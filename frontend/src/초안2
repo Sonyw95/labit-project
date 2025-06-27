@@ -1,0 +1,1092 @@
+import React, { useState, useEffect } from 'react';
+import {
+    Container,
+    Text,
+    Stack,
+    Group,
+    Avatar,
+    Badge,
+    ActionIcon,
+    Divider,
+    Box,
+    Paper,
+    Affix,
+    Transition,
+    Progress,
+    Tooltip,
+    Button,
+    useMantineColorScheme,
+    useComputedColorScheme,
+    Card,
+    Textarea,
+    Modal
+} from '@mantine/core';
+import {
+    IconHeart,
+    IconBookmark,
+    IconShare2,
+    IconMessageCircle,
+    IconEye,
+    IconCalendar,
+    IconClock,
+    IconArrowLeft,
+    IconArrowUp,
+    IconSun,
+    IconMoon,
+    IconBrandTwitter,
+    IconBrandFacebook,
+    IconBrandLinkedin,
+    IconCopy,
+    IconPhoto,
+    IconSend,
+    IconDots
+} from '@tabler/icons-react';
+
+// 다크 모드 토글 컴포넌트
+function DarkModeToggle() {
+    const { setColorScheme } = useMantineColorScheme();
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [isHovered, setIsHovered] = useState(false);
+
+    const toggleColorScheme = () => {
+        setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light');
+    };
+
+    return (
+        <Tooltip
+            label={computedColorScheme === 'light' ? '다크 모드로 전환' : '라이트 모드로 전환'}
+            position="left"
+        >
+            <ActionIcon
+                onClick={toggleColorScheme}
+                variant="gradient"
+                gradient={
+                    computedColorScheme === 'light'
+                        ? { from: 'indigo', to: 'purple', deg: 135 }
+                        : { from: 'yellow', to: 'orange', deg: 135 }
+                }
+                size="lg"
+                style={{
+                    border: `2px solid ${computedColorScheme === 'light' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`,
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: computedColorScheme === 'light'
+                        ? '0 8px 32px rgba(0, 0, 0, 0.15)'
+                        : '0 8px 32px rgba(255, 255, 255, 0.1)',
+                    transform: isHovered ? 'scale(1.1) rotate(180deg)' : 'scale(1) rotate(0deg)',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                {computedColorScheme === 'light' ? <IconMoon size={18} /> : <IconSun size={18} />}
+            </ActionIcon>
+        </Tooltip>
+    );
+}
+
+// 포스트 네비게이터 컴포넌트
+function PostNavigator({ currentProgress, onScrollTo }) {
+    const computedColorScheme = useComputedColorScheme('light');
+    const [activeSection, setActiveSection] = useState(0);
+
+    const sections = [
+        { id: 'intro', title: '소개', progress: 0 },
+        { id: 'overview', title: '개요', progress: 20 },
+        { id: 'content', title: '본문', progress: 40 },
+        { id: 'examples', title: '예시', progress: 60 },
+        { id: 'conclusion', title: '결론', progress: 80 },
+        { id: 'comments', title: '댓글', progress: 100 }
+    ];
+
+    useEffect(() => {
+        const currentSection = sections.findIndex(section =>
+            currentProgress >= section.progress &&
+            currentProgress < (sections[sections.indexOf(section) + 1]?.progress || 100)
+        );
+        setActiveSection(Math.max(0, currentSection));
+    }, [currentProgress]);
+
+    return (
+        <Affix position={{ top: '50%', right: 20 }} style={{ transform: 'translateY(-50%)' }}>
+            <Paper
+                p="md"
+                style={{
+                    background: computedColorScheme === 'light'
+                        ? 'rgba(255, 255, 255, 0.95)'
+                        : 'rgba(20, 20, 20, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    border: computedColorScheme === 'light'
+                        ? '1px solid rgba(0, 0, 0, 0.1)'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '20px',
+                    boxShadow: computedColorScheme === 'light'
+                        ? '0 12px 40px rgba(0, 0, 0, 0.15)'
+                        : '0 12px 40px rgba(255, 255, 255, 0.05)',
+                    width: '220px'
+                }}
+            >
+                <Stack gap="sm">
+                    <Group justify="space-between" align="center" mb="xs">
+                        <Text size="sm" fw={700}
+                              style={{
+                                  background: 'linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-violet-6))',
+                                  backgroundClip: 'text',
+                                  WebkitBackgroundClip: 'text',
+                                  color: 'transparent'
+                              }}
+                        >
+                            목차
+                        </Text>
+                        <DarkModeToggle />
+                    </Group>
+
+                    <Progress
+                        value={currentProgress}
+                        size="sm"
+                        radius="xl"
+                        style={{ marginBottom: '12px' }}
+                        color="violet"
+                    />
+
+                    {sections.map((section, index) => (
+                        <Box
+                            key={section.id}
+                            style={{
+                                padding: '12px 16px',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                background: activeSection === index
+                                    ? computedColorScheme === 'light'
+                                        ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 69, 19, 0.1))'
+                                        : 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 69, 19, 0.2))'
+                                    : 'transparent',
+                                border: activeSection === index
+                                    ? '1px solid rgba(99, 102, 241, 0.3)'
+                                    : '1px solid transparent',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transform: activeSection === index ? 'scale(1.02)' : 'scale(1)'
+                            }}
+                            onClick={() => onScrollTo(section.progress)}
+                        >
+                            <Text
+                                size="sm"
+                                c={activeSection === index ? 'violet' : 'dimmed'}
+                                fw={activeSection === index ? 600 : 400}
+                                style={{ transition: 'all 0.2s ease' }}
+                            >
+                                {section.title}
+                            </Text>
+                        </Box>
+                    ))}
+                </Stack>
+            </Paper>
+        </Affix>
+    );
+}
+
+// 플로팅 액션 버튼
+function FloatingActions() {
+    const [isLiked, setIsLiked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const [shareModal, setShareModal] = useState(false);
+    const computedColorScheme = useComputedColorScheme('light');
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowScrollTop(window.scrollY > 300);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const shareActions = [
+        { icon: IconBrandTwitter, label: 'Twitter', color: '#1DA1F2' },
+        { icon: IconBrandFacebook, label: 'Facebook', color: '#4267B2' },
+        { icon: IconBrandLinkedin, label: 'LinkedIn', color: '#0077B5' },
+        { icon: IconCopy, label: '링크 복사', color: '#666' }
+    ];
+
+    const handleShare = (label) => {
+        if (label === '링크 복사') {
+            navigator.clipboard.writeText(window.location.href);
+        }
+        setShareModal(false);
+    };
+
+    return (
+        <>
+            <Affix position={{ bottom: 30, left: 30 }}>
+                <Stack gap="sm">
+                    <Paper
+                        p="sm"
+                        style={{
+                            background: computedColorScheme === 'light'
+                                ? 'rgba(255, 255, 255, 0.95)'
+                                : 'rgba(20, 20, 20, 0.95)',
+                            backdropFilter: 'blur(20px)',
+                            border: computedColorScheme === 'light'
+                                ? '1px solid rgba(0, 0, 0, 0.1)'
+                                : '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '20px',
+                            boxShadow: computedColorScheme === 'light'
+                                ? '0 12px 40px rgba(0, 0, 0, 0.15)'
+                                : '0 12px 40px rgba(255, 255, 255, 0.05)'
+                        }}
+                    >
+                        <Stack gap="xs">
+                            <Tooltip label="공유하기" position="right">
+                                <ActionIcon
+                                    variant="gradient"
+                                    gradient={{ from: 'blue', to: 'cyan' }}
+                                    size="lg"
+                                    onClick={() => setShareModal(true)}
+                                    style={{
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    <IconShare2 size={20} />
+                                </ActionIcon>
+                            </Tooltip>
+
+                            <Divider size="xs" />
+
+                            <Tooltip label={isLiked ? '좋아요 취소' : '좋아요'} position="right">
+                                <ActionIcon
+                                    variant={isLiked ? "filled" : "gradient"}
+                                    color={isLiked ? "red" : undefined}
+                                    gradient={!isLiked ? { from: 'pink', to: 'red' } : undefined}
+                                    size="lg"
+                                    onClick={() => setIsLiked(!isLiked)}
+                                    style={{
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isLiked ? 'scale(1.15)' : 'scale(1)'
+                                    }}
+                                >
+                                    <IconHeart size={20} fill={isLiked ? "currentColor" : "none"} />
+                                </ActionIcon>
+                            </Tooltip>
+
+                            <Tooltip label={isBookmarked ? '북마크 해제' : '북마크'} position="right">
+                                <ActionIcon
+                                    variant={isBookmarked ? "filled" : "gradient"}
+                                    color={isBookmarked ? "yellow" : undefined}
+                                    gradient={!isBookmarked ? { from: 'yellow', to: 'orange' } : undefined}
+                                    size="lg"
+                                    onClick={() => setIsBookmarked(!isBookmarked)}
+                                    style={{
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isBookmarked ? 'scale(1.15)' : 'scale(1)'
+                                    }}
+                                >
+                                    <IconBookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Stack>
+                    </Paper>
+
+                    <Transition mounted={showScrollTop} transition="slide-up" duration={300}>
+                        {(styles) => (
+                            <ActionIcon
+                                style={{
+                                    ...styles,
+                                    background: 'linear-gradient(135deg, var(--mantine-color-violet-6), var(--mantine-color-blue-6))',
+                                    backdropFilter: 'blur(20px)',
+                                    border: computedColorScheme === 'light'
+                                        ? '1px solid rgba(0, 0, 0, 0.1)'
+                                        : '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '50%',
+                                    boxShadow: computedColorScheme === 'light'
+                                        ? '0 12px 40px rgba(0, 0, 0, 0.15)'
+                                        : '0 12px 40px rgba(255, 255, 255, 0.05)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                size="xl"
+                                onClick={scrollToTop}
+                            >
+                                <IconArrowUp size={24} color="white" />
+                            </ActionIcon>
+                        )}
+                    </Transition>
+                </Stack>
+            </Affix>
+
+            <Modal
+                opened={shareModal}
+                onClose={() => setShareModal(false)}
+                title="포스트 공유하기"
+                centered
+                radius="lg"
+            >
+                <Stack gap="md">
+                    {shareActions.map(({ icon: Icon, label, color }) => (
+                        <Button
+                            key={label}
+                            variant="light"
+                            leftSection={<Icon size={20} />}
+                            onClick={() => handleShare(label)}
+                            style={{
+                                '--button-color': color,
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            {label}
+                        </Button>
+                    ))}
+                </Stack>
+            </Modal>
+        </>
+    );
+}
+
+// 댓글 입력 폼
+function CommentForm({ onSubmit }) {
+    const [comment, setComment] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const computedColorScheme = useComputedColorScheme('light');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!comment.trim()) {
+            return false;
+        }
+
+        setIsSubmitting(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        onSubmit(comment);
+        setComment('');
+        setIsSubmitting(false);
+    };
+
+    return (
+        <Paper
+            p="lg"
+            mb="xl"
+            style={{
+                background: computedColorScheme === 'light'
+                    ? 'rgba(255, 255, 255, 0.95)'
+                    : 'rgba(30, 30, 30, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: computedColorScheme === 'light'
+                    ? '1px solid rgba(0, 0, 0, 0.1)'
+                    : '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '20px',
+                boxShadow: computedColorScheme === 'light'
+                    ? '0 8px 32px rgba(0, 0, 0, 0.08)'
+                    : '0 8px 32px rgba(255, 255, 255, 0.02)'
+            }}
+        >
+            <form onSubmit={handleSubmit}>
+                <Group align="flex-start" gap="md">
+                    <Avatar
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face"
+                        size="lg"
+                        style={{
+                            border: '3px solid rgba(99, 102, 241, 0.3)',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                        }}
+                    />
+                    <Stack gap="md" style={{ flex: 1 }}>
+                        <Textarea
+                            placeholder="이 포스트에 대한 생각을 공유해보세요..."
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            minRows={3}
+                            maxRows={6}
+                            autosize
+                            style={{
+                                '& .mantine-Textarea-input': {
+                                    background: computedColorScheme === 'light'
+                                        ? 'rgba(249, 250, 251, 0.8)'
+                                        : 'rgba(40, 40, 40, 0.8)',
+                                    border: computedColorScheme === 'light'
+                                        ? '1px solid rgba(0, 0, 0, 0.1)'
+                                        : '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '12px',
+                                    fontSize: '14px',
+                                    lineHeight: 1.6
+                                }
+                            }}
+                        />
+                        <Group justify="space-between" align="center">
+                            <Group gap="xs">
+                                <ActionIcon variant="subtle" size="sm">
+                                    <IconPhoto size={18} />
+                                </ActionIcon>
+                                <Text size="xs" c="dimmed">이미지 첨부</Text>
+                            </Group>
+                            <Button
+                                type="submit"
+                                variant="gradient"
+                                gradient={{ from: 'violet', to: 'blue' }}
+                                leftSection={<IconSend size={18} />}
+                                disabled={!comment.trim()}
+                                loading={isSubmitting}
+                                style={{
+                                    transition: 'all 0.2s ease',
+                                    opacity: comment.trim() ? 1 : 0.6
+                                }}
+                            >
+                                댓글 작성
+                            </Button>
+                        </Group>
+                    </Stack>
+                </Group>
+            </form>
+        </Paper>
+    );
+}
+
+// 댓글 컴포넌트
+function Comment({ comment, onReply, isReply = false }) {
+    const [showReplyForm, setShowReplyForm] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const computedColorScheme = useComputedColorScheme('light');
+
+    const handleReply = (replyText) => {
+        onReply(comment.id, replyText);
+        setShowReplyForm(false);
+    };
+
+    return (
+        <Paper
+            p="lg"
+            style={{
+                background: computedColorScheme === 'light'
+                    ? 'rgba(255, 255, 255, 0.95)'
+                    : 'rgba(30, 30, 30, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: computedColorScheme === 'light'
+                    ? '1px solid rgba(0, 0, 0, 0.05)'
+                    : '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: '16px',
+                marginLeft: isReply ? '40px' : '0',
+                transition: 'all 0.2s ease'
+            }}
+        >
+            <Group align="flex-start" gap="md">
+                <Avatar
+                    src={comment.author.avatar}
+                    size={isReply ? "md" : "lg"}
+                    style={{
+                        border: `2px solid ${comment.author.verified ? 'var(--mantine-color-blue-6)' : 'rgba(255, 255, 255, 0.2)'}`,
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                    }}
+                />
+                <Stack gap="xs" style={{ flex: 1 }}>
+                    <Group justify="space-between" align="center">
+                        <Group gap="xs">
+                            <Text size="sm" fw={600}>{comment.author.name}</Text>
+                            {comment.author.badge && (
+                                <Badge variant="light" size="xs" color={comment.author.badgeColor}>
+                                    {comment.author.badge}
+                                </Badge>
+                            )}
+                            {comment.author.verified && (
+                                <Badge variant="filled" size="xs" color="blue">✓</Badge>
+                            )}
+                        </Group>
+                        <Group gap="xs">
+                            <Text size="xs" c="dimmed">{comment.timestamp}</Text>
+                            <ActionIcon variant="subtle" size="sm">
+                                <IconDots size={16} />
+                            </ActionIcon>
+                        </Group>
+                    </Group>
+
+                    <Text size="sm" style={{ lineHeight: 1.6 }}>
+                        {comment.content}
+                    </Text>
+
+                    <Group gap="lg" mt="xs">
+                        <Group gap={4} style={{ cursor: 'pointer' }} onClick={() => setIsLiked(!isLiked)}>
+                            <IconHeart size={16} color={isLiked ? "#e91e63" : undefined} fill={isLiked ? "currentColor" : "none"} />
+                            <Text size="xs" c="dimmed">{comment.likes + (isLiked ? 1 : 0)}</Text>
+                        </Group>
+                        {!isReply && (
+                            <Group gap={4} style={{ cursor: 'pointer' }} onClick={() => setShowReplyForm(!showReplyForm)}>
+                                <IconMessageCircle size={16} />
+                                <Text size="xs" c="dimmed">답글</Text>
+                            </Group>
+                        )}
+                        <Group gap={4} style={{ cursor: 'pointer' }}>
+                            <IconShare2 size={16} />
+                            <Text size="xs" c="dimmed">공유</Text>
+                        </Group>
+                    </Group>
+
+                    {showReplyForm && (
+                        <Box mt="md" p="md" style={{
+                            background: computedColorScheme === 'light'
+                                ? 'rgba(249, 250, 251, 0.5)'
+                                : 'rgba(40, 40, 40, 0.5)',
+                            borderRadius: '12px',
+                            border: computedColorScheme === 'light'
+                                ? '1px solid rgba(0, 0, 0, 0.05)'
+                                : '1px solid rgba(255, 255, 255, 0.05)'
+                        }}>
+                            <CommentForm onSubmit={handleReply} />
+                        </Box>
+                    )}
+
+                    {comment.replies && comment.replies.length > 0 && (
+                        <Stack gap="md" mt="md" pl="md" style={{
+                            borderLeft: computedColorScheme === 'light'
+                                ? '2px solid rgba(0, 0, 0, 0.1)'
+                                : '2px solid rgba(255, 255, 255, 0.1)'
+                        }}>
+                            {comment.replies.map((reply) => (
+                                <Comment key={reply.id} comment={reply} onReply={onReply} isReply={true} />
+                            ))}
+                        </Stack>
+                    )}
+                </Stack>
+            </Group>
+        </Paper>
+    );
+}
+
+// 메인 포스트 상세 컴포넌트
+export default function CompletePostDetail() {
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [comments, setComments] = useState([
+        {
+            id: 1,
+            author: {
+                name: "이개발자",
+                avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+                badge: "프론트엔드 개발자",
+                badgeColor: "blue",
+                verified: true
+            },
+            content: "정말 인사이트가 가득한 포스트네요! 특히 2025년 웹 디자인 트렌드 중에서 실험적 내비게이션 부분이 가장 흥미로웠습니다. 실제 프로젝트에 적용해볼 만한 아이디어들이 많아서 도움이 되었어요. 👍",
+            timestamp: "2시간 전",
+            likes: 12,
+            replies: [
+                {
+                    id: 11,
+                    author: {
+                        name: "김디자이너",
+                        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+                        badge: "작성자",
+                        badgeColor: "violet",
+                        verified: true
+                    },
+                    content: "@이개발자 감사합니다! 실험적 내비게이션은 정말 2025년의 핵심 트렌드 중 하나라고 생각해요. 다만 사용자 경험을 해치지 않는 선에서 적용하는 게 중요하겠죠. 🎨",
+                    timestamp: "1시간 전",
+                    likes: 8
+                }
+            ]
+        },
+        {
+            id: 2,
+            author: {
+                name: "박UX",
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+                badge: "UX 디자이너",
+                badgeColor: "green",
+                verified: false
+            },
+            content: "지속가능한 웹 디자인 트렌드가 특히 인상적이었어요. 환경을 고려한 디자인이 단순히 트렌드를 넘어 필수가 되어가는 것 같습니다. 성능 최적화와 환경 보호를 동시에 달성할 수 있다는 점이 매력적이네요! 🌱",
+            timestamp: "3시간 전",
+            likes: 15,
+            replies: []
+        },
+        {
+            id: 3,
+            author: {
+                name: "정풀스택",
+                avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face",
+                badge: "풀스택 개발자",
+                badgeColor: "orange",
+                verified: true
+            },
+            content: "마이크로 애니메이션 부분이 정말 유용했어요! 요즘 프로젝트에서 사용자 경험을 위해 애니메이션을 많이 도입하고 있는데, 과도하지 않으면서도 의미있는 애니메이션을 구현하는 방법에 대해 고민이 많았거든요. 🚀",
+            timestamp: "4시간 전",
+            likes: 9,
+            replies: []
+        }
+    ]);
+
+    const computedColorScheme = useComputedColorScheme('light');
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = Math.min((scrollTop / docHeight) * 100, 100);
+            setScrollProgress(progress);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleScrollTo = (targetProgress) => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const targetPosition = (targetProgress / 100) * docHeight;
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+    };
+
+    const handleCommentSubmit = (commentText) => {
+        const newComment = {
+            id: Date.now(),
+            author: {
+                name: "현재사용자",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face",
+                badge: "새로운 멤버",
+                badgeColor: "cyan",
+                verified: false
+            },
+            content: commentText,
+            timestamp: "방금 전",
+            likes: 0,
+            replies: []
+        };
+        setComments([newComment, ...comments]);
+    };
+
+    const handleReply = (parentId, replyText) => {
+        setComments(comments.map(comment => {
+            if (comment.id === parentId) {
+                const newReply = {
+                    id: Date.now(),
+                    author: {
+                        name: "현재사용자",
+                        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=32&h=32&fit=crop&crop=face",
+                        badge: "새로운 멤버",
+                        badgeColor: "cyan",
+                        verified: false
+                    },
+                    content: replyText,
+                    timestamp: "방금 전",
+                    likes: 0
+                };
+                return {
+                    ...comment,
+                    replies: [...(comment.replies || []), newReply]
+                };
+            }
+            return comment;
+        }));
+    };
+
+    const post = {
+        title: "2025년 웹 디자인 트렌드: 미래를 이끄는 혁신적인 디자인 패러다임",
+        subtitle: "AI 기반 개인화, 지속가능한 디자인, 그리고 몰입형 사용자 경험의 시대",
+        bannerImage: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1200&h=600&fit=crop",
+        author: {
+            name: "김디자이너",
+            avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face",
+            bio: "UX/UI 디자이너이자 웹 트렌드 전문가",
+            followers: "12.5K"
+        },
+        publishedAt: "2025-06-25",
+        readTime: "12분",
+        views: 3420,
+        likes: 234,
+        category: "디자인",
+        tags: ["웹디자인", "2025트렌드", "UI/UX", "사용자경험"]
+    };
+
+    return (
+        <Box style={{ minHeight: '100vh' }}>
+            {/* 진행률 표시바 */}
+            <Progress
+                value={scrollProgress}
+                size="xs"
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000
+                }}
+                color="violet"
+            />
+
+            {/* 배너 이미지 섹션 */}
+            <Box
+                style={{
+                    height: '75vh',
+                    backgroundImage: `linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 69, 19, 0.1)), url(${post.bannerImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundAttachment: 'fixed',
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'end',
+                    padding: '0 20px 80px'
+                }}
+            >
+                {/* 그라디언트 오버레이 */}
+                <Box
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: computedColorScheme === 'light'
+                            ? 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%)'
+                            : 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.9) 100%)',
+                        backdropFilter: 'blur(2px)'
+                    }}
+                />
+
+                {/* 뒤로가기 버튼 */}
+                <ActionIcon
+                    variant="filled"
+                    size="xl"
+                    style={{
+                        position: 'absolute',
+                        top: '30px',
+                        left: '30px',
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '50%',
+                        transition: 'all 0.3s ease'
+                    }}
+                >
+                    <IconArrowLeft size={24} color="white" />
+                </ActionIcon>
+
+                {/* 타이틀 영역 */}
+                <Container size="lg" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
+                    <Stack gap="lg">
+                        <Badge
+                            color="violet"
+                            variant="gradient"
+                            gradient={{ from: 'violet', to: 'blue', deg: 135 }}
+                            size="xl"
+                            style={{
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                padding: '8px 20px',
+                                fontSize: '16px',
+                                fontWeight: 600
+                            }}
+                        >
+                            {post.category}
+                        </Badge>
+
+                        <Text
+                            size="4rem"
+                            fw={900}
+                            c="white"
+                            style={{
+                                fontSize: 'clamp(1.8rem, 5vw, 4rem)',
+                                lineHeight: 1.1,
+                                textShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+                                maxWidth: '85%',
+                                background: 'linear-gradient(135deg, #ffffff, #e0e7ff)',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text',
+                                color: 'transparent'
+                            }}
+                        >
+                            {post.title}
+                        </Text>
+
+                        <Text
+                            size="xl"
+                            style={{
+                                fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                textShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
+                                maxWidth: '75%',
+                                lineHeight: 1.4
+                            }}
+                        >
+                            {post.subtitle}
+                        </Text>
+                    </Stack>
+                </Container>
+            </Box>
+
+            {/* 메인 콘텐츠 */}
+            <Container size="md" py="xl">
+                {/* 작성자 정보 */}
+                <Card
+                    p="xl"
+                    mb="xl"
+                    style={{
+                        background: computedColorScheme === 'light'
+                            ? 'rgba(255, 255, 255, 0.95)'
+                            : 'rgba(30, 30, 30, 0.95)',
+                        backdropFilter: 'blur(20px)',
+                        border: computedColorScheme === 'light'
+                            ? '1px solid rgba(0, 0, 0, 0.1)'
+                            : '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '20px',
+                        boxShadow: computedColorScheme === 'light'
+                            ? '0 12px 40px rgba(0, 0, 0, 0.1)'
+                            : '0 12px 40px rgba(255, 255, 255, 0.02)'
+                    }}
+                >
+                    <Group justify="space-between" align="center">
+                        <Group>
+                            <Avatar
+                                src={post.author.avatar}
+                                size="xl"
+                                style={{
+                                    border: '3px solid var(--mantine-color-violet-6)',
+                                    boxShadow: '0 4px 16px rgba(99, 102, 241, 0.3)'
+                                }}
+                            />
+                            <Stack gap={6}>
+                                <Group gap="xs">
+                                    <Text fw={700} size="lg">{post.author.name}</Text>
+                                    <Badge variant="filled" color="violet" size="sm">✓ 인증됨</Badge>
+                                </Group>
+                                <Text size="sm" c="dimmed">{post.author.bio}</Text>
+                                <Group gap="lg">
+                                    <Group gap={6}>
+                                        <IconCalendar size={16} />
+                                        <Text size="sm" c="dimmed">{post.publishedAt}</Text>
+                                    </Group>
+                                    <Group gap={6}>
+                                        <IconClock size={16} />
+                                        <Text size="sm" c="dimmed">{post.readTime}</Text>
+                                    </Group>
+                                    <Group gap={6}>
+                                        <IconEye size={16} />
+                                        <Text size="sm" c="dimmed">{post.views.toLocaleString()}회</Text>
+                                    </Group>
+                                </Group>
+                            </Stack>
+                        </Group>
+
+                        <Stack align="center" gap={8}>
+                            <Button
+                                variant="gradient"
+                                gradient={{ from: 'violet', to: 'blue' }}
+                                size="md"
+                                style={{ minWidth: '120px' }}
+                            >
+                                팔로우
+                            </Button>
+                            <Text size="sm" c="dimmed" fw={500}>{post.author.followers} 팔로워</Text>
+                        </Stack>
+                    </Group>
+                </Card>
+
+                {/* 포스트 콘텐츠 */}
+                <Stack gap="xl" id="content">
+                    <section id="intro">
+                        <Text size="xl" fw={700} mb="lg"
+                              style={{
+                                  background: 'linear-gradient(135deg, var(--mantine-color-violet-6), var(--mantine-color-blue-6))',
+                                  backgroundClip: 'text',
+                                  WebkitBackgroundClip: 'text',
+                                  color: 'transparent'
+                              }}
+                        >
+                            들어가며
+                        </Text>
+                        <Text size="lg" style={{ lineHeight: 1.8 }}>
+                            2025년, 웹 디자인 업계는 전례없는 변화의 중심에 서 있습니다.
+                            반디자인과 실험적 내비게이션부터
+                            AI 기반 개인화와 지속가능한 디자인까지,
+                            새로운 패러다임이 사용자 경험의 미래를 재정의하고 있습니다.
+                        </Text>
+                    </section>
+
+                    <Divider variant="dashed" />
+
+                    <section id="overview">
+                        <Text size="xl" fw={700} mb="lg"
+                              style={{
+                                  background: 'linear-gradient(135deg, var(--mantine-color-violet-6), var(--mantine-color-blue-6))',
+                                  backgroundClip: 'text',
+                                  WebkitBackgroundClip: 'text',
+                                  color: 'transparent'
+                              }}
+                        >
+                            2025년 핵심 트렌드 개요
+                        </Text>
+                        <Stack gap="lg">
+                            <Text size="lg" style={{ lineHeight: 1.8 }}>
+                                마이크로 애니메이션과 커스텀 커서는 단순한 장식을 넘어
+                                브랜드 요소로 진화하고 있습니다. 사용자들은 더 이상 정적인 웹사이트에 만족하지 않으며,
+                                인터랙티브하고 몰입적인 경험을 기대합니다.
+                            </Text>
+
+                            <Paper p="xl" style={{
+                                background: computedColorScheme === 'light'
+                                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 69, 19, 0.05))'
+                                    : 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 69, 19, 0.1))',
+                                borderRadius: '16px',
+                                border: computedColorScheme === 'light'
+                                    ? '1px solid rgba(99, 102, 241, 0.2)'
+                                    : '1px solid rgba(99, 102, 241, 0.3)'
+                            }}>
+                                <Text size="lg" style={{ lineHeight: 1.8 }}>
+                                    가시적 그리드 레이아웃과
+                                    3D 요소의 접근성 향상은
+                                    디자이너들에게 새로운 창작의 자유를 제공하고 있습니다.
+                                </Text>
+                            </Paper>
+                        </Stack>
+                    </section>
+
+                    <Divider variant="dashed" />
+
+                    <section id="examples">
+                        <Text size="xl" fw={700} mb="lg"
+                              style={{
+                                  background: 'linear-gradient(135deg, var(--mantine-color-violet-6), var(--mantine-color-blue-6))',
+                                  backgroundClip: 'text',
+                                  WebkitBackgroundClip: 'text',
+                                  color: 'transparent'
+                              }}
+                        >
+                            실제 적용 사례
+                        </Text>
+                        <Stack gap="lg">
+                            <Paper
+                                p="xl"
+                                style={{
+                                    background: computedColorScheme === 'light'
+                                        ? 'rgba(249, 250, 251, 0.9)'
+                                        : 'rgba(40, 40, 40, 0.9)',
+                                    borderRadius: '16px',
+                                    border: computedColorScheme === 'light'
+                                        ? '1px solid rgba(0, 0, 0, 0.05)'
+                                        : '1px solid rgba(255, 255, 255, 0.05)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            >
+                                <Text fw={700} mb="md" size="lg" c="violet">스크롤 기반 스토리텔링</Text>
+                                <Text size="md" style={{ lineHeight: 1.7 }}>
+                                    스크롤텔링은 단순한 제품 브로셔를 넘어 제품 모험으로 진화하고 있습니다.
+                                    패럴랙스 스크롤링과 줌 인 효과를 통해 더욱 몰입적인 경험을 제공합니다.
+                                </Text>
+                            </Paper>
+
+                            <Paper
+                                p="xl"
+                                style={{
+                                    background: computedColorScheme === 'light'
+                                        ? 'rgba(249, 250, 251, 0.9)'
+                                        : 'rgba(40, 40, 40, 0.9)',
+                                    borderRadius: '16px',
+                                    border: computedColorScheme === 'light'
+                                        ? '1px solid rgba(0, 0, 0, 0.05)'
+                                        : '1px solid rgba(255, 255, 255, 0.05)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            >
+                                <Text fw={700} mb="md" size="lg" c="green">지속가능한 웹 디자인</Text>
+                                <Text size="md" style={{ lineHeight: 1.7 }}>
+                                    2025년 웹 지속가능성은 기본 최적화를 넘어 환경 친화적 웹사이트 창조에 집중합니다.
+                                    이는 더 빠르고 효율적인 웹사이트로 이어져 사용자 경험과 환경 책임의 완벽한 조화를 이룹니다.
+                                </Text>
+                            </Paper>
+                        </Stack>
+                    </section>
+
+                    <Divider variant="dashed" />
+
+                    <section id="conclusion">
+                        <Text size="xl" fw={700} mb="lg"
+                              style={{
+                                  background: 'linear-gradient(135deg, var(--mantine-color-violet-6), var(--mantine-color-blue-6))',
+                                  backgroundClip: 'text',
+                                  WebkitBackgroundClip: 'text',
+                                  color: 'transparent'
+                              }}
+                        >
+                            마무리
+                        </Text>
+                        <Text size="lg" style={{ lineHeight: 1.8 }}>
+                            2025년 웹 디자인 트렌드는 전통적인 규칙을 깨뜨리는 것에 관한 것입니다.
+                            하지만 이러한 혁신은 항상 사용자 중심적이어야 하며, 접근성과 사용성을 희생하지 않는 선에서 이루어져야 합니다.
+                        </Text>
+                    </section>
+
+                    <Divider variant="dashed" />
+
+                    {/* 태그 섹션 */}
+                    <Group gap="md" justify="center">
+                        {post.tags.map((tag) => (
+                            <Badge
+                                key={tag}
+                                variant="gradient"
+                                gradient={{ from: 'violet', to: 'blue' }}
+                                size="lg"
+                                style={{ padding: '8px 16px', fontSize: '14px' }}
+                            >
+                                #{tag}
+                            </Badge>
+                        ))}
+                    </Group>
+
+                    <Divider size="md" />
+
+                    {/* 댓글 섹션 */}
+                    <section id="comments">
+                        <Group justify="space-between" align="center" mb="xl">
+                            <Text size="2rem" fw={700}
+                                  style={{
+                                      background: 'linear-gradient(135deg, var(--mantine-color-violet-6), var(--mantine-color-blue-6))',
+                                      backgroundClip: 'text',
+                                      WebkitBackgroundClip: 'text',
+                                      color: 'transparent'
+                                  }}
+                            >
+                                댓글
+                            </Text>
+                            <Group gap={8}>
+                                <IconMessageCircle size={20} color="var(--mantine-color-violet-6)" />
+                                <Text size="lg" fw={600} c="violet">{comments.length}개</Text>
+                            </Group>
+                        </Group>
+
+                        {/* 댓글 입력 폼 */}
+                        <CommentForm onSubmit={handleCommentSubmit} />
+
+                        {/* 댓글 리스트 */}
+                        <Stack gap="lg">
+                            {comments.map((comment) => (
+                                <Comment
+                                    key={comment.id}
+                                    comment={comment}
+                                    onReply={handleReply}
+                                />
+                            ))}
+                        </Stack>
+
+                        {/* 더 많은 댓글 보기 */}
+                        <Group justify="center" mt="xl">
+                            <Button
+                                variant="outline"
+                                size="lg"
+                                style={{
+                                    borderColor: 'var(--mantine-color-violet-6)',
+                                    color: 'var(--mantine-color-violet-6)'
+                                }}
+                            >
+                                더 많은 댓글 보기 (15개 남음)
+                            </Button>
+                        </Group>
+                    </section>
+                </Stack>
+            </Container>
+
+            {/* 포스트 네비게이터 */}
+            <PostNavigator
+                currentProgress={scrollProgress}
+                onScrollTo={handleScrollTo}
+            />
+
+            {/* 플로팅 액션 버튼들 */}
+            <FloatingActions />
+        </Box>
+    );
+}

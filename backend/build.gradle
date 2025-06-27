@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'kr.labit'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    compileOnly 'org.projectlombok:lombok'
+//    annotationProcessor 'org.projectlombok:lombok'
+//
+////    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Oracle Database
+    implementation 'com.oracle.database.jdbc:ojdbc11:23.3.0.23.09'
+    implementation 'com.oracle.database.security:oraclepki:21.5.0.0'
+    implementation 'com.oracle.database.security:osdt_cert:21.5.0.0'
+    implementation 'com.oracle.database.security:osdt_core:21.5.0.0'
+
+    // Development
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+

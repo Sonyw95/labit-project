@@ -1,0 +1,1002 @@
+import React, { useState, useRef, useEffect } from 'react';
+import {
+    AppShell,
+    Burger,
+    Group,
+    Text,
+    NavLink,
+    Container,
+    Title,
+    Card,
+    Badge,
+    Button,
+    Avatar,
+    Stack,
+    Grid,
+    Paper,
+    ActionIcon,
+    Switch,
+    useMantineColorScheme,
+    MantineProvider,
+    createTheme,
+    Divider,
+    Box,
+    TextInput,
+    Center,
+    ThemeIcon,
+} from '@mantine/core';
+import {
+    IconHome,
+    IconCode,
+    IconBrandReact,
+    IconBrandJavascript,
+    IconMoon,
+    IconSun,
+    IconBrandGithub,
+    IconBrandLinkedin,
+    IconMail,
+    IconSearch,
+    IconHeart,
+    IconMessage,
+    IconShare,
+    IconCalendar,
+    IconUser,
+    IconTag,
+    IconSparkles,
+    IconLeaf,
+    IconBolt,
+    IconPalette,
+    IconArrowDown,
+    IconChevronDown,
+} from '@tabler/icons-react';
+
+const theme = createTheme({
+    primaryColor: 'violet',
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    headings: {
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        fontWeight: '800',
+    },
+    colors: {
+        brand: [
+            '#f3e8ff',
+            '#e9d5ff',
+            '#d8b4fe',
+            '#c084fc',
+            '#a855f7',
+            '#9333ea',
+            '#7c3aed',
+            '#6d28d9',
+            '#5b21b6',
+            '#4c1d95'
+        ],
+        electric: [
+            '#fef3c7',
+            '#fde68a',
+            '#fcd34d',
+            '#fbbf24',
+            '#f59e0b',
+            '#d97706',
+            '#b45309',
+            '#92400e',
+            '#78350f',
+            '#451a03'
+        ],
+        nature: [
+            '#ecfdf5',
+            '#d1fae5',
+            '#a7f3d0',
+            '#6ee7b7',
+            '#34d399',
+            '#10b981',
+            '#059669',
+            '#047857',
+            '#065f46',
+            '#064e3b'
+        ]
+    },
+    shadows: {
+        glow: '0 0 40px rgba(168, 85, 247, 0.3)',
+        neon: '0 0 20px rgba(34, 197, 94, 0.5)',
+        soft: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    }
+});
+
+// 플로팅 객체 컴포넌트
+function FloatingShape({ children, delay = 0, direction = 1 }) {
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const animationRef = useRef();
+
+    useEffect(() => {
+        let start;
+
+        const animate = (timestamp) => {
+            if (!start) start = timestamp + delay * 1000;
+            const elapsed = timestamp - start;
+
+            const x = Math.sin(elapsed * 0.001) * 20 * direction;
+            const y = Math.cos(elapsed * 0.0008) * 15;
+
+            setPosition({ x, y });
+            animationRef.current = requestAnimationFrame(animate);
+        };
+
+        animationRef.current = requestAnimationFrame(animate);
+
+        return () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+            }
+        };
+    }, [delay, direction]);
+
+    return (
+        <div
+            style={{
+                transform: `translate(${position.x}px, ${position.y}px)`,
+                transition: 'transform 0.1s ease-out',
+            }}
+        >
+            {children}
+        </div>
+    );
+}
+
+// 커스텀 커서 효과
+function CustomCursor() {
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isHovering, setIsHovering] = useState(false);
+
+    useEffect(() => {
+        const updateCursor = (e) => {
+            setPosition({ x: e.clientX, y: e.clientY });
+        };
+
+        const handleMouseOver = (e) => {
+            if (e.target.closest('button, a, [role="button"]')) {
+                setIsHovering(true);
+            } else {
+                setIsHovering(false);
+            }
+        };
+
+        document.addEventListener('mousemove', updateCursor);
+        document.addEventListener('mouseover', handleMouseOver);
+
+        return () => {
+            document.removeEventListener('mousemove', updateCursor);
+            document.removeEventListener('mouseover', handleMouseOver);
+        };
+    }, []);
+
+    return (
+        <div
+            style={{
+                position: 'fixed',
+                left: position.x - 10,
+                top: position.y - 10,
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.2))',
+                pointerEvents: 'none',
+                zIndex: 9999,
+                transform: isHovering ? 'scale(2)' : 'scale(1)',
+                transition: 'transform 0.2s ease',
+                mixBlendMode: 'difference',
+            }}
+        />
+    );
+}
+
+// 글리치 효과 텍스트
+function GlitchText({ children }) {
+    const [glitch, setGlitch] = useState(false);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setGlitch(true);
+            setTimeout(() => setGlitch(false), 200);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <span
+            style={{
+                display: 'inline-block',
+                animation: glitch ? 'glitch 0.2s ease-in-out' : 'none',
+            }}
+        >
+      {children}
+            <style>
+        {`
+          @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+          }
+        `}
+      </style>
+    </span>
+    );
+}
+
+// 블로그 포스트 데이터 (2025 트렌드 반영)
+const blogPosts = [
+    {
+        id: 1,
+        title: "React 19의 혁신적 기능들과 Server Components 완전 정복",
+        excerpt: "React 19에서 도입된 Server Components와 새로운 Hooks들을 실무 프로젝트에 적용한 생생한 경험담을 공유합니다.",
+        date: "2025-06-20",
+        category: "React",
+        tags: ["React 19", "Server Components", "Next.js 15"],
+        readTime: "12분",
+        likes: 89,
+        comments: 24,
+        gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        featured: true
+    },
+    {
+        id: 2,
+        title: "Spring Boot 3.3과 Virtual Threads로 성능 최적화하기",
+        excerpt: "Project Loom의 Virtual Threads를 Spring Boot에 적용하여 10배 향상된 성능을 달성한 과정을 상세히 설명합니다.",
+        date: "2025-06-15",
+        category: "Backend",
+        tags: ["Spring Boot 3.3", "Virtual Threads", "Performance"],
+        readTime: "15분",
+        likes: 156,
+        comments: 32,
+        gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+    },
+    {
+        id: 3,
+        title: "AI 시대의 웹 디자인: 2025 트렌드 완전 분석",
+        excerpt: "Vivid Glow부터 Organic Shapes까지, 2025년을 주도할 웹 디자인 트렌드를 실제 구현 예제와 함께 살펴봅니다.",
+        date: "2025-06-10",
+        category: "Design",
+        tags: ["Web Design", "AI", "2025 Trends"],
+        readTime: "8분",
+        likes: 234,
+        comments: 45,
+        gradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+    },
+    {
+        id: 4,
+        title: "Micro-interactions로 사용자 경험 극대화하기",
+        excerpt: "작은 인터랙션이 만드는 큰 차이! 실제 사례와 함께 알아보는 마이크로 인터랙션 디자인 가이드입니다.",
+        date: "2025-06-05",
+        category: "UX",
+        tags: ["Micro-interactions", "UX", "Animation"],
+        readTime: "10분",
+        likes: 78,
+        comments: 18,
+        gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
+    }
+];
+
+function BlogPost({ post, onReadMore, index }) {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <Card
+            shadow={isHovered ? "glow" : "soft"}
+            padding="xl"
+            radius="xl"
+            withBorder
+            style={{
+                background: post.gradient,
+                color: 'white',
+                transform: isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* 플로팅 데코레이션 */}
+            <div style={{ position: 'absolute', top: 20, right: 20 }}>
+                <FloatingShape delay={index * 0.5}>
+                    <ThemeIcon variant="light" size="lg" radius="xl" color="white">
+                        <IconSparkles size={20} />
+                    </ThemeIcon>
+                </FloatingShape>
+            </div>
+
+            {post.featured && (
+                <Badge
+                    size="lg"
+                    variant="light"
+                    color="yellow"
+                    style={{
+                        position: 'absolute',
+                        top: 15,
+                        left: 15,
+                        fontWeight: 'bold'
+                    }}
+                >
+                    ✨ FEATURED
+                </Badge>
+            )}
+
+            <Group justify="space-between" mb="xl" mt={post.featured ? "xl" : "xs"}>
+                <Badge
+                    size="xl"
+                    variant="white"
+                    color="dark"
+                    style={{
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        padding: '8px 16px'
+                    }}
+                >
+                    {post.category}
+                </Badge>
+                <Group gap="xs" c="white">
+                    <IconCalendar size={18} />
+                    <Text size="sm" fw={500}>{post.date}</Text>
+                </Group>
+            </Group>
+
+            <Title
+                order={post.featured ? 2 : 3}
+                mb="lg"
+                c="white"
+                style={{
+                    fontSize: post.featured ? '28px' : '24px',
+                    lineHeight: 1.2,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+            >
+                <GlitchText>{post.title}</GlitchText>
+            </Title>
+
+            <Text size="md" mb="xl" c="rgba(255,255,255,0.9)" fw={400}>
+                {post.excerpt}
+            </Text>
+
+            <Group wrap="wrap" gap="sm" mb="xl">
+                {post.tags.map((tag, tagIndex) => (
+                    <Badge
+                        key={tagIndex}
+                        size="md"
+                        variant="white"
+                        color="dark"
+                        style={{ fontWeight: 500 }}
+                    >
+                        #{tag}
+                    </Badge>
+                ))}
+            </Group>
+
+            <Group justify="space-between" align="center">
+                <Group gap="lg">
+                    <Group gap="xs">
+                        <ActionIcon variant="white" color="red" size="lg" radius="xl">
+                            <IconHeart size={18} />
+                        </ActionIcon>
+                        <Text size="lg" fw={600} c="white">{post.likes}</Text>
+                    </Group>
+
+                    <Group gap="xs">
+                        <ActionIcon variant="white" color="blue" size="lg" radius="xl">
+                            <IconMessage size={18} />
+                        </ActionIcon>
+                        <Text size="lg" fw={600} c="white">{post.comments}</Text>
+                    </Group>
+
+                    <Text size="md" fw={500} c="rgba(255,255,255,0.8)">• {post.readTime}</Text>
+                </Group>
+
+                <Button
+                    variant="white"
+                    size="lg"
+                    radius="xl"
+                    fw={600}
+                    onClick={() => onReadMore(post)}
+                    style={{
+                        transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                        transition: 'transform 0.2s ease'
+                    }}
+                >
+                    더 읽기 →
+                </Button>
+            </Group>
+        </Card>
+    );
+}
+
+function HeroSection() {
+    const { colorScheme } = useMantineColorScheme();
+    const [scrollY, setScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return (
+        <Box
+            style={{
+                height: '100vh',
+                background: colorScheme === 'dark'
+                    ? 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
+                    : 'linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #ffecd2 100%)',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+            }}
+        >
+            {/* 플로팅 오브젝트들 */}
+            <div style={{ position: 'absolute', top: '20%', left: '10%' }}>
+                <FloatingShape delay={0} direction={1}>
+                    <ThemeIcon size={80} radius="xl" variant="white" color="violet">
+                        <IconBrandReact size={40} />
+                    </ThemeIcon>
+                </FloatingShape>
+            </div>
+
+            <div style={{ position: 'absolute', top: '60%', right: '15%' }}>
+                <FloatingShape delay={1} direction={-1}>
+                    <ThemeIcon size={60} radius="xl" variant="white" color="teal">
+                        <IconCode size={30} />
+                    </ThemeIcon>
+                </FloatingShape>
+            </div>
+
+            <div style={{ position: 'absolute', top: '30%', right: '30%' }}>
+                <FloatingShape delay={2} direction={1}>
+                    <ThemeIcon size={100} radius="xl" variant="white" color="orange">
+                        <IconBolt size={50} />
+                    </ThemeIcon>
+                </FloatingShape>
+            </div>
+
+            <div style={{ position: 'absolute', bottom: '20%', left: '20%' }}>
+                <FloatingShape delay={1.5} direction={-1}>
+                    <ThemeIcon size={70} radius="xl" variant="white" color="green">
+                        <IconLeaf size={35} />
+                    </ThemeIcon>
+                </FloatingShape>
+            </div>
+
+            <Container size="lg" style={{ textAlign: 'center', zIndex: 2 }}>
+                <div style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+                    <Avatar
+                        size={120}
+                        radius="xl"
+                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=TechBlogger2025"
+                        mb="xl"
+                        style={{
+                            boxShadow: '0 0 50px rgba(255,255,255,0.3)',
+                            border: '4px solid white'
+                        }}
+                    />
+
+                    <Title
+                        order={1}
+                        size="4rem"
+                        fw={900}
+                        c="white"
+                        mb="xl"
+                        style={{
+                            textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                            lineHeight: 1.1,
+                        }}
+                    >
+                        <GlitchText>김개발의</GlitchText><br />
+                        <span style={{
+                            background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                        }}>
+              Tech Universe
+            </span>
+                    </Title>
+
+                    <Text size="xl" fw={500} c="white" mb="xl" maw={600} mx="auto">
+                        2025년을 주도하는 최신 기술 트렌드와 실무 노하우를 공유하는
+                        <br />개발자의 창의적인 디지털 공간입니다 ✨
+                    </Text>
+
+                    <Group justify="center" gap="xl">
+                        <Button
+                            size="xl"
+                            radius="xl"
+                            variant="white"
+                            leftSection={<IconSparkles size={24} />}
+                            style={{
+                                fontSize: '18px',
+                                fontWeight: 700,
+                                padding: '16px 32px',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                            }}
+                        >
+                            블로그 둘러보기
+                        </Button>
+
+                        <Group gap="md">
+                            <ActionIcon size="xl" radius="xl" variant="white" color="dark">
+                                <IconBrandGithub size={28} />
+                            </ActionIcon>
+                            <ActionIcon size="xl" radius="xl" variant="white" color="blue">
+                                <IconBrandLinkedin size={28} />
+                            </ActionIcon>
+                            <ActionIcon size="xl" radius="xl" variant="white" color="red">
+                                <IconMail size={28} />
+                            </ActionIcon>
+                        </Group>
+                    </Group>
+                </div>
+            </Container>
+
+            {/* 스크롤 인디케이터 */}
+            <div
+                style={{
+                    position: 'absolute',
+                    bottom: 30,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    animation: 'bounce 2s infinite'
+                }}
+            >
+                <ActionIcon size="xl" radius="xl" variant="white" color="dark">
+                    <IconArrowDown size={24} />
+                </ActionIcon>
+            </div>
+
+            <style>
+                {`
+          @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+              transform: translateX(-50%) translateY(0);
+            }
+            40% {
+              transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+              transform: translateX(-50%) translateY(-5px);
+            }
+          }
+        `}
+            </style>
+        </Box>
+    );
+}
+
+function Header() {
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 100);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return (
+        <Paper
+            shadow={scrolled ? "xl" : "none"}
+            p="lg"
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1000,
+                background: scrolled
+                    ? (colorScheme === 'dark' ? 'rgba(37, 38, 43, 0.95)' : 'rgba(255, 255, 255, 0.95)')
+                    : 'transparent',
+                backdropFilter: scrolled ? 'blur(20px)' : 'none',
+                transition: 'all 0.3s ease',
+                borderBottom: scrolled ? `1px solid ${colorScheme === 'dark' ? '#373A40' : '#E9ECEF'}` : 'none'
+            }}
+        >
+            <Container size="xl">
+                <Group justify="space-between" align="center">
+                    <Group>
+                        <ThemeIcon size="xl" radius="xl" variant="gradient" gradient={{ from: 'violet', to: 'cyan' }}>
+                            <IconPalette size={32} />
+                        </ThemeIcon>
+                        <div>
+                            <Title order={3} fw={800} c={scrolled ? undefined : 'white'}>
+                                Tech Universe
+                            </Title>
+                            <Text size="sm" c={scrolled ? 'dimmed' : 'rgba(255,255,255,0.8)'}>
+                                2025 Design Trends
+                            </Text>
+                        </div>
+                    </Group>
+
+                    <Group gap="lg">
+                        <Switch
+                            size="lg"
+                            color="violet"
+                            onLabel={<IconSun size={18} stroke={2.5} />}
+                            offLabel={<IconMoon size={18} stroke={2.5} />}
+                            checked={colorScheme === 'light'}
+                            onChange={() => toggleColorScheme()}
+                            style={{
+                                filter: scrolled ? 'none' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+                            }}
+                        />
+                    </Group>
+                </Group>
+            </Container>
+        </Paper>
+    );
+}
+
+function Sidebar({ opened }) {
+    const categories = [
+        { label: "전체", icon: IconHome, count: 25, color: "violet" },
+        { label: "React", icon: IconBrandReact, count: 12, color: "blue" },
+        { label: "JavaScript", icon: IconBrandJavascript, count: 8, color: "yellow" },
+        { label: "Backend", icon: IconCode, count: 7, color: "green" },
+        { label: "Design", icon: IconPalette, count: 6, color: "pink" },
+    ];
+
+    return (
+        <Stack gap="lg">
+            <TextInput
+                placeholder="포스트 검색..."
+                leftSection={<IconSearch size={18} />}
+                radius="xl"
+                size="lg"
+                mb="md"
+                style={{
+                    '& input': {
+                        border: '2px solid transparent',
+                        background: 'linear-gradient(white, white) padding-box, linear-gradient(45deg, #667eea, #764ba2) border-box',
+                    }
+                }}
+            />
+
+            <Paper
+                p="xl"
+                radius="xl"
+                withBorder
+                style={{
+                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+                    border: '1px solid rgba(102, 126, 234, 0.2)'
+                }}
+            >
+                <Title order={4} mb="lg" fw={700}>카테고리</Title>
+                <Stack gap="sm">
+                    {categories.map((category, index) => (
+                        <NavLink
+                            key={index}
+                            label={category.label}
+                            leftSection={
+                                <ThemeIcon size="md" radius="xl" color={category.color} variant="light">
+                                    <category.icon size={18} />
+                                </ThemeIcon>
+                            }
+                            rightSection={
+                                <Badge size="lg" variant="light" color={category.color}>
+                                    {category.count}
+                                </Badge>
+                            }
+                            active={index === 0}
+                            style={{
+                                borderRadius: '12px',
+                                padding: '12px',
+                                fontWeight: 600,
+                            }}
+                        />
+                    ))}
+                </Stack>
+            </Paper>
+
+            <Paper
+                p="xl"
+                radius="xl"
+                withBorder
+                style={{
+                    background: 'linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%)',
+                    border: '1px solid rgba(240, 147, 251, 0.2)'
+                }}
+            >
+                <Title order={4} mb="lg" fw={700}>트렌딩 태그</Title>
+                <Group gap="sm">
+                    {["React 19", "Virtual Threads", "AI Design", "Web3", "TypeScript 5", "Micro-interactions"].map((tag, index) => (
+                        <Badge
+                            key={index}
+                            variant="gradient"
+                            gradient={{ from: 'violet', to: 'cyan' }}
+                            size="lg"
+                            style={{ cursor: 'pointer' }}
+                        >
+                            #{tag}
+                        </Badge>
+                    ))}
+                </Group>
+            </Paper>
+
+            <Paper
+                p="xl"
+                radius="xl"
+                withBorder
+                style={{
+                    background: 'linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%)',
+                    border: '1px solid rgba(168, 237, 234, 0.2)'
+                }}
+            >
+                <Title order={4} mb="lg" fw={700}>About</Title>
+                <Text size="sm" lh={1.6}>
+                    🚀 7년차 풀스택 개발자<br/>
+                    💡 React & Spring Boot 전문가<br/>
+                    ✨ 2025 웹 디자인 트렌드 선도자<br/>
+                    🌱 지속 가능한 개발 추구
+                </Text>
+            </Paper>
+        </Stack>
+    );
+}
+
+function MainContent() {
+    const [selectedPost, setSelectedPost] = useState(null);
+
+    const handleReadMore = (post) => {
+        setSelectedPost(post);
+    };
+
+    if (selectedPost) {
+        return (
+            <Container size="lg" pt="xl">
+                <Button
+                    variant="gradient"
+                    gradient={{ from: 'violet', to: 'cyan' }}
+                    size="lg"
+                    radius="xl"
+                    mb="xl"
+                    onClick={() => setSelectedPost(null)}
+                    leftSection={<IconChevronDown style={{ transform: 'rotate(90deg)' }} />}
+                >
+                    목록으로 돌아가기
+                </Button>
+
+                <Paper
+                    p="3xl"
+                    radius="xl"
+                    withBorder
+                    style={{
+                        background: selectedPost.gradient,
+                        color: 'white'
+                    }}
+                >
+                    <Group justify="space-between" mb="xl">
+                        <Badge size="xl" variant="white" color="dark">
+                            {selectedPost.category}
+                        </Badge>
+                        <Group gap="xs" c="white">
+                            <IconCalendar size={20} />
+                            <Text size="lg" fw={500}>{selectedPost.date}</Text>
+                        </Group>
+                    </Group>
+
+                    <Title order={1} mb="xl" c="white" size="3rem" fw={900}>
+                        {selectedPost.title}
+                    </Title>
+
+                    <Group mb="2xl" gap="xl">
+                        <Group gap="xs">
+                            <IconUser size={20} />
+                            <Text size="lg" fw={600}>김개발</Text>
+                        </Group>
+                        <Text size="lg" fw={500}>📖 {selectedPost.readTime}</Text>
+                        <Group gap="xs">
+                            <IconHeart size={20} />
+                            <Text size="lg" fw={600}>{selectedPost.likes}</Text>
+                        </Group>
+                    </Group>
+
+                    <Divider mb="2xl" color="rgba(255,255,255,0.3)" />
+
+                    <Stack gap="xl" style={{ fontSize: '18px', lineHeight: 1.8 }}>
+                        <Text>
+                            {selectedPost.excerpt}
+                        </Text>
+
+                        <Text>
+                            이 포스트는 2025년 최신 웹 개발 트렌드를 반영하여 작성되었습니다.
+                            실무에서 바로 적용할 수 있는 코드 예제와 베스트 프랙티스를 포함하고 있습니다.
+                        </Text>
+
+                        <Text>
+                            더 자세한 내용과 전체 소스코드는 GitHub 저장소에서 확인하실 수 있습니다.
+                            궁금한 점이 있으시면 언제든 댓글로 남겨주세요!
+                        </Text>
+                    </Stack>
+
+                    <Divider my="2xl" color="rgba(255,255,255,0.3)" />
+
+                    <Group justify="space-between" wrap="wrap">
+                        <Group gap="xl">
+                            <Group gap="xs">
+                                <ActionIcon variant="white" color="red" size="xl" radius="xl">
+                                    <IconHeart size={24} />
+                                </ActionIcon>
+                                <Text size="xl" fw={700}>{selectedPost.likes}</Text>
+                            </Group>
+
+                            <Group gap="xs">
+                                <ActionIcon variant="white" color="blue" size="xl" radius="xl">
+                                    <IconMessage size={24} />
+                                </ActionIcon>
+                                <Text size="xl" fw={700}>{selectedPost.comments}</Text>
+                            </Group>
+
+                            <ActionIcon variant="white" color="green" size="xl" radius="xl">
+                                <IconShare size={24} />
+                            </ActionIcon>
+                        </Group>
+
+                        <Group gap="sm">
+                            {selectedPost.tags.map((tag, index) => (
+                                <Badge
+                                    key={index}
+                                    variant="white"
+                                    color="dark"
+                                    size="lg"
+                                    leftSection={<IconTag size={14} />}
+                                >
+                                    {tag}
+                                </Badge>
+                            ))}
+                        </Group>
+                    </Group>
+                </Paper>
+            </Container>
+        );
+    }
+
+    return (
+        <>
+            {/* 히어로 섹션 */}
+            <HeroSection />
+
+            {/* 메인 콘텐츠 */}
+            <Container size="lg" py="5xl">
+                <Group justify="space-between" align="center" mb="3xl">
+                    <div style={{ textAlign: 'center', width: '100%' }}>
+                        <Title
+                            order={1}
+                            size="3.5rem"
+                            fw={900}
+                            mb="lg"
+                            style={{
+                                background: 'linear-gradient(45deg, #667eea, #764ba2, #f093fb)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                            }}
+                        >
+                            Latest Tech Insights
+                        </Title>
+                        <Text size="xl" c="dimmed" fw={500}>
+                            2025년을 주도하는 혁신적인 기술 이야기들을 만나보세요 ✨
+                        </Text>
+                    </div>
+                </Group>
+
+                <Grid gutter="xl">
+                    {blogPosts.map((post, index) => (
+                        <Grid.Col key={post.id} span={{ base: 12, md: post.featured ? 12 : 6 }}>
+                            <BlogPost
+                                post={post}
+                                onReadMore={handleReadMore}
+                                index={index}
+                            />
+                        </Grid.Col>
+                    ))}
+                </Grid>
+
+                {/* CTA 섹션 */}
+                <Center mt="5xl">
+                    <Paper
+                        p="3xl"
+                        radius="2xl"
+                        withBorder
+                        style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            textAlign: 'center',
+                            maxWidth: '600px'
+                        }}
+                    >
+                        <ThemeIcon
+                            size={80}
+                            radius="xl"
+                            variant="white"
+                            color="violet"
+                            mb="xl"
+                            mx="auto"
+                        >
+                            <IconSparkles size={40} />
+                        </ThemeIcon>
+
+                        <Title order={2} mb="lg" fw={800}>
+                            더 많은 인사이트가 궁금하다면?
+                        </Title>
+
+                        <Text size="lg" mb="xl" opacity={0.9}>
+                            매주 새로운 기술 트렌드와 실무 팁을
+                            <br />이메일로 받아보세요!
+                        </Text>
+
+                        <Group gap="md" justify="center">
+                            <Button
+                                size="xl"
+                                variant="white"
+                                radius="xl"
+                                fw={700}
+                                leftSection={<IconMail size={24} />}
+                            >
+                                뉴스레터 구독하기
+                            </Button>
+
+                            <Button
+                                size="xl"
+                                variant="outline"
+                                color="white"
+                                radius="xl"
+                                fw={700}
+                            >
+                                RSS 피드
+                            </Button>
+                        </Group>
+                    </Paper>
+                </Center>
+            </Container>
+        </>
+    );
+}
+
+export default function TechBlog() {
+    const [opened, setOpened] = useState(false);
+
+    return (
+        <MantineProvider theme={theme} defaultColorScheme="auto">
+            <CustomCursor />
+            <AppShell
+                header={{ height: 80 }}
+                navbar={{
+                    width: 320,
+                    breakpoint: 'md',
+                    collapsed: { mobile: !opened },
+                }}
+                padding={0}
+            >
+                <AppShell.Header>
+                    <Header />
+                </AppShell.Header>
+
+                <AppShell.Navbar p="xl" style={{ marginTop: 80 }}>
+                    <Burger
+                        opened={opened}
+                        onClick={() => setOpened(!opened)}
+                        hiddenFrom="md"
+                        size="lg"
+                        mb="xl"
+                        color="violet"
+                    />
+                    <Sidebar opened={opened} />
+                </AppShell.Navbar>
+
+                <AppShell.Main style={{ marginTop: 80 }}>
+                    <MainContent />
+                </AppShell.Main>
+            </AppShell>
+        </MantineProvider>
+    );
+}
