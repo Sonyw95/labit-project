@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: LABIT
+Implementation-Version: 1.0-SNAPSHOT
+System-JDK: 16.0.2 (Oracle Corporation)
+Build-JDK-Version: 11
+Gradle-Version: 7.1.1
+Created-By: jechun@jdinscorp.com
+Create-Date: 2023-04-01 15:27:32
+

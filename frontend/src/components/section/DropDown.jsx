@@ -1,4 +1,4 @@
-import React, {} from 'react';
+import React, {useState} from 'react';
 import {
     Group,
     Text,
@@ -11,15 +11,17 @@ import {
     UnstyledButton,
     rem,
     Menu,
-    Divider,
+    Divider, TextInput, PasswordInput, Alert,
 } from '@mantine/core';
 import {
     IconUser,
     IconSettings,
     IconLogout,
     IconLogin,
-    IconChevronDown,
+    IconChevronDown, IconAlertCircle,
 } from '@tabler/icons-react';
+import {useLoginMutation, useLogoutMutation} from "@/hooks/useAuth.js";
+import {useAuthStore} from "@/store/authStore.js";
 
 // 사용자 프로필 (데모용)
 const userProfile = {
@@ -28,10 +30,36 @@ const userProfile = {
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
     role: 'Full Stack Developer'
 };
-
+// 카카오톡 아이콘 SVG 컴포넌트
+const KakaoIcon = ({ size = 20 }) => (
+    <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="currentColor"
+    >
+        <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3Z"/>
+    </svg>
+);
 // 사용자 드롭다운 메뉴 컴포넌트
 export default function  UserDropdown (props) {
-    const {dark, isLoggedIn, setIsLoggedIn} = props;
+    const {dark, isAuthenticated, setIsLoggedIn} = props;
+    const [credentials, setCredentials] = useState({ userEmail: '', password: '' });
+    const { error, clearError } = useAuthStore();
+    const loginMutation = useLoginMutation();
+    const logoutMutation = useLogoutMutation();
+    const handleSubmit = async (e, type) => {
+        e.preventDefault();
+        clearError();
+        try {
+            const resp = await loginMutation.mutateAsync(credentials, type);
+            console.log(resp);
+            window.location.href = '/home';
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
+    };
+
     return(
         <Menu
             shadow="lg"
@@ -57,7 +85,7 @@ export default function  UserDropdown (props) {
                     }}
                 >
                     <Group gap="xs" wrap="nowrap">
-                        {isLoggedIn ? (
+                        {isAuthenticated ? (
                             <>
                                 <Avatar
                                     src={userProfile.avatar}
@@ -113,7 +141,7 @@ export default function  UserDropdown (props) {
                         : '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)',
                 }}
             >
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                     <>
                         {/* User Profile Header */}
                         <Box
@@ -213,37 +241,64 @@ export default function  UserDropdown (props) {
                     </>
                 ) : (
                     <>
-                        {/* Login State */}
+                        {/*/!* Login State *!/*/}
                         <Box style={{ padding: rem(8) }}>
-                            <Text
-                                size="sm"
-                                fw={600}
-                                mb="md"
-                                style={{
-                                    color: dark ? '#ffffff' : '#1e293b',
-                                    textAlign: 'center'
-                                }}
-                            >
-                                LABit에 오신 것을 환영합니다
-                            </Text>
+                        {/*    <Text*/}
+                        {/*        size="sm"*/}
+                        {/*        fw={600}*/}
+                        {/*        mb="md"*/}
+                        {/*        style={{*/}
+                        {/*            color: dark ? '#ffffff' : '#1e293b',*/}
+                        {/*            textAlign: 'center'*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        LOGIN*/}
+                        {/*    </Text>*/}
 
                             <Stack gap="sm">
-                                <Button
-                                    leftSection={<IconLogin size={16} />}
-                                    fullWidth
-                                    size="sm"
-                                    onClick={() => setIsLoggedIn(true)}
-                                    style={{
-                                        background: dark ? '#4c6ef5' : '#339af0',
-                                        borderRadius: rem(8),
-                                        '&:hover': {
-                                            background: dark ? '#3b82f6' : '#2563eb',
-                                        }
-                                    }}
-                                >
-                                    로그인
-                                </Button>
-
+                                <form onSubmit={(e) => handleSubmit(e, 'normal')}>
+                                    <TextInput
+                                        label='이메일'
+                                        placeholder='이메일을 입력하세요.'
+                                        value={credentials.userEmail}
+                                        onChange={(e) => {setCredentials({...credentials, userEmail: e.target.value})}}
+                                        required
+                                        mb='md'
+                                    />
+                                    <PasswordInput
+                                        label='비밀번호'
+                                        placeholder='비밀번호를 입력하세요.'
+                                        value={credentials.password}
+                                        onChange={(e) => {setCredentials({...credentials, password: e.target.value})}}
+                                        required
+                                        mb='md'
+                                    />
+                                    {error && (
+                                        <Alert
+                                            icon={<IconAlertCircle size={16}/>}
+                                            title="로그인 오류"
+                                            color="red"
+                                            mb="md"
+                                        >
+                                            {error}
+                                        </Alert>
+                                    )}
+                                    <Button
+                                        type='submit'
+                                        leftSection={<IconLogin size={16} />}
+                                        fullWidth
+                                        size="sm"
+                                        style={{
+                                            background: dark ? '#4c6ef5' : '#339af0',
+                                            borderRadius: rem(8),
+                                            '&:hover': {
+                                                background: dark ? '#3b82f6' : '#2563eb',
+                                            }
+                                        }}
+                                    >
+                                        {loginMutation.isPending ? '로그인중....    ' : '로그인'}
+                                    </Button>
+                                </form>
                                 <Button
                                     variant="outline"
                                     fullWidth
@@ -259,18 +314,52 @@ export default function  UserDropdown (props) {
                                 >
                                     회원가입
                                 </Button>
+
                             </Stack>
 
                             <Divider
                                 label="또는"
                                 labelPosition="center"
+                                onClick={(e) => handleSubmit(e, 'kakao')}
                                 style={{
                                     borderColor: dark ? '#2a2a2a' : '#e2e8f0',
                                     margin: `${rem(16)} 0`,
                                     color: dark ? '#666666' : '#94a3b8'
                                 }}
                             />
-
+                            <Button
+                                leftSection={<KakaoIcon size={16} />}
+                                fullWidth
+                                size="sm"
+                                radius="md"
+                                onClick={() => setIsLoggedIn(true)}
+                                style={{
+                                    backgroundColor: '#FEE500',
+                                    color: '#000000',
+                                    border: 'none',
+                                    fontWeight: 600,
+                                    '&:hover': {
+                                        backgroundColor: '#fff',
+                                        transform: 'translateY(-1px)',
+                                    },
+                                    transition: 'all 0.2s ease'
+                                }}
+                                // styles={{
+                                //     backgroundColor: '#FEE500',
+                                //     color: '#000000',
+                                //     border: 'none',
+                                //     fontWeight: 600,
+                                //     minWidth: '300px',
+                                //     height: '50px',
+                                //     '&:hover': {
+                                //         backgroundColor: '#FDD835',
+                                //         transform: 'translateY(-1px)',
+                                //     },
+                                //     transition: 'all 0.2s ease'
+                                // }}
+                            >
+                                카카오톡으로 로그인
+                            </Button>
                         </Box>
                     </>
                 )}

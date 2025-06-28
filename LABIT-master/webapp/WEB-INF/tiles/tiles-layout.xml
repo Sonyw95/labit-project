@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="tiles_social" template="/WEB-INF/tiles/template/main_template.jsp">
+        <put-attribute name="head" value="/WEB-INF/tiles/template/main_head.jsp"/>
+        <put-attribute name="side" value="/WEB-INF/tiles/template/main_side.jsp"/>
+        <put-attribute name="foot" value="/WEB-INF/tiles/template/main_foot.jsp"/>
+        <put-attribute name="title" value="LABIT"/>
+    </definition>
+
+    <definition name="soc:*" extends="tiles_social">
+        <put-attribute name="content" value="/WEB-INF/views/index.jsp" />
+    </definition>
+    <definition name="soc:*/*" extends="tiles_social">
+        <put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+    </definition>
+    <definition name="soc:*/*/*" extends="tiles_social">
+        <put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+    </definition>
+    <definition name="soc:*/*/*/*" extends="tiles_social">
+        <put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp" />
+    </definition>
+
+
+
+
+    <definition name="login_temp" template="/WEB-INF/tiles/template/login_template.jsp">
+        <put-attribute name="temp" value="/WEB-INF/tiles/template/modal-temp.jsp"/>
+    </definition>
+
+    <definition name="log:*" extends="login_temp">
+        <put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+    </definition>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tiles-definitions>

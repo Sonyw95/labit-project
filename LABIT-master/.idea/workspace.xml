@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Gradle : app.labinit : back-1.0-SNAPSHOT.war (exploded)" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f74bf5ef-02b4-4945-ac02-a9c2011eaffb" name="Changes" comment=" sad">
+      <change beforePath="$PROJECT_DIR$/.idea/Labit.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0541fab5-8df0-4754-bac2-005186efd3cd.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0541fab5-8df0-4754-bac2-005186efd3cd/storage_v2/_src_/schema/SYS.rUIBAA.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0541fab5-8df0-4754-bac2-005186efd3cd/storage_v2/_src_/schema/SYSTEM.L2avkg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/back.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-02-04__1_58__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-02-04_오전_1_58_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/cwallet.sso" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/ewallet.p12" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/ewallet.pem" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/keystore.jks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/ojdbc.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/sqlnet.ora" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/tnsnames.ora" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/Wallet_LABITDB/truststore.jks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/META-INF/context.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/Exceptions/AlreadyData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/Exceptions/NoMatchAccountException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/Exceptions/NothingWorkException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/common/SessionManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/controller/SocialHomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/LandingController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/OauthConnectionManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/dao/DatabaseDao.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/dao/DatabaseDaoImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/dto/KakaoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/dto/OauthDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/dto/ParamDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/dto/SessionUser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/globalprops/GlobalProperties.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/service/MemberService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/app/labit/service/OauthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/config/spring/ApplicationContext.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/config/spring/WebXml.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/cwallet.sso" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/ewallet.p12" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/ewallet.pem" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/keystore.jks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/ojdbc.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/sqlnet.ora" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/tnsnames.ora" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/Wallet_LABITDB/truststore.jks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/config/spring/context-common.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/config/spring/context-session.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/config/spring/context-transaction.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/config/spring/mybatis-config.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/config/spring/servlet-context.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/mybatis/sql/HomeMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/mybatis/sql/user/MemberServiceMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/resources/properties/global-properties.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/DOC/CREATE_TABLE.SQL" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/DOC/Rule.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/META-INF/context.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/template/login_template.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/template/main_foot.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/template/main_head.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/template/main_side.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/template/main_template.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/template/modal-temp.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/tiles/tiles-layout.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/views/index.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/WEB-INF/views/login_form.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/bootstrap.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/main_common.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/main_head.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/simplebar.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/styles.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/css/tiny-slider.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/file/font.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/img/KakaoTalk_logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/img/main_logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/img/menu-white.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/img/white-logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/common.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/content/content.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/form/form.utils.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/global/global.accordions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/global/global.charts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/global/global.maps.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/global/global.popups.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/global/global.tooltips.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/header/header.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/landing/landing.tabs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/login/login.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/sidebar/sidebar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/utils/demo-icons.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/utils/liquidify.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/utils/page-loader.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/utils/svg-loader.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/Chart.bundle.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/simplebar.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/tiny-slider.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_accordion.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_dropdown.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_hexagon.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_plugins.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_popup.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_progressBar.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_tab.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/vendor/xm_tooltip.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/webapp/js/widget/twitter.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.idea/git_toolbox_prj.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.idea/modules.xml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/back">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/front/src/component/post/read/ReadPost.js" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2KuKlBZpbnDTHc2eyhPPT2Kcxy5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="oracle" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/back/webapp" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Facets" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.4177215" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.build" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Labit\front\public\resources\image" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Labit\front\public\resources\image" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Tomcat 8.5.70" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8.5.70" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+      <option name="OPEN_IN_BROWSER" value="false" />
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="Gradle : app.labinit : back-1.0-SNAPSHOT.war (exploded)">
+          <settings>
+            <option name="CONTEXT_PATH" value="/" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="2fd19a2e-8557-462d-b353-2f31d23be035" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="65097" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="Gradle : app.labinit : back-1.0-SNAPSHOT.war (exploded)" />
+        </option>
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f74bf5ef-02b4-4945-ac02-a9c2011eaffb" name="Changes" comment=" sad" />
+      <created>1674819176885</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1674819176885</updated>
+      <workItem from="1674819178192" duration="103000" />
+      <workItem from="1674878160983" duration="170000" />
+      <workItem from="1674878346935" duration="52000" />
+      <workItem from="1674878408306" duration="65000" />
+      <workItem from="1674879673223" duration="22000" />
+      <workItem from="1674879708381" duration="115000" />
+      <workItem from="1674879948299" duration="6760000" />
+      <workItem from="1675674034935" duration="4760000" />
+      <workItem from="1676019213188" duration="16004000" />
+      <workItem from="1677667871435" duration="1142000" />
+      <workItem from="1677723851330" duration="932000" />
+      <workItem from="1677737193997" duration="679000" />
+      <workItem from="1677749400615" duration="2007000" />
+      <workItem from="1678094147214" duration="1727000" />
+      <workItem from="1678194070351" duration="19000" />
+      <workItem from="1678278370802" duration="1256000" />
+      <workItem from="1678287766022" duration="37000" />
+      <workItem from="1678287832409" duration="54000" />
+      <workItem from="1678288058011" duration="5000" />
+      <workItem from="1678328524805" duration="547000" />
+      <workItem from="1678438153331" duration="1698000" />
+      <workItem from="1678440697509" duration="127000" />
+      <workItem from="1678440990855" duration="2151000" />
+      <workItem from="1678527117681" duration="1654000" />
+      <workItem from="1678537288372" duration="4000" />
+      <workItem from="1678611118198" duration="7092000" />
+      <workItem from="1678624879470" duration="47000" />
+      <workItem from="1678672719411" duration="10779000" />
+      <workItem from="1678684072807" duration="2820000" />
+      <workItem from="1678688718709" duration="473000" />
+      <workItem from="1678693374409" duration="803000" />
+      <workItem from="1678699867662" duration="12485000" />
+      <workItem from="1680330273973" duration="130000" />
+      <workItem from="1680330413846" duration="38000" />
+    </task>
+    <task id="LOCAL-00001" summary=" sad">
+      <created>1674880145282</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1674880145282</updated>
+    </task>
+    <task id="LOCAL-00002" summary=" sad">
+      <created>1674881999365</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1674881999365</updated>
+    </task>
+    <task id="LOCAL-00003" summary=" sad">
+      <created>1675677448476</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1675677448476</updated>
+    </task>
+    <task id="LOCAL-00004" summary=" sad">
+      <created>1675677749518</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1675677749518</updated>
+    </task>
+    <task id="LOCAL-00005" summary=" sad">
+      <created>1678624914042</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1678624914042</updated>
+    </task>
+    <task id="LOCAL-00006" summary=" sad">
+      <created>1678679677395</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1678679677395</updated>
+    </task>
+    <task id="LOCAL-00007" summary=" sad">
+      <created>1678680549558</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1678680549558</updated>
+    </task>
+    <task id="LOCAL-00008" summary=" sad">
+      <created>1678684046152</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1678684046152</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=" sad" />
+    <option name="LAST_COMMIT_MESSAGE" value=" sad" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/service/OauthService.java</url>
+          <line>73</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/service/OauthService.java</url>
+          <line>63</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/LandingController.java</url>
+          <line>97</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/LandingController.java</url>
+          <line>99</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/LandingController.java</url>
+          <line>100</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/LandingController.java</url>
+          <line>101</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/service/OauthService.java</url>
+          <line>82</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/OauthConnectionManager.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/back/src/main/java/app/labit/controller/api/LandingController.java</url>
+          <line>96</line>
+          <properties class="app.labit.controller.api.LandingController" method="logout">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

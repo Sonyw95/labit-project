@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="MemberServiceMapper">
+    <select id="selectUserInfo" resultType="SessionUser">
+        SELECT
+                EMAIL       AS email
+            ,   USERNAME    AS username
+            ,   ISADMIN   AS ISADMIN
+            ,   USERLEVEL   AS userLevel
+            ,   USEREXP     AS userExp
+            ,   AUTHSNS     AS authSns
+            ,   USEYN       AS useYn
+            ,   PASSWD    AS PASSWORD
+        FROM LABUSERHEAD
+        WHERE 1=1
+        AND EMAIL = NVL(#{email}, #{authData.email})
+        AND AUTHSNS = NVL(#{authSns}, #{authData.authSns})
+        AND USEYN ='Y'
+
+    </select>
+
+    <insert id="insertMemberInfo">
+        INSERT
+            INTO LABUSERHEAD
+            (
+                 EMAIL
+                ,PASSWD
+                ,USERNAME
+                ,ISADMIN
+                ,USERLEVEL
+                ,USEREXP
+                ,AUTHSNS
+                ,USEYN
+                ,REGDATE
+            )
+            VALUES
+            (
+                #{email}
+            ,   #{password}
+            ,   #{username}
+            ,   'N'
+            ,   '1'
+            ,   '0'
+            ,   #{authSns}
+            ,   'Y'
+            ,   SYSDATE
+            )
+    </insert>
+
+    <insert id="insertInfoTrace">
+        INSERT INTO
+            LABINFOTRACE
+        (
+                TYPE
+            ,   AGENT
+            ,   REFERER
+            ,   REGDATE
+        )
+        VALUES
+        (
+                #{type}
+            ,   #{agent}
+            ,   #{referer}
+            ,   SYSDATE
+        )
+    </insert>
+
+    <delete id="deleteMember">
+        DELETE FROM LABUSERHEAD
+        WHERE 1=1
+        AND EMAIL = #{email}
+        AND AUTHSNS =#{authSns}
+    </delete>
+
+</mapper>

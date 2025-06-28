@@ -18,7 +18,7 @@ import UserDropdown from "@/components/section/DropDown.jsx";
 
 const Header = ( props ) =>{
     const{ dark, opened, toggleColorScheme, setOpened, loginInfo} = props;
-    const {isLoggedIn, setIsLoggedIn} = loginInfo;
+    const {isAuthenticated, setIsLoggedIn} = loginInfo;
     return (
         <>
             {/* Header */}
@@ -111,7 +111,7 @@ const Header = ( props ) =>{
                         >
                             {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
                         </ActionIcon>
-                        <UserDropdown dark={dark} isLoggedIn={true} setIsLoggedIn={setIsLoggedIn}/>
+                        <UserDropdown dark={dark} isAuthenticated={isAuthenticated} setIsLoggedIn={setIsLoggedIn}/>
                     </Group>
                 </Group>
             </AppShell.Header>

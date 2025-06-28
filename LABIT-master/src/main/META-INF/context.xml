@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Mac Os
+<Context path="/">
+    <Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" initialSize="10"
+              logAbandoned="true" maxActive="20" maxIdle="20"
+              minEvictableIdleTimeMillis="3600000" minIdle="10" name="jdbc/oraDB"
+              removeAbandoned="true" removeAbandonedTimeout="60"
+              testOnBorrow="false" testOnReturn="false" testWhileIdle="true"
+              timeBetweenEvictionRunsMillis="5000" type="javax.sql.DataSource"
+              url="jdbc:oracle:thin:@labitdb_high?TNS_ADMIN=/Users/user/IdeaProjects/newLABIT/back/src/Wallet_LABITDB"
+              password="Labitdbdev1234"  username="LABITDEV"
+              validationInterval="1000" validationQuery="SELECT 1 FROM DUAL" />
+</Context>
+-->
+
+<!-- Window Os -->
+<Context path="/">
+<Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver"
+          factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" initialSize="10"
+          logAbandoned="true" maxActive="20" maxIdle="20"
+          minEvictableIdleTimeMillis="3600000" minIdle="10" name="jdbc/oraDB"
+          removeAbandoned="true" removeAbandonedTimeout="60"
+          testOnBorrow="false" testOnReturn="false" testWhileIdle="true"
+          timeBetweenEvictionRunsMillis="5000" type="javax.sql.DataSource"
+          url="jdbc:oracle:thin:@labitdb_high?TNS_ADMIN=D:\\Wallet_LABITDB"
+          password="Labitdbdev1234"  username="LABITDEV"
+          validationInterval="1000" validationQuery="SELECT 1 FROM DUAL" />
+</Context>

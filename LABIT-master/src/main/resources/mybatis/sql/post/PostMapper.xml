@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="PostMapper">
+
+    <select id="selectPostHeadId" resultType="String">
+        SELECT 'PO'||LPAD(POST_HEAD_SEQ.NEXTVAL,12,0) FROM DUAL
+    </select>
+
+    <select id="selectPostBodyId" resultType="String">
+        SELECT 'PO'||LPAD(POST_BODY_SEQ.NEXTVAL,12,0) FROM DUAL
+    </select>
+
+    <select id="selectLastPage" resultType="Integer">
+        SELECT
+                ROUND(COUNT(*)/9, 0)
+        FROM LABPOSTHEAD
+        WHERE 1=1
+        AND USEYN ='Y'
+    </select>
+
+    <select id="selectCategory" resultType="CommonDto">
+        SELECT
+            LINE
+             ,   NO
+             ,   NAME
+        FROM LABCODEMASTER
+        WHERE 1=1
+        ORDER BY LINE ASC
+    </select>
+
+    <update id="updatePostViewCount">
+        UPDATE LABPOSTHEAD
+            SET VIEWCOUTN = VIEWCOUNT+1
+        WHERE 1=1
+        AND HEADID = #{headId}
+    </update>
+
+    <insert id="insertWritePostHead">
+        INSERT
+            INTO LABPOSTHEAD
+                (
+                     HEADID
+                    ,TITLE
+                    ,CATEGORY
+                    ,OWNER
+                    ,USEYN
+                    ,REGDATE
+                    ,FIXPOST
+                )
+            VALUES
+                (
+                     #{headId}
+                    ,#{title}
+                    ,#{category}
+                    ,#{owner}
+                    ,'Y'
+                    ,SYSDATE
+                    ,NVL(#{fixYn}, 'N')
+                )
+    </insert>
+    <update id="updatePostHead">
+        UPDATE
+            LABPOSTHEAD
+        SET
+                TITLE = #{title}
+            ,   CATEGORY = #{category}
+            ,   FIXPOST = #{fixYn}
+            ,   EDITDATE = SYSDATE
+        WHERE 1=1
+        AND USEYN ='Y'
+        AND HEADID = #{editHeadId}
+    </update>
+
+    <insert id="insertWritePostBody">
+        INSERT
+            INTO LABPOSTBODY
+                (
+                     HEADID
+                    ,BODYID
+                    ,CONTENTS
+                    ,REGDATE
+                )
+            VALUES
+                (
+                     #{headId}
+                    ,#{bodyId}
+                    ,#{body}
+                    ,SYSDATE
+                )
+    </insert>
+
+    <update id="updatePostBody">
+        UPDATE
+            LABPOSTBODY
+        SET
+                CONTENTS = #{body}
+            ,   EDITDATE = SYSDATE
+        WHERE 1=1
+        AND HEADID = #{editHeadId}
+
+    </update>
+
+    <insert id="insertPostTags">
+        <foreach collection="tags" item="list" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+            INTO LABPOSTTAGS
+                (
+                     HEADID
+                    ,TAG
+                    ,REGDATE
+                )
+            VALUES
+                (
+                     NVL(#{headId}, #{editHeadId})
+                    ,#{list}
+                    ,SYSDATE
+                )
+
+        </foreach>
+    </insert>
+
+    <delete id="deletePostTags">
+        DELETE FROM
+            LABPOSTTAGS
+        WHERE 1=1
+        AND HEADID = NVL( #{editHeadId},#{headId} )
+    </delete>
+
+    <select id="selectReadPost" resultType="PostDto">
+            SELECT
+                     HD.HEADID                                      AS HEADID
+                 ,   HD.TITLE                                       AS TITLE
+                 ,   MA.NO                                        AS CATEGORY
+                 ,   HD.OWNER                                       AS OWNER
+                 ,   TO_CHAR(HD.REGDATE, 'YYYY"년" MM"월" DD"일"')   AS REGDATE
+                 ,   BO.BODYID                                      AS BODYID
+                 ,   BO.CONTENTS                                    AS BODY
+                 ,   HD.VIEWCOUNT                                   AS VIEWCOUNT
+                 ,   (
+                        SELECT COUNT(*)
+                        FROM LABPOSTCOMMENT
+                        WHERE 1=1 AND HD.HEADID = HEADID
+                     )                                              AS COMMENTCOUNT
+                ,   HD.FIXPOST                                      AS FIXYN
+                ,   PATH.FILEPATH || PATH.FILENAME      AS IMAGE
+            FROM
+                LABPOSTHEAD HD
+                    LEFT OUTER JOIN LABFILEPATH PATH
+                        ON( (HD.HEADID = PATH.PARENTSID) OR (HD.CATEGORY = PATH.PARENTSID))
+                    INNER JOIN LABPOSTBODY BO
+                        ON HD.HEADID = BO.HEADID
+                    INNER JOIN LABCODEMASTER MA
+                        ON  MA.TYPE ='WRITE_POST'
+                        AND HD.CATEGORY = MA.NO
+            WHERE 1=1
+              AND HD.HEADID = #{headId}
+              AND HD.USEYN ='Y'
+    </select>
+
+    <select id="selectReadPostTags" parameterType="List" resultType="String">
+        SELECT TAG
+        FROM LABPOSTTAGS
+        WHERE 1=1
+        AND HEADID = #{headId}
+    </select>
+
+    <select id="selectReadPostComment" resultType="CommentDto">
+        SELECT
+                 HEADID                                        AS HEADID
+             ,   COMMENTID                                     AS COMMENTID
+             ,   PARENTSCOMMENTID                              AS PARENTSCOMMENTID
+             ,   OWNER                                         AS OWNER
+             ,   TO_CHAR(REGDATE, 'YYYY"년" MM"월" DD"일"')     AS REGDATE
+             ,   COMMENTS                                       AS COMMENTS
+        FROM LABPOSTCOMMENT
+        WHERE 1=1
+        AND HEADID =#{headId}
+    </select>
+
+    <select id="selectPostList" resultType="PostDto">
+        SELECT
+                HD.HEADID                                       AS HEADID
+            ,   HD.TITLE                                        AS TITLE
+            ,   MA.NAME                                           AS CATEGORY
+            ,   HD.OWNER                                        AS OWNER
+            ,   HD.VIEWCOUNT                                    AS VIEWCOUNT
+            ,   TO_CHAR(HD.REGDATE, 'YYYY"년" MM"월" DD"일"')    AS REGDATE
+            ,   (
+                    SELECT COUNT(*)
+                    FROM LABPOSTCOMMENT
+                    WHERE 1=1 AND HD.HEADID = HEADID
+                )                                               AS COMMENTCOUNT
+            ,   SUBSTR(BD.CONTENTS, 0, LENGTH(BD.CONTENTS)-5)
+                || LPAD('.', 5, '.') AS BODY
+            ,   DECODE(FIX.LASTFIX,NULL, 'N', 'Y')   AS FIXYN
+            ,   PATH.FILEPATH || PATH.FILENAME      AS IMAGE
+        FROM LABPOSTHEAD HD
+            LEFT OUTER JOIN LABFILEPATH PATH
+                ON( (HD.HEADID = PATH.PARENTSID) OR (HD.CATEGORY = PATH.PARENTSID))
+            INNER JOIN LABCODEMASTER MA
+                ON  MA.TYPE ='WRITE_POST'
+                AND HD.CATEGORY = MA.NO
+            INNER JOIN
+                (
+                    SELECT
+                            REGEXP_REPLACE(
+                                TO_CHAR(SUBSTR(CONTENTS, 0, 150)), <![CDATA['<[^>]*>|\&([^;])*;']]>, ''
+                            ) AS CONTENTS
+                        ,   HEADID
+                    FROM LABPOSTBODY
+                    ) BD
+                ON HD.HEADID = BD.HEADID
+            LEFT OUTER JOIN
+             (
+                 SELECT
+                     HEADID , ROW_NUMBER() over (PARTITION BY FIXPOST ORDER BY REGDATE DESC) AS LASTFIX
+                 FROM LABPOSTHEAD
+                 WHERE 1=1 AND FIXPOST ='Y'
+                   AND USEYN ='Y'
+             ) FIX
+             ON HD.HEADID = FIX.HEADID
+             AND FIX.LASTFIX =1
+        WHERE 1=1
+        AND USEYN ='Y'
+        ORDER BY HD.REGDATE ASC
+        OFFSET #{index} ROWS FETCH NEXT 9 ROWS ONLY
+    </select>
+
+    <delete id="deletePostHead">
+        DELETE FROM LABPOSTHEAD
+        WHERE 1=1 AND USEYN ='Y'
+        AND HEADID =#{headId}
+    </delete>
+
+    <delete id="deletePostBody">
+        DELETE FROM LABPOSTBODY
+        WHERE 1=1
+        AND HEADID =#{headId}
+    </delete>
+
+    <delete id="deletePostComments">
+        DELETE FROM LABPOSTCOMMENT
+        WHERE 1=1
+        AND HEADID =#{headId}
+    </delete>
+
+
+
+</mapper>

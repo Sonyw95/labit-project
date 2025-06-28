@@ -22,7 +22,10 @@ const MainContainer = styled("div")( ({theme}) => ({
         paddingRight: theme.spacing(2),
     },
 }));
+
 export default function MainLayout(){
+
+
     const [open, setOpen] = useState(false);
     return (
         <StyleRoot>

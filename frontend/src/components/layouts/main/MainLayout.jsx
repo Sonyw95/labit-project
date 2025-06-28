@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import {
+    Alert,
     AppShell,
     useMantineColorScheme,
 } from '@mantine/core';
-import {
-    IconCode,
-} from '@tabler/icons-react';
+
 import LoadOverlay from "@/components/layouts/overlay/LoadOverlay.jsx";
 import Header from "@/components/section/Header.jsx";
 import NavBar from "@/components/section/NavBar.jsx";
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet} from "react-router-dom";
+import {useAuthStore} from "@/store/authStore.js";
+import {useAuthQuery} from "@/hooks/useAuth.js";
+import {IconLogin} from "@tabler/icons-react";
+
 
 const MainLayout = () => {
+    const { isAuthenticated, user } = useAuthStore();
+    const { data: currentUser, isLoading } = useAuthQuery();
+
     const [opened, setOpened] = useState(false);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
@@ -43,6 +49,8 @@ const MainLayout = () => {
         );
     }
 
+
+
     return (
         <AppShell
             header={{ height: 70 }}
@@ -57,7 +65,7 @@ const MainLayout = () => {
             }}
         >
             <Header dark={dark} opened={opened}  setOpened={setOpened}  toggleColorScheme={toggleColorScheme} loginInfo={{isLoggedIn, setIsLoggedIn} } />
-            <NavBar dark={dark} opened={opened}  setOpened={setOpened} loginInfo={{isLoggedIn, setIsLoggedIn} } />
+            <NavBar dark={dark} opened={opened}  setOpened={setOpened} loginInfo={{isAuthenticated, setIsLoggedIn} } />
             <AppShell.Main h='100%'>
                 <Outlet context={{
                     loading,
