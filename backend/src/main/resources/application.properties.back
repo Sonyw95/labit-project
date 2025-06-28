@@ -1,0 +1,23 @@
+#spring.application.name=backend
+#server.port=8080
+#server.servlet.context-path=/api
+#
+#spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
+#spring.datasource.url=jdbc:oracle:thin:@labitdb_medium?TNS_ADMIN= ${user.dir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}wallet
+#spring.datasource.username=LABITDEV
+#spring.datasource.password=passWord2025
+#
+#spring.jpa.hibernate.ddl-auto=validate
+#spring.jpa.show-sql=true
+#spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.OracleDialect
+#spring.jpa.properties.hibernate.format_sql=true
+#spring.jpa.open-in-view=false
+#
+#
+#logging.level.kr.labit.blog=debug
+#logging.level.org.springframework.security=debug
+
+
+
+# Spring Security ?? ===============
+spring.security.oauth2.client.registration.kakao

@@ -1,0 +1,47 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:8080/oauth2/callback/kakao}
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  datasource:
+    url: oracle:thin:@labitdb_medium?TNS_ADMIN= ${user.dir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}wallet
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: LABITDEV
+    password: passWord2025
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 86400000  # 24시간 (밀리초)
+
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+
+logging:
+  level:
+    com.example.kakao: DEBUG
+    org.springframework.security: DEBUG
