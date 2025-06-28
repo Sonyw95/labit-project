@@ -18,15 +18,28 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => {
-          return path
-        }
+        rewrite: (path) => path
       }
     }
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'mantine': ['@mantine/core', '@mantine/hooks'],
+          'query': ['@tanstack/react-query'],
+          'icons': ['@tabler/icons-react'],
+          'axios': ['axios'],
+          'zustand': ['zustand']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
+  },
+  define: {
+    // // 환경 변수를 빌드 시점에 정의
+    // 'process.env': process.env
   }
 
 })

@@ -1,9 +1,10 @@
 import '@mantine/core/styles.css';
-import {Alert, MantineProvider} from "@mantine/core";
+import {MantineProvider} from "@mantine/core";
 import theme from "@/components/theme/Theme.jsx";
 import {Router} from "@/Router.jsx";
 import Helmet from "@/components/Helmet.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
 
 const queryClient = new QueryClient({
@@ -23,6 +24,13 @@ function App() {
                 <Helmet>
                     <Router/>
                 </Helmet>
+                {/* 개발 환경에서만 React Query Devtools 표시 */}
+                {import.meta.env.DEV && (
+                    <ReactQueryDevtools
+                        initialIsOpen={false}
+                        position="bottom-right"
+                    />
+                )}
             </QueryClientProvider>
 
         </MantineProvider>

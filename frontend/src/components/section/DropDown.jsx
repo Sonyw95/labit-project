@@ -20,8 +20,8 @@ import {
     IconLogin,
     IconChevronDown, IconAlertCircle,
 } from '@tabler/icons-react';
-import {useLoginMutation, useLogoutMutation} from "@/hooks/useAuth.js";
-import {useAuthStore} from "@/store/authStore.js";
+import {useAuthStore} from "../../store/authStore.js";
+import {useLoginMutation} from "../../hooks/useAuth.js";
 
 // 사용자 프로필 (데모용)
 const userProfile = {
@@ -45,9 +45,20 @@ const KakaoIcon = ({ size = 20 }) => (
 export default function  UserDropdown (props) {
     const {dark, isAuthenticated, setIsLoggedIn} = props;
     const [credentials, setCredentials] = useState({ userEmail: '', password: '' });
-    const { error, clearError } = useAuthStore();
+    const { error, clearError, loginWithKakao, isLoading } = useAuthStore();
     const loginMutation = useLoginMutation();
-    const logoutMutation = useLogoutMutation();
+
+
+    const handleKakaoLogin = async () => {
+        clearError();
+        try {
+            await loginWithKakao();
+            // 로그인 성공 시 페이지 새로고침 또는 리다이렉트
+            window.location.href = '/dashboard';
+        } catch (error) {
+            console.error('Kakao login failed:', error);
+        }
+    };
     const handleSubmit = async (e, type) => {
         e.preventDefault();
         clearError();
@@ -332,7 +343,8 @@ export default function  UserDropdown (props) {
                                 fullWidth
                                 size="sm"
                                 radius="md"
-                                onClick={() => setIsLoggedIn(true)}
+                                onClick={handleKakaoLogin}
+                                loading={isLoading}
                                 style={{
                                     backgroundColor: '#FEE500',
                                     color: '#000000',
@@ -358,7 +370,7 @@ export default function  UserDropdown (props) {
                                 //     transition: 'all 0.2s ease'
                                 // }}
                             >
-                                카카오톡으로 로그인
+                                {isLoading ? '로그인중....' : '카카오톡으로 로그인'}
                             </Button>
                         </Box>
                     </>

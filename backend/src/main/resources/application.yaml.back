@@ -17,31 +17,30 @@ spring:
             user-name-attribute: id
 
   datasource:
-    url: oracle:thin:@labitdb_medium?TNS_ADMIN= ${user.dir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}wallet
+#    url: oracle:thin:@labitdb_medium?TNS_ADMIN= ${user.dir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}wallet
     driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: oracle:thin:@labitdb_medium?TNS_ADMIN=E:/sonsDev/LABit/backend/src/main/resources/wallet
     username: LABITDEV
     password: passWord2025
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
         format_sql: true
-
-  h2:
-    console:
-      enabled: true
+    open-in-view: false
 
 jwt:
-  secret: mySecretKey123456789012345678901234567890
   expiration: 86400000  # 24시간 (밀리초)
 
 app:
-  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  secret-key: e44d1db462b751514abfc44aa6c2f47a54ad9e95b9c0c68c1bfdccecabb3d5ed
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
 
 logging:
   level:
-    com.example.kakao: DEBUG
+    kr.labit.blog: DEBUG
     org.springframework.security: DEBUG

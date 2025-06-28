@@ -1,0 +1,6 @@
+1) 도메인
+상위 도메인 rabit.be
+
+LABIT 프로젝트 story.labit.be
+
+형상관리 scm.labit.be

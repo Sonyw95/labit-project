@@ -11,15 +11,14 @@
  * @property {string} username
  * @property {string} password
  */
+import {apiClient} from "../lib/apiClient.js";
+
 /**
  * @typedef {Object} LoginResponse
  * @property {string} accessToken
  * @property {string} refreshToken
  * @property {User} user
  */
-
-import {apiClient} from "@/lib/apiClient.js";
-
 
 
 export class AuthService {

@@ -1,4 +1,6 @@
-// API 응답 타입 정의 (JSDoc으로 타입 힌트 제공)
+// src/lib/axios.js
+import axios from 'axios';
+
 /**
  * @typedef {Object} ApiResponse
  * @property {boolean} success
@@ -7,15 +9,12 @@
  * @property {string} [code]
  */
 
-import axios from "axios";
-
 /**
  * @typedef {Object} ApiError
  * @property {string} message
  * @property {string} [code]
  * @property {number} [status]
  */
-
 
 class ApiClient {
     constructor() {
@@ -26,74 +25,80 @@ class ApiClient {
                 'Content-Type': 'application/json',
             },
         });
-        this.setInterceptors();
+
+        this.setupInterceptors();
     }
-    // 요청, 응답 인터셉터
-    setInterceptors() {
-        // 요청 -> 토큰 저장 혹은 토큰 헤더 세팅
+
+    setupInterceptors() {
+        // 요청 인터셉터 - 토큰 자동 추가
         this.client.interceptors.request.use(
-            ( config ) => {
+            (config) => {
                 const token = localStorage.getItem('accessToken');
-                if( token ){
+                if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
                 return config;
             },
-            ( error ) => Promise.reject(error)
+            (error) => Promise.reject(error)
         );
-        //응답 -> 토큰 만료 처리
+
+        // 응답 인터셉터 - 토큰 만료 처리
         this.client.interceptors.response.use(
-            ( response ) => response,
-            async ( error ) => {
-                const originRequest = error.config;
-                if( error.response?.status === 401 && !originRequest._retry ){
-                    originRequest._retry  = true;
-                    try{
-                        // 스토리지에 저장된 새로고침 토큰을 획득
+            (response) => response,
+            async (error) => {
+                const originalRequest = error.config;
+
+                if (error.response?.status === 401 && !originalRequest._retry) {
+                    originalRequest._retry = true;
+
+                    try {
                         const refreshToken = localStorage.getItem('refreshToken');
-                        if( refreshToken ){
-                            // 새로고침 토큰이 존재할 경우 만료 처리
+                        if (refreshToken) {
                             const response = await this.client.post('/auth/refresh', {
                                 refreshToken
                             });
-                            // 접근 토큰을 스토리지에 저장
+
                             const { accessToken } = response.data.data;
                             localStorage.setItem('accessToken', accessToken);
 
-                            return this.client(originRequest);
+                            return this.client(originalRequest);
                         }
-                    }catch ( refreshError ){
-                        localStorage.removeItem('accessToken')
+                        // eslint-disable-next-line no-unused-vars
+                    } catch (refreshError) {
+                        localStorage.removeItem('accessToken');
                         localStorage.removeItem('refreshToken');
-                        window.location.href = '/home';
+                        window.location.href = '/login';
                     }
                 }
-                return Promise.reject( error );
+
+                return Promise.reject(error);
             }
-        )
+        );
     }
 
-    // 복수 작업을 위한 배치 Request Method
-    async batchRequests( request ){
-        try{
-            const response = await Promise.allSettled(
-                request.map(request => request() )
+    // 복수개 작업 처리를 위한 배치 요청 메서드
+    async batchRequests(requests) {
+        try {
+            const responses = await Promise.allSettled(
+                requests.map(request => request())
             );
-            return response.map( ( resp, index ) => {
-                if( resp.status === 'fulfilled' ){
-                    return resp.value.data.data
+
+            return responses.map((response, index) => {
+                if (response.status === 'fulfilled') {
+                    return response.value.data.data;
                 }
-                console.error(`Batch Request ${index} failed: ${resp.reason}`);
-                throw new Error(`[ERROR] Request ${index} failed: ${resp.reason.message}`);
-            } )
-        }catch ( error ){
-            throw new Error( `[ERROR] Batch Request Failed : ${error}` );
+                console.error(`Batch request ${index} failed:`, response.reason);
+                throw new Error(`Request ${index} failed: ${response.reason.message}`);
+
+            });
+        } catch (error) {
+            throw new Error(`Batch request failed: ${error}`);
         }
     }
 
-    // 직렬 처리 ( 순차 )
     async sequentialRequests(requests) {
         const results = [];
+
         for (const request of requests) {
             try {
                 const response = await request();
@@ -103,9 +108,10 @@ class ApiClient {
                 throw error;
             }
         }
+
         return results;
     }
-    // 기본 HTTP 메서드들
+
     async get(url, config) {
         const response = await this.client.get(url, config);
         return response.data;

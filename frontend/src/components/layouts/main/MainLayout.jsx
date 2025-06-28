@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Alert,
     AppShell,
     useMantineColorScheme,
 } from '@mantine/core';
@@ -9,14 +8,10 @@ import LoadOverlay from "@/components/layouts/overlay/LoadOverlay.jsx";
 import Header from "@/components/section/Header.jsx";
 import NavBar from "@/components/section/NavBar.jsx";
 import {Outlet} from "react-router-dom";
-import {useAuthStore} from "@/store/authStore.js";
-import {useAuthQuery} from "@/hooks/useAuth.js";
-import {IconLogin} from "@tabler/icons-react";
+import {useAuthStore} from "../../../store/authStore.js";
 
 
 const MainLayout = () => {
-    const { isAuthenticated, user } = useAuthStore();
-    const { data: currentUser, isLoading } = useAuthQuery();
 
     const [opened, setOpened] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -25,6 +20,12 @@ const MainLayout = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     const dark = colorScheme === 'dark';
+    const { isAuthenticated, user, isLoading, checkAuthToken } = useAuthStore();
+
+// 컴포넌트 마운트 시 인증 토큰 확인
+    useEffect(() => {
+        checkAuthToken();
+    }, [checkAuthToken]);
 
     // 로딩 효과 시뮬레이션
     useEffect(() => {
