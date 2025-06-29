@@ -17,10 +17,9 @@ const MainLayout = () => {
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     const dark = colorScheme === 'dark';
-    const { isAuthenticated, user, isLoading, checkAuthToken } = useAuthStore();
+    const { checkAuthToken } = useAuthStore();
 
 // 컴포넌트 마운트 시 인증 토큰 확인
     useEffect(() => {
@@ -65,8 +64,8 @@ const MainLayout = () => {
                 background: dark ? '#0d1117' : '#f8fafc',  // 매우 어두운 배경
             }}
         >
-            <Header dark={dark} opened={opened}  setOpened={setOpened}  toggleColorScheme={toggleColorScheme} loginInfo={{isLoggedIn, setIsLoggedIn} } />
-            <NavBar dark={dark} opened={opened}  setOpened={setOpened} loginInfo={{isAuthenticated, setIsLoggedIn} } />
+            <Header dark={dark} opened={opened}  setOpened={setOpened}  toggleColorScheme={toggleColorScheme}  />
+            <NavBar dark={dark} opened={opened}  setOpened={setOpened}  />
             <AppShell.Main h='100%'>
                 <Outlet context={{
                     loading,

@@ -20,16 +20,9 @@ import {
     IconLogin,
     IconChevronDown, IconAlertCircle,
 } from '@tabler/icons-react';
-import {useAuthStore} from "../../store/authStore.js";
 import {useLoginMutation} from "../../hooks/useAuth.js";
+import {useAuthStore} from "../../store/authStore.js";
 
-// 사용자 프로필 (데모용)
-const userProfile = {
-    name: 'LABit',
-    email: 'labit@example.com',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-    role: 'Full Stack Developer'
-};
 // 카카오톡 아이콘 SVG 컴포넌트
 const KakaoIcon = ({ size = 20 }) => (
     <svg
@@ -43,18 +36,18 @@ const KakaoIcon = ({ size = 20 }) => (
 );
 // 사용자 드롭다운 메뉴 컴포넌트
 export default function  UserDropdown (props) {
-    const {dark, isAuthenticated, setIsLoggedIn} = props;
+    const { dark } = props;
     const [credentials, setCredentials] = useState({ userEmail: '', password: '' });
-    const { error, clearError, loginWithKakao, isLoading } = useAuthStore();
+    const { error, clearError, loginWithKakao, isLoading,isAuthenticated, user } = useAuthStore();
+    console.log(user);
     const loginMutation = useLoginMutation();
-
 
     const handleKakaoLogin = async () => {
         clearError();
         try {
             await loginWithKakao();
             // 로그인 성공 시 페이지 새로고침 또는 리다이렉트
-            window.location.href = '/dashboard';
+            window.location.href = '/home';
         } catch (error) {
             console.error('Kakao login failed:', error);
         }
@@ -99,7 +92,7 @@ export default function  UserDropdown (props) {
                         {isAuthenticated ? (
                             <>
                                 <Avatar
-                                    src={userProfile.avatar}
+                                    src={user.profileImage}
                                     size={32}
                                     radius="xl"
                                     style={{
@@ -165,7 +158,7 @@ export default function  UserDropdown (props) {
                         >
                             <Group gap="md">
                                 <Avatar
-                                    src={userProfile.avatar}
+                                    src={user.profileImage}
                                     size={48}
                                     radius="xl"
                                     style={{
@@ -179,14 +172,14 @@ export default function  UserDropdown (props) {
                                         style={{ color: dark ? '#ffffff' : '#1e293b' }}
                                         truncate
                                     >
-                                        {userProfile.name}
+                                        {user.nickname}
                                     </Text>
                                     <Text
                                         size="xs"
                                         style={{ color: dark ? '#999999' : '#64748b' }}
                                         truncate
                                     >
-                                        {userProfile.email}
+                                        {user.email}
                                     </Text>
                                     <Badge
                                         size="xs"
@@ -196,7 +189,7 @@ export default function  UserDropdown (props) {
                                             marginTop: rem(4),
                                         }}
                                     >
-                                        {userProfile.role}
+                                        {user.roles[0]}
                                     </Badge>
                                 </Box>
                             </Group>
@@ -237,7 +230,6 @@ export default function  UserDropdown (props) {
 
                         <Menu.Item
                             leftSection={<IconLogout size={16} />}
-                            onClick={() => setIsLoggedIn(false)}
                             style={{
                                 borderRadius: rem(8),
                                 padding: rem(12),
@@ -254,18 +246,6 @@ export default function  UserDropdown (props) {
                     <>
                         {/*/!* Login State *!/*/}
                         <Box style={{ padding: rem(8) }}>
-                        {/*    <Text*/}
-                        {/*        size="sm"*/}
-                        {/*        fw={600}*/}
-                        {/*        mb="md"*/}
-                        {/*        style={{*/}
-                        {/*            color: dark ? '#ffffff' : '#1e293b',*/}
-                        {/*            textAlign: 'center'*/}
-                        {/*        }}*/}
-                        {/*    >*/}
-                        {/*        LOGIN*/}
-                        {/*    </Text>*/}
-
                             <Stack gap="sm">
                                 <form onSubmit={(e) => handleSubmit(e, 'normal')}>
                                     <TextInput
@@ -356,19 +336,6 @@ export default function  UserDropdown (props) {
                                     },
                                     transition: 'all 0.2s ease'
                                 }}
-                                // styles={{
-                                //     backgroundColor: '#FEE500',
-                                //     color: '#000000',
-                                //     border: 'none',
-                                //     fontWeight: 600,
-                                //     minWidth: '300px',
-                                //     height: '50px',
-                                //     '&:hover': {
-                                //         backgroundColor: '#FDD835',
-                                //         transform: 'translateY(-1px)',
-                                //     },
-                                //     transition: 'all 0.2s ease'
-                                // }}
                             >
                                 {isLoading ? '로그인중....' : '카카오톡으로 로그인'}
                             </Button>

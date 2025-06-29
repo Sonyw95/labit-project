@@ -7,9 +7,7 @@ import {
     ThemeIcon,
 } from "@mantine/core";
 import {
-    IconBell,
     IconMoon,
-    IconSearch,
     IconSun,
 } from "@tabler/icons-react";
 import React from "react";
@@ -17,8 +15,8 @@ import Logo from "@/components/Logo.jsx";
 import UserDropdown from "@/components/section/DropDown.jsx";
 
 const Header = ( props ) =>{
-    const{ dark, opened, toggleColorScheme, setOpened, loginInfo} = props;
-    const {isAuthenticated, setIsLoggedIn} = loginInfo;
+    const{ dark, opened, toggleColorScheme, setOpened} = props;
+
     return (
         <>
             {/* Header */}
@@ -111,7 +109,7 @@ const Header = ( props ) =>{
                         >
                             {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
                         </ActionIcon>
-                        <UserDropdown dark={dark} isAuthenticated={isAuthenticated} setIsLoggedIn={setIsLoggedIn}/>
+                        <UserDropdown dark={dark} />
                     </Group>
                 </Group>
             </AppShell.Header>
