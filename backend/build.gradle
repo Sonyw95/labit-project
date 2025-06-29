@@ -11,10 +11,8 @@ version = '0.0.1-SNAPSHOT'
 
 ext.javaEncoding = 'UTF-8'
 ext.gradleVersion = '8.14.2'
-ext.targetServer = project.hasProperty('target') ? target : 'local'
+ext.targetServer = project.hasProperty('target') ? target : 'dev'
 ext.osName = System.getProperty("os.name").contains('Window') ? 'window' : 'linux'
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
 
 java {
     toolchain {
@@ -41,46 +39,6 @@ configurations {
 configurations.configureEach {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-//
-//sourceSets {
-//    println("========== sourceSets [ $targetServer ] ==============")
-//    if( "$targetServer" != "local" ){
-//        println("==================== sourceSets start ============================")
-//
-//        copy {
-//            from 'src/main/resources/properties-$targetServer'
-//            into "src/main/resources/properties"
-//        }
-//
-//        delete "src/main/resources/properties-dev"
-//        delete "src/main/resources/properties-stage"
-//        delete "src/main/resources/properties-real"
-//    }else {
-//        delete "src/main/resources/application.properties"
-//        copy {
-//            from( "src/main/resources/properties-dev-$osName/application.properties")
-//            into "src/main/resources"
-//        }
-//    }
-//}
-
-//processResources {
-//    from('src/main/java') {
-//        include '**/*.xml'
-//    }
-//    into 'build/classes'
-//    includeEmptyDirs = true
-//}
-
-//processTestResources {
-//    from('src/test/java') {
-//        include '**/*.xml'
-//    }
-//
-//    into 'build/classes'
-//
-//    includeEmptyDirs = true
-//}
 
 tasks.register('Wrapper', Wrapper) {
     description = 'Generates gradlew[.bat] scripts'
@@ -90,8 +48,62 @@ repositories {
     mavenCentral()
 }
 
+// OS 탐지
+static def getOsName(){
+    def osName = System.getProperty("os.name").toLowerCase()
+    if( osName.contains("window") ){
+        return "window"
+    }else if(osName.contains('linux') ){
+        return 'linux'
+    }else if(osName.contains('mac')){
+        return 'linux'
+    }
+    return 'unknown'
+}
+
+tasks.register('copyPropertiesForOs') {
+    doLast{
+        def osName = getOsName()
+        def sourceDir = file("src/main/resources")
+        def targetFile = file("${sourceDir}/application.properties")
+
+        if( targetFile.exists() ){
+            copy {
+                from targetFile
+                into sourceDir
+                rename {"application.properties.backup"}
+            }
+        }
+        if( osName === 'unknown' ){
+            println("지원되지 않는 OS ${System.getProperty("os.name")}")
+        }else{
+            def serverPropsFile = file("src/main/resources/properties-${targetServer}-${osName}/application.properties")
+            if( serverPropsFile.exists() ){
+                copy{
+                    from serverPropsFile
+                    into sourceDir
+                    println("Copy Success Os Server Properties")
+                }
+            }else {
+                println("Os Server Properties File Not Found")
+            }
+        }
+    }
+}
+
+bootRun{
+    dependsOn(copyPropertiesForOs)
+    systemProperties( System.properties )
+}
+clean {
+    doLast{
+        delete fileTree("src/main/resources"){
+            include("application.properties.backup")
+        }
+    }
+}
 dependencies {
-//
+
 ////    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 //    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
