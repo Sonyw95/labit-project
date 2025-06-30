@@ -9,7 +9,6 @@ import {
     useMantineColorScheme
 } from '@mantine/core';
 import {
-    IconCode,
     IconMoon, IconSun,
 } from '@tabler/icons-react';
 import UserDropdown from "@/components/userDropDown/index.jsx";

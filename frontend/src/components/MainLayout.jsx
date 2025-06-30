@@ -84,7 +84,7 @@ const TechBlogLayout = () => {
             navbar={{
                 width: 280,
                 breakpoint: 'lg',
-                collapsed: { mobile: !opened },
+                collapsed: { mobile: true },
             }}
             // padding="md"
             style={{

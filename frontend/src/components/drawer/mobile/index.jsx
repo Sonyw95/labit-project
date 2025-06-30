@@ -45,6 +45,8 @@ const MobileDrawer= ({
         <Drawer
             opened={opened}
             onClose={onClose}
+            // hidden="xl"
+            hiddenFrom="lg"
             size="xs"
             position="left"
             title={
