@@ -9,7 +9,7 @@ import {
     Avatar,
     ActionIcon,
     Image,
-    Tooltip, useMantineColorScheme, NavLink
+    Tooltip, useMantineColorScheme, NavLink, Skeleton
 } from "@mantine/core";
 import {IconBookmark, IconChevronRight, IconEye, IconHeart, IconShare} from "@tabler/icons-react";
 import React, {useState} from "react";
@@ -24,10 +24,80 @@ const categoryColors = {
     "보안": "red"
 };
 
-function PostCard({ dark, post, index }) {
+function PostCard({ dark, post, index, loading = false }) {
     const [isHovered, setIsHovered] = useState(false);
-    const [isLiked, setIsLiked] = useState(false);
-    const {id} = useParams();
+    const [likedPosts, setLikedPosts] = useState(new Set());
+    const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set());
+
+    const isLiked = likedPosts.has(post.id);
+    const isBookmarked = bookmarkedPosts.has(post.id);
+
+    const formatNumber = (num) => {
+        if (num >= 1000) {
+            return `${(num / 1000).toFixed(1)  }K`;
+        }
+        return num.toString();
+    };
+    const handleBookmark = (postId) => {
+        setBookmarkedPosts(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(postId)) {
+                newSet.delete(postId);
+            } else {
+                newSet.add(postId);
+            }
+            return newSet;
+        });
+    };
+    const handleLike = (postId) => {
+        setLikedPosts(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(postId)) {
+                newSet.delete(postId);
+            } else {
+                newSet.add(postId);
+            }
+            return newSet;
+        });
+    };
+    const handleShare = async (post) => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: post.title,
+                    text: post.excerpt,
+                    url: `${window.location.origin  }/posts/${post.id}`,
+                });
+            } catch (error) {
+                console.log('Sharing cancelled');
+            }
+        } else {
+            // Fallback to clipboard
+            await navigator.clipboard.writeText(`${window.location.origin  }/posts/${post.id}`);
+        }
+    };
+    const LoadingSkeleton = () => (
+        <Card radius="xl" p="md">
+            <Skeleton height={180} radius="md" mb="md" />
+            <Stack gap="sm">
+                <Group justify="space-between">
+                    <Skeleton height={12} width="30%" />
+                    <Skeleton height={20} radius="xl" width={20} />
+                </Group>
+                <Skeleton height={20} width="85%" />
+                <Skeleton height={16} width="95%" />
+                <Skeleton height={16} width="70%" />
+                <Group justify="space-between" mt="xs">
+                    <Skeleton height={12} width="20%" />
+                    <Group gap="xs">
+                        <Skeleton height={24} width={24} radius="xl" />
+                        <Skeleton height={24} width={24} radius="xl" />
+                        <Skeleton height={24} width={24} radius="xl" />
+                    </Group>
+                </Group>
+            </Stack>
+        </Card>
+    );
 
     return (
         <Transition
@@ -36,11 +106,9 @@ function PostCard({ dark, post, index }) {
             duration={300}
             timingFunction="ease-out"
             enterDelay={index * 100}
-        >
-            {(styles) => (
+        > {
+            loading ? <LoadingSkeleton /> : (styles) => (
                 <Card
-                    component={Links}
-                    to={`/post/detail/${id}/${post.id}`}
                     style={{
                         ...styles,
                         transform: isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
@@ -78,6 +146,7 @@ function PostCard({ dark, post, index }) {
                                 transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                                 filter: isHovered ? 'brightness(1.1)' : 'brightness(1)'
                             }}
+                            fallbackSrc="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop"
                         />
 
                         {/* 그라디언트 오버레이 */}
@@ -95,7 +164,7 @@ function PostCard({ dark, post, index }) {
                             }}
                         />
 
-                         {/*카테고리 배지*/}
+                        {/*카테고리 배지*/}
                         <Badge
                             color={categoryColors[post.category]}
                             variant="filled"
@@ -114,30 +183,28 @@ function PostCard({ dark, post, index }) {
                         </Badge>
 
                         {/* /!*북마크 버튼*!/*/}
-                        {/*<ActionIcon*/}
-                        {/*    variant="filled"*/}
-                        {/*    size="md"*/}
-                        {/*    style={{*/}
-                        {/*        position: 'absolute',*/}
-                        {/*        top: 12,*/}
-                        {/*        right: 12,*/}
-                        {/*        backdropFilter: 'blur(10px)',*/}
-                        {/*        background: isBookmarked*/}
-                        {/*            ? 'rgba(var(--mantine-color-yellow-6-rgb), 0.9)'*/}
-                        {/*            : dark*/}
-                        {/*                ? 'rgba(0, 0, 0, 0.6)'*/}
-                        {/*                : 'rgba(255, 255, 255, 0.15)',*/}
-                        {/*        border: '1px solid rgba(255, 255, 255, 0.2)',*/}
-                        {/*        transform: isHovered ? 'scale(1.1)' : 'scale(1)',*/}
-                        {/*        transition: 'all 0.2s ease'*/}
-                        {/*    }}*/}
-                        {/*    onClick={(e) => {*/}
-                        {/*        e.stopPropagation();*/}
-                        {/*        setIsBookmarked(!isBookmarked);*/}
-                        {/*    }}*/}
-                        {/*>*/}
-                        {/*    <IconBookmark size={16} />*/}
-                        {/*</ActionIcon>*/}
+                        <ActionIcon
+                            variant="filled"
+                            size="md"
+                            style={{
+                                position: 'absolute',
+                                top: 12,
+                                right: 12,
+                                backdropFilter: 'blur(10px)',
+                                background: isBookmarked
+                                    ? 'var(--mantine-color-yellow-6)'
+                                    : (dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'),
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleBookmark(post.id);
+                            }}
+                        >
+                            <IconBookmark size={16} />
+                        </ActionIcon>
                     </Box>
 
                     {/* 콘텐츠 섹션 */}
@@ -220,27 +287,58 @@ function PostCard({ dark, post, index }) {
                                         color={isLiked ? "red" : "gray"}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            setIsLiked(!isLiked);
+                                            handleLike(post.id);
                                         }}
                                         style={{
-                                            transform: isLiked ? 'scale(1.2)' : 'scale(1)',
-                                            transition: 'transform 0.2s ease'
+                                            transition: 'all 0.2s ease',
+                                            '&:hover': {
+                                                transform: 'scale(1.1)',
+                                                backgroundColor: isLiked
+                                                    ? 'rgba(239, 68, 68, 0.1)'
+                                                    : (dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'),
+                                            }
                                         }}
                                     >
-                                        <IconHeart size={14} fill={isLiked ? "currentColor" : "none"} />
+                                        <IconHeart size={14}   style={{
+                                            fill: isLiked ? 'currentColor' : 'none',
+                                        }} />
                                     </ActionIcon>
-                                    <Text size="xs" c="dimmed">{post.likes}</Text>
+                                    {(isLiked || post.likes > 0) && (
+                                        <Text
+                                            size="xs"
+                                            c={dark ? 'gray.5' : 'gray.6'}
+                                            fw={500}
+                                        >
+                                            {formatNumber(post.likes + (isLiked ? 1 : 0))}
+                                        </Text>
+                                    )}
                                 </Group>
 
-                                <Group gap={4}>
-                                    <ActionIcon variant="subtle" size="sm" color="gray">
-                                        <IconEye size={14} />
-                                    </ActionIcon>
-                                    <Text size="xs" c="dimmed">{post.views}</Text>
+                                <Group gap="lg">
+                                    <Group gap="xs">
+                                        <IconEye
+                                            size={16}
+                                            color={dark ? '#666666' : '#94a3b8'}
+                                        />
+                                        <Text
+                                            size="xs"
+                                            c={dark ? 'gray.5' : 'gray.6'}
+                                            fw={600}
+                                        >
+                                            {post.views}
+                                        </Text>
+                                    </Group>
                                 </Group>
 
                                 <Tooltip label="공유하기">
-                                    <ActionIcon variant="subtle" size="sm" color="gray">
+                                    <ActionIcon
+                                        variant="subtle"
+                                        ize="sm"
+                                        color="gray"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleShare(post).then(r =>{ console.log(r)} );
+                                        }}>
                                         <IconShare size={14} />
                                     </ActionIcon>
                                 </Tooltip>
@@ -271,9 +369,9 @@ function PostCard({ dark, post, index }) {
                         </Group>
                     </Stack>
                 </Card>
-            )}
+            )
+        }
         </Transition>
-    );
+    )
 }
-
 export default PostCard;

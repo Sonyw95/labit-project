@@ -1,11 +1,10 @@
 import {Badge, Box, Container, Grid, Group, Stack, Text, useMantineColorScheme, Button, TextInput, Overlay, Center, Title} from "@mantine/core";
 import PostCard from "@/components/section/PostCard.jsx";
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 
 export default function PostCardList({ opts }) {
     const { colorScheme} = useMantineColorScheme();
     const dark = colorScheme === 'dark';
-    const { maxCount, category } = opts;
 
     const categoryColors = {
         "디자인": "violet",
@@ -15,7 +14,6 @@ export default function PostCardList({ opts }) {
         "클라우드": "cyan",
         "보안": "red"
     };
-// 샘플 포스트 데이터
     const posts = [
         {
             id: 1,
@@ -171,84 +169,6 @@ export default function PostCardList({ opts }) {
                         </Grid.Col>
                     ))}
                 </Grid>
-
-                {/*/!* Recent Posts *!/*/}
-                {/*<Title order={2} mb="md" style={{color: dark ? '#f0f6fc' : '#1e293b'}}>  /!* 매우 밝은 텍스트 *!/*/}
-                {/*    최근 게시글*/}
-                {/*</Title>*/}
-
-                {/*<Stack gap="md">*/}
-                {/*    {recentPosts.map((post) => (*/}
-                {/*        <Card*/}
-                {/*            key={post.id}*/}
-                {/*            padding="lg"*/}
-                {/*            radius="md"*/}
-                {/*            style={{*/}
-                {/*                background: dark ? '#161b22' : '#ffffff',  // 매우 어두운 카드 배경*/}
-                {/*                border: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,  // 어두운 보더*/}
-                {/*                cursor: 'pointer',*/}
-                {/*                transition: 'all 0.3s ease',*/}
-                {/*                boxShadow: 'none', // 플랫 디자인: 그림자 제거*/}
-                {/*                '&:hover': {*/}
-                {/*                    transform: 'translateY(-4px)',*/}
-                {/*                    borderColor: dark ? '#30363d' : '#d1d5db',  // 어두운 호버 보더*/}
-                {/*                }*/}
-                {/*            }}*/}
-                {/*        >*/}
-                {/*            <Group align="flex-start" gap="md">*/}
-                {/*                <Image*/}
-                {/*                    src={post.image}*/}
-                {/*                    h={120}*/}
-                {/*                    w={200}*/}
-                {/*                    radius="md"*/}
-                {/*                    style={{*/}
-                {/*                        flexShrink: 0,*/}
-                {/*                        objectFit: 'cover',*/}
-                {/*                    }}*/}
-                {/*                />*/}
-                {/*                <Box style={{flex: 1}}>*/}
-                {/*                    <Title order={3} size="h4" mb="xs">*/}
-                {/*                        {post.title}*/}
-                {/*                    </Title>*/}
-                {/*                    <Text size="sm" c="dimmed" mb="md" lineClamp={2}>*/}
-                {/*                        {post.excerpt}*/}
-                {/*                    </Text>*/}
-                {/*                    <Group justify="space-between" align="center">*/}
-                {/*                        <Group gap="xs">*/}
-                {/*                            <IconCalendar size={14}*/}
-                {/*                                          style={{color: dark ? '#8b949e' : '#6b7280'}}/> /!* 어두운 테마 아이콘 *!/*/}
-                {/*                            <Text size="xs" c="dimmed">{post.date}</Text>*/}
-                {/*                            <Text size="xs" c="dimmed">·</Text>*/}
-                {/*                            <Text size="xs" c="dimmed">{post.readTime} 읽기</Text>*/}
-                {/*                        </Group>*/}
-                {/*                        <Group gap="lg">*/}
-                {/*                            <Group gap="xs">*/}
-                {/*                                <IconEye size={14}*/}
-                {/*                                         style={{color: dark ? '#8b949e' : '#6b7280'}}/> /!* 어두운 테마 아이콘 *!/*/}
-                {/*                                <Text size="xs" c="dimmed">{post.views}</Text>*/}
-                {/*                            </Group>*/}
-                {/*                            <Group gap="xs">*/}
-                {/*                                <IconHeart size={14} style={{color: '#ef4444'}}/>*/}
-                {/*                                <Text size="xs" c="dimmed">{post.likes}</Text>*/}
-                {/*                            </Group>*/}
-                {/*                            <ActionIcon*/}
-                {/*                                variant="subtle"*/}
-                {/*                                size="sm"*/}
-                {/*                                style={{*/}
-                {/*                                    '&:hover': {*/}
-                {/*                                        background: dark ? '#21262d' : '#f3f4f6',  // 어두운 호버 색상*/}
-                {/*                                    }*/}
-                {/*                                }}*/}
-                {/*                            >*/}
-                {/*                                <IconShare size={14}/>*/}
-                {/*                            </ActionIcon>*/}
-                {/*                        </Group>*/}
-                {/*                    </Group>*/}
-                {/*                </Box>*/}
-                {/*            </Group>*/}
-                {/*        </Card>*/}
-                {/*    ))}*/}
-                {/*</Stack>*/}
             </Container>
         </>
     )

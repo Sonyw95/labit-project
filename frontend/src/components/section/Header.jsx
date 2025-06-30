@@ -42,11 +42,11 @@ const Header = ( props ) =>{
                                 }}
                             >
                                 <Logo
-                                    isLogo={true}
+                                    isLogo
                                     radius="xl"
                                     size="sm"
                                     dark={dark}
-                                    href={'/home'}
+                                    href="/home"
                                 />
                             </ThemeIcon>
                             <div>
