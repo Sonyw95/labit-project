@@ -8,7 +8,7 @@ import LoadOverlay from "@/components/layouts/overlay/LoadOverlay.jsx";
 import Header from "@/components/section/Header.jsx";
 import NavBar from "@/components/section/NavBar.jsx";
 import {Outlet} from "react-router-dom";
-import {useAuthStore} from "../../../store/authStore.js";
+import {useAuthStore} from "../../../../store/authStore.js";
 
 
 const MainLayout = () => {

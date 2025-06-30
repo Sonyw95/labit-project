@@ -20,8 +20,8 @@ import {
     IconLogin,
     IconChevronDown, IconAlertCircle,
 } from '@tabler/icons-react';
-import {useLoginMutation} from "../../hooks/useAuth.js";
-import {useAuthStore} from "../../store/authStore.js";
+import {useLoginMutation} from "../../../hooks/useAuth.js";
+import {useAuthStore} from "../../../store/authStore.js";
 
 // 카카오톡 아이콘 SVG 컴포넌트
 const KakaoIcon = ({ size = 20 }) => (

@@ -1,6 +1,6 @@
 import '@mantine/core/styles.css';
-import {MantineProvider} from "@mantine/core";
-import theme from "@/components/theme/Theme.jsx";
+import {Box, MantineProvider} from "@mantine/core";
+import theme from "@/components/index/index.jsx";
 import {Router} from "@/Router.jsx";
 import Helmet from "@/components/Helmet.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
@@ -18,18 +18,20 @@ const queryClient = new QueryClient({
 });
 function App() {
     return (
-        <MantineProvider theme={theme} defaultC
-                         olorScheme="auto" withGlobalStyles withNormalizeCSS>
+        <MantineProvider theme={theme} defaultColorScheme="auto" >
             <QueryClientProvider client={queryClient}>
                 <Helmet>
                     <Router/>
                 </Helmet>
                 {/* 개발 환경에서만 React Query Devtools 표시 */}
                 {import.meta.env.DEV && (
-                    <ReactQueryDevtools
-                        initialIsOpen={false}
-                        position="bottom-right"
-                    />
+                    <Box top={0}>
+                        <ReactQueryDevtools
+                            initialIsOpen={false}
+                            position="bottom-right"
+                        />
+                    </Box>
+
                 )}
             </QueryClientProvider>
 

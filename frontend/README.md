@@ -5,15 +5,29 @@
 ```
 src/
 ├── components/                    # 재사용 가능한 UI 컴포넌트
-│   ├── index.ts                  # 컴포넌트 export 인덱스
-│   ├── Header.tsx               # 메인 헤더
-│   ├── Navbar.tsx               # 사이드 네비게이션
-│   ├── MobileDrawer.tsx         # 모바일 드로어 메뉴
-│   ├── UserDropdown.tsx         # 사용자 드롭다운
-│   ├── HeroSection.tsx          # 랜딩 히어로 섹션
-│   ├── RecentPosts.tsx          # 최근 게시글
-│   ├── CustomLoader.tsx         # 로딩 컴포넌트
-│   ├── Logo.tsx                 # 로고 컴포넌트
+│   ├── drawer
+│       └── index.jsx            # 모바일 드로어 메뉴
+│   ├── header
+│       └── index.jsx            # 메인 헤더
+│   ├── heroSection
+│       └── index.jsx            # 랜딩 히어로 섹션
+│   ├── icon
+│       └── index.jsx            # 동적 주입 아이콘
+│   ├── icon
+│       └── index.jsx            # 동적 주입 아이콘
+│   ├── loading
+│       └── index.jsx            # 로딩 오버레이
+│   ├── logo
+│       └── index.jsx            # 로고 
+│   ├── navBar
+│       └── index.jsx            # Side Nav Bar 
+│   ├── post
+│       ├── recent 
+│            └── index.jsx       # 최근 게시글 리스트
+│   ├──theme
+│       └── index.jsx            # 테마 
+│   ├──userDropDown
+│       └── index.jsx            # Heade 사용자 드롭다운               
 │   ├── Toast.tsx                # 토스트 알림
 │   ├── SearchBar.tsx            # 검색 바
 │   ├── ProgressiveImage.tsx     # 점진적 이미지 로딩

@@ -50,7 +50,7 @@ import {
     IconChevronDown,
 } from '@tabler/icons-react';
 
-const theme = createTheme({
+const index = createTheme({
     primaryColor: 'violet',
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
     headings: {
@@ -966,7 +966,7 @@ export default function TechBlog() {
     const [opened, setOpened] = useState(false);
 
     return (
-        <MantineProvider theme={theme} defaultColorScheme="auto">
+        <MantineProvider index={index} defaultColorScheme="auto">
             <CustomCursor />
             <AppShell
                 header={{ height: 80 }}

@@ -1,6 +1,6 @@
 import {createTheme} from "@mantine/core";
 
-const theme = createTheme({
+const index = createTheme({
     primaryColor: 'blue',
     fontFamily: 'Inter, sans-serif',
     headings: {
@@ -23,4 +23,4 @@ const theme = createTheme({
     }
 });
 
-export default theme;
+export default index;

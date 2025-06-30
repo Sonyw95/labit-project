@@ -75,7 +75,7 @@ export default function PostCard( { post, index } ){
                                 width: '100%',
                                 height: '100%',
                                 position: 'absolute',
-                                // bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+                                // bgcolor: (index) => alpha(index.palette.grey[900], 0.72),
                             },
                         }),
                         ...(!(lastPostLarge || ( latestPost && isDesktop )) && {

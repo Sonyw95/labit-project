@@ -61,7 +61,7 @@ export const useAuthStore = create(
             },
 
             // 로그인
-            login: async (credentials, type) => {
+            login: async (credentials) => {
                 try {
                     set({ isLoading: true, error: null });
                     const response = await AuthService.login(credentials);
