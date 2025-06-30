@@ -35,7 +35,7 @@ const RecentPosts = ({
     const dark = colorScheme === 'dark';
 
     return (
-        <Container size="lg">
+        <Container size="lg" mb='xl'>
             <Stack gap='xl' mb='xl'>
                 {/* Header Section */}
                 <Group justify="space-between" gap="xs" mb='md'>
@@ -171,7 +171,6 @@ const RecentPosts = ({
                     </Button>
                 </Center>
             )}
-
         </Container>
     );
 };
