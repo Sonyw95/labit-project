@@ -6,24 +6,16 @@ import {
     Text,
     Button,
     Stack,
-    Badge,
-    Card,
-    Image,
-    ActionIcon,
     Center,
-    Flex,
-    Avatar,
-    Skeleton,
     Container,
     rem,
-    useMantineTheme,
     useMantineColorScheme, Grid,
 } from '@mantine/core';
 import {
     IconChevronRight,
     IconSparkles,
 } from '@tabler/icons-react';
-import PostCard from "@/components/section/PostCard.jsx";
+import PostCard from "@/components/oldest/section/PostCard.jsx";
 
 const RecentPosts = ({
                          posts,
@@ -96,41 +88,6 @@ const RecentPosts = ({
                         모든 글 보기
                     </Button>
                 </Group>
-                {/* Posts Grid */}
-                {/*<Box>*/}
-                {/*    {loading ? (*/}
-                {/*        <Box*/}
-                {/*            style={{*/}
-                {/*                display: 'grid',*/}
-                {/*                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',*/}
-                {/*                gap: rem(24),*/}
-                {/*            }}*/}
-                {/*        >*/}
-                {/*            {[...Array(6)].map((_, index) => (*/}
-                {/*                <LoadingSkeleton key={index} />*/}
-                {/*            ))}*/}
-                {/*        </Box>*/}
-                {/*    ) : (*/}
-                {/*        // <Box*/}
-                {/*        //     style={{*/}
-                {/*        //         display: 'grid',*/}
-                {/*        //         gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',*/}
-                {/*        //         gap: rem(24),*/}
-                {/*        //     }}*/}
-                {/*        // >*/}
-                {/*        //     {posts.map((post, index) => (*/}
-                {/*        //         <PostCard key={post.id} post={post} index={index} />*/}
-                {/*        //     ))}*/}
-                {/*        // </Box>*/}
-                {/*        <Grid gutter='lg'>*/}
-                {/*            {posts.map((post, index) => (*/}
-                {/*                <PostCard key={post.id} post={post} index={index} dark={dark}/>*/}
-                {/*            ))}*/}
-                {/*        </Grid>*/}
-                {/*    )}*/}
-                {/*</Box>*/}
-
-
             </Stack>
             <Grid gutter='lg'>
                 {posts.map((post, index) => (

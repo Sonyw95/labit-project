@@ -1,13 +1,11 @@
-import React, { useEffect, useState} from "react";
-import {
-    Container
-} from "@mantine/core";
-import {useOutletContext} from "react-router-dom";
 import HeroSection from "@/components/heroSection/index.jsx";
+import {Container} from "@mantine/core";
+// import RecentPosts from "@/components/post/recent/index.jsx";
+import {useEffect, useState} from "react";
+import {useOutletContext} from "react-router-dom";
 import RecentPosts from "@/components/post/recent/index.jsx";
-import {BackgroundBlur} from "@/utils/BackgroundBlur.jsx";
 
-export default function (){
+export default function Home (){
     const recentPosts = [
         {
             id: 1,

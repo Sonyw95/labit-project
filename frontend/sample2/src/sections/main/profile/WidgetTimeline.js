@@ -1,6 +1,6 @@
 import {Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator} from "@mui/lab";
 import {Card, CardContent, CardHeader, Typography} from "@mui/material";
-import {formatDate, fromToNow} from "../../../utils/formatUitls";
+import {formatDate} from "../../../utils/formatUitls";
 
 
 const Order = ({ item, isLast }) => {

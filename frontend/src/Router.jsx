@@ -4,9 +4,7 @@ import {lazy, Suspense} from "react";
 
 // const MainLayout = lazy(() => import("@/components/layouts/main/MainLayout.jsx"));
 const MainLayout = lazy(() => import('@/components/MainLayout.jsx'));
-const HomePage = lazy(() => import("@/components/pages/HomePage.jsx"))
-const PostDetail = lazy(() => import("@/components/section/PostDetail.jsx"))
-const PostPage = lazy( () => import("@/components/pages/PostPage.jsx"))
+const HomePage = lazy(() => import("@/components/page/Home.jsx"))
 
 const router = createBrowserRouter([
     {

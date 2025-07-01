@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 
 const MENU = [
     {
-        label: 'Home',
+        label: 'Home.jsx',
         icon: 'eva:home-fill',
         path: '/main'
     },

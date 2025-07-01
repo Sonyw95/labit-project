@@ -5,8 +5,6 @@ import Header from "@/components/header/index.jsx";
 import Navbar from "@/components/navBar/index.jsx";
 import {Outlet} from "react-router-dom";
 import MobileDrawer from "@/components/drawer/mobile/index.jsx";
-import {FaJava} from "react-icons/fa";
-import {SiSpring} from "react-icons/si";
 
 // 네비게이션 메뉴 아이템
  const navigationItems = [
@@ -110,7 +108,6 @@ const TechBlogLayout = () => {
                 setIsLoggedIn={setIsLoggedIn}
                 dark={dark}
             />
-
             <Navbar
                 navigationItems={navigationItems}
                 popularTags={popularTags}
