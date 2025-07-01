@@ -116,7 +116,6 @@ function App() {
     return (
         <ToastProvider>
             <MantineProvider theme={theme} defaultColorScheme="auto" >
-                <Notifications position="top-right" />
                 <QueryClientProvider client={queryClient}>
                     <AppContent/>
                 </QueryClientProvider>

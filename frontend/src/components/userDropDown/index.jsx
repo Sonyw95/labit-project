@@ -1,11 +1,9 @@
-import React from 'react';
 import {
     Group,
     Text,
     Avatar,
     Badge,
     Button,
-    ActionIcon,
     Box,
     ThemeIcon,
     Stack,
@@ -13,31 +11,62 @@ import {
     Menu,
     Divider,
     rem,
-    useMantineColorScheme, TextInput, PasswordInput, Alert
+    TextInput, PasswordInput, Alert
 } from '@mantine/core';
 import {
     IconUser,
     IconChevronDown,
     IconSettings,
-    IconShield,
-    IconPalette,
-    IconLanguage,
-    IconHelp,
     IconLogout,
     IconLogin,
-    IconSun,
-    IconMoon, IconAlertCircle,
+    IconAlertCircle,
 } from '@tabler/icons-react';
+import {useState} from "react";
 import {useAuthStore} from "@/store/authStore.js";
+import {useLoginMutation} from "@/hooks/useAuth.js";
+import {NavLink} from "react-router-dom";
 
+// 카카오톡 아이콘 SVG 컴포넌트
+const KakaoIcon = ({ size = 20 }) => (
+    <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="currentColor"
+    >
+        <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3Z"/>
+    </svg>
+);
 const UserDropdown = ({
-                          userProfile,
-                          isLoggedIn,
-                          setIsLoggedIn,
+                          // userProfile,
+                          // isAuthenticated,
+                          // loginMutation,
                           dark,
                       }) => {
-    const { toggleColorScheme } = useMantineColorScheme();
-    const {isAuthenticated, user } = useAuthStore();
+    const [credentials, setCredentials] = useState({ userEmail: '', password: '' });
+    const { error, clearError, loginWithKakao, isLoading,isAuthenticated, user } = useAuthStore();
+    const loginMutation = useLoginMutation();
+
+    const handleKakaoLogin = async () => {
+        clearError();
+        try {
+            await loginWithKakao();
+            // 로그인 성공 시 페이지 새로고침 또는 리다이렉트
+            window.location.href = '/home';
+        } catch (error) {
+            console.error('Kakao login failed:', error);
+        }
+    };
+    const handleSubmit = async (e, type) => {
+        e.preventDefault();
+        clearError();
+        try {
+            const resp = await loginMutation.mutateAsync(credentials, type);
+            window.location.href = '/home';
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
+    };
 
     return (
         <Menu
@@ -188,6 +217,8 @@ const UserDropdown = ({
                         </Menu.Item>
 
                         <Menu.Item
+                            component={NavLink}
+                            to='/setting/account'
                             leftSection={<IconSettings size={16} />}
                             style={{
                                 borderRadius: rem(8),

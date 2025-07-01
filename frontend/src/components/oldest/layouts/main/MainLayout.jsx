@@ -8,7 +8,7 @@ import LoadOverlay from "@/components/layouts/overlay/LoadOverlay.jsx";
 import Header from "@/components/section/Header.jsx";
 import NavBar from "@/components/section/NavBar.jsx";
 import {Outlet} from "react-router-dom";
-import {useAuthStore} from "../../../../store/authStore.js";
+import {useAuthStore} from "@/store/authStore.js";
 
 
 const MainLayout = () => {
@@ -48,9 +48,6 @@ const MainLayout = () => {
             <LoadOverlay dark={dark} progress={progress}/>
         );
     }
-
-
-
     return (
         <AppShell
             header={{ height: 70 }}
@@ -61,7 +58,7 @@ const MainLayout = () => {
             }}
             // padding="md"
             style={{
-                background: dark ? '#0d1117' : '#f8fafc',  // 매우 어두운 배경
+                background: dark ? '#21262d' : '#f8fafc',  // 매우 어두운 배경
             }}
         >
             <Header dark={dark} opened={opened}  setOpened={setOpened}  toggleColorScheme={toggleColorScheme}  />

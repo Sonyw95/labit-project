@@ -7,29 +7,29 @@ import {Outlet} from "react-router-dom";
 import MobileDrawer from "@/components/drawer/mobile/index.jsx";
 
 // 네비게이션 메뉴 아이템
- const navigationItems = [
-     { icon: 'IconHome', label: '홈', href: '/home',  requiredNav: true,
-         subLinks: []
-     },
-     { icon: 'IconDevicesCode', label: '기술', href: '/post', requiredNav: false,
-         subLinks: [
-             {
-                 icon: 'IconCoffee', label: 'Java', href: '/post/java', badge: '10', requiredNav: true, subLinks: []
-             },
-             {
-                 icon: 'IconCoffee', label: 'Spring', href: '/post/spring', badge: '10', requiredNav: true, subLinks: []
-             }
-         ]
-     },
-     { icon: 'IconTags', label: '태그', href: '/tag', requiredNav: true,
-         subLinks: []
-     },
-     // { icon: IconTrendingUp, label: '인기글', href: '/trending', hasLinks: false, requiredNav: true, subLinks: [] },
-     // { icon: IconBookmark, label: '북마크', href: '/bookmarks', hasLinks: false, requiredNav: true, subLinks: [] },
-     { icon: 'IconUser', label: '소개', href: '/about', requiredNav: true,
-         subLinks: []
-     },
- ];
+const navigationItems = [
+    { icon: 'IconHome', label: '홈', href: '/home',  requiredNav: true,
+        subLinks: []
+    },
+    { icon: 'IconDevicesCode', label: '기술', href: '/post', requiredNav: false,
+        subLinks: [
+            {
+                icon: 'IconCoffee', label: 'Java', href: '/post/java', badge: '10', requiredNav: true, subLinks: []
+            },
+            {
+                icon: 'IconCoffee', label: 'Spring', href: '/post/spring', badge: '10', requiredNav: true, subLinks: []
+            }
+        ]
+    },
+    { icon: 'IconTags', label: '태그', href: '/tag', requiredNav: true,
+        subLinks: []
+    },
+    // { icon: IconTrendingUp, label: '인기글', href: '/trending', hasLinks: false, requiredNav: true, subLinks: [] },
+    // { icon: IconBookmark, label: '북마크', href: '/bookmarks', hasLinks: false, requiredNav: true, subLinks: [] },
+    { icon: 'IconUser', label: '소개', href: '/about', requiredNav: true,
+        subLinks: []
+    },
+];
 // 인기 태그
 const popularTags= [
     { name: 'React', count: 15, color: 'blue' },
@@ -86,7 +86,7 @@ const TechBlogLayout = () => {
             }}
             // padding="md"
             style={{
-                background: dark ? '#000000' : '#f8fafc',
+                background: dark ? '#1a1a1a' : '#f8fafc',
             }}
         >
             <Header

@@ -17,6 +17,7 @@ import {
 } from '@tabler/icons-react';
 import Logo from "@/components/logo/index.jsx";
 import NavLinkLayout from "@/components/NavLinkLayout.jsx";
+import {NavLink} from "react-router-dom";
 
 
 const Navbar = ({ navigationItems, popularTags, dark }) => {
@@ -141,6 +142,8 @@ const Navbar = ({ navigationItems, popularTags, dark }) => {
                         <IconBrandLinkedin size={18} />
                     </ActionIcon>
                     <ActionIcon
+                        component={NavLink}
+                        to='/setting/blog'
                         variant="subtle"
                         size="lg"
                         radius="md"

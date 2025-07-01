@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {IconAlertTriangle, IconCheck, IconInfoSmall, IconX} from "@tabler/icons-react";
-import {ActionIcon, Box, Group, rem} from "@mantine/core";
+import {ActionIcon, Box, Group, rem, Text} from "@mantine/core";
 
 export const Toast = ({
                           id,

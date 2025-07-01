@@ -20,8 +20,8 @@ import {
     IconLogin,
     IconChevronDown, IconAlertCircle,
 } from '@tabler/icons-react';
-import {useLoginMutation} from "../../../hooks/useAuth.js";
-import {useAuthStore} from "../../../store/authStore.js";
+import {useLoginMutation} from "@/hooks/useAuth.js";
+import {useAuthStore} from "@/store/authStore.js";
 
 // 카카오톡 아이콘 SVG 컴포넌트
 const KakaoIcon = ({ size = 20 }) => (
@@ -39,7 +39,6 @@ export default function  UserDropdown (props) {
     const { dark } = props;
     const [credentials, setCredentials] = useState({ userEmail: '', password: '' });
     const { error, clearError, loginWithKakao, isLoading,isAuthenticated, user } = useAuthStore();
-    console.log(user);
     const loginMutation = useLoginMutation();
 
     const handleKakaoLogin = async () => {
@@ -57,7 +56,6 @@ export default function  UserDropdown (props) {
         clearError();
         try {
             const resp = await loginMutation.mutateAsync(credentials, type);
-            console.log(resp);
             window.location.href = '/home';
         } catch (error) {
             console.error('Login failed:', error);

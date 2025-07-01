@@ -2,9 +2,11 @@ import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom';
 import {lazy, Suspense} from "react";
 
 
-// const MainLayout = lazy(() => import("@/components/layouts/main/MainLayout.jsx"));
 const MainLayout = lazy(() => import('@/components/MainLayout.jsx'));
 const HomePage = lazy(() => import("@/components/page/Home.jsx"))
+const SettingAccountPage = lazy(() => import("@/components/page/SettingAccount.jsx"))
+const SettingBlogPage = lazy( () => import('@/components/page/SettingBlog.jsx'))
+
 
 const router = createBrowserRouter([
     {
@@ -14,7 +16,10 @@ const router = createBrowserRouter([
         ),
         children: [
             { index: true, element: <Navigate to="/home"/> },
-            { path: 'home', element: <Suspense><HomePage/></Suspense> },
+            { path: '/home', element: <Suspense><HomePage/></Suspense> },
+            { path: '/setting/account', element: <Suspense><SettingAccountPage/></Suspense> },
+            { path: '/setting/blog', element: <Suspense><SettingBlogPage/></Suspense> },
+
             // { path: '/post/:id', element: <Suspense><PostPage/></Suspense> },
             // { path: '/post/detail/:type/:id', element: <Suspense><PostDetail/></Suspense> },
         ]

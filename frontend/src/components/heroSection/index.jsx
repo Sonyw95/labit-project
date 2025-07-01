@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     Badge,
-    Button,
     Container,
     Title,
     Box,
@@ -11,10 +10,6 @@ import {
     BackgroundImage,
     rem,
 } from '@mantine/core';
-import {
-    IconChevronRight,
-    IconUser,
-} from '@tabler/icons-react';
 import bannerImage from '../../assets/banner/banner.gif'
 import {BackgroundBlur} from "@/utils/BackgroundBlur.jsx";
 

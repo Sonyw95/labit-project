@@ -16,9 +16,9 @@ import Logo from "@/components/logo/index.jsx";
 const Header = ({
                     drawerOpened,
                     setDrawerOpened,
-                    userProfile,
-                    isLoggedIn,
-                    setIsLoggedIn,
+                    // userProfile,
+                    // isAuthenticated,
+                    // loginMutation,
                     dark,
                 }) => {
     const { toggleColorScheme } = useMantineColorScheme();
@@ -92,9 +92,10 @@ const Header = ({
                         {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
                     </ActionIcon>
                     <UserDropdown
-                        userProfile={userProfile}
-                        isLoggedIn={isLoggedIn}
-                        setIsLoggedIn={setIsLoggedIn}
+                        // userProfile={userProfile}
+                        // isAuthenticated={isAuthenticated}
+                        // loginMutation={loginMutation}
+                        // setIsLoggedIn={setIsLoggedIn}
                         dark={dark}
                     />
                 </Group>
