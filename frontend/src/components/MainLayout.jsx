@@ -46,13 +46,11 @@ const userProfile = {
     role: 'Full Stack Developer'
 };
 
-const TechBlogLayout = () => {
-    const [opened, setOpened] = useState(false);
+const MainLayout = () => {
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
     const [isLoggedIn, setIsLoggedIn] = useState(true);
-
     const { colorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
 
@@ -123,4 +121,4 @@ const TechBlogLayout = () => {
     );
 };
 
-export default TechBlogLayout;
+export default MainLayout;

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
     Container,
     Title,
@@ -14,20 +14,17 @@ import {
     Badge,
     ActionIcon,
     Box,
-    Flex,
     Divider,
     ColorInput,
     NumberInput,
     Tabs,
-    Paper,
     ScrollArea,
     ThemeIcon,
-    Avatar,
     UnstyledButton,
     Modal,
     rem,
     useMantineColorScheme,
-    useMantineTheme,
+    useMantineTheme, Paper,
 } from '@mantine/core';
 import {
     IconSettings,
@@ -50,13 +47,12 @@ import {
     IconCode,
     IconMenu2, IconDisc,
 } from '@tabler/icons-react';
-import { useDisclosure } from '@mantine/hooks';
+import {useDisclosure, useListState} from '@mantine/hooks';
+import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 
 const SettingBlog = () => {
     const { colorScheme } = useMantineColorScheme();
-    const theme = useMantineTheme();
     const dark = colorScheme === 'dark';
-
     // Navigation Management State
     const [navigationItems, setNavigationItems] = useState([
         {
@@ -120,6 +116,7 @@ const SettingBlog = () => {
             order: 6
         },
     ]);
+    const [state, handler] = useListState(navigationItems);
 
     const [selectedNavItem, setSelectedNavItem] = useState(navigationItems[0]);
     const [draggedItem, setDraggedItem] = useState(null);
@@ -282,6 +279,88 @@ const SettingBlog = () => {
         setNavigationItems(updatedItems);
         setSelectedNavItem(updatedItems[0]);
         close();
+    };
+
+    const TEST = ({selectedNavItem}) => {
+        return state.map( (item, index) => (
+            <Draggable key={item.id} index={index} draggableId={item.id}>
+                {(provided, snapshot) => (
+                    <div
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+
+                    >
+                        <Paper
+                            style={{
+                                width: '100%',
+                                padding: rem(12),
+                                borderRadius: rem(8),
+                                background: selectedNavItem?.id === item.id
+                                    ? (dark ? '#1a1a1a' : '#f3f4f6')
+                                    : 'transparent',
+                                border: `1px solid ${selectedNavItem?.id === item.id
+                                    ? (dark ? '#2a2a2a' : '#e2e8f0')
+                                    : 'transparent'}`,
+                                cursor: 'grab',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    background: dark ? '#1a1a1a' : '#f8fafc',
+                                    transform: 'translateX(4px)',
+                                },
+                                '&:active': {
+                                    cursor: 'grabbing',
+                                }
+                            }}
+                        >
+                            <Group justify="space-between" wrap="nowrap">
+                                <Group gap="sm">
+                                    <IconGripVertical
+                                        size={16}
+                                        style={{ color: dark ? '#666666' : '#94a3b8' }}
+                                    />
+                                    <ThemeIcon
+                                        size="sm"
+                                        radius="md"
+                                        variant={selectedNavItem?.id === item.id ? 'filled' : 'light'}
+                                        style={{
+                                            background: selectedNavItem?.id === item.id
+                                                ? '#4c6ef5'
+                                                : (dark ? '#2a2a2a' : '#f1f5f9'),
+                                            color: selectedNavItem?.id === item.id
+                                                ? '#ffffff'
+                                                : (dark ? '#ffffff' : '#64748b'),
+                                        }}
+                                    >
+                                        <item.icon size={16} />
+                                    </ThemeIcon>
+                                    <Text
+                                        size="sm"
+                                        // fw={isSelected ? 600 : 500}
+                                        style={{ color: dark ? '#ffffff' : '#1e293b' }}
+                                    >
+                                        {item.label}
+                                    </Text>
+                                </Group>
+
+                                <Group gap="xs">
+                                    {item.badge && (
+                                        <Badge size="xs" color="red">
+                                            {item.badge}
+                                        </Badge>
+                                    )}
+                                    {item.visible ? (
+                                        <IconEye size={14} style={{ color: dark ? '#10b981' : '#059669' }} />
+                                    ) : (
+                                        <IconEyeOff size={14} style={{ color: dark ? '#666666' : '#94a3b8' }} />
+                                    )}
+                                </Group>
+                            </Group>
+                        </Paper>
+                    </div>
+                )}
+            </Draggable>
+        ));
     };
 
     const NavigationTreeItem = ({ item, isSelected }) => {
@@ -647,15 +726,30 @@ const SettingBlog = () => {
 
                                     <ScrollArea style={{ flex: 1 }}>
                                         <Stack gap="xs">
-                                            {navigationItems
-                                                .sort((a, b) => a.order - b.order)
-                                                .map((item) => (
-                                                    <NavigationTreeItem
-                                                        key={item.id}
-                                                        item={item}
-                                                        isSelected={selectedNavItem?.id === item.id}
-                                                    />
-                                                ))}
+                                            {/*{navigationItems*/}
+                                            {/*    .sort((a, b) => a.order - b.order)*/}
+                                            {/*    .map((item) => (*/}
+                                            {/*        <NavigationTreeItem*/}
+                                            {/*            key={item.id}*/}
+                                            {/*            item={item}*/}
+                                            {/*            isSelected={selectedNavItem?.id === item.id}*/}
+                                            {/*        />*/}
+                                            {/*    ))}*/}
+                                            <DragDropContext
+                                                onDragEnd={({ destination, source }) =>
+                                                    handler.reorder({ from: source.index, to: destination?.index || 0 })
+                                                }
+                                            >
+                                                <Droppable droppableId="dnd-list" direction="vertical">
+                                                    {(provided) => (
+                                                        <div {...provided.droppableProps} ref={provided.innerRef}>
+                                                            {/*{TEST}*/}
+                                                            <TEST selectedNavItem={selectedNavItem}/>
+                                                            {provided.placeholder}
+                                                        </div>
+                                                    )}
+                                                </Droppable>
+                                            </DragDropContext>
                                         </Stack>
                                     </ScrollArea>
                                 </Stack>
