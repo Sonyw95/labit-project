@@ -14,7 +14,7 @@ import {Outlet} from "react-router-dom";
 import MobileDrawer from "@/components/MobileDrawer.jsx";
 import {navigationItems, popularTags} from "@/constants/data.js";
 
-const TechBlogLayout = () => {
+const MainPageLayout = () => {
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
@@ -103,4 +103,4 @@ const TechBlogLayout = () => {
     );
 };
 
-export default TechBlogLayout;
+export default MainPageLayout;

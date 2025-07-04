@@ -1,15 +1,16 @@
 import {Badge, NavLink, rem, Stack} from "@mantine/core";
 import {IconSparkles} from "@tabler/icons-react";
 import React from "react";
-import {NavLink as Links, useNavigate} from "react-router-dom";
+import {matchPath, NavLink as Links, useLocation, useMatch, useNavigate} from "react-router-dom";
 import {Icons} from "@/utils/Icons.jsx";
 
 
 const handleClick = (requiredNav, onClose) => {
     onClose && requiredNav && onClose();
 }
-const Navigated = ( ({item, onClose}) => {
+const Navigated = ( ({item, onClose, pathname}) => {
     const subItem = item?.subLinks;
+    const isActive = matchPath(pathname, {path: item.href});
     return (
         <NavLink
             key={item.href}
@@ -48,10 +49,12 @@ const Navigated = ( ({item, onClose}) => {
     )
 })
 export default function NavItem({navigationItems, onClose}) {
+    const {pathname} = useLocation();
+
     return (
         <Stack gap="xs">
             {navigationItems.map((item) => (
-                <Navigated item={item} key={item.href} onClose={onClose} />
+                <Navigated item={item} key={item.href} onClose={onClose} pathname={pathname}/>
             ))}
         </Stack>
     )
