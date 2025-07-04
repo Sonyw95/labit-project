@@ -164,7 +164,7 @@ export default function PostCard( { post, index } ){
                                     } )
                                 }}
                             >
-                                <Icons icon={info.icon} sx={{ width: 16, height: 16, mr: 0.5 }}/>
+                                <Icons.jsx icon={info.icon} sx={{ width: 16, height: 16, mr: 0.5 }}/>
                                 <Typography variant={"caption"}>{}</Typography>
                             </Box>
                         ))}

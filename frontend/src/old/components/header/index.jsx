@@ -11,7 +11,7 @@ import {
 import {
     IconMoon, IconSun,
 } from '@tabler/icons-react';
-import UserDropdown from "@/components/userDropDown/index.jsx";
+import UserDropdown from "@/components/UserDropDown.jsx/index.jsx";
 import Logo from "@/components/logo/index.jsx";
 const Header = ({
                     drawerOpened,

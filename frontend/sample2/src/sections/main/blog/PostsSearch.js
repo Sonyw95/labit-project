@@ -78,7 +78,7 @@ export default function PostSearch({ posts }){
                             ...params.InputProps,
                             startAdornment: (
                                 <InputAdornment position={"start"}>
-                                    <Icons
+                                    <Icons.jsx
                                         icon={"mdi:post-it-note-search-outline"}
                                         sx={{ ml: 1, width: 20, height: 20, color:"text.disabled"}}
                                     />

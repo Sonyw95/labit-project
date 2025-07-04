@@ -1,19 +1,19 @@
-import {forwardRef, useState} from "react";
-import {Avatar, Box} from "@mantine/core";
-import logo from '../assets/logo/logo.png';
-// eslint-disable-next-line no-duplicate-imports
-import {
-    Text,
-    Stack,
-} from '@mantine/core';
-import {NavLink} from "react-router-dom";
+import React from 'react';
+import {Avatar, Box, Stack, Text} from "@mantine/core";
+import logo from '@/assets/logo/logo.png';
+import {useNavigate} from "react-router-dom";
 
-const LogoContent = (dark) => {
+const LogoContent = () => {
+    const navigate = useNavigate();
     return (
         <>
             {/* 로고 중앙 정렬 */}
-            <Stack align="center" gap="xl">
-                <div style={{ position: 'relative', display: 'inline-block' }}>
+            <Stack align="center" gap="xl" >
+                <Box onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/')
+                    // window.location.href = '/';
+                }}  style={{ cursor: 'pointer', position: 'relative', display: 'inline-block' }}>
                     {/* 첫 번째 < - 색상 변화 애니메이션 */}
                     <Text
                         component="span"
@@ -35,7 +35,6 @@ const LogoContent = (dark) => {
                         size="md"
                         fw={700}
                         ff="monospace"
-                        c={dark ? 'orange.4' : 'orange.6'}
                         style={{
                             animation: 'rotateAfterDelay 4s infinite',
                             // animationDelay: '0s',
@@ -53,7 +52,6 @@ const LogoContent = (dark) => {
                         size="md"
                         fw={700}
                         ff="monospace"
-                        c={dark ? 'gray.3' : 'gray.7'}
                         style={{
                             display: 'inline-block',
                             lineHeight: 1,
@@ -61,7 +59,7 @@ const LogoContent = (dark) => {
                     >
                         &gt;
                     </Text>
-                </div>
+                </Box>
             </Stack>
 
             {/* CSS 애니메이션 정의 */}
@@ -84,26 +82,26 @@ const LogoContent = (dark) => {
         </>
     );
 };
-const Logo = forwardRef( ({ href, isLogo = true, dark, ...style}, ref) => {
-    const [colorScheme, setColorScheme] = useState('light');
-
-    if( isLogo ){
-        return (
-            <Box
-                component={NavLink}
-                to={href}
-                style={{
-                transition: 'background-color 0.3s ease',
-                cursor:'pointer'
-            }}>
-                <LogoContent dark={dark}/>
-            </Box>
-        );
-    }else{
-        return(
-            <Avatar src={logo} {...style}/>
-        )
-    }
-});
+const Logo = ({
+                  radius = 'md',
+                  size = 'sm',
+                  style = {},
+                  isLogo = true
+              }) => (
+    isLogo ? (<div style={{
+        width: size === 'lg' ? '48px' : '32px',
+        height: size === 'lg' ? '48px' : '32px',
+        borderRadius: radius === 'xl' ? '50%' : '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: size === 'lg' ? '18px' : '14px',
+        ...style
+    }}>
+        <LogoContent />
+    </div>) : <Avatar src={logo} style={style}/>
+);
 
 export default Logo;

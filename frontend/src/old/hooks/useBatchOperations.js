@@ -1,7 +1,7 @@
 // ============= 복수 작업 처리 훅 =============
 
 import { useMutation } from '@tanstack/react-query';
-import {apiClient} from "@/lib/apiClient.js";
+import {apiClient} from "@/old/lib/apiClient.js";
 
 /**
  * @typedef {Object} BatchOperation
