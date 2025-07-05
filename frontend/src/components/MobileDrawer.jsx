@@ -34,6 +34,7 @@ const MobileDrawer= ({
                          userProfile,
                          isLoggedIn,
                          setIsLoggedIn,
+                         pathname,
                          dark,
                      }) => {
     const { toggleColorScheme } = useMantineColorScheme();
@@ -148,7 +149,7 @@ const MobileDrawer= ({
                 )}
 
                 {/* Navigation Items */}
-                <NavItem navigationItems={navigationItems} dark={dark} onClose={onClose}/>
+                <NavItem navigationItems={navigationItems} dark={dark} onClose={onClose} pathname={pathname}/>
                 <Divider style={{ borderColor: dark ? '#2a2a2a' : '#e2e8f0' }} />
 
                 {/* Popular Tags */}
