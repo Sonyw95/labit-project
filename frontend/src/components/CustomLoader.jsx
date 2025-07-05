@@ -43,35 +43,6 @@ const CustomLoader = ({ progress, dark }) => (
                 />
 
                 {/* 주변 회전하는 점들 */}
-                <Box
-                    style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 140,
-                        height: 140,
-                        animation: 'rotate 3s linear infinite',
-                    }}
-                >
-                    {[0, 1, 2, 3].map((i) => (
-                        <Box
-                            key={i}
-                            style={{
-                                position: 'absolute',
-                                width: 8,
-                                height: 8,
-                                borderRadius: '50%',
-                                background: dark ? '#4c6ef5' : '#339af0',
-                                top: '50%',
-                                left: '50%',
-                                transform: `translate(-50%, -50%) rotate(${i * 90}deg) translateY(-70px)`,
-                                boxShadow: 'none',
-                                animation: `pulse 1s ease-in-out infinite ${i * 0.2}s`,
-                            }}
-                        />
-                    ))}
-                </Box>
             </Box>
 
             <Stack align="center" gap="xs">

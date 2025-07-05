@@ -600,7 +600,7 @@ const TechBlogLayout = () => {
                                             letterSpacing: '-0.02em',
                                         }}
                                     >
-                                        Let's learn
+                                        Let's Learn
                                     </Title>
 
                                     <Box style={{ position: 'relative', height: rem(80) }}>

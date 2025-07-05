@@ -3,14 +3,47 @@ import {Box, Button, Center, Container, Divider, Group, rem, Stack, Text, Title}
 import PostList from "@/components/PostList.jsx";
 import {recentPosts} from "@/constants/data.js";
 import React from "react";
-import {IconChevronRight, IconSparkles} from "@tabler/icons-react";
+import {
+    IconBookOff,
+    IconChevronRight, IconCode,
+    IconEye,
+    IconHeart,
+    IconMessage,
+    IconSparkles,
+    IconUsers
+} from "@tabler/icons-react";
+import PostHeroSection from "@/components/BannerSection.jsx";
+import BannerSection from "@/components/BannerSection.jsx";
 
 const PostPage = () => {
     // const {category} = useParams();
     const {dark} = useOutletContext();
+    // const customStats = [
+    //     { icon: IconBookOff, label: '총 게시글', value: '42', color: '#3b82f6' },
+    //     { icon: IconUsers, label: '월간 독자', value: '1.2K', color: '#10b981' },
+    //     { icon: IconHeart, label: '총 좋아요', value: '350', color: '#ef4444' },
+    //     { icon: IconEye, label: '총 조회수', value: '25.6K', color: '#f59e0b' },
+    //     { icon: IconMessage, label: '댓글', value: '128', color: '#8b5cf6' },
+    //     { icon: IconCode, label: '기술 스택', value: '15+', color: '#06b6d4' },
+    // ];
+
     return (
         <>
+            <BannerSection
+                variant="simple"
+                title="기록을 남겨요"
+                enableTyping={true}
+                typingTexts={[
+                    "정보",
+                    "인사이트",
+                    "경험"
+                ]}
+                typingSpeed={150}
+                deleteSpeed={75}
+                pauseTime={3000}
+            />
             <Container size='lg'>
+
                 <Stack gap='xl' mb='xl' mt='xl'>
                     {/* Header Section */}
                     <Group justify="center" gap="xs" mb='md'>

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
     AppShell,
-    Box,
     useMantineColorScheme,
 } from '@mantine/core';
 
 // 스타일 imports
-import '../../styles/animation.css';
+import '../styles/animation.css';
 import CustomLoader from "@/components/CustomLoader.jsx";
 import Navbar from "@/components/Navbar.jsx";
 import Header from "@/components/Header.jsx";
@@ -15,6 +14,7 @@ import MobileDrawer from "@/components/MobileDrawer.jsx";
 import {navigationItems, popularTags} from "@/constants/data.js";
 
 const MainPageLayout = () => {
+    console.log('Main')
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
@@ -24,40 +24,40 @@ const MainPageLayout = () => {
 
 
     // 로딩 효과 시뮬레이션
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setProgress((prevProgress) => {
-                if (prevProgress >= 100) {
-                    clearInterval(timer);
-                    setTimeout(() => setLoading(false), 500);
-                    return 100;
-                }
-                return prevProgress + Math.random() * 15;
-            });
-        }, 200);
-
-        return () => clearInterval(timer);
-    }, []);
-
-
-
-    if (loading) {
-        return (
-            <Box
-                style={{
-                    height: '100vh',
-                    background: dark ? '#0d1117' : '#f8fafc',
-                    overflow: 'hidden',
-                }}
-            >
-                <CustomLoader progress={progress} dark={dark} />
-            </Box>
-        );
-    }
+    // useEffect(() => {
+    //     const timer = setInterval(() => {
+    //         setProgress((prevProgress) => {
+    //             if (prevProgress >= 100) {
+    //                 clearInterval(timer);
+    //                 setTimeout(() => setLoading(false), 500);
+    //                 return 100;
+    //             }
+    //             return prevProgress + Math.random() * 15;
+    //         });
+    //     }, 200);
+    //
+    //     return () => clearInterval(timer);
+    // }, []);
+    //
+    //
+    //
+    // if (loading) {
+    //     return (
+    //         <Box
+    //             style={{
+    //                 height: '100vh',
+    //                 background: dark ? '#0d1117' : '#f8fafc',
+    //                 overflow: 'hidden',
+    //             }}
+    //         >
+    //             <CustomLoader progress={progress} dark={dark} />
+    //         </Box>
+    //     );
+    // }
 
     return (
         <AppShell
-            header={{ height: 70 }}
+            header={{ height: 70 , offset: true}}
             navbar={{
                 width: 280,
                 breakpoint: 'lg',

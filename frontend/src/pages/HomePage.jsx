@@ -1,11 +1,11 @@
-import HeroSection from "@/components/HeroSection.jsx";
 import PostList from "@/components/PostList.jsx";
 import React, {useEffect, useState} from "react";
 import {recentPosts, techStack} from "@/constants/data.js";
 import {Box, Button, Center, Container, Group, rem, Stack, Text, Title} from "@mantine/core";
 import {useOutletContext} from "react-router-dom";
 import {IconChevronRight, IconSparkles} from "@tabler/icons-react";
-
+import BannerSection from "@/components/BannerSection.jsx";
+import banner from '../assets/banner/banner.gif'
 
 const HomePage = () => {
     const {loading, dark} = useOutletContext();
@@ -22,7 +22,14 @@ const HomePage = () => {
     }, [loading, techStack.length]);
     return(
         <>
-            <HeroSection currentTech={currentTech} dark={dark} />
+            <BannerSection
+                variant="hero"
+                title="LABit"
+                // description="확장 가능하고 안정적인 백엔드 시스템 구축 경험을 나눕니다."
+                techStack={['Java', 'Spring', 'React']}
+                backgroundImage= { banner}
+                showScrollIndicator={true}
+            />
             <Container size="lg">
                 <Stack gap='xl' mb='xl'>
                     {/* Header Section */}

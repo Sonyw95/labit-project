@@ -1,9 +1,9 @@
 import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom';
 import {lazy, Suspense} from "react";
 
-const MainPage = lazy(() => import('@/components/layout/MainPage.jsx'));
-const HomePage = lazy(() => import("@/components/layout/HomePage.jsx"))
-const PostPage = lazy(() => import('@/components/layout/PostPage.jsx'))
+const MainPage = lazy(() => import('@/pages/MainPage.jsx'));
+const HomePage = lazy(() => import("@/pages/HomePage.jsx"))
+const PostPage = lazy(() => import('@/pages/PostPage.jsx'))
 // const SettingAccountPage = lazy(() => import("@/components/page/SettingAccount.jsx"))
 // const SettingBlogPage = lazy( () => import('@/components/page/SettingBlog.jsx'))
 

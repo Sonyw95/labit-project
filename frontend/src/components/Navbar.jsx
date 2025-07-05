@@ -15,7 +15,6 @@ import {
     IconBrandGithub,
     IconBrandLinkedin,
     IconSettings,
-    IconSparkles,
 } from '@tabler/icons-react';
 import Logo from './Logo';
 import {getTagColor} from '../utils/helpers';
@@ -25,6 +24,12 @@ const Navbar = ({ dark, navigationItems, popularTags }) => (
     <AppShell.Navbar p="md" style={{
         background: dark ? '#161b22' : '#ffffff',
         borderRight: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        height: '100vh',
+        zIndex: 100
     }}>
         <AppShell.Section>
             <Group mb="md">

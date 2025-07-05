@@ -1,16 +1,16 @@
 import {Badge, NavLink, rem, Stack} from "@mantine/core";
 import {IconSparkles} from "@tabler/icons-react";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {matchPath, NavLink as Links, useLocation, useMatch, useNavigate} from "react-router-dom";
 import {Icons} from "@/utils/Icons.jsx";
+import {useNavLinkState} from "@/hooks/useNavLinksState.js";
 
 
 const handleClick = (requiredNav, onClose) => {
     onClose && requiredNav && onClose();
 }
-const Navigated = ( ({item, onClose, pathname}) => {
+const Navigated = ( ({item, onClose, openedItems, toggleItem}) => {
     const subItem = item?.subLinks;
-    const isActive = matchPath(pathname, {path: item.href});
     return (
         <NavLink
             key={item.href}
@@ -18,6 +18,8 @@ const Navigated = ( ({item, onClose, pathname}) => {
             to={ item.href }
             onClick={() => handleClick(item.requiredNav, onClose)}
             label={item.label}
+            opened={openedItems.has(item.href)}
+            onChange={(opened) => toggleItem(item.href)}
             leftSection={
                 <Icons icon={item.icon} size={18} style={{
                     transition: 'all 0.3s ease',
@@ -38,23 +40,22 @@ const Navigated = ( ({item, onClose, pathname}) => {
                     padding: rem(12),
                     marginBottom: rem(4),
                     border: 'none',
-                    ransition: 'all 0.3s ease',
+                    transition: 'all 0.3s ease',
                 },
             }}
         >
             { subItem && subItem.length > 0 && item?.subLinks?.map( (sub) => (
-                <Navigated item={sub} key={sub.href} onClose={onClose}/>
+                <Navigated item={sub} key={sub.href} onClose={onClose} openedItems={openedItems}/>
             ))}
         </NavLink>
     )
 })
 export default function NavItem({navigationItems, onClose}) {
-    const {pathname} = useLocation();
-
+    const { openedItems, toggleItem } = useNavLinkState(navigationItems);
     return (
         <Stack gap="xs">
             {navigationItems.map((item) => (
-                <Navigated item={item} key={item.href} onClose={onClose} pathname={pathname}/>
+                <Navigated item={item} key={item.href} onClose={onClose} openedItems={openedItems} toggleItem={toggleItem}/>
             ))}
         </Stack>
     )

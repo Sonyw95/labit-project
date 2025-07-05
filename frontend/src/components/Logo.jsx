@@ -18,7 +18,7 @@ const LogoContent = () => {
                     <Text
                         component="span"
                         size="md"
-                        fw={700}
+                        fw={500}
                         ff="monospace"
                         style={{
                             animation: 'colorChange 3s infinite',
@@ -33,7 +33,7 @@ const LogoContent = () => {
                     <Text
                         component="span"
                         size="md"
-                        fw={700}
+                        fw={500}
                         ff="monospace"
                         style={{
                             animation: 'rotateAfterDelay 4s infinite',
@@ -50,7 +50,7 @@ const LogoContent = () => {
                     <Text
                         component="span"
                         size="md"
-                        fw={700}
+                        fw={500}
                         ff="monospace"
                         style={{
                             display: 'inline-block',

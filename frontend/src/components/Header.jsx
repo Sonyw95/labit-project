@@ -17,7 +17,9 @@ import {
 import Logo from "@/components/Logo.jsx";
 
 const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
-    <AppShell.Header style={{
+    <AppShell.Header
+        ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
+        style={{
         background: dark ? '#161b22' : '#ffffff',
         borderBottom: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
     }}>

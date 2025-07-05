@@ -11,11 +11,8 @@ import {
     ActionIcon,
     rem, Button, Grid, Center,
 } from '@mantine/core';
-import {
-    IconChevronRight,
-    IconSparkles,
-} from '@tabler/icons-react';
 import PostCard from "@/components/PostCard.jsx";
+import PostHeroSection from "@/components/BannerSection.jsx";
 
 const PostList = ({   posts,
                       loading = false,

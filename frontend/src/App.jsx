@@ -1,4 +1,7 @@
 import '@mantine/core/styles.css';
+import '@mantine/carousel/styles.css';
+import './App.css'
+
 import {Box, MantineProvider} from "@mantine/core";
 import {Router} from "@/Router.jsx";
 import Helmet from "@/components/Helmet.jsx";
