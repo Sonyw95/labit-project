@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 import Logo from "@/components/Logo.jsx";
 import {BackgroundBlur} from "@/utils/helpers.js";
+import UserDropDown2 from "@/components/UserDropDown2.jsx";
 
 const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
     <AppShell.Header
@@ -83,19 +84,19 @@ const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
                 >
                     <IconSearch size={18} />
                 </ActionIcon>
-                <ActionIcon
-                    variant="subtle"
-                    size="lg"
-                    radius="md"
-                    style={{
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                            background: dark ? '#21262d' : '#f3f4f6',
-                        }
-                    }}
-                >
-                    <IconBell size={18} />
-                </ActionIcon>
+                {/*<ActionIcon*/}
+                {/*    variant="subtle"*/}
+                {/*    size="lg"*/}
+                {/*    radius="md"*/}
+                {/*    style={{*/}
+                {/*        transition: 'all 0.3s ease',*/}
+                {/*        '&:hover': {*/}
+                {/*            background: dark ? '#21262d' : '#f3f4f6',*/}
+                {/*        }*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    <IconBell size={18} />*/}
+                {/*</ActionIcon>*/}
                 <ActionIcon
                     variant="light"
                     size="lg"
@@ -112,6 +113,7 @@ const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
                 >
                     {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
                 </ActionIcon>
+                <UserDropDown2/>
             </Group>
         </Group>
     </AppShell.Header>

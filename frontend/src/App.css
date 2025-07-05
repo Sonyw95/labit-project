@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./assets/fonts/JetBrainsMono-Light.woff2') format('woff');
+  /*font-weight: 900;*/
+}
 *{
   font-family: 'JetBrains Mono', 'Tahoma', sans-serif !important;
 }

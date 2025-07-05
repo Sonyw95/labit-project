@@ -24,7 +24,7 @@ import {BackgroundBlur} from "@/utils/helpers.js";
 
 const BannerSection = ({
                            title = "LABit",
-                           subtitle = "기술과 성장의 기록",
+                           subtitle ,
                            description = "풀스택 개발자의 학습 여정을 기록하며, 실무 경험과 인사이트를 공유하는 공간입니다.",
                            backgroundImage,
                            stats = [],
@@ -526,29 +526,33 @@ const BannerSection = ({
 
                 <Container size="lg" style={{ position: 'relative', zIndex: 10 }}>
                     <Stack align="center" gap="xl" style={{ textAlign: 'center' }}>
-                        <Badge
-                            size="md"
-                            radius="xl"
-                            style={{
-                                background: '#4c6ef5',
-                                color: 'white',
-                                animation: mounted ? 'fadeInDown 0.6s ease-out' : 'none',
-                            }}
-                        >
-                            {subtitle}
-                        </Badge>
+                        { subtitle && (
+                            <Badge
+                                size="md"
+                                radius="xl"
+                                style={{
+                                    background: '#4c6ef5',
+                                    color: 'white',
+                                    animation: mounted ? 'fadeInDown 0.6s ease-out' : 'none',
+                                }}
+                            >
+                                {subtitle}
+                            </Badge>
+                        )}
+                        { title && (
+                            <Title
+                                order={1}
+                                style={{
+                                    fontSize: rem(48),
+                                    fontWeight: 700,
+                                    color: dark ? '#f0f6fc' : '#1e293b',
+                                    animation: mounted ? 'fadeInUp 0.6s ease-out 0.2s both' : 'none',
+                                }}
+                            >
+                                {title}
+                            </Title>
+                        )}
 
-                        <Title
-                            order={1}
-                            style={{
-                                fontSize: rem(48),
-                                fontWeight: 700,
-                                color: dark ? '#f0f6fc' : '#1e293b',
-                                animation: mounted ? 'fadeInUp 0.6s ease-out 0.2s both' : 'none',
-                            }}
-                        >
-                            {title}
-                        </Title>
 
                         {/* Typing Text or Static Description */}
                         {enableTyping ? (

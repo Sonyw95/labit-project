@@ -5,7 +5,7 @@ import {recentPosts} from "@/constants/data.js";
 import React from "react";
 import {
     IconBookOff,
-    IconChevronRight, IconCode,
+    IconChevronRight, IconCode, IconCoffee,
     IconEye,
     IconHeart,
     IconMessage,
@@ -16,7 +16,7 @@ import PostHeroSection from "@/components/BannerSection.jsx";
 import BannerSection from "@/components/BannerSection.jsx";
 
 const PostPage = () => {
-    // const {category} = useParams();
+    const {category} = useParams();
     const {dark} = useOutletContext();
     // const customStats = [
     //     { icon: IconBookOff, label: '총 게시글', value: '42', color: '#3b82f6' },
@@ -31,12 +31,13 @@ const PostPage = () => {
         <>
             <BannerSection
                 variant="simple"
-                title="기록을 남겨요"
+                title=""
                 enableTyping={true}
                 typingTexts={[
-                    "정보",
+                    "알고리즘",
+                    "자료구조",
                     "인사이트",
-                    "경험"
+                    "기본지식"
                 ]}
                 typingSpeed={150}
                 deleteSpeed={75}
@@ -49,7 +50,7 @@ const PostPage = () => {
                     <Group justify="center" gap="xs" mb='md'>
                         <Box style={{ flex: 1 }}>
                             <Center gap="xs" mb="xs">
-                                <IconSparkles
+                                <IconCoffee
                                     size={24}
                                     color={dark ? '#60a5fa' : '#3b82f6'}
                                 />
@@ -69,7 +70,7 @@ const PostPage = () => {
                                         letterSpacing: '-0.02em',
                                     }}
                                 >
-                                    최근 게시글
+                                    {category.toUpperCase()}
                                 </Title>
                             </Center>
                             <Center>
@@ -78,7 +79,7 @@ const PostPage = () => {
                                     c={dark ? 'gray.4' : 'gray.6'}
                                     style={{ maxWidth: '600px' }}
                                 >
-                                    최신 기술 트렌드와 개발 인사이트를 담은 포스트들을 만나보세요
+                                    공부하는 내용 정리
                                 </Text>
                             </Center>
 
