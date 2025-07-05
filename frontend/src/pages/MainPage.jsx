@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    AppShell,
+    AppShell, ScrollArea, Stack,
     useMantineColorScheme,
 } from '@mantine/core';
 
@@ -94,12 +94,13 @@ const MainPageLayout = () => {
                 popularTags={popularTags}
                 dark={dark}
             />
-            <AppShell.Main h='100%'>
+            <ScrollArea my="md" component={AppShell.Main}  h={200} scrollbars="y">
                 <Outlet context={{
                     loading,
                     dark
                 }}/>
-            </AppShell.Main>
+            </ScrollArea>
+
         </AppShell>
     );
 };

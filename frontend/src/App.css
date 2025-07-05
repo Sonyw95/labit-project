@@ -6,3 +6,6 @@
 *{
   font-family: 'JetBrains Mono', 'Tahoma', sans-serif !important;
 }
+body{
+  overflow: hidden;
+}

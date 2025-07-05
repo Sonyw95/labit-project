@@ -9,7 +9,6 @@ import {
 } from '@mantine/core';
 import {
     IconSearch,
-    IconBell,
     IconSun,
     IconMoon,
 } from '@tabler/icons-react';
