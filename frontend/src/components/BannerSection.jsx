@@ -23,26 +23,28 @@ import {
 import {BackgroundBlur} from "@/utils/helpers.js";
 
 const BannerSection = ({
-                                   title = "LABit",
-                                   subtitle = "기술과 성장의 기록",
-                                   description = "풀스택 개발자의 학습 여정을 기록하며, 실무 경험과 인사이트를 공유하는 공간입니다.",
-                                   backgroundImage,
-                                   stats = [],
-                                   techStack = ['Java', 'Spring', 'React'],
-                                   onPrimaryAction,
-                                   onSecondaryAction,
-                                   showScrollIndicator = true,
-                                   variant = "hero", // hero, simple, stats
-                                   // 타이핑 효과 관련 props
-                                   enableTyping = false,
-                                   typingTexts = [],
-                                   typingSpeed = 100,
-                                   deleteSpeed = 50,
-                                   pauseTime = 2000,
-                                   loop = true,
-                               }) => {
+                           title = "LABit",
+                           subtitle = "기술과 성장의 기록",
+                           description = "풀스택 개발자의 학습 여정을 기록하며, 실무 경험과 인사이트를 공유하는 공간입니다.",
+                           backgroundImage,
+                           stats = [],
+                           techStack = ['Java', 'Spring', 'React'],
+                           onPrimaryAction,
+                           onSecondaryAction,
+                           showScrollIndicator = true,
+                           variant = "hero", // hero, simple, stats
+                           // 타이핑 효과 관련 props
+                           enableTyping = false,
+                           typingTexts = [],
+                           typingSpeed = 100,
+                           deleteSpeed = 50,
+                           pauseTime = 2000,
+                           loop = true,
+                           animationType = "float", // float, pulse, glow, bounce, rotate, scale
+                       }) => {
     const { colorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
+    const [hoveredIndex, setHoveredIndex] = useState(null);
 
     const [currentTech, setCurrentTech] = useState(0);
     const [mounted, setMounted] = useState(false);
@@ -115,7 +117,7 @@ const BannerSection = ({
 
     // 기본 통계 데이터
     const defaultStats = [
-        { icon: IconDevicesCode, label: '게시글', value: '42+', color: '#3b82f6' },
+        { icon: IconDevicesCode, label: '게시글', value: '42+', color: '#3b82f6', trend: '+12%'  },
         { icon: IconUsers, label: '독자', value: '1.2K+', color: '#10b981' },
         { icon: IconStar, label: '좋아요', value: '350+', color: '#f59e0b' },
         { icon: IconTrendingUp, label: '조회수', value: '25K+', color: '#ef4444' },
@@ -131,6 +133,152 @@ const BannerSection = ({
         return colors[index % colors.length];
     };
 
+    const getAnimationStyle = (index, isHovered) => {
+        const baseStyle = {
+            minWidth: rem(140),
+            padding: rem(24),
+            borderRadius: rem(16),
+            background: dark
+                ? (isHovered ? '#1c2128' : '#161b22')
+                : (isHovered ? '#f8fafc' : '#ffffff'),
+            border: `2px solid ${isHovered ? displayStats[index]?.color || '#4c6ef5' : (dark ? '#21262d' : '#e5e7eb')}`,
+            cursor: 'pointer',
+            position: 'relative',
+            overflow: 'hidden',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        };
+
+        switch (animationType) {
+            case 'float':
+                return {
+                    ...baseStyle,
+                    transform: isHovered ? 'translateY(-12px) scale(1.05)' : 'translateY(0) scale(1)',
+                    boxShadow: isHovered
+                        ? `0 20px 40px -8px ${displayStats[index]?.color}40, 0 0 0 1px ${displayStats[index]?.color}20`
+                        : dark
+                            ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                };
+
+            case 'pulse':
+                return {
+                    ...baseStyle,
+                    transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                    animation: isHovered ? 'pulse 1.5s infinite' : 'none',
+                    boxShadow: isHovered
+                        ? `0 0 30px ${displayStats[index]?.color}60, 0 0 60px ${displayStats[index]?.color}30`
+                        : dark
+                            ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                };
+
+            case 'glow':
+                return {
+                    ...baseStyle,
+                    transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
+                    background: isHovered
+                        ? `linear-gradient(135deg, ${displayStats[index]?.color}10, ${displayStats[index]?.color}05)`
+                        : baseStyle.background,
+                    boxShadow: isHovered
+                        ? `0 15px 35px ${displayStats[index]?.color}40, 0 5px 15px rgba(0, 0, 0, 0.1), inset 0 1px 0 ${displayStats[index]?.color}30`
+                        : dark
+                            ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                };
+
+            case 'bounce':
+                return {
+                    ...baseStyle,
+                    transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+                    animation: isHovered ? 'bounce 0.6s ease-out' : 'none',
+                    boxShadow: isHovered
+                        ? `0 12px 24px ${displayStats[index]?.color}30`
+                        : dark
+                            ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                };
+
+            case 'rotate':
+                return {
+                    ...baseStyle,
+                    transform: isHovered ? 'translateY(-8px) rotateY(5deg) rotateX(5deg)' : 'translateY(0) rotateY(0deg) rotateX(0deg)',
+                    transformStyle: 'preserve-3d',
+                    perspective: '1000px',
+                    boxShadow: isHovered
+                        ? `0 15px 30px ${displayStats[index]?.color}40, 10px 0 20px rgba(0, 0, 0, 0.1)`
+                        : dark
+                            ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                };
+
+            case 'scale':
+                return {
+                    ...baseStyle,
+                    transform: isHovered ? 'scale(1.12)' : 'scale(1)',
+                    zIndex: isHovered ? 10 : 1,
+                    boxShadow: isHovered
+                        ? `0 25px 50px ${displayStats[index]?.color}50, 0 0 0 1px ${displayStats[index]?.color}`
+                        : dark
+                            ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                };
+
+            default:
+                return baseStyle;
+        }
+    };
+
+    const getIconStyle = (index, isHovered) => {
+        const stat = displayStats[index];
+        const baseIconStyle = {
+            background: isHovered ? stat?.color : `${stat?.color}20`,
+            color: isHovered ? 'white' : stat?.color,
+            border: 'none',
+            transition: 'all 0.3s ease',
+        };
+
+        switch (animationType) {
+            case 'pulse':
+                return {
+                    ...baseIconStyle,
+                    transform: isHovered ? 'scale(1.2)' : 'scale(1)',
+                    animation: isHovered ? 'iconPulse 1s infinite' : 'none',
+                };
+
+            case 'rotate':
+                return {
+                    ...baseIconStyle,
+                    transform: isHovered ? 'rotateY(360deg) scale(1.1)' : 'rotateY(0deg) scale(1)',
+                    transition: 'all 0.6s ease',
+                };
+
+            case 'bounce':
+                return {
+                    ...baseIconStyle,
+                    transform: isHovered ? 'scale(1.2)' : 'scale(1)',
+                    animation: isHovered ? 'iconBounce 0.6s ease-out' : 'none',
+                };
+
+            default:
+                return {
+                    ...baseIconStyle,
+                    transform: isHovered ? 'scale(1.15)' : 'scale(1)',
+                };
+        }
+    };
+
+    const getValueStyle = (index, isHovered) => {
+        const stat = displayStats[index];
+
+        return {
+            color: isHovered ? stat?.color : (dark ? '#f0f6fc' : '#1e293b'),
+            transition: 'all 0.3s ease',
+            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+            fontWeight: isHovered ? 800 : 700,
+        };
+    };
+
+
     // Hero 버전 (메인 페이지용)
     if (variant === "hero") {
         return (
@@ -139,7 +287,7 @@ const BannerSection = ({
                     position: 'relative',
                     minHeight: '100vh',
                     overflow: 'hidden',
-                    marginBottom: rem(40),
+                    // marginBottom: rem(40),
                 }}
             >
                 {/* Background */}
@@ -294,62 +442,6 @@ const BannerSection = ({
                                 </Stack>
                             ))}
                         </Group>
-
-                        {/* Action Buttons */}
-                        <Group
-                            gap="md"
-                            justify="center"
-                            style={{
-                                animation: mounted ? 'fadeInUp 0.8s ease-out 1s both' : 'none',
-                            }}
-                        >
-                            <Button
-                                size="lg"
-                                radius="xl"
-                                rightSection={<IconChevronRight size={18} />}
-                                onClick={onPrimaryAction}
-                                style={{
-                                    background: '#4c6ef5',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '12px 32px',
-                                    fontSize: rem(16),
-                                    fontWeight: 500,
-                                    boxShadow: 'none',
-                                    transition: 'all 0.3s ease',
-                                    '&:hover': {
-                                        background: '#3b82f6',
-                                        transform: 'translateY(-2px)',
-                                    }
-                                }}
-                            >
-                                블로그 둘러보기
-                            </Button>
-
-                            <Button
-                                size="lg"
-                                radius="xl"
-                                variant="outline"
-                                leftSection={<IconUser size={18} />}
-                                onClick={onSecondaryAction}
-                                style={{
-                                    padding: '12px 32px',
-                                    fontSize: rem(16),
-                                    fontWeight: 500,
-                                    background: 'transparent',
-                                    color: '#8b949e',
-                                    border: '2px solid #30363d',
-                                    transition: 'all 0.3s ease',
-                                    '&:hover': {
-                                        background: 'rgba(255, 255, 255, 0.1)',
-                                        transform: 'translateY(-2px)',
-                                    }
-                                }}
-                            >
-                                개발자 소개
-                            </Button>
-                        </Group>
-
                         {/* Progress Indicator */}
                         <Box style={{
                             animation: mounted ? 'fadeInUp 0.8s ease-out 1.2s both' : 'none',
@@ -545,15 +637,20 @@ const BannerSection = ({
         return (
             <Box
                 style={{
-                    background: dark
-                        ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
-                        : 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
+                    // background: dark
+                    //     ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                    //     : 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
                     padding: `${rem(60)} 0`,
                     marginBottom: rem(40),
-                    border: `1px solid ${dark ? '#30363d' : '#e2e8f0'}`,
+                    // border: `1px solid ${dark ? '#30363d' : '#e2e8f0'}`,
+                    position: 'relative',
+                    overflow: 'hidden',
                 }}
             >
-                <Container size="lg">
+                {/* 배경 파티클 효과 */}
+
+
+                <Container size="lg" style={{ position: 'relative', zIndex: 10 }}>
                     <Stack gap="xl">
                         {/* Header */}
                         <Stack align="center" gap="md" style={{ textAlign: 'center' }}>
@@ -586,56 +683,106 @@ const BannerSection = ({
                             gap="xl"
                             style={{
                                 animation: mounted ? 'fadeInUp 0.6s ease-out 0.4s both' : 'none',
+                                flexWrap: 'wrap',
                             }}
                         >
-                            {displayStats.map((stat, index) => (
-                                <Stack
-                                    key={stat.label}
-                                    align="center"
-                                    gap="xs"
-                                    style={{
-                                        minWidth: rem(120),
-                                        padding: rem(20),
-                                        borderRadius: rem(12),
-                                        background: dark ? '#161b22' : '#ffffff',
-                                        border: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
-                                        transition: 'transform 0.3s ease',
-                                        '&:hover': {
-                                            transform: 'translateY(-4px)',
-                                        }
-                                    }}
-                                >
-                                    <ActionIcon
-                                        size="xl"
-                                        radius="xl"
-                                        style={{
-                                            background: `${stat.color}20`,
-                                            color: stat.color,
-                                            border: 'none',
-                                        }}
-                                    >
-                                        <stat.icon size={24} />
-                                    </ActionIcon>
+                            {displayStats.map((stat, index) => {
+                                const isHovered = hoveredIndex === index;
 
-                                    <Text
-                                        size="xl"
-                                        fw={700}
-                                        style={{
-                                            color: dark ? '#f0f6fc' : '#1e293b',
-                                        }}
+                                return (
+                                    <Stack
+                                        key={stat.label}
+                                        align="center"
+                                        gap="md"
+                                        style={getAnimationStyle(index, isHovered)}
+                                        onMouseEnter={() => setHoveredIndex(index)}
+                                        onMouseLeave={() => setHoveredIndex(null)}
                                     >
-                                        {stat.value}
-                                    </Text>
+                                        {/* 배경 글로우 효과 */}
+                                        {isHovered && (
+                                            <Box
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    background: `radial-gradient(circle at center, ${stat.color}15 0%, transparent 70%)`,
+                                                    borderRadius: rem(16),
+                                                    animation: 'glow 2s ease-in-out infinite alternate',
+                                                }}
+                                            />
+                                        )}
 
-                                    <Text
-                                        size="sm"
-                                        c="dimmed"
-                                        style={{ textAlign: 'center' }}
-                                    >
-                                        {stat.label}
-                                    </Text>
-                                </Stack>
-                            ))}
+                                        {/* 아이콘 */}
+                                        <ActionIcon
+                                            size="xl"
+                                            radius="xl"
+                                            style={getIconStyle(index, isHovered)}
+                                        >
+                                            <stat.icon size={28} />
+                                        </ActionIcon>
+
+                                        {/* 값 */}
+                                        <Text
+                                            size="xl"
+                                            style={getValueStyle(index, isHovered)}
+                                        >
+                                            {stat.value}
+                                        </Text>
+
+                                        {/* 라벨 */}
+                                        <Text
+                                            size="sm"
+                                            style={{
+                                                textAlign: 'center',
+                                                color: isHovered ? stat.color : (dark ? '#8b949e' : '#64748b'),
+                                                transition: 'all 0.3s ease',
+                                                fontWeight: isHovered ? 600 : 400,
+                                            }}
+                                        >
+                                            {stat.label}
+                                        </Text>
+
+                                        {/* 트렌드 표시 (있는 경우) */}
+                                        {stat.trend && (
+                                            <Text
+                                                size="xs"
+                                                style={{
+                                                    color: stat.color,
+                                                    background: `${stat.color}15`,
+                                                    padding: `${rem(4)} ${rem(8)}`,
+                                                    borderRadius: rem(12),
+                                                    fontWeight: 600,
+                                                    opacity: isHovered ? 1 : 0.7,
+                                                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                                                    transition: 'all 0.3s ease',
+                                                }}
+                                            >
+                                                {stat.trend}
+                                            </Text>
+                                        )}
+
+                                        {/* 리플 효과 */}
+                                        {isHovered && animationType === 'glow' && (
+                                            <Box
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    width: '200%',
+                                                    height: '200%',
+                                                    transform: 'translate(-50%, -50%)',
+                                                    borderRadius: '50%',
+                                                    background: `radial-gradient(circle, ${stat.color}30 0%, transparent 70%)`,
+                                                    animation: 'ripple 1.5s ease-out infinite',
+                                                    pointerEvents: 'none',
+                                                }}
+                                            />
+                                        )}
+                                    </Stack>
+                                );
+                            })}
                         </Group>
                     </Stack>
                 </Container>
@@ -648,69 +795,91 @@ const BannerSection = ({
 
 // 스타일 추가
 const enhancedBannerStyles = `
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+                    @keyframes fadeInUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
 
-    @keyframes smoothChange {
-        0% { 
-            opacity: 0; 
-            transform: scale(0.95); 
-        }
-        100% { 
-            opacity: 1; 
-            transform: scale(1); 
-        }
-    }
+                    @keyframes pulse {
+                        0%, 100% {
+                            transform: scale(1.08);
+                        }
+                        50% {
+                            transform: scale(1.12);
+                        }
+                    }
 
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% {
-            transform: translateY(0);
-        }
-        40% {
-            transform: translateY(-10px);
-        }
-        60% {
-            transform: translateY(-5px);
-        }
-    }
+                    @keyframes iconPulse {
+                        0%, 100% {
+                            transform: scale(1.2);
+                        }
+                        50% {
+                            transform: scale(1.3);
+                        }
+                    }
 
-    @keyframes blink {
-        0%, 50% {
-            opacity: 1;
-        }
-        51%, 100% {
-            opacity: 0;
-        }
-    }
+                    @keyframes bounce {
+                        0% {
+                            transform: translateY(-6px);
+                        }
+                        50% {
+                            transform: translateY(-12px);
+                        }
+                        100% {
+                            transform: translateY(-6px);
+                        }
+                    }
 
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-        }
-        50% {
-            transform: translateY(-10px) rotate(1deg);
-        }
-    }
-`;
+                    @keyframes iconBounce {
+                        0%, 100% {
+                            transform: scale(1.2);
+                        }
+                        25% {
+                            transform: scale(1.3) translateY(-2px);
+                        }
+                        50% {
+                            transform: scale(1.25) translateY(-4px);
+                        }
+                        75% {
+                            transform: scale(1.28) translateY(-1px);
+                        }
+                    }
+
+                    @keyframes glow {
+                        0% {
+                            opacity: 0.5;
+                        }
+                        100% {
+                            opacity: 0.8;
+                        }
+                    }
+
+                    @keyframes ripple {
+                        0% {
+                            transform: translate(-50%, -50%) scale(0);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: translate(-50%, -50%) scale(1);
+                            opacity: 0;
+                        }
+                    }
+
+                    @keyframes backgroundPulse {
+                        0%, 100% {
+                            opacity: 0.7;
+                        }
+                        50% {
+                            opacity: 1;
+                        }
+                    }
+                `;
 
 // 스타일을 head에 추가
 if (typeof document !== 'undefined') {

@@ -30,11 +30,14 @@ const HomePage = () => {
                 backgroundImage= { banner}
                 showScrollIndicator={true}
             />
-            <Container size="lg">
+            <BannerSection
+                variant="stats"
+            />
+            <Container size="lg" mt={rem(40)}>
                 <Stack gap='xl' mb='xl'>
                     {/* Header Section */}
                     <Group justify="space-between" gap="xs" mb='md'>
-                        <Box style={{ flex: 1 }}>
+                        <Box style={{ flex: 1 }} p='xl'>
                             <Group gap="xs" mb="xs">
                                 <IconSparkles
                                     size={24}
@@ -93,7 +96,7 @@ const HomePage = () => {
                     </Group>
                 </Stack>
                 <PostList posts={recentPosts} dark={dark} />
-                {!loading && (
+                {loading && (
                     <Center mt="xl">
                         <Button
                             variant="outline"
