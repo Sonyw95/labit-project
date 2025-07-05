@@ -142,3 +142,28 @@ export const recentPosts = [
         tags: ["보안", "사이버", "개발"]
     }
 ];
+
+export const THEME_COLORS = {
+    primary: '#4c6ef5',
+    secondary: '#339af0',
+    java: '#f59e0b',
+    spring: '#10b981',
+    react: '#3b82f6',
+    error: '#ef4444',
+    success: '#10b981',
+    warning: '#f59e0b',
+    dark: {
+        background: '#0d1117',
+        surface: '#161b22',
+        border: '#21262d',
+        text: '#f0f6fc',
+        textSecondary: '#8b949e',
+    },
+    light: {
+        background: '#f8fafc',
+        surface: '#ffffff',
+        border: '#e5e7eb',
+        text: '#1e293b',
+        textSecondary: '#6b7280',
+    }
+};

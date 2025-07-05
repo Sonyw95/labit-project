@@ -8,13 +8,8 @@ import {
     Title,
     Text,
     Group,
-    Button,
     rem,
 } from '@mantine/core';
-import {
-    IconChevronRight,
-    IconUser,
-} from '@tabler/icons-react';
 import { banner, techStack } from '../constants/data';
 import { BackgroundBlur, getTechConfig } from '../utils/helpers';
 

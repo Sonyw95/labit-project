@@ -6,27 +6,18 @@ import {useOutletContext} from "react-router-dom";
 import {IconChevronRight, IconSparkles} from "@tabler/icons-react";
 import BannerSection from "@/components/BannerSection.jsx";
 import banner from '../assets/banner/banner.gif'
+import {useTech} from "@/hooks/useTech.js";
 
 const HomePage = () => {
     const {loading, dark} = useOutletContext();
-    const [currentTech, setCurrentTech] = useState(0);
-    // 기술 스택 텍스트 변경 효과
-    useEffect(() => {
-        if (!loading) {
-            const techTimer = setInterval(() => {
-                setCurrentTech((prev) => (prev + 1) % techStack.length);
-            }, 3000);
-
-            return () => clearInterval(techTimer);
-        }
-    }, [loading, techStack.length]);
+    const currentTech = useTech(loading, techStack );
     return(
         <>
             <BannerSection
                 variant="hero"
                 title="LABit"
                 // description="확장 가능하고 안정적인 백엔드 시스템 구축 경험을 나눕니다."
-                techStack={['Java', 'Spring', 'React']}
+                techStack={currentTech}
                 backgroundImage= { banner}
                 showScrollIndicator={true}
             />

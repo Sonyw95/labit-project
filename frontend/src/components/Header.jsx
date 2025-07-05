@@ -14,14 +14,18 @@ import {
     IconMoon,
 } from '@tabler/icons-react';
 import Logo from "@/components/Logo.jsx";
+import {BackgroundBlur} from "@/utils/helpers.js";
 
 const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
     <AppShell.Header
         ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
         style={{
-        background: dark ? '#161b22' : '#ffffff',
-        borderBottom: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
-    }}>
+            background: dark ? '#161b22' : '#ffffff',
+            borderBottom: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
+            ...BackgroundBlur({ color:dark ? '#161b22' : '#ffffff', alpha: 0.7})
+
+
+        }}>
         <Group h="100%" px="md" justify="space-between">
             <Group>
                 <Burger
