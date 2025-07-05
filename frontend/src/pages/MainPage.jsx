@@ -12,6 +12,7 @@ import Header from "@/components/Header.jsx";
 import {Outlet} from "react-router-dom";
 import MobileDrawer from "@/components/MobileDrawer.jsx";
 import {navigationItems, popularTags} from "@/constants/data.js";
+import useScrollToTop from "@/hooks/useScrollToTop.js";
 
 const MainPageLayout = () => {
     console.log('Main')
@@ -22,7 +23,7 @@ const MainPageLayout = () => {
     const { colorScheme,toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
 
-
+    useScrollToTop();
     // 로딩 효과 시뮬레이션
     // useEffect(() => {
     //     const timer = setInterval(() => {
