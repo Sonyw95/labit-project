@@ -12,10 +12,10 @@ import Header from "@/components/Header.jsx";
 import {Outlet} from "react-router-dom";
 import MobileDrawer from "@/components/MobileDrawer.jsx";
 import {navigationItems, popularTags} from "@/constants/data.js";
-import useScrollToTop from "@/hooks/useScrollToTop.js";
 
 const MainPageLayout = () => {
-    console.log('Main')
+
+
     const [drawerOpened, setDrawerOpened] = useState(false);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
@@ -23,7 +23,6 @@ const MainPageLayout = () => {
     const { colorScheme,toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
 
-    useScrollToTop();
     // 로딩 효과 시뮬레이션
     // useEffect(() => {
     //     const timer = setInterval(() => {
@@ -58,11 +57,11 @@ const MainPageLayout = () => {
 
     return (
         <AppShell
-            header={{ height: 70 , offset: true}}
+            header={{height: 60, offset: true}}
             navbar={{
                 width: 280,
                 breakpoint: 'lg',
-                collapsed: { mobile: true },
+                collapsed: {mobile: true},
             }}
             // padding="md"
             style={{
@@ -94,13 +93,12 @@ const MainPageLayout = () => {
                 popularTags={popularTags}
                 dark={dark}
             />
-            <ScrollArea my="md" component={AppShell.Main}  h={200} scrollbars="y">
+            <ScrollArea component={AppShell.Main} h={200} scrollbars="y">
                 <Outlet context={{
                     loading,
                     dark
                 }}/>
             </ScrollArea>
-
         </AppShell>
     );
 };

@@ -14,7 +14,6 @@ import {
 } from '@tabler/icons-react';
 import Logo from "@/components/Logo.jsx";
 import {BackgroundBlur} from "@/utils/helpers.js";
-import UserDropDown2 from "@/components/UserDropDown2.jsx";
 
 const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
     <AppShell.Header
@@ -23,8 +22,6 @@ const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
             background: dark ? '#161b22' : '#ffffff',
             borderBottom: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
             ...BackgroundBlur({ color:dark ? '#161b22' : '#ffffff', alpha: 0.7})
-
-
         }}>
         <Group h="100%" px="md" justify="space-between">
             <Group>
@@ -112,7 +109,6 @@ const Header = ({ opened, setDrawerOpened, dark, toggleColorScheme }) => (
                 >
                     {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
                 </ActionIcon>
-                <UserDropDown2/>
             </Group>
         </Group>
     </AppShell.Header>

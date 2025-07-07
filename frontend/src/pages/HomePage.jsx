@@ -1,5 +1,5 @@
 import PostList from "@/components/PostList.jsx";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {recentPosts, techStack} from "@/constants/data.js";
 import {Box, Button, Center, Container, Group, rem, Stack, Text, Title} from "@mantine/core";
 import {useOutletContext} from "react-router-dom";
@@ -19,7 +19,7 @@ const HomePage = () => {
                 // description="확장 가능하고 안정적인 백엔드 시스템 구축 경험을 나눕니다."
                 techStack={currentTech}
                 backgroundImage= { banner}
-                showScrollIndicator={true}
+                showScrollIndicator
             />
             <BannerSection
                 variant="stats"
