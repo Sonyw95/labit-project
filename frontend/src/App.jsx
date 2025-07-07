@@ -1,15 +1,13 @@
 
 import '@mantine/core/styles.css';
-// import '@mantine/notifications/styles.css';
 import '@mantine/carousel/styles.css';
 import './App.css'
 
-import {MantineProvider} from "@mantine/core";
+import {ColorSchemeScript, MantineProvider} from "@mantine/core";
 import {Router} from "@/Router.jsx";
-import Helmet from "@/components/Helmet.jsx";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {Notifications} from "@mantine/notifications";
-import theme from "@/styles/theme.jsx";
+import {QueryClient} from "@tanstack/react-query";
+import Helmet from "@/components/common/Helmet.jsx";
+import {BrowserRouter} from "react-router-dom";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -20,28 +18,17 @@ const queryClient = new QueryClient({
         },
     },
 });
-
-const AppContent = () => {
-    return (
-        <MantineProvider theme={theme}>
-            <Notifications
-                position="top-right"
-                zIndex={9999}
-                limit={5}
-            />
-            {/* Main Layout */}
-            <Helmet>
-                <Router/>
-            </Helmet>
-        </MantineProvider>
-    );
-};
 function App() {
     return (
-        <QueryClientProvider client={queryClient}>
-            <AppContent/>
-        </QueryClientProvider>
-    )
+        <>
+            <ColorSchemeScript defaultColorScheme="auto" />
+            <MantineProvider defaultColorScheme="auto">
+                <Helmet>
+                    <Router/>
+                </Helmet>
+            </MantineProvider>
+        </>
+    );
 }
 
 export default App

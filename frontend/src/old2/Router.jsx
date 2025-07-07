@@ -1,8 +1,10 @@
 import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom';
 import {lazy, Suspense} from "react";
-import MainHomePage from "@/pages/MainHomePage.jsx";
+import HomePage from "@/pages/HomePage.jsx";
+import PostPage from "@/pages/PostPage.jsx";
+import NavbarMenuSettingsPage from "@/pages/NavbarMenuSettingsPage.jsx";
 
-const BlogPage = lazy(() => import('@/pages/BlogPage.jsx'));
+const MainPage = lazy(() => import('@/pages/BlogPage.jsx'));
 // const SettingAccountPage = lazy(() => import("@/components/page/SettingAccount.jsx"))
 // const SettingBlogPage = lazy( () => import('@/components/page/SettingBlog.jsx'))
 
@@ -11,13 +13,14 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <Suspense ><BlogPage/></Suspense>
+            <Suspense fallback={<div>Loading...</div>} ><MainPage/></Suspense>
         ),
         children: [
             { index: true, element: <Navigate to="/home"/> },
-            { path: '/home', element: <MainHomePage/> },
-            // { path: '/posts/:category', element: <PostPage/> },
-            // { path: '/setting/admin', element: <NavbarMenuSettingsPage/> }
+            { path: '/home', element: <HomePage/> },
+            { path: '/posts/:category', element: <PostPage/> },
+            { path: '/setting/admin', element: <NavbarMenuSettingsPage/> }
+
 
             // { path: '/setting/account', element: <Suspense><SettingAccountPage/></Suspense> },
             // { path: '/setting/blog', element: <Suspense><SettingBlogPage/></Suspense> },
