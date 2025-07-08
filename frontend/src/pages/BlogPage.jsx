@@ -1,25 +1,28 @@
-import {useLoadingProgress} from "@/hooks/useLoadingProgress.js";
 import AppLayout from "@/components/layout/AppLayout.jsx";
 import {Outlet} from "react-router-dom";
-import CustomLoader from "@/components/common/CustomLoader.jsx";
+import {useMantineColorScheme} from "@mantine/core";
 
 const BlogPage = () => {
-    const { loading, progress } = useLoadingProgress();
-    // const currentTech = useTechStackRotation(loading);
-
+    console.log('Blog Page Render')
+    const loading = false;
+    // const {colorScheme} = useMantineColorScheme(); // 리렌더링 없음
+    // const isDark = colorScheme === 'dark';
     return (
-        <AppLayout loading={loading}>
-            {loading ? (
-                <CustomLoader progress={progress} />
-            ) : (
-                <>
-                    <Outlet
-                        context={loading}
-                    />
-                    {/*<HeroSection currentTech={currentTech} />*/}
-                    {/*<RecentPosts />*/}
-                </>
-            )}
+        <AppLayout loading={loading} >
+            {/*{loading ? (*/}
+            {/*    <CustomLoader progress={progress} />*/}
+            {/*) : (*/}
+            {/*    <>*/}
+            {/*        <Outlet*/}
+            {/*            context={loading}*/}
+            {/*        />*/}
+            {/*        /!*<HeroSection currentTech={currentTech} />*!/*/}
+            {/*        /!*<RecentPosts />*!/*/}
+            {/*    </>*/}
+            {/*)}*/}
+            <Outlet
+                context={loading}
+            />
         </AppLayout>
     );
 };

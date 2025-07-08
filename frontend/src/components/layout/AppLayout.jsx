@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-    AppShell,
-    Box, ScrollArea,
-    useMantineColorScheme
+    AppShell, ScrollArea, useComputedColorScheme, useMantineColorScheme,
 } from '@mantine/core';
 import Header from './Header';
 import Navigation from './Navigation';
@@ -10,26 +8,30 @@ import { animations } from '@/utils/animations.js';
 import {BackgroundBlur} from "@/utils/backgroundBlur.js";
 import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/utils/constants.js";
 
-const AppLayout = ({ children, loading }) => {
+const AppLayout = ({ children, loading = false }) => {
+    console.log('AppLayout Render')
+    const { setColorScheme } = useMantineColorScheme();
+    const computedColorScheme = useComputedColorScheme('light', {
+        getInitialValueInEffect: true
+    });
+    // const isDark = colorScheme === 'dark';
     const [opened, setOpened] = useState(false);
-    const { colorScheme } = useMantineColorScheme();
-    const dark = colorScheme === 'dark';
+    // const { isDark } = useOptimizedTheme(); // 필요한 상태만 구독
 
-
-    if (loading) {
-        return (
-            <Box
-                style={{
-                    height: '100vh',
-                    background: dark ? '#0d1117' : '#f8fafc',
-                    overflow: 'hidden',
-                }}
-            >
-                {children}
-                <style>{animations}</style>
-            </Box>
-        );
-    }
+    // if (loading) {
+    //     return (
+    //         <Box
+    //             style={{
+    //                 height: '100vh',
+    //                 background: dark ? '#0d1117' : '#f8fafc',
+    //                 overflow: 'hidden',
+    //             }}
+    //         >
+    //             {children}
+    //             <style>{animations}</style>
+    //         </Box>
+    //     );
+    // }
 
     return (
         <AppShell
@@ -40,22 +42,22 @@ const AppLayout = ({ children, loading }) => {
                 collapsed: { mobile: true },
             }}
             style={{
-                background: dark ? '#0d1117' : '#f8fafc',
+                // background: isDark ? '#0d1117' : '#f8fafc',
             }}
         >
             <AppShell.Header
                 ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
                 style={{
-                    background: dark ? '#161b22' : '#ffffff',
-                    borderBottom: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
-                    ...BackgroundBlur({ color:dark ? '#161b22' : '#ffffff', alpha: 0.7})
+                    // background: isDark ? '#161b22' : '#ffffff',
+                    // borderBottom: `1px solid ${isDark ? '#21262d' : '#e5e7eb'}`,
+                    // ...BackgroundBlur({ color:isDark ? '#161b22' : '#ffffff', alpha: 0.7})
                 }}>
                 <Header opened={opened} onToggle={() => setOpened(!opened)} />
             </AppShell.Header>
 
             <AppShell.Navbar p="md" style={{
-                background: dark ? '#161b22' : '#ffffff',
-                borderRight: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,
+                // background: isDark ? '#161b22' : '#ffffff',
+                // borderRight: `1px solid ${isDark ? '#21262d' : '#e5e7eb'}`,
                 position: 'fixed',
                 top: 0,
                 bottom: 0,

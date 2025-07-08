@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useCallback } from 'react';
 import { MantineProvider, createTheme, useMantineColorScheme } from '@mantine/core';
 import {useLocalStorage} from "@mantine/hooks";
-import {ColorHelper} from "@/utils/helpers.js";
+import {trendColors} from "@/utils/colorHeplers.js";
 
 const ThemeContext = createContext();
 
@@ -113,7 +113,7 @@ export const ThemeProvider = ({ children }) => {
         preferences,
         updatePreferences,
         resetToDefaults,
-        colors: ColorHelper.palette,
+        colors: trendColors.palette,
         darkTheme: ColorHelper.darkTheme,
     };
 

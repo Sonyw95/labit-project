@@ -1,7 +1,5 @@
 import {Avatar, Box, Stack, Text} from "@mantine/core";
-import logo from '@/assets/logo/logo.png';
 import {useNavigate} from "react-router-dom";
-import {useTheme} from "@/hooks/useTheme.js";
 
 const LogoContent = () => {
     const navigate = useNavigate();
@@ -18,7 +16,7 @@ const LogoContent = () => {
                     <Text
                         component="span"
                         size="md"
-                        fw={500}
+                        fw={900}
                         ff="monospace"
                         style={{
                             animation: 'colorChange 3s infinite',
@@ -33,7 +31,7 @@ const LogoContent = () => {
                     <Text
                         component="span"
                         size="md"
-                        fw={500}
+                        fw={900}
                         ff="monospace"
                         style={{
                             animation: 'rotateAfterDelay 4s infinite',
@@ -50,7 +48,7 @@ const LogoContent = () => {
                     <Text
                         component="span"
                         size="md"
-                        fw={500}
+                        fw={900}
                         ff="monospace"
                         style={{
                             display: 'inline-block',
@@ -88,10 +86,7 @@ const Logo = ({
                   style = {},
                   isLogo = true
               }) => {
-    const {getBackgroundColor} = useTheme();
-
     return (
-
         isLogo ? (<div style={{
             width: size === 'lg' ? '48px' : '32px',
             height: size === 'lg' ? '48px' : '32px',
@@ -106,7 +101,7 @@ const Logo = ({
             ...style
         }}>
             <LogoContent />
-        </div>) : <Avatar src={logo} style={style}/>
+        </div>) : <Avatar src='/upload/images/logo.png' style={style}/>
     )
 }
 

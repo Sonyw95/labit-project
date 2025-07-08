@@ -12,6 +12,7 @@ import {
 } from '@tabler/icons-react';
 import Logo from '../common/Logo';
 import ThemeToggle from '../common/ThemeToggle';
+import UserDropdown from "@/components/layout/UserDropdown.jsx";
 
 const Header = ({ opened, onToggle }) => {
     const { colorScheme } = useMantineColorScheme();
@@ -73,6 +74,7 @@ const Header = ({ opened, onToggle }) => {
                     <IconBell size={18} />
                 </ActionIcon>
                 <ThemeToggle />
+                <UserDropdown onNavSettingsOpen={() =>{console.log('Click')}}/>
             </Group>
         </Group>
     );
