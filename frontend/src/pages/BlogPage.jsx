@@ -1,11 +1,14 @@
 import AppLayout from "@/components/layout/AppLayout.jsx";
 import {Outlet} from "react-router-dom";
 import {useMantineColorScheme} from "@mantine/core";
+import {useSelectiveColorScheme} from "../hooks/useSelectiveColorScheme.js";
 
 const BlogPage = () => {
     const loading = false;
     // const {colorScheme} = useMantineColorScheme(); // 리렌더링 없음
     // const isDark = colorScheme === 'dark';
+    // const isDark = useSelectiveColorScheme(state => state.isDark);
+
     return (
         <AppLayout loading={loading} >
             {/*{loading ? (*/}
@@ -20,7 +23,7 @@ const BlogPage = () => {
             {/*    </>*/}
             {/*)}*/}
             <Outlet
-                context={loading}
+                context={{loading}}
             />
         </AppLayout>
     );

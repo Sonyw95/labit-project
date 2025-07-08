@@ -10,7 +10,8 @@ import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/utils/constants.js";
 import {useSelectiveColorScheme} from "@/hooks/useSelectiveColorScheme.js";
 
 const AppLayout = ({ children, loading = false }) => {
-    const isDark = useSelectiveColorScheme(state => state.isDark);
+    const isDark = useSelectiveColorScheme(state => state.isDark)
+    // const isDark = useColorScheme() === 'dark';
     const [opened, setOpened] = useState(false);
 
     // if (loading) {
