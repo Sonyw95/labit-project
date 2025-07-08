@@ -3,7 +3,6 @@ import {Outlet} from "react-router-dom";
 import {useMantineColorScheme} from "@mantine/core";
 
 const BlogPage = () => {
-    console.log('Blog Page Render')
     const loading = false;
     // const {colorScheme} = useMantineColorScheme(); // 리렌더링 없음
     // const isDark = colorScheme === 'dark';

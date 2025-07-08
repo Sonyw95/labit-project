@@ -140,7 +140,6 @@ const blogReducer = (state, action) => {
 
 // BlogProvider 컴포넌트
 export const BlogProvider = ({ children, apiClient }) => {
-    console.log('BlogProvider Render')
     const [state, dispatch] = useReducer(blogReducer, initialState);
     const isMounted = useMountedState();
 

@@ -63,7 +63,9 @@ const createProviders = () => [
         </BlogProvider>
     ),
 ];
-import React from 'react';
+import React, {memo} from 'react';
+import {OptimizedColorSchemeProvider} from "@/contexts/OptimizedColorSchemeContext.jsx";
+import {useRenderOptimization} from "@/hooks/useRenderOptimization.js";
 
 // Provider들을 체인으로 연결하는 유틸리티 컴포넌트
 const ProviderTree = ({ children, providers }) => {
@@ -72,16 +74,39 @@ const ProviderTree = ({ children, providers }) => {
         children
     );
 };
+const ColorSchemeWrapper = memo(({ children }) => {
+    return (
+        <OptimizedColorSchemeProvider>
+            {children}
+        </OptimizedColorSchemeProvider>
+    );
+});
+const AppContent = memo(() => {
+    const { renderCount } = useRenderOptimization('AppContent');
 
+    return (
+        <>
+            <Helmet>
+                <Router/>
+            </Helmet>
+            {import.meta.env.NODE_ENV !== 'development' && (
+                <div style={{ position: 'fixed', bottom: 10, right: 10 }}>
+                    Renders: {renderCount}
+                </div>
+            )}
+        </>
+    );
+});
 function App() {
     const providers = createProviders();
     return (
         <>
-            {/*<ColorSchemeScript defaultColorScheme="auto" />*/}
+            <ColorSchemeScript defaultColorScheme="auto" />
             <ProviderTree providers={providers}>
-                <Helmet>
-                   <Router/>
-                </Helmet>
+                <ColorSchemeWrapper>
+                    <AppContent/>
+                </ColorSchemeWrapper>
+
             </ProviderTree>
         </>
     );

@@ -92,7 +92,6 @@ const authReducer = (state, action) => {
 
 // AuthProvider 컴포넌트
 export const AuthProvider = ({ children, apiClient }) => {
-    console.log('AuthProvider Render')
     const [state, dispatch] = useReducer(authReducer, initialState);
     const [storedAuth, setStoredAuth, removeStoredAuth] = useLocalStorage('auth', null);
     const isMounted = useMountedState();

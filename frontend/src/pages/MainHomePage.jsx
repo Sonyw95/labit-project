@@ -22,7 +22,6 @@ import {useColorScheme} from "@mantine/hooks";
 
 
 const MainHomePage = () => {
-    console.log('Main Home Page Render')
     // const colorScheme = useColorScheme();
     // const { isDark } = useOptimizedTheme(); // 필요한 상태만 구독
 

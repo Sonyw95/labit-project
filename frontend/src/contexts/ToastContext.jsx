@@ -75,7 +75,6 @@ const getPositionStyles = (position) => {
 
 // ToastProvider 컴포넌트
 export const ToastProvider = ({ children, maxToasts = 5 }) => {
-    console.log('ToastProvider Render');
     const [state, dispatch] = useReducer(toastReducer, initialState);
     const isMounted = useMountedState();
 

@@ -4,7 +4,6 @@ import {
     Text,
     ActionIcon,
     Burger,
-    useMantineColorScheme
 } from '@mantine/core';
 import {
     IconSearch,
@@ -13,11 +12,10 @@ import {
 import Logo from '../common/Logo';
 import ThemeToggle from '../common/ThemeToggle';
 import UserDropdown from "@/components/layout/UserDropdown.jsx";
+import {useSelectiveColorScheme} from "@/hooks/useSelectiveColorScheme.js";
 
 const Header = ({ opened, onToggle }) => {
-    const { colorScheme } = useMantineColorScheme();
-    const dark = colorScheme === 'dark';
-
+    const isDark = useSelectiveColorScheme(state => state.isDark);
     return (
         <Group h="100%" px="md" justify="space-between">
             <Group>
@@ -34,7 +32,7 @@ const Header = ({ opened, onToggle }) => {
                             size="lg"
                             fw={700}
                             style={{
-                                color: dark ? '#ffffff' : '#1e293b',
+                                color: isDark ? '#ffffff' : '#1e293b',
                             }}
                         >
                             LABit
@@ -54,7 +52,7 @@ const Header = ({ opened, onToggle }) => {
                     style={{
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            background: dark ? '#21262d' : '#f3f4f6',
+                            background: isDark ? '#21262d' : '#f3f4f6',
                         }
                     }}
                 >
@@ -67,7 +65,7 @@ const Header = ({ opened, onToggle }) => {
                     style={{
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            background: dark ? '#21262d' : '#f3f4f6',
+                            background: isDark ? '#21262d' : '#f3f4f6',
                         }
                     }}
                 >

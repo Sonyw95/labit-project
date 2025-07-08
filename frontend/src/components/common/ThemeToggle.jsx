@@ -1,14 +1,18 @@
-import React, {memo} from 'react';
+import React, {memo, useMemo} from 'react';
 import {ActionIcon, useComputedColorScheme, useMantineColorScheme} from '@mantine/core';
 import { IconSun, IconMoon } from '@tabler/icons-react';
+import {useColorSchemeActions, useColorSchemeValue} from "@/contexts/OptimizedColorSchemeContext.jsx";
 
 const ThemeToggle = memo(() => {
-    console.log('ThemeToggle Render');
-    const { setColorScheme } = useMantineColorScheme();
-    const computedColorScheme = useComputedColorScheme('light', {
-        getInitialValueInEffect: true
-    });
-    const isDark = computedColorScheme === 'dark';
+    const { toggleColorScheme } = useColorSchemeActions();
+    const { isDark } = useColorSchemeValue();
+
+    // 아이콘만 메모이제이션
+    const icon = useMemo(() =>
+            isDark ? <IconSun size={18} /> : <IconMoon size={18} />,
+        [isDark]
+    );
+
 
     // 스타일을 useMemo로 메모이제이션
     return (
@@ -16,7 +20,7 @@ const ThemeToggle = memo(() => {
             variant="light"
             size="lg"
             radius="md"
-            onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
+            onClick={toggleColorScheme}
             style={{
                 background: isDark ? '#21262d' : '#f3f4f6',
                 border: 'none',
@@ -26,7 +30,7 @@ const ThemeToggle = memo(() => {
                 }
             }}
         >
-            {isDark ? <IconSun size={18} /> : <IconMoon size={18} />}
+            {icon}
         </ActionIcon>
     );
 });

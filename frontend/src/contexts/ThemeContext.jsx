@@ -180,7 +180,6 @@ const createTrendTheme = (themeState) => {
 
 // ThemeProvider 컴포넌트
 export const CustomThemeProvider = ({ children }) => {
-    console.log("ThemeProvider Render")
     const [state, dispatch] = useReducer(themeReducer, initialState);
     const [storedTheme, setStoredTheme] = useLocalStorage('theme-settings', null);
     const isMounted = useMountedState();
@@ -289,7 +288,7 @@ export const CustomThemeProvider = ({ children }) => {
         resetTheme,
         theme,
     };
-
+    console.log('Thmeme Provider')
     return (
         <ThemeContext.Provider value={value}>
             <MantineProvider defaultColorScheme="auto" suppressHydrationWarning>
