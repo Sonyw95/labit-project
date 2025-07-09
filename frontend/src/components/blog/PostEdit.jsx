@@ -159,18 +159,18 @@ const PostEdit = memo(({
 
         loadTags();
 
-        // 임시저장 데이터 복원
-        if (draftData && !initialPost) {
-            // eslint-disable-next-line no-alert
-            const shouldRestore = window.confirm('저장되지 않은 임시 데이터가 있습니다. 복원하시겠습니까?');
-            if (shouldRestore) {
-                setFormData(draftData);
-                if (editor) {
-                    editor.commands.setContent(draftData.content);
-                }
-                setBannerPreview(draftData.bannerImage);
-            }
-        }
+        // // 임시저장 데이터 복원
+        // if (draftData && !initialPost) {
+        //     // eslint-disable-next-line no-alert
+        //     const shouldRestore = window.confirm('저장되지 않은 임시 데이터가 있습니다. 복원하시겠습니까?');
+        //     if (shouldRestore) {
+        //         setFormData(draftData);
+        //         if (editor) {
+        //             editor.commands.setContent(draftData.content);
+        //         }
+        //         setBannerPreview(draftData.bannerImage);
+        //     }
+        // }
     }, [draftData, initialPost, editor]);
 
     // 자동저장 (디바운스)

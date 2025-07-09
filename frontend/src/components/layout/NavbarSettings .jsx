@@ -144,7 +144,7 @@ const NavItem = memo(({
                         : (dark ? '#161b22' : '#ffffff'),
                     border: `1px solid ${dark ? '#30363d' : '#e5e7eb'}`,
                     marginLeft: rem(level * 20),
-                    transform: isDragging ? 'rotate(5deg)' : 'none',
+                    // transform: isDragging ? 'rotate(5deg)' : 'none',
                     opacity: isDragging ? 0.8 : 1,
                 }}
             >
