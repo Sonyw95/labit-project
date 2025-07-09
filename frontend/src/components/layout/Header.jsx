@@ -10,19 +10,17 @@ import {
     IconBell
 } from '@tabler/icons-react';
 import Logo from '../common/Logo';
-import ThemeToggle from '../common/ThemeToggle';
-import UserDropdown from "@/components/layout/UserDropdown.jsx";
-import {useSelectiveColorScheme} from "@/hooks/useSelectiveColorScheme.js";
+import {useTheme} from "@/hooks/useTheme.js";
 
-const Header = ({ opened, onToggle }) => {
-    const isDark = useSelectiveColorScheme(state => state.isDark);
+const Header = ({ drawerOpened, setDrawerOpened }) => {
+    const { dark } = useTheme();
     return (
         <Group h="100%" px="md" justify="space-between">
             <Group>
                 <Burger
-                    opened={opened}
-                    onClick={onToggle}
-                    hiddenFrom="sm"
+                    opened={drawerOpened}
+                    onClick={setDrawerOpened}
+                    hiddenFrom="lg"
                     size="sm"
                 />
                 <Group gap="xs">
@@ -32,7 +30,7 @@ const Header = ({ opened, onToggle }) => {
                             size="lg"
                             fw={700}
                             style={{
-                                color: isDark ? '#ffffff' : '#1e293b',
+                                color: dark ? '#ffffff' : '#1e293b',
                             }}
                         >
                             LABit
@@ -52,7 +50,7 @@ const Header = ({ opened, onToggle }) => {
                     style={{
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            background: isDark ? '#21262d' : '#f3f4f6',
+                            background: dark ? '#21262d' : '#f3f4f6',
                         }
                     }}
                 >
@@ -65,14 +63,12 @@ const Header = ({ opened, onToggle }) => {
                     style={{
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            background: isDark ? '#21262d' : '#f3f4f6',
+                            background: dark ? '#21262d' : '#f3f4f6',
                         }
                     }}
                 >
                     <IconBell size={18} />
                 </ActionIcon>
-                <ThemeToggle />
-                <UserDropdown onNavSettingsOpen={() =>{console.log('Click')}}/>
             </Group>
         </Group>
     );
