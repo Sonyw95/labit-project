@@ -364,7 +364,23 @@ const PostView = memo(({ postId }) => {
     const { colorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
 
-    const [post, setPost] = useState(null);
+    const [post, setPost] = useState({
+        title: "2025년 웹 디자인 트렌드: 미래를 이끄는 혁신적인 디자인 패러다임",
+        subtitle: "AI 기반 개인화, 지속가능한 디자인, 그리고 몰입형 사용자 경험의 시대",
+        bannerImage: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1200&h=600&fit=crop",
+        author: {
+            name: "김디자이너",
+            avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face",
+            bio: "UX/UI 디자이너이자 웹 트렌드 전문가",
+            followers: "12.5K"
+        },
+        publishedAt: "2025-06-25",
+        readTime: "12분",
+        views: 3420,
+        likes: 234,
+        category: "디자인",
+        tags: ["웹디자인", "2025트렌드", "UI/UX", "사용자경험"]
+    });
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isLiked, setIsLiked] = useState(false);
@@ -375,38 +391,38 @@ const PostView = memo(({ postId }) => {
     const { user, isAuthenticated } = useAuth();
 
     // 포스트 데이터 로드
-    useEffect(() => {
-        const loadPost = async () => {
-            try {
-                startNavigationProgress();
-
-                const [postResponse, commentsResponse] = await Promise.all([
-                    apiClient.posts.getById(postId),
-                    apiClient.comments.getByPost(postId)
-                ]);
-
-                setPost(postResponse.data);
-                setComments(commentsResponse.data);
-
-                // 사용자 상호작용 상태 확인
-                if (isAuthenticated) {
-                    setIsLiked(postResponse.data.likes?.includes(user?.id));
-                    setIsBookmarked(postResponse.data.bookmarks?.includes(user?.id));
-                }
-
-                completeNavigationProgress();
-            } catch (error) {
-                showToast.error('오류', '포스트를 불러올 수 없습니다.');
-                completeNavigationProgress();
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (postId) {
-            loadPost();
-        }
-    }, [postId, user?.id, isAuthenticated]);
+    // useEffect(() => {
+    //     const loadPost = async () => {
+    //         try {
+    //             startNavigationProgress();
+    //
+    //             const [postResponse, commentsResponse] = await Promise.all([
+    //                 apiClient.posts.getById(postId),
+    //                 apiClient.comments.getByPost(postId)
+    //             ]);
+    //
+    //             setPost(postResponse.data);
+    //             setComments(commentsResponse.data);
+    //
+    //             // 사용자 상호작용 상태 확인
+    //             if (isAuthenticated) {
+    //                 setIsLiked(postResponse.data.likes?.includes(user?.id));
+    //                 setIsBookmarked(postResponse.data.bookmarks?.includes(user?.id));
+    //             }
+    //
+    //             completeNavigationProgress();
+    //         } catch (error) {
+    //             showToast.error('오류', '포스트를 불러올 수 없습니다.');
+    //             completeNavigationProgress();
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //
+    //     if (postId) {
+    //         loadPost();
+    //     }
+    // }, [postId, user?.id, isAuthenticated]);
 
     // 읽기 진행률 계산
     useEffect(() => {
@@ -505,7 +521,7 @@ const PostView = memo(({ postId }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    if (loading) {
+    if (!loading) {
         return (
             <Container size="md">
                 <Stack gap="md">
@@ -528,17 +544,16 @@ const PostView = memo(({ postId }) => {
             </Container>
         );
     }
-
     return (
         <>
             {/* 읽기 진행률 표시 */}
             <NavigationProgress />
 
-            <Container size="md">
+            <Container size="xl">
                 <Stack gap="xl">
                     {/* 배너 이미지 */}
                     {post.bannerImage && (
-                        <BackgroundImage src={post.bannerImage} h={400} radius="md">
+                        <BackgroundImage src={post.bannerImage} h={400} radius="md" >
                             <Box
                                 h="100%"
                                 style={{
@@ -605,7 +620,7 @@ const PostView = memo(({ postId }) => {
                                             <Group gap={4}>
                                                 <IconClock size={12} />
                                                 <Text size="xs">
-                                                    {formatters.readingTime(post.content)}
+                                                    {/*{formatters.readingTime(post.content)}*/}
                                                 </Text>
                                             </Group>
                                             <Text size="xs">•</Text>

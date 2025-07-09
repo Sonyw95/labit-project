@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import {throttle} from "../utils/throttle.js";
 
 export const useScrollPosition = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
