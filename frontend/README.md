@@ -1,704 +1,649 @@
 # 🚀 Modern Tech Blog Platform
 
-2025년 웹 디자인 트렌드를 반영한 고성능 기술 블로그 플랫폼입니다. Mantine v8 기반으로 구축되었으며, 모바일 우선 설계와 메모리 누수 방지, 리렌더링 최적화가 적용되었습니다.
+[![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
+[![Mantine](https://img.shields.io/badge/Mantine-v8.1.1-339af0.svg)](https://mantine.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-![Tech Stack](https://img.shields.io/badge/React-18.2.0-blue)
-![Mantine](https://img.shields.io/badge/Mantine-v8.1.2-orange)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![TanStack Query](https://img.shields.io/badge/TanStack%20Query-5.0-red)
+> 현대적이고 반응형인 기술 블로그 플랫폼입니다. React, Mantine v8, TanStack Query, Zustand를 사용하여 구축되었습니다.
 
 ## ✨ 주요 기능
 
-### 🎨 2025 웹 디자인 트렌드 적용
-- **Low Light 모드**: 어두운 테마에 최적화된 색상 팔레트
-- **Bento Box 레이아웃**: 깔끔하게 정리된 카드 기반 디자인
-- **Glassmorphism**: 반투명 효과와 블러 처리
-- **Micro-animations**: 부드러운 인터랙션 애니메이션
-- **Bold Typography**: 대담하고 현대적인 타이포그래피
+### 🎨 **모던 UI/UX**
+- **다크/라이트 모드** 지원
+- **모바일 우선** 반응형 디자인
+- **2025 웹 디자인 트렌드** 반영
+- **플랫 디자인** 스타일
+- **부드러운 애니메이션** 및 전환 효과
 
-### 🚀 고성능 최적화
-- **메모리 누수 방지**: 모든 컴포넌트에 cleanup 로직 적용
-- **리렌더링 최적화**: React.memo, useMemo, useCallback 활용
-- **가상화**: 대용량 리스트 성능 최적화
-- **지연 로딩**: 이미지 및 컴포넌트 lazy loading
-- **코드 분할**: 동적 import를 통한 번들 크기 최적화
+### 📝 **블로그 기능**
+- **리치 텍스트 에디터** (Mantine TipTap 기반)
+- **실시간 코드 하이라이팅**
+- **배너 이미지** 업로드 및 관리
+- **태그 시스템** (다중 선택, 색상 구분)
+- **카테고리 관리**
+- **임시저장** 기능
+- **자동저장** (디바운스 적용)
+- **SEO 최적화**
 
-### 📱 모바일 우선 설계
-- **반응형 디자인**: 모든 화면 크기에 최적화
-- **터치 친화적**: 모바일 제스처 지원
-- **PWA 지원**: 오프라인 기능 및 앱 설치
-- **성능 최적화**: 모바일 환경에서의 빠른 로딩
+### 👤 **사용자 관리**
+- **일반 로그인/회원가입**
+- **카카오 소셜 로그인**
+- **프로필 관리** (이미지, 정보 수정)
+- **비밀번호 변경** (강도 검사 포함)
+- **알림 설정**
 
-## 🏗️ 아키텍처
+### 🛠 **고급 기능**
+- **드래그 앤 드롭** 네비게이션 설정
+- **무한 스크롤**
+- **가상화된 리스트**
+- **지연 로딩 이미지**
+- **읽기 진행률** 표시
+- **댓글 시스템** (중첩 댓글 지원)
+- **검색 기능** (자동완성, 검색 기록)
+- **토스트 알림**
 
-### 📁 프로젝트 구조
+### 🔧 **개발자 도구**
+- **TypeScript** 지원
+- **커스텀 훅** 라이브러리
+- **API 클라이언트** (Axios + TanStack Query)
+- **상태 관리** (Zustand + Context API)
+- **테스트 지원** (Jest 설정)
+- **메모리 누수 방지**
+- **성능 최적화**
+
+## 🏗 프로젝트 구조
+
 ```
 src/
-├── components/
-│   ├── common/              # 재사용 가능한 공통 컴포넌트
+├── components/              # 재사용 가능한 컴포넌트
+│   ├── common/             # 공통 컴포넌트
 │   │   ├── Logo.jsx
 │   │   ├── CustomLoader.jsx
-│   │   ├── ThemeToggle.jsx
-│   │   └── LoadingWrapper.jsx
-│   ├── layout/              # 레이아웃 관련 컴포넌트
-│   │   ├── Header.jsx
-│   │   ├── Navigation.jsx
-│   │   ├── AppLayout.jsx
-│   │   └── UserDropdown.jsx
-│   ├── sections/            # 페이지 섹션 컴포넌트
+│   │   ├── SearchBar.jsx
+│   │   ├── InfiniteScroll.jsx
+│   │   └── Modal.jsx
+│   ├── layout/             # 레이아웃 컴포넌트
 │   │   ├── HeroSection.jsx
-│   │   └── RecentPosts.jsx
-│   ├── cards/               # 카드 형태 컴포넌트
-│   │   └── PostCard.jsx
-│   ├── advanced/            # 고급 컴포넌트
-│   │   ├── Toast/
-│   │   ├── SearchBar/
-│   │   ├── InfiniteScroll/
-│   │   ├── VirtualList/
-│   │   └── LazyImage/
-│   └── settings/            # 설정 관련 컴포넌트
-│       ├── NavBarSettings.jsx
-│       └── UserSettings.jsx
-├── contexts/                # React Context 관리
+│   │   ├── NavbarSettings.jsx
+│   │   └── UserInfo.jsx
+│   └── blog/               # 블로그 관련 컴포넌트
+│       ├── PostEdit.jsx
+│       ├── PostView.jsx
+│       ├── PostCard.jsx
+│       └── CommentsSection.jsx
+├── contexts/               # React Context
 │   ├── AuthContext.jsx
 │   ├── BlogContext.jsx
-│   ├── ToastContext.jsx
-│   └── ThemeContext.jsx
-├── hooks/                   # 커스텀 훅
+│   ├── ThemeContext.jsx
+│   └── ToastContext.jsx
+├── hooks/                  # 커스텀 훅
 │   ├── useLocalStorage.js
 │   ├── useDebounce.js
+│   ├── useClickOutside.js
 │   ├── useIntersectionObserver.js
-│   ├── useMediaQuery.js
-│   └── useApiQueries.js
-├── api/                     # API 클라이언트
+│   ├── useScrollPosition.js
+│   └── useApi.js
+├── services/               # API 클라이언트
 │   ├── apiClient.js
-│   └── queryClient.js
-├── utils/                   # 유틸리티 함수
+│   └── endpoints/
+├── stores/                 # Zustand 스토어
+│   └── apiStore.js
+├── utils/                  # 유틸리티 함수
 │   ├── colorHelpers.js
 │   ├── formatters.js
-│   ├── validation.js
-│   ├── domHelpers.js
-│   ├── performanceHelpers.js
-│   └── constants.js
-└── pages/                   # 페이지 컴포넌트
-    └── TechBlogPage.jsx
+│   ├── validators.js
+│   └── storage.js
+├── constants/              # 상수 및 설정
+│   └── data.js
+└── tests/                  # 테스트 파일
+    ├── apiClient.test.js
+    └── components/
 ```
 
-## 🛠️ 기술 스택
+## 🚀 빠른 시작
 
-### Core
-- **React 18.2.0**: 최신 Concurrent Features 활용
-- **Mantine v8.1.2**: 2025년 최신 UI 컴포넌트 라이브러리
-- **TypeScript**: 타입 안전성 보장
-- **Vite**: 빠른 개발 서버 및 빌드 도구
+### 필수 요구사항
+- Node.js 18.x 이상
+- npm 또는 yarn
 
-### 상태 관리
-- **TanStack Query v5**: 서버 상태 관리 및 캐싱
-- **Zustand**: 클라이언트 상태 관리
-- **React Context**: 전역 상태 관리
+### 설치 및 실행
 
-### API & 네트워킹
-- **Axios**: HTTP 클라이언트
-- **멀티 요청 배치 처리**: 동시 요청 최적화
-- **자동 토큰 갱신**: JWT 토큰 자동 관리
-- **재시도 로직**: 네트워크 오류 복구
-
-### UI/UX
-- **@hello-pangea/dnd**: 드래그 앤 드롭 기능
-- **React Intersection Observer**: 무한 스크롤 구현
-- **Framer Motion**: 고급 애니메이션 (선택사항)
-
-## 🚀 설치 및 실행
-
-### 1. 의존성 설치
 ```bash
+# 1. 저장소 클론
+git clone https://github.com/your-username/tech-blog-platform.git
+cd tech-blog-platform
+
+# 2. 의존성 설치
 npm install
 
-# 주요 의존성
-npm install @mantine/core@^8.1.2 @mantine/hooks @tabler/icons-react
-npm install @tanstack/react-query axios zustand
-npm install @hello-pangea/dnd
+# 3. 환경 변수 설정
+cp .env.example .env
+# .env 파일을 편집하여 필요한 값들을 설정하세요
+
+# 4. 개발 서버 실행
+npm run dev
+
+# 5. 브라우저에서 http://localhost:3000 접속
 ```
 
-### 2. 환경 변수 설정
-```bash
-# .env.local
+### 환경 변수 설정
+
+```env
+# .env
 REACT_APP_API_URL=http://localhost:3001/api
 REACT_APP_KAKAO_CLIENT_ID=your_kakao_client_id
+REACT_APP_KAKAO_REDIRECT_URI=http://localhost:3000/auth/kakao/callback
 ```
 
-### 3. 개발 서버 실행
-```bash
-npm start
+## 📦 주요 의존성
+
+### 핵심 라이브러리
+```json
+{
+  "@mantine/core": "^7.12.0",
+  "@mantine/hooks": "^7.12.0",
+  "@mantine/notifications": "^7.12.0",
+  "@mantine/tiptap": "^7.12.0",
+  "@mantine/nprogress": "^7.12.0",
+  "@mantine/prism": "^7.12.0",
+  "@tabler/icons-react": "^2.47.0",
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0"
+}
 ```
 
-### 4. 빌드
-```bash
-npm run build
+### 상태 관리 및 API
+```json
+{
+  "@tanstack/react-query": "^5.0.0",
+  "zustand": "^4.4.0",
+  "axios": "^1.6.0"
+}
 ```
 
-## 🎯 주요 컴포넌트 사용법
-
-### 1. 커스텀 훅 활용
-
-#### useLocalStorage
-```javascript
-import { useLocalStorage } from './hooks/useLocalStorage';
-
-const MyComponent = () => {
-    const [theme, setTheme, removeTheme] = useLocalStorage('theme', 'light');
-
-    return (
-        <button onClick={() => setTheme('dark')}>
-            다크 테마로 변경
-        </button>
-    );
-};
+### 에디터 및 UI
+```json
+{
+  "@tiptap/react": "^2.1.0",
+  "@tiptap/starter-kit": "^2.1.0",
+  "@hello-pangea/dnd": "^16.5.0",
+  "lowlight": "^3.1.0"
+}
 ```
 
-#### useDebounce
-```javascript
-import { useDebounce, useDebouncedCallback } from './hooks/useDebounce';
+## 🎯 컴포넌트 사용법
 
-const SearchComponent = () => {
-    const [query, setQuery] = useState('');
-    const debouncedQuery = useDebounce(query, 300);
+### 1. SearchBar 컴포넌트
 
-    const { debouncedCallback } = useDebouncedCallback((searchTerm) => {
-        // API 호출
-        searchAPI(searchTerm);
-    }, 500);
+```jsx
+import { SearchBar } from './components/common/SearchBar';
 
-    useEffect(() => {
-        if (debouncedQuery) {
-            searchAPI(debouncedQuery);
-        }
-    }, [debouncedQuery]);
-};
+function App() {
+  const handleSearch = (query) => {
+    console.log('검색어:', query);
+  };
+
+  return (
+    <SearchBar
+      placeholder="검색어를 입력하세요..."
+      onSearch={handleSearch}
+      showSuggestions={true}
+      showHistory={true}
+      showTrending={true}
+      maxHistoryItems={5}
+      debounceMs={300}
+    />
+  );
+}
 ```
 
-### 2. 고급 컴포넌트 활용
+### 2. InfiniteScroll 컴포넌트
 
-#### Toast 시스템
-```javascript
-import { useToast } from './contexts/ToastContext';
+```jsx
+import { InfiniteScroll } from './components/common/InfiniteScroll';
 
-const MyComponent = () => {
-    const toast = useToast();
+function PostsList() {
+  const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-    const handleSuccess = () => {
-        toast.success('작업이 완료되었습니다!', {
-            duration: 3000,
-            action: <Button size="xs">실행 취소</Button>
-        });
-    };
-
-    const handleError = () => {
-        toast.error('오류가 발생했습니다.', {
-            title: '오류',
-            position: 'top-center'
-        });
-    };
-};
-```
-
-#### SearchBar
-```javascript
-import SearchBar from './components/advanced/SearchBar/SearchBar';
-
-const MyPage = () => {
-    const [suggestions, setSuggestions] = useState([]);
-
-    const handleSearch = (query) => {
-        // 검색 로직
-        fetchSuggestions(query).then(setSuggestions);
-    };
-
-    return (
-        <SearchBar
-            placeholder="검색어를 입력하세요..."
-            onSearch={handleSearch}
-            suggestions={suggestions}
-            recentSearches={['React', 'JavaScript']}
-            popularSearches={['TypeScript', 'Node.js']}
-            showFilters
-        />
-    );
-};
-```
-
-#### InfiniteScroll
-```javascript
-import InfiniteScroll from './components/advanced/InfiniteScroll/InfiniteScroll';
-
-const PostList = () => {
-    const { data, fetchNextPage, hasNextPage, isLoading } = useInfinitePosts();
-
-    return (
-        <InfiniteScroll
-            hasMore={hasNextPage}
-            isLoading={isLoading}
-            onLoadMore={fetchNextPage}
-            endMessage="모든 게시글을 불러왔습니다."
-        >
-            {data?.pages.map((page) =>
-                page.posts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                ))
-            )}
-        </InfiniteScroll>
-    );
-};
-```
-
-### 3. Context 활용
-
-#### AuthContext
-```javascript
-import { useAuth } from './contexts/AuthContext';
-
-const LoginComponent = () => {
-    const { login, loginWithKakao, user, isAuthenticated, isLoading } = useAuth();
-
-    const handleLogin = async (credentials) => {
-        const result = await login(credentials);
-        if (result.success) {
-            console.log('로그인 성공:', result.data);
-        } else {
-            console.error('로그인 실패:', result.error);
-        }
-    };
-
-    const handleKakaoLogin = async () => {
-        const result = await loginWithKakao();
-        if (result.success) {
-            console.log('카카오 로그인 성공');
-        }
-    };
-
-    if (isLoading) return <div>로딩 중...</div>;
-
-    return isAuthenticated ? (
-        <div>환영합니다, {user.name}님!</div>
-    ) : (
-        <div>
-            <button onClick={() => handleLogin({ email: 'test@example.com', password: 'password' })}>
-                로그인
-            </button>
-            <button onClick={handleKakaoLogin}>
-                카카오 로그인
-            </button>
-        </div>
-    );
-};
-```
-
-### 4. API 클라이언트 활용
-
-#### 기본 사용법
-```javascript
-import { apiClient } from './api/apiClient';
-
-// 단일 요청
-const createPost = async (postData) => {
+  const loadMore = async () => {
+    setLoading(true);
     try {
-        const response = await apiClient.blog.createPost(postData);
-        console.log('포스트 생성 성공:', response);
+      const newPosts = await fetchPosts(posts.length);
+      if (newPosts.length === 0) {
+        setHasMore(false);
+      } else {
+        setPosts(prev => [...prev, ...newPosts]);
+      }
     } catch (error) {
-        console.error('포스트 생성 실패:', error.message);
+      console.error('Failed to load posts:', error);
+    } finally {
+      setLoading(false);
     }
-};
+  };
 
-// 배치 요청
-const batchCreatePosts = async (postsData) => {
-    const requests = postsData.map(post => ({
-        method: 'POST',
-        url: '/posts',
-        data: post
-    }));
-
-    const result = await apiClient.batchRequests(requests, {
-        concurrent: 3,
-        onProgress: (progress) => {
-            console.log(`진행률: ${progress.progress}%`);
-        }
-    });
-
-    console.log(`성공: ${result.successCount}, 실패: ${result.errorCount}`);
-};
-
-// 파일 업로드
-const uploadImage = async (file) => {
-    try {
-        const response = await apiClient.uploadFile(file, '/images', {
-            onProgress: (progress) => {
-                console.log(`업로드 진행률: ${progress}%`);
-            }
-        });
-        console.log('업로드 성공:', response.data.url);
-    } catch (error) {
-        console.error('업로드 실패:', error.message);
-    }
-};
+  return (
+    <InfiniteScroll
+      hasMore={hasMore}
+      loading={loading}
+      onLoadMore={loadMore}
+      threshold={100}
+    >
+      {posts.map(post => (
+        <PostCard key={post.id} post={post} />
+      ))}
+    </InfiniteScroll>
+  );
+}
 ```
 
-#### TanStack Query와 함께 사용
-```javascript
-import { usePosts, useCreatePost, useInfinitePosts } from './hooks/useApiQueries';
+### 3. UserInfo 컴포넌트
 
-const BlogPage = () => {
-    // 단순 목록 조회
-    const { data: posts, isLoading, error } = usePosts({ category: 'tech' });
+```jsx
+import { UserInfo } from './components/UserInfo';
+import { AuthProvider } from './contexts/AuthContext';
 
-    // 무한 스크롤
-    const {
-        data: infinitePosts,
-        fetchNextPage,
-        hasNextPage,
-        isLoading: isLoadingMore
-    } = useInfinitePosts({ limit: 10 });
-
-    // 뮤테이션
-    const createPostMutation = useCreatePost();
-
-    const handleCreatePost = async (postData) => {
-        try {
-            await createPostMutation.mutateAsync(postData);
-            // 성공 처리는 훅 내부에서 자동으로 처리됨 (토스트 알림 등)
-        } catch (error) {
-            // 에러 처리도 훅 내부에서 자동으로 처리됨
-        }
-    };
-
-    if (isLoading) return <div>로딩 중...</div>;
-    if (error) return <div>오류: {error.message}</div>;
-
-    return (
-        <div>
-            {posts.map(post => (
-                <PostCard key={post.id} post={post} />
-            ))}
-        </div>
-    );
-};
+function App() {
+  return (
+    <AuthProvider>
+      <header>
+        <UserInfo />
+      </header>
+    </AuthProvider>
+  );
+}
 ```
 
-### 5. NavBar 설정 시스템
+### 4. PostEdit 컴포넌트
 
-#### 네비게이션 구조 정의
-```javascript
-const navStructure = {
-    id: 'root',
-    type: 'folder',
-    title: 'Navigation',
-    children: [
-        {
-            id: 'home',
-            type: 'item',
-            title: '홈',
-            icon: 'IconHome',
-            href: '/',
-            visible: true,
-            order: 0
-        },
-        {
-            id: 'blog',
-            type: 'folder',
-            title: '블로그',
-            icon: 'IconArticle',
-            visible: true,
-            order: 1,
-            children: [
-                {
-                    id: 'posts',
-                    type: 'item',
-                    title: '게시글',
-                    href: '/posts',
-                    visible: true,
-                    order: 0
-                }
-            ]
-        }
-    ]
-};
+```jsx
+import PostEdit from './components/blog/PostEdit';
+
+function CreatePost() {
+  const handleSave = (postData) => {
+    console.log('저장된 포스트:', postData);
+  };
+
+  const handlePreview = (postData) => {
+    console.log('미리보기:', postData);
+  };
+
+  return (
+    <PostEdit
+      initialPost={null} // 새 포스트 작성
+      onSave={handleSave}
+      onPreview={handlePreview}
+      navbarData={[
+        { id: 'tech', label: '기술' },
+        { id: 'tutorial', label: '튜토리얼' }
+      ]}
+    />
+  );
+}
 ```
 
-#### NavBar 설정 컴포넌트 사용
-```javascript
-import NavBarSettings from './components/settings/NavBarSettings';
+### 5. NavbarSettings 컴포넌트
 
-const App = () => {
-    const [navSettingsOpened, setNavSettingsOpened] = useState(false);
-    const [currentNavData, setCurrentNavData] = useLocalStorage('nav-structure', defaultNavStructure);
-    
-    const handleSaveNavigation = (newNavStructure) => {
-        setCurrentNavData(newNavStructure);
-        // 네비게이션 재구성 로직
-        updateNavigation(newNavStructure);
-    };
-    
-    return (
-        <>
-            <NavBarSettings
-                opened={navSettingsOpened}
-                onClose={() => setNavSettingsOpened(false)}
-                currentNavData={currentNavData}
-                onSave={handleSaveNavigation}
-            />
-            {/* 드래그 앤 드롭으로 메뉴 순서 변경 가능 */}
-        </>
-    );
-};
+```jsx
+import NavbarSettings from './components/NavbarSettings';
+
+function SettingsPage() {
+  return (
+    <div>
+      <h1>네비게이션 설정</h1>
+      <NavbarSettings />
+    </div>
+  );
+}
 ```
 
-### 6. 사용자 설정 시스템
+## 🔌 API 사용법
 
-#### UserSettings 컴포넌트
+### 기본 API 호출
+
 ```javascript
-import UserSettings from './components/settings/UserSettings';
+import { apiClient } from './services/apiClient';
 
-const UserProfile = () => {
-    const [settingsOpened, setSettingsOpened] = useState(false);
-    
-    return (
-        <>
-            <button onClick={() => setSettingsOpened(true)}>
-                사용자 설정
-            </button>
-            
-            <UserSettings
-                opened={settingsOpened}
-                onClose={() => setSettingsOpened(false)}
-            />
-            {/* 프로필 수정, 비밀번호 변경, 이미지 업로드 등 */}
-        </>
-    );
-};
-```
+// 포스트 목록 조회
+const posts = await apiClient.posts.getAll();
 
-## 🎨 테마 시스템
+// 포스트 생성
+const newPost = await apiClient.posts.create({
+  title: '새 포스트',
+  content: '<p>내용</p>',
+  tags: ['react', 'javascript']
+});
 
-### 커스텀 테마 적용
-```javascript
-import { CustomThemeProvider } from './contexts/ThemeContext';
-
-const App = () => {
-    return (
-        <CustomThemeProvider>
-            <YourApp />
-        </CustomThemeProvider>
-    );
-};
-
-// 테마 훅 사용
-const MyComponent = () => {
-    const {
-        colorScheme,
-        setColorScheme,
-        setPrimaryColor,
-        setRadius,
-        theme
-    } = useCustomTheme();
-    
-    return (
-        <div>
-            <button onClick={() => setColorScheme('dark')}>
-                다크 모드
-            </button>
-            <button onClick={() => setPrimaryColor('red')}>
-                빨간색 테마
-            </button>
-        </div>
-    );
-};
-```
-
-### 2025 트렌드 색상 사용
-```javascript
-import { trendColors, trendGradients } from './utils/colorHelpers';
-
-const TrendyComponent = () => {
-    return (
-        <div
-            style={{
-                background: trendGradients.sunset,
-                color: trendColors.lowLight.text,
-                padding: '20px',
-                borderRadius: '16px'
-            }}
-        >
-            2025 트렌드 디자인
-        </div>
-    );
-};
-```
-
-## 📊 성능 최적화 기법
-
-### 1. 메모리 누수 방지
-```javascript
-import { useMountedState } from './hooks/useMountedState';
-
-const AsyncComponent = () => {
-    const isMounted = useMountedState();
-    
-    const fetchData = async () => {
-        const data = await api.getData();
-        
-        // 컴포넌트가 언마운트되었다면 상태 업데이트 하지 않음
-        if (isMounted()) {
-            setData(data);
-        }
-    };
-    
-    useEffect(() => {
-        fetchData();
-    }, []);
-};
-```
-
-### 2. 리렌더링 최적화
-```javascript
-// React.memo로 불필요한 리렌더링 방지
-const PostCard = React.memo(({ post, onLike }) => {
-    // 메모화된 핸들러
-    const handleLike = useCallback(() => {
-        onLike(post.id);
-    }, [post.id, onLike]);
-    
-    // 계산 값 메모화
-    const formattedDate = useMemo(() => {
-        return formatDate(post.createdAt);
-    }, [post.createdAt]);
-    
-    return (
-        <Card>
-            <Text>{post.title}</Text>
-            <Text>{formattedDate}</Text>
-            <button onClick={handleLike}>좋아요</button>
-        </Card>
-    );
+// 사용자 로그인
+const loginResult = await apiClient.auth.login({
+  email: 'user@example.com',
+  password: 'password123'
 });
 ```
 
-### 3. 가상화 리스트
-```javascript
-import VirtualList from './components/advanced/VirtualList/VirtualList';
+### React Query와 함께 사용
 
-const LargePostList = ({ posts }) => {
-    return (
-        <VirtualList
-            items={posts}
-            itemHeight={120}
-            containerHeight={600}
-            renderItem={({ item: post, index }) => (
-                <PostCard key={post.id} post={post} />
-            )}
-        />
-    );
-};
+```javascript
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiClient } from './services/apiClient';
+
+// 포스트 목록 조회
+function usePostsQuery() {
+  return useQuery({
+    queryKey: ['posts'],
+    queryFn: () => apiClient.posts.getAll().then(res => res.data)
+  });
+}
+
+// 포스트 생성 뮤테이션
+function useCreatePostMutation() {
+  return useMutation({
+    mutationFn: (postData) => apiClient.posts.create(postData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['posts']);
+    }
+  });
+}
+
+// 컴포넌트에서 사용
+function PostsList() {
+  const { data: posts, isLoading } = usePostsQuery();
+  const createPost = useCreatePostMutation();
+
+  if (isLoading) return <div>로딩 중...</div>;
+
+  return (
+    <div>
+      {posts.map(post => (
+        <div key={post.id}>{post.title}</div>
+      ))}
+    </div>
+  );
+}
 ```
 
-## 🔧 유틸리티 함수 활용
+### 배치 요청
 
-### 색상 헬퍼
 ```javascript
-import {
-    hexToRgb,
-    isDarkColor,
-    getContrastColor,
-    adjustBrightness
-} from './utils/colorHelpers';
+// 여러 API를 한 번에 호출
+const batchRequests = [
+  { method: 'GET', url: '/posts', id: 'posts' },
+  { method: 'GET', url: '/tags', id: 'tags' },
+  { method: 'GET', url: '/categories', id: 'categories' }
+];
 
-const dynamicColor = '#3b82f6';
-const textColor = getContrastColor(dynamicColor); // 대비되는 텍스트 색상
-const lighterColor = adjustBrightness(dynamicColor, 20); // 20% 밝게
-```
-
-### 포맷터
-```javascript
-import {
-    formatNumber,
-    formatCurrency,
-    formatRelativeTime,
-    formatFileSize
-} from './utils/formatters';
-
-const price = 1500000;
-const formattedPrice = formatCurrency(price); // ₩1,500,000
-
-const date = new Date('2024-01-01');
-const relativeTime = formatRelativeTime(date); // 6개월 전
-
-const fileSize = 2048576;
-const readableSize = formatFileSize(fileSize); // 2.0 MB
-```
-
-### 검증 함수
-```javascript
-import {
-    isValidEmail,
-    validatePassword,
-    isValidKoreanPhone
-} from './utils/validation';
-
-const email = 'user@example.com';
-const isValid = isValidEmail(email); // true
-
-const password = 'MyPassword123!';
-const passwordStrength = validatePassword(password);
-// { length: true, uppercase: true, lowercase: true, number: true, special: true, score: 5, strength: 'strong', isValid: true }
+const results = await apiClient.batch.execute(batchRequests);
+console.log(results.data.posts); // 포스트 데이터
+console.log(results.data.tags); // 태그 데이터
+console.log(results.data.categories); // 카테고리 데이터
 ```
 
 ## 🧪 테스트
 
-### 단위 테스트 예시
+### 단위 테스트 실행
+
 ```bash
+# 모든 테스트 실행
 npm test
+
+# 특정 파일 테스트
+npm test -- apiClient.test.js
+
+# 커버리지 포함 테스트
+npm test -- --coverage
+
+# 워치 모드로 테스트
+npm test -- --watch
 ```
 
+### API 테스트 예시
+
 ```javascript
-// __tests__/PostCard.test.js
-import { render, screen } from '@testing-library/react';
-import PostCard from '../components/cards/PostCard';
+// tests/apiClient.test.js
+import { apiClient } from '../services/apiClient';
 
-describe('PostCard', () => {
-    const mockPost = {
-        id: 1,
-        title: 'Test Post',
-        excerpt: 'Test excerpt',
-        date: '2024-01-01',
-        readTime: '5분',
-        views: 100,
-        likes: 10
-    };
+describe('API Client', () => {
+  test('포스트 목록 조회', async () => {
+    const posts = await apiClient.posts.getAll();
+    expect(posts.data).toBeInstanceOf(Array);
+  });
 
-    test('renders post title correctly', () => {
-        render(<PostCard post={mockPost} />);
-        expect(screen.getByText('Test Post')).toBeInTheDocument();
+  test('로그인 기능', async () => {
+    const result = await apiClient.auth.login({
+      email: 'test@example.com',
+      password: 'password123'
     });
+    expect(result.data).toHaveProperty('token');
+    expect(result.data).toHaveProperty('user');
+  });
 });
+```
+
+### 컴포넌트 테스트
+
+```javascript
+// tests/components/SearchBar.test.js
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { SearchBar } from '../../components/SearchBar';
+
+describe('SearchBar', () => {
+  test('검색 입력 및 실행', async () => {
+    const onSearch = jest.fn();
+    render(<SearchBar onSearch={onSearch} />);
+
+    const input = screen.getByPlaceholderText(/검색어/);
+    fireEvent.change(input, { target: { value: 'React' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(onSearch).toHaveBeenCalledWith('React');
+    });
+  });
+});
+```
+
+## 🎨 커스터마이징
+
+### 테마 설정
+
+```javascript
+// contexts/ThemeContext.jsx에서 테마 수정
+const customTheme = {
+  colorScheme: 'dark',
+  primaryColor: 'blue',
+  fontFamily: 'Inter, sans-serif',
+  colors: {
+    // 커스텀 색상 정의
+  }
+};
+```
+
+### 새 컴포넌트 추가
+
+```javascript
+// components/custom/MyComponent.jsx
+import React, { memo } from 'react';
+import { Box, Text } from '@mantine/core';
+
+const MyComponent = memo(({ title, children }) => {
+  return (
+    <Box p="md">
+      <Text size="lg" fw={600} mb="sm">
+        {title}
+      </Text>
+      {children}
+    </Box>
+  );
+});
+
+MyComponent.displayName = 'MyComponent';
+export default MyComponent;
+```
+
+### 새 API 엔드포인트 추가
+
+```javascript
+// services/apiClient.js에 추가
+export class ApiClient {
+  // ... 기존 코드
+
+  // 새 API 그룹 추가
+  myNewApi = {
+    getData: async () => {
+      return this.api.get('/my-new-endpoint');
+    },
+
+    postData: async (data) => {
+      return this.api.post('/my-new-endpoint', data);
+    }
+  };
+}
+```
+
+## 🔧 성능 최적화
+
+### 메모이제이션
+
+- 모든 컴포넌트는 `React.memo()` 사용
+- 콜백 함수는 `useCallback()` 사용
+- 계산된 값은 `useMemo()` 사용
+
+```javascript
+const OptimizedComponent = memo(({ data, onUpdate }) => {
+  const processedData = useMemo(() => {
+    return data.map(item => ({ ...item, processed: true }));
+  }, [data]);
+
+  const handleClick = useCallback((id) => {
+    onUpdate(id);
+  }, [onUpdate]);
+
+  return (
+    <div>
+      {processedData.map(item => (
+        <div key={item.id} onClick={() => handleClick(item.id)}>
+          {item.name}
+        </div>
+      ))}
+    </div>
+  );
+});
+```
+
+### 코드 분할
+
+```javascript
+// 지연 로딩으로 번들 크기 최적화
+const PostEdit = lazy(() => import('./components/blog/PostEdit'));
+const PostView = lazy(() => import('./components/blog/PostView'));
+
+function App() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/edit" element={<PostEdit />} />
+        <Route path="/view/:id" element={<PostView />} />
+      </Routes>
+    </Suspense>
+  );
+}
+```
+
+### 이미지 최적화
+
+```javascript
+// LazyImage 컴포넌트 사용
+<LazyImage
+  src="large-image.jpg"
+  placeholder={<SkeletonLoader type="image" />}
+  fallback={<div>이미지를 불러올 수 없습니다</div>}
+/>
+```
+
+## 📱 모바일 지원
+
+### 반응형 디자인
+
+```javascript
+// 모바일 우선 스타일링
+const ResponsiveComponent = () => {
+  return (
+    <Box
+      p={{ base: 'xs', sm: 'md', lg: 'xl' }}
+      w={{ base: '100%', sm: '80%', lg: '60%' }}
+    >
+      <Group
+        direction={{ base: 'column', sm: 'row' }}
+        spacing={{ base: 'xs', sm: 'md' }}
+      >
+        <Button size={{ base: 'sm', sm: 'md' }}>
+          모바일용 버튼
+        </Button>
+      </Group>
+    </Box>
+  );
+};
+```
+
+### 터치 제스처
+
+```javascript
+// 터치 이벤트 처리
+const TouchComponent = () => {
+  const handleTouchStart = useCallback((e) => {
+    // 터치 시작 처리
+  }, []);
+
+  const handleTouchEnd = useCallback((e) => {
+    // 터치 종료 처리
+  }, []);
+
+  return (
+    <div
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      터치 가능한 요소
+    </div>
+  );
+};
 ```
 
 ## 🚀 배포
 
-### Vercel 배포
+### 빌드
+
 ```bash
-npm install -g vercel
-vercel --prod
+# 프로덕션 빌드
+npm run build
+
+# 빌드 확인
+npm run preview
 ```
 
-### Netlify 배포
+### 환경별 설정
+
 ```bash
-npm run build
-# dist 폴더를 Netlify에 드래그 앤 드롭
+# 개발 환경
+REACT_APP_ENV=development npm run build
+
+# 스테이징 환경
+REACT_APP_ENV=staging npm run build
+
+# 프로덕션 환경
+REACT_APP_ENV=production npm run build
 ```
 
 ### Docker 배포
+
 ```dockerfile
+# Dockerfile
 FROM node:18-alpine
 
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm ci --only=production
 
@@ -706,140 +651,59 @@ COPY . .
 RUN npm run build
 
 EXPOSE 3000
+
 CMD ["npm", "start"]
 ```
 
-## 🔧 환경 설정
-
-### VSCode 권장 확장
-```json
-{
-    "recommendations": [
-        "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss",
-        "ms-vscode.vscode-typescript-next",
-        "bradlc.vscode-tailwindcss"
-    ]
-}
-```
-
-### ESLint 설정
-```json
-{
-    "extends": [
-        "react-app",
-        "react-app/jest"
-    ],
-    "rules": {
-        "react-hooks/exhaustive-deps": "error",
-        "no-unused-vars": "error"
-    }
-}
-```
-
-## 📈 모니터링 및 분석
-
-### 성능 모니터링
-```javascript
-// 성능 메트릭 수집
-const observer = new PerformanceObserver((list) => {
-    list.getEntries().forEach((entry) => {
-        console.log(entry.name, entry.duration);
-    });
-});
-
-observer.observe({ entryTypes: ['measure', 'navigation'] });
-```
-
-### 에러 추적
-```javascript
-window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error);
-    // 에러 로깅 서비스로 전송
-});
-
-window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason);
-});
+```bash
+# Docker 빌드 및 실행
+docker build -t tech-blog .
+docker run -p 3000:3000 tech-blog
 ```
 
 ## 🤝 기여하기
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### 개발 환경 설정
 
-### 코딩 컨벤션
-- **컴포넌트**: PascalCase (예: `PostCard.jsx`)
-- **훅**: camelCase with `use` prefix (예: `useLocalStorage.js`)
-- **유틸리티**: camelCase (예: `formatters.js`)
-- **상수**: UPPER_SNAKE_CASE (예: `API_ENDPOINTS`)
+1. Fork 저장소
+2. 브랜치 생성: `git checkout -b feature/amazing-feature`
+3. 변경사항 커밋: `git commit -m 'Add amazing feature'`
+4. 브랜치에 푸시: `git push origin feature/amazing-feature`
+5. Pull Request 생성
 
-### 커밋 메시지 컨벤션
-```
-feat: 새로운 기능 추가
-fix: 버그 수정
-docs: 문서 수정
-style: 코드 formatting, 세미콜론 누락 등
-refactor: 코드 리팩토링
-test: 테스트 코드
-chore: 빌드 과정 또는 보조 기능 수정
-```
+### 코딩 스타일
 
-## 📝 라이센스
+- ESLint와 Prettier 설정 준수
+- 컴포넌트명은 PascalCase 사용
+- 파일명은 kebab-case 사용
+- 커밋 메시지는 [Conventional Commits](https://conventionalcommits.org/) 규칙 준수
 
-이 프로젝트는 MIT 라이센스 하에 있습니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+### 코드 리뷰 가이드라인
 
-## 🆘 문제 해결
+- 모든 PR은 최소 1명의 리뷰어 승인 필요
+- 테스트 커버리지 80% 이상 유지
+- 타입스크립트 에러 0개
+- 성능 영향도 검토
 
-### 자주 발생하는 문제
+## 📄 라이센스
 
-#### 1. Mantine 스타일이 적용되지 않는 경우
-```javascript
-// App.jsx에 CSS 파일 import 확인
-import '@mantine/core/styles.css';
-```
-
-#### 2. 토큰이 자동으로 갱신되지 않는 경우
-```javascript
-// API 클라이언트 설정 확인
-const apiStore = useApiStore.getState();
-console.log('Current tokens:', apiStore.tokens);
-```
-
-#### 3. 드래그 앤 드롭이 작동하지 않는 경우
-```bash
-npm install @hello-pangea/dnd
-```
-
-#### 4. 무한 스크롤이 트리거되지 않는 경우
-```javascript
-// Intersection Observer 옵션 조정
-const [setElement, isIntersecting] = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '100px', // 마진 증가
-});
-```
-
-## 📞 지원
-
-- **GitHub Issues**: 버그 리포트 및 기능 요청
-- **Discussions**: 일반적인 질문 및 토론
-- **Email**: support@techblog.com
+이 프로젝트는 MIT 라이센스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 ## 🙏 감사의 말
 
-이 프로젝트는 다음 오픈소스 프로젝트들의 도움을 받았습니다:
-
-- [Mantine](https://mantine.dev/) - 훌륭한 UI 컴포넌트 라이브러리
+- [Mantine](https://mantine.dev/) - 훌륭한 React 컴포넌트 라이브러리
 - [TanStack Query](https://tanstack.com/query) - 강력한 데이터 페칭 라이브러리
-- [Zustand](https://github.com/pmndrs/zustand) - 가벼운 상태 관리 라이브러리
-- [React DnD](https://github.com/hello-pangea/dnd) - 드래그 앤 드롭 라이브러리
+- [Tabler Icons](https://tabler-icons.io/) - 아름다운 아이콘 세트
+- [Hello Pangea DnD](https://github.com/hello-pangea/dnd) - 드래그 앤 드롭 라이브러리
+
+## 📞 문의
+
+프로젝트 관련 문의사항이 있으시면 언제든 연락주세요:
+
+- 이메일: your-email@example.com
+- 이슈: [GitHub Issues](https://github.com/your-username/tech-blog-platform/issues)
+- 토론: [GitHub Discussions](https://github.com/your-username/tech-blog-platform/discussions)
 
 ---
 
-**⭐ 이 프로젝트가 도움이 되셨다면 Star를 눌러주세요!**
-
-Made with ❤️ by LABit Team
+⭐ 이 프로젝트가 도움이 되셨다면 스타를 눌러주세요!

@@ -11,6 +11,7 @@ import {backgroundBlur} from "@/utils/backgroundBlur.js";
 import Navbar from "@/components/layout/Navbar.jsx";
 import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/constants/data.js";
 import MobileNav from "@/components/layout/MobileNav.jsx";
+import {Outlet} from "react-router-dom";
 
 const MainPageLayout = () => {
     const [drawerOpened, setDrawerOpened] = useState(false);
@@ -65,6 +66,8 @@ const MainPageLayout = () => {
             </AppShell.Navbar>
 
             <ScrollArea component={AppShell.Main} h={200} scrollbars="y">
+                <Outlet
+                />
             </ScrollArea>
         </AppShell>
     );

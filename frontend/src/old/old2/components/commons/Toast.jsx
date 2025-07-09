@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Notification, Portal, Stack, rem } from '@mantine/core';
 import { IconCheck, IconX, IconAlertCircle, IconInfoCircle } from '@tabler/icons-react';
+import {getToastColor} from "../../../../utils/colorHelpers.js";
 
 const ToastContext = createContext();
 
@@ -22,15 +23,6 @@ const getToastIcon = (type) => {
     }
 };
 
-const getToastColor = (type) => {
-    switch (type) {
-        case 'success': return 'green';
-        case 'error': return 'red';
-        case 'warning': return 'yellow';
-        case 'info': return 'blue';
-        default: return 'blue';
-    }
-};
 
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
