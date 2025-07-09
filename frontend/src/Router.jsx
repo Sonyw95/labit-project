@@ -5,10 +5,12 @@ import OptimizedLoading from "./components/common/OptimizedLoading.jsx";
 import NavbarSettings from "./components/layout/NavbarSettings .jsx";
 import PostEditLayout from "./pages/PostEditLayout.jsx";
 import PostView from "./components/blog/PostView.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 const MainLayout = lazy(() => import('@/pages/MainLayout.jsx'));
 const AppRouter = () => {
     const router = createBrowserRouter([
+        { path: '*', element: <NotFoundPage/> },
         {
             path: '/',
             element: (

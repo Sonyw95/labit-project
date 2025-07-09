@@ -9,6 +9,8 @@ import LoginModal from "./LoginModal.jsx";
 
 const UserInfo = memo(() => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
+    const [regModalOpened, setRegModalOpen] = useState(false);
+
     const [settingsModalOpened, setSettingsModalOpened] = useState(false);
 
     const { isAuthenticated, user, logout } = useAuth();
@@ -62,6 +64,7 @@ const UserInfo = memo(() => {
             </Group>
 
             <LoginModal
+                isLogin={ loginModalOpened }
                 opened={loginModalOpened}
                 onClose={() => setLoginModalOpened(false)}
             />
