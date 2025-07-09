@@ -1,6 +1,6 @@
 import {alpha} from "@mantine/core";
 
-export function BackgroundBlur(props) {
+export function backgroundBlur(props) {
     const blur = 6;
     const alphaPoint = props?.alpha || 0.3;
     const color = props.color;

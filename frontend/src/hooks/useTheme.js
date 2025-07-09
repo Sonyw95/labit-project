@@ -1,48 +1,19 @@
-import {useComputedColorScheme} from '@mantine/core';
-import {useCallback} from "react";
+// hooks/useTheme.js
+import { useMantineColorScheme } from '@mantine/core';
+import { THEME_COLORS } from '../constants/data';
+import {useMemo} from "react";
 
 export const useTheme = () => {
-    const { colorScheme, toggleColorScheme } = useComputedColorScheme();
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+    const dark = useMemo(() => colorScheme === 'dark', [colorScheme]);
 
-    // 실제 colorScheme 값은 CSS에서 data-mantine-color-scheme 속성으로 처리
-    const getCurrentScheme = useCallback(() => {
-        if (typeof document === 'undefined') {
-            return 'light';
-        }
-        return document.documentElement.getAttribute('data-mantine-color-scheme') || 'light';
-    }, []);
-
-    const dark = getCurrentScheme === 'dark';
-
-    const getThemeColor = (lightColor, darkColor) => {
-        return dark ? darkColor : lightColor;
-    };
-
-    const getBackgroundColor = () => {
-        return dark ? '#0d1117' : '#f8fafc';
-    };
-
-    const getCardBackgroundColor = () => {
-        return dark ? '#161b22' : '#ffffff';
-    };
-
-    const getBorderColor = () => {
-        return dark ? '#21262d' : '#e5e7eb';
-    };
-
-    const getHoverColor = () => {
-        return dark ? '#21262d' : '#f3f4f6';
-    };
+    const colors = dark ? THEME_COLORS.dark : THEME_COLORS.light;
 
     return {
         dark,
-        colorScheme,
+        colors,
         toggleColorScheme,
-        getThemeColor,
-        getBackgroundColor,
-        getCardBackgroundColor,
-        getBorderColor,
-        getHoverColor,
-        getCurrentScheme,
+        primary: THEME_COLORS.primary,
+        primaryHover: THEME_COLORS.primaryHover,
     };
 };
