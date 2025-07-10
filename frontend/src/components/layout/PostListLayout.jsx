@@ -3,7 +3,6 @@ import {Box, Button, Center, Container, Grid, Group, rem, Stack, Text, Title} fr
 import React, {memo} from "react";
 import {useTheme} from "@/hooks/useTheme.js";
 import {RECENT_POSTS} from "@/constants/data.js";
-import PostCard from "@/components/blog/PostCard.jsx";
 import PostList from "@/components/blog/PostList.jsx";
 
 const PostListLayout = memo(() => {

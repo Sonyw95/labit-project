@@ -38,7 +38,6 @@ import {useQuery} from "@tanstack/react-query";
 import {apiClient} from "@/services/apiClient.js";
 import {showToast} from "@/components/common/Toast.jsx";
 import InfiniteScroll from "@/components/common/InfiniteScroll.jsx";
-import PostCard from "@/components/blog/PostCard.jsx";
 
 // 포스트 스켈레톤 컴포넌트
 const PostSkeleton = memo(() => {

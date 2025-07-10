@@ -52,7 +52,7 @@ export const RECENT_POSTS =  [
         views: 1250,
         likes: 89,
         createdAt: "2025-06-24",
-        tags: ["UI/UX", "모바일", "트렌드"]
+        tags: ["UI/UX", "모바일", "트렌드"],
     },
     {
         id: 2,

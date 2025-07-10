@@ -10,7 +10,7 @@ function iterLink(shouldOpen, currentPath, routes){
                 shouldOpen.add( nowPath );
                 nowPath && shouldOpen.add( nowPath );
             }else {
-                iterLink(shouldOpen, currentPath, nowPath, subRoute);
+                iterLink(shouldOpen, currentPath, subRoute);
             }
         }
     })

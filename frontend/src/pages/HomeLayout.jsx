@@ -3,7 +3,7 @@ import BannerSection from "../components/layout/BannerSection.jsx";
 import {RECENT_POSTS, TECH_STACK} from "../constants/data.js";
 import {Box, Button, Center, Container, Grid, Group, rem, Stack, Title, Text} from "@mantine/core";
 import {IconChevronRight, IconSparkles} from "@tabler/icons-react";
-import PostCard from "../components/blog/PostCard.jsx";
+import PostCard from "@/components/blog/PostCard.jsx";
 
 
 const MainHomePage = () => {
@@ -87,7 +87,8 @@ const MainHomePage = () => {
                 <Grid gutter='lg'>
                     {RECENT_POSTS.map((post, index) => (
                         <Grid.Col key={post.id} span={{ base: 12, sm: 6, lg: 4 }}>
-                            <PostCard post={post} index={index} dark={dark} />
+                            <PostCard key={post.id} post={post} />
+                            {/*<PostCard post={post} index={index} dark={dark} />*/}
                         </Grid.Col>
                     ))}
                 </Grid>
