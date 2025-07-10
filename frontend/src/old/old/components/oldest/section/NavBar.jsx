@@ -23,25 +23,25 @@ const NavBar = (props) => {
 
     // 네비게이션 메뉴 아이템
     const navigationItems = [
-        { icon: IconHome, label: '홈', href: '/home',  requiredNav: true,
+        { icon: IconHome, label: '홈', href: '/home',  root: true,
             subLinks: []
         },
-        { icon: IconDevicesCode, label: '기술', href: '/post', requiredNav: false,
+        { icon: IconDevicesCode, label: '기술', href: '/post', root: false,
             subLinks: [
                 {
-                    icon: FaJava, label: 'Java', href: '/post/java', badge: '10', requiredNav: true, subLinks: []
+                    icon: FaJava, label: 'Java', href: '/post/java', badge: '10', root: true, subLinks: []
                 },
                 {
-                    icon: SiSpring, label: 'Spring', href: '/post/spring', badge: '10', requiredNav: true, subLinks: []
+                    icon: SiSpring, label: 'Spring', href: '/post/spring', badge: '10', root: true, subLinks: []
                 }
             ]
         },
-        { icon: IconTags, label: '태그', href: '/tag', requiredNav: true,
+        { icon: IconTags, label: '태그', href: '/tag', root: true,
             subLinks: []
         },
-        // { icon: IconTrendingUp, label: '인기글', href: '/trending', hasLinks: false, requiredNav: true, subLinks: [] },
-        // { icon: IconBookmark, label: '북마크', href: '/bookmarks', hasLinks: false, requiredNav: true, subLinks: [] },
-        { icon: IconUser, label: '소개', href: '/about', requiredNav: true,
+        // { icon: IconTrendingUp, label: '인기글', href: '/trending', hasLinks: false, root: true, subLinks: [] },
+        // { icon: IconBookmark, label: '북마크', href: '/bookmarks', hasLinks: false, root: true, subLinks: [] },
+        { icon: IconUser, label: '소개', href: '/about', root: true,
             subLinks: []
         },
     ];
@@ -612,7 +612,7 @@ const NavBar = (props) => {
                         </Badge>
                     ) : item.active ? (
                         <IconSparkles size={14} style={{ color: '#4c6ef5' }} />
-                    ) : item.requiredNav ? null :  <IconChevronRight size={14} stroke={1.5} />
+                    ) : item.root ? null :  <IconChevronRight size={14} stroke={1.5} />
                 }
                 active={item.active}
                 style={{

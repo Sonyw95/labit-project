@@ -11,25 +11,25 @@ export const techStack = ['Java', 'Spring', 'React'];
 
 // 네비게이션 메뉴 아이템
 export const navigationItems = [
-    { icon: 'IconHome', label: '홈', href: '/home',  requiredNav: true,
+    { icon: 'IconHome', label: '홈', href: '/home',  root: true,
         subLinks: []
     },
-    { icon: 'IconDevicesCode', label: '기술', href: '/posts', requiredNav: false,
+    { icon: 'IconDevicesCode', label: '기술', href: '/posts', root: false,
         subLinks: [
             {
-                icon: 'IconCoffee', label: 'Java', href: '/posts/java', badge: '10', requiredNav: true, subLinks: []
+                icon: 'IconCoffee', label: 'Java', href: '/posts/java', badge: '10', root: true, subLinks: []
             },
             {
-                icon: 'IconLeaf', label: 'Spring', href: '/posts/spring', badge: '10', requiredNav: true, subLinks: []
+                icon: 'IconLeaf', label: 'Spring', href: '/posts/spring', badge: '10', root: true, subLinks: []
             }
         ]
     },
-    { icon: 'IconTags', label: '태그', href: '/tag', requiredNav: true,
+    { icon: 'IconTags', label: '태그', href: '/tag', root: true,
         subLinks: []
     },
-    // { icon: IconTrendingUp, label: '인기글', href: '/trending', hasLinks: false, requiredNav: true, subLinks: [] },
-    // { icon: IconBookmark, label: '북마크', href: '/bookmarks', hasLinks: false, requiredNav: true, subLinks: [] },
-    { icon: 'IconUser', label: '소개', href: '/about', requiredNav: true,
+    // { icon: IconTrendingUp, label: '인기글', href: '/trending', hasLinks: false, root: true, subLinks: [] },
+    // { icon: IconBookmark, label: '북마크', href: '/bookmarks', hasLinks: false, root: true, subLinks: [] },
+    { icon: 'IconUser', label: '소개', href: '/about', root: true,
         subLinks: []
     },
 ];

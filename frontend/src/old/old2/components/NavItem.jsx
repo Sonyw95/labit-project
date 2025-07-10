@@ -6,8 +6,8 @@ import {Icons} from "@/utils/Icons.jsx";
 import {useNavLinkState} from "@/hooks/useNavLinksState.js";
 
 
-const handleClick = (requiredNav, onClose) => {
-    onClose && requiredNav && onClose();
+const handleClick = (root, onClose) => {
+    onClose && root && onClose();
 }
 const Navigated = ( ({item, onClose, openedItems, toggleItem}) => {
     const subItem = item?.subLinks;
@@ -16,7 +16,7 @@ const Navigated = ( ({item, onClose, openedItems, toggleItem}) => {
             key={item.href}
             component={Links}
             to={ item.href }
-            onClick={() => handleClick(item.requiredNav, onClose)}
+            onClick={() => handleClick(item.root, onClose)}
             label={item.label}
             opened={openedItems.has(item.href)}
             onChange={(opened) => toggleItem(item.href)}
