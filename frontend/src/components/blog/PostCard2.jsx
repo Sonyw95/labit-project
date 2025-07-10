@@ -290,7 +290,7 @@ const PostMenu = memo(({ post, onEdit, onDelete, onTogglePin, onToggleVisibility
 PostMenu.displayName = 'PostMenu';
 
 // 메인 PostCard 컴포넌트
-const PostCard = memo(({
+const PostCard2 = memo(({
                            post,
                            variant = 'default', // 'default', 'compact', 'featured'
                            showImage = true,
@@ -648,5 +648,5 @@ const PostCard = memo(({
     );
 });
 
-PostCard.displayName = 'PostCard';
-export default PostCard;
+PostCard2.displayName = 'PostCard';
+export default PostCard2;

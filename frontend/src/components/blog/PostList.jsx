@@ -38,6 +38,7 @@ import {useQuery} from "@tanstack/react-query";
 import {apiClient} from "@/services/apiClient.js";
 import {showToast} from "@/components/common/Toast.jsx";
 import InfiniteScroll from "@/components/common/InfiniteScroll.jsx";
+import PostCard2 from "@/components/blog/PostCard2.jsx";
 
 // 포스트 스켈레톤 컴포넌트
 const PostSkeleton = memo(() => {
@@ -368,6 +369,7 @@ const PostList = memo(({
 
     // 빈 상태
     if (posts.length === 0) {
+    // if (posts.length === 0) {
         const emptyType = debouncedSearchQuery ? 'search-empty' : 'empty';
 
         return (
@@ -529,7 +531,7 @@ const PostList = memo(({
                     >
                         <Stack gap="md">
                             {posts.map((post) => (
-                                <PostCard key={post.id} post={post} />
+                                <PostCard2 key={post.id} post={post} />
                             ))}
                         </Stack>
                     </InfiniteScroll>
@@ -537,7 +539,7 @@ const PostList = memo(({
                     <>
                         <Stack gap="md">
                             {posts.map((post) => (
-                                <PostCard key={post.id} post={post} />
+                                <PostCard2 key={post.id} post={post} />
                             ))}
                         </Stack>
 

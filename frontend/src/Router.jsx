@@ -21,7 +21,7 @@ const AppRouter = () => {
                 { index: true, element: <Navigate to="/home"/> },
                 { path: '/home', element: <HomeLayout/> },
                 { path: '/setting/blog', element: <NavbarSettings />},
-                // { path: '/posts/:category', element: <PostListLayout/> },
+                { path: '/posts/:category', element: <PostListLayout/> },
                 { path: '/post/edit', element: <PostEditLayout/>},
                 { path: '/post/view', element: <PostView/>}
             ]

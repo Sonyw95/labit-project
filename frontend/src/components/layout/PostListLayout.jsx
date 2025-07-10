@@ -1,13 +1,9 @@
 import {useParams} from "react-router-dom";
-import {Box, Button, Center, Container, Grid, Group, rem, Stack, Text, Title} from "@mantine/core";
 import React, {memo} from "react";
 import {useTheme} from "@/hooks/useTheme.js";
-import {RECENT_POSTS} from "@/constants/data.js";
 import PostList from "@/components/blog/PostList.jsx";
 
 const PostListLayout = memo(() => {
-    const { dark } = useTheme();
-    const { category } =useParams();
         // const customStats = [
         //     { icon: IconBookOff, label: '총 게시글', value: '42', color: '#3b82f6' },
         //     { icon: IconUsers, label: '월간 독자', value: '1.2K', color: '#10b981' },
