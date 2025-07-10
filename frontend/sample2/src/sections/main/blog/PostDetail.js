@@ -112,7 +112,7 @@ export default function PostDetail() {
 
     return (
         <Box style={{ minHeight: '100vh', background: isDark ? theme.colors.dark[8] : theme.colors.gray[0] }}>
-            {/* PostPage Navigator - 2025 트렌드: Bento Box 스타일의 네비게이션 */}
+            {/* PostListLayout Navigator - 2025 트렌드: Bento Box 스타일의 네비게이션 */}
             <Paper
                 shadow="sm"
                 p="md"
@@ -177,7 +177,7 @@ export default function PostDetail() {
             </Paper>
 
             <Container size="md" py="xl">
-                {/* PostPage Banner Image - 2025 트렌드: 유기적 형태와 그라데이션 */}
+                {/* PostListLayout Banner Image - 2025 트렌드: 유기적 형태와 그라데이션 */}
                 <Paper
                     radius="xl"
                     overflow="hidden"
@@ -284,7 +284,7 @@ export default function PostDetail() {
                     </Group>
                 </Card>
 
-                {/* PostPage Content - 2025 트렌드: 개선된 가독성과 여백 활용 */}
+                {/* PostListLayout Content - 2025 트렌드: 개선된 가독성과 여백 활용 */}
                 <Paper p="xl" radius="xl" shadow="sm" mb="xl" style={{ border: `1px solid ${isDark ? theme.colors.dark[4] : theme.colors.gray[2]}` }}>
                     <Stack gap="xl">
                         <Text size="lg" style={{ lineHeight: 1.8 }}>

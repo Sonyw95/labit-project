@@ -25,7 +25,7 @@ export function useNavState(routes) {
         const shouldOpen = new Set();
 
         // 현재 경로와 매치되는 모든 상위 경로를 찾아서 열기
-        iterLink(shouldOpen, currentPath, undefined, routes);
+        iterLink(shouldOpen, currentPath, routes);
 
         setOpenedItems(shouldOpen);
     }, [location.pathname, routes]);

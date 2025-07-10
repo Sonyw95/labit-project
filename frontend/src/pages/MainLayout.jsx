@@ -65,7 +65,7 @@ const MainPageLayout = () => {
                 />
             </AppShell.Navbar>
 
-            <ScrollArea component={AppShell.Main} h={200} scrollbars="y">
+            <ScrollArea component={AppShell.Main} h={200} scㅌrollbars="y">
                 <Outlet
                 />
             </ScrollArea>

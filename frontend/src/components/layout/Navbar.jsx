@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
     AppShell,
     Group,
@@ -19,7 +19,8 @@ import TagItem from "@/components/layout/TagItem.jsx";
 import NavigationItem from "@/components/layout/NavigationItem.jsx";
 import {useTheme} from "@/hooks/useTheme.js";
 
-const Navbar = ({  navigationItems, popularTags }) => {
+const Navbar = memo(({  navigationItems, popularTags }) => {
+    console.log('Nav')
     const { dark } = useTheme();
     return (
         <>
@@ -122,5 +123,5 @@ const Navbar = ({  navigationItems, popularTags }) => {
         </>
     )
 }
-
+)
 export default Navbar;

@@ -17,9 +17,10 @@ const Navigated = ( ({item, onClose, openedItems, toggleItem}) => {
             component={Links}
             to={ item.href }
             onClick={() => handleClick(item.requiredNav, onClose)}
+            onChange={(opened) => toggleItem(item.href)}
+
             label={item.label}
             opened={openedItems.has(item.href)}
-            onChange={(opened) => toggleItem(item.href)}
             leftSection={
                 <Icons icon={item.icon} size={18} style={{
                     transition: 'all 0.3s ease',

@@ -601,13 +601,17 @@ const BannerSection = ({
         return (
             <Box
                 style={{
-                    background: dark
-                        ? 'linear-gradient(135deg, #161b22 0%, #0d1117 100%)'
-                        : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    // background: dark
+                    //     ? 'linear-gradient(135deg, #161b22 0%, #0d1117 100%)'
+                    //     : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
                     padding: `${rem(80)} 0`,
                     marginBottom: rem(40),
                     position: 'relative',
                     overflow: 'hidden',
+                    backgroundImage: `url(${defaultBg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
                 }}
             >
                 <Container size="lg" style={{ position: 'relative', zIndex: 10 }}>
@@ -632,7 +636,8 @@ const BannerSection = ({
                                 style={{
                                     fontSize: rem(48),
                                     fontWeight: 700,
-                                    color: dark ? '#f0f6fc' : '#1e293b',
+                                    // color: dark ? '#f0f6fc' : '#1e293b',
+                                    color: '#f0f6fc',
                                     animation: mounted ? 'fadeInUp 0.6s ease-out 0.2s both' : 'none',
                                 }}
                             >

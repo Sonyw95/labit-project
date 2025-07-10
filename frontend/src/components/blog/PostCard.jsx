@@ -12,7 +12,7 @@ import {
     Tooltip, Skeleton
 } from "@mantine/core";
 import {IconBookmark, IconChevronRight, IconEye, IconHeart, IconShare} from "@tabler/icons-react";
-import React, {useState} from "react";
+import React, {memo, useState} from "react";
 
 const categoryColors = {
     "디자인": "violet",
@@ -23,7 +23,7 @@ const categoryColors = {
     "보안": "red"
 };
 
-function PostCard({ post, index, dark, loading = false }) {
+function PostCard({ post, index, dark, loading = true }) {
     const [isHovered, setIsHovered] = useState(false);
     const [likedPosts, setLikedPosts] = useState(new Set());
     const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set());
@@ -373,4 +373,4 @@ function PostCard({ post, index, dark, loading = false }) {
         </Transition>
     )
 }
-export default PostCard;
+export default memo(PostCard);

@@ -6,13 +6,16 @@ export const NAVIGATION_ITEMS =  [
     { icon: 'IconHome', label: '홈', href: '/home',  requiredNav: true,
         subLinks: []
     },
-    { icon: 'IconDevicesCode', label: '기술', href: '/posts', requiredNav: false,
+    { icon: 'IconServer', label: 'Backend', href: '/posts', requiredNav: false,
         subLinks: [
             {
                 icon: 'IconCoffee', label: 'Java', href: '/posts/java', badge: '10', requiredNav: true, subLinks: []
             },
             {
                 icon: 'IconLeaf', label: 'Spring', href: '/posts/spring', badge: '10', requiredNav: true, subLinks: []
+            },
+            {
+                icon: 'IconBrandAdobe', label: 'AEM', href: '/posts/aem', badge: '10', requiredNav: true, subLinks: []
             }
         ]
     },
