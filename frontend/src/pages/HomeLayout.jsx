@@ -87,8 +87,8 @@ const MainHomePage = () => {
                 <Grid gutter='lg'>
                     {RECENT_POSTS.map((post, index) => (
                         <Grid.Col key={post.id} span={{ base: 12, sm: 6, lg: 4 }}>
-                            <PostCard key={post.id} post={post} />
-                            {/*<PostCard post={post} index={index} dark={dark} />*/}
+                            {/*<PostCard variant="compact" key={post.id} post={post}/>*/}
+                            <PostCard post={post} index={index} dark={dark} />
                         </Grid.Col>
                     ))}
                 </Grid>
