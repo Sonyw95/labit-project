@@ -47,7 +47,9 @@ tasks.register('Wrapper', Wrapper) {
 repositories {
     mavenCentral()
 }
-
+compileJava {
+    options.compilerArgs << '-parameters'
+}
 // OS 탐지
 static def getOsName(){
     def osName = System.getProperty("os.name").toLowerCase()
@@ -77,7 +79,7 @@ tasks.register('copyPropertiesForOs') {
         if( osName === 'unknown' ){
             println("지원되지 않는 OS ${System.getProperty("os.name")}")
         }else{
-            def serverPropsFile = file("src/main/resources/properties-${targetServer}-${osName}/application.properties")
+            def serverPropsFile = file("src/main/resources/properties-${targetServer}-${osName}/application.properties") as Object
             if( serverPropsFile.exists() ){
                 copy{
                     from serverPropsFile
@@ -85,6 +87,7 @@ tasks.register('copyPropertiesForOs') {
                     println("Copy Success Os Server Properties")
                 }
             }else {
+                println("src/main/resources/properties-${targetServer}-${osName}/application.properties")
                 println("Os Server Properties File Not Found")
             }
         }
