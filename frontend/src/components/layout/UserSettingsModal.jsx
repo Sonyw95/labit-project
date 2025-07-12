@@ -1,7 +1,7 @@
 import {memo, useCallback, useState} from "react";
 import {useAuth} from "../../contexts/AuthContext.jsx";
-import {useTheme} from "../../hooks/useTheme.js";
-import {validators} from "../../utils/validators.js";
+import {useTheme} from "@/hooks/useTheme.js";
+import {validators} from "@/utils/validators.js";
 import {showToast} from "../common/Toast.jsx";
 import {
     Alert,
@@ -14,7 +14,8 @@ import {
     PasswordInput,
     Stack, Switch,
     Tabs,
-    TextInput
+    TextInput,
+    Text
 } from "@mantine/core";
 import {IconBell, IconCamera, IconCheck, IconLock, IconShield, IconUser} from "@tabler/icons-react";
 import PasswordStrengthIndicator from "./PasswordStrengthIndicator.jsx";

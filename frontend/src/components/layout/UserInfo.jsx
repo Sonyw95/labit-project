@@ -6,13 +6,12 @@ import UserSettingsModal from "./UserSettingsModal.jsx";
 import {Button, Group} from "@mantine/core";
 import {IconLogin, IconUserPlus} from "@tabler/icons-react";
 import LoginModal from "./LoginModal.jsx";
+import SignupModal from "@/components/layout/SignupModal.jsx";
 
 const UserInfo = memo(() => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
-    const [regModalOpened, setRegModalOpen] = useState(false);
-
+    const [signupModalOpened, setSignupModalOpened] = useState(false);
     const [settingsModalOpened, setSettingsModalOpened] = useState(false);
-
     const { isAuthenticated, user, logout } = useAuth();
 
     const handleLogout = useCallback(async () => {
@@ -22,6 +21,20 @@ const UserInfo = memo(() => {
 
     const handleOpenSettings = useCallback(() => {
         setSettingsModalOpened(true);
+    }, []);
+    const handleCloseLogin = useCallback(() => {
+        setLoginModalOpened(false);
+    }, [])
+    const handleSwitchToSignup = useCallback(() => {
+        setLoginModalOpened(false);
+        setSignupModalOpened(true);
+    }, []);
+    const handleCloseSignup = useCallback(() => {
+        setSignupModalOpened(false);
+    }, []);
+    const handleSwitchToLogin = useCallback(() => {
+        setSignupModalOpened(false);
+        setLoginModalOpened(true);
     }, []);
 
     if (isAuthenticated && user) {
@@ -54,20 +67,25 @@ const UserInfo = memo(() => {
                     로그인
                 </Button>
 
-                <Button
-                    size="sm"
-                    leftSection={<IconUserPlus size={14} />}
-                    onClick={() => setLoginModalOpened(true)}
-                >
-                    회원가입
-                </Button>
+                {/*<Button*/}
+                {/*    size="sm"*/}
+                {/*    leftSection={<IconUserPlus size={14} />}*/}
+                {/*    onClick={() => setSignupModalOpened(true)}*/}
+                {/*>*/}
+                {/*    회원가입*/}
+                {/*</Button>*/}
             </Group>
 
             <LoginModal
-                isLogin={ loginModalOpened }
                 opened={loginModalOpened}
-                onClose={() => setLoginModalOpened(false)}
+                onClose={handleCloseLogin}
+                onSwitchToSignup={handleSwitchToSignup}
             />
+            {/*<SignupModal*/}
+            {/*    opened={signupModalOpened}*/}
+            {/*    onClose={handleCloseSignup}*/}
+            {/*    onSwitchToLogin={handleSwitchToLogin}*/}
+            {/*/>*/}
         </>
     );
 });

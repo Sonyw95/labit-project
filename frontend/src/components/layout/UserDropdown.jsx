@@ -1,6 +1,6 @@
-import {useTheme} from "../../hooks/useTheme.js";
+import {useTheme} from "@/hooks/useTheme.js";
 import {memo} from "react";
-import {Avatar, Box, Group, Menu} from "@mantine/core";
+import {Avatar, Box, Group, Menu, Text} from "@mantine/core";
 import {IconLogout, IconSettings, IconUser} from "@tabler/icons-react";
 
 const UserDropdown = memo(({ user, onLogout, onOpenSettings }) => {
@@ -12,8 +12,8 @@ const UserDropdown = memo(({ user, onLogout, onOpenSettings }) => {
             <Menu.Target>
                 <Group style={{ cursor: 'pointer' }} gap="xs">
                     <Avatar
-                        src={user?.avatar}
-                        size="sm"
+                        src={user?.profileImage}
+                        size="md"
                         radius="xl"
                         style={{
                             border: `2px solid ${dark ? '#30363d' : '#e5e7eb'}`,
@@ -21,14 +21,14 @@ const UserDropdown = memo(({ user, onLogout, onOpenSettings }) => {
                     >
                         {user?.name?.charAt(0)?.toUpperCase()}
                     </Avatar>
-                    <Box style={{ display: { base: 'none', sm: 'block' } }}>
-                        <Text size="sm" fw={500}>
-                            {user?.name}
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                            {user?.email}
-                        </Text>
-                    </Box>
+                    {/*<Box style={{ display: { base: 'none', sm: 'block' } }}>*/}
+                    {/*    <Text size="sm" fw={500}>*/}
+                    {/*        {user?.name}*/}
+                    {/*    </Text>*/}
+                    {/*    <Text size="xs" c="dimmed">*/}
+                    {/*        {user?.email}*/}
+                    {/*    </Text>*/}
+                    {/*</Box>*/}
                 </Group>
             </Menu.Target>
 
@@ -47,9 +47,9 @@ const UserDropdown = memo(({ user, onLogout, onOpenSettings }) => {
                     프로필 설정
                 </Menu.Item>
 
-                <Menu.Item leftSection={<IconSettings size={14} />}>
-                    환경 설정
-                </Menu.Item>
+                {/*<Menu.Item leftSection={<IconSettings size={14} />}>*/}
+                {/*    환경 설정*/}
+                {/*</Menu.Item>*/}
 
                 <Menu.Divider />
 

@@ -7,7 +7,7 @@ export const useTheme = () => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = useMemo(() => colorScheme === 'dark', [colorScheme]);
 
-    const colors = dark ? THEME_COLORS.dark : THEME_COLORS.light;
+    const colors = dark ? '#df9f20' : '#ffaa00';
 
     return {
         dark,

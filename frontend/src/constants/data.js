@@ -158,4 +158,3 @@ export const THEME_COLORS = {
     }
 };
 
-export const BANNER_IMAGE = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&h=1080&fit=crop';

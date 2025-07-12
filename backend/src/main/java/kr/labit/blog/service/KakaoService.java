@@ -133,7 +133,7 @@ public class KakaoService {
 
             // 기존 사용자 정보 업데이트
             user.setNickname(nickname);
-            user.setProfileImage(profileImage);
+//            user.setProfileImage(profileImage);
             if (email != null && !email.isEmpty()) {
                 user.setEmail(email);
             }
@@ -148,7 +148,6 @@ public class KakaoService {
             String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
 
             log.info("Successfully created JWT tokens for user: {}", user.getEmail());
-
             return LoginResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)

@@ -28,7 +28,7 @@ export const showToast = {
             icon: <IconX size={16} />,
             autoClose: 6000,
             withCloseButton: true,
-            position: 'top-right',
+            // position: 'top-right',
             ...options,
         });
     },

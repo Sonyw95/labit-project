@@ -1,9 +1,9 @@
 // stores/apiStore.js - Zustand 스토어
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { persist} from 'zustand/middleware';
 
 export const useApiStore = create(
-    devtools(
+    persist(
         (set, get) => ({
             // 로딩 상태 관리
             loading: {},
@@ -21,7 +21,7 @@ export const useApiStore = create(
 
             clearError: (key) =>
                 set((state) => {
-                    const { [key]: removed, ...rest } = state.errors;
+                    const {  ...rest } = state.errors;
                     return { errors: rest };
                 }, false, 'clearError'),
 

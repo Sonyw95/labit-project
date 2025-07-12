@@ -35,9 +35,10 @@ import {
     IconUser,
 } from '@tabler/icons-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import {useTheme} from "../../hooks/useTheme.js";
+import {useTheme} from "@/hooks/useTheme.js";
 import {showToast} from "../common/Toast.jsx";
-import {useLocalStorage} from "../../hooks/useLocalStorage.js";
+import {useLocalStorage} from "@/hooks/useLocalStorage.js";
+import {Icons} from "@/utils/Icons.jsx";
 
 // 기본 네비게이션 구조
 const defaultNavStructure = [
@@ -104,18 +105,6 @@ const defaultNavStructure = [
     }
 ];
 
-// 아이콘 매핑
-const iconMap = {
-    IconHome,
-    IconArticle,
-    IconTags,
-    IconUser,
-    IconFolder,
-    IconFile,
-    IconLink,
-    IconSettings,
-};
-
 // NavItem 컴포넌트
 const NavItem = memo(({
                           item,
@@ -129,7 +118,6 @@ const NavItem = memo(({
                       }) => {
     const { dark } = useTheme();
 
-    const Icon = iconMap[item.icon] || IconFile;
     const hasChildren = item.children && item.children.length > 0;
     const isCollapsed = collapsed;
 
@@ -174,7 +162,7 @@ const NavItem = memo(({
                             variant="light"
                             color={item.visible ? 'blue' : 'gray'}
                         >
-                            <Icon size={14} />
+                            <Icons icon={item.icon} size={14} />
                         </ThemeIcon>
 
                         <Stack gap={2} style={{ flex: 1 }}>

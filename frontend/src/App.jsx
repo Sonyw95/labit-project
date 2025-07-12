@@ -22,6 +22,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 // 지연 로딩 컴포넌트
 import AppRouter from "./Router.jsx";
 import Skeleton from "./components/common/Skeleton.jsx";
+import theme from "@/styles/theme.js";
 
 // React Query 클라이언트 설정
 const createQueryClient = () => new QueryClient({
@@ -131,10 +132,10 @@ ContextProviders.displayName = 'ContextProviders';
 // Mantine Provider 래퍼
 const MantineProviders = memo(({ children }) => (
     <MantineProvider defaultColorScheme="auto">
-        <ModalsProvider>
+        <ModalsProvider theme={theme}>
             {/* 🔥 중요! Notifications 컴포넌트가 있어야 Toast가 보임 */}
             <Notifications
-                position="top-right"
+                position="top-center"
                 zIndex={2077}
                 limit={5}
                 autoClose={4000}
