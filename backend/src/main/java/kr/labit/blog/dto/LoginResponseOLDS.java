@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginResponseOLDS {
     private String accessToken;
     private String refreshToken;
     private UserInfo user;

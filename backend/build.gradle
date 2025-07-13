@@ -47,9 +47,9 @@ tasks.register('Wrapper', Wrapper) {
 repositories {
     mavenCentral()
 }
-compileJava {
-    options.compilerArgs << '-parameters'
-}
+//compileJava {
+//    options.compilerArgs << '-parameters'
+//}
 // OS 탐지
 static def getOsName(){
     def osName = System.getProperty("os.name").toLowerCase()

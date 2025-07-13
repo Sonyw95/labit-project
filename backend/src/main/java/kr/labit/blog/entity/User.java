@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table( name = "LABUSER" )
@@ -18,47 +19,45 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "USER_SEQ", allocationSize = 1)
+    @Column(name = "USER_ID")
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String nickname;
-
-    @Column(nullable = true)
-    private String profileImage;
-
-    @Column(unique = true)
+    @Column(name = "KAKAO_ID", unique = true)
     private String kakaoId;
 
-    @Enumerated(EnumType.STRING)
-    private Provider provider;
+    @Column(name = "EMAIL", length = 200)
+    private String email;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private List<Role> roles;
+    @Column(name = "NICKNAME", nullable = false, length = 100)
+    private String nickname;
 
+    @Column(name = "PROFILE_IMAGE_URL", length = 500)
+    private String profileImageUrl;
+
+    @Column(name = "ROLE", nullable = false, length = 20)
+    @Builder.Default
+    private String role = "USER";
+
+    @Column(name = "IS_ACTIVE", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
+
+    @Column(name = "REFRESH_TOKEN", length = 500)
+    private String refreshToken;
+
+    @Column(name = "KAKAO_ACCESS_TOKEN", length = 500)
+    private String kakaoAccessToken;
+
+    @Column(name = "LAST_LOGIN_AT")
+    private LocalDateTime lastLoginAt;
+
+    @CreationTimestamp
+    @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    public enum Provider {
-        KAKAO, LOCAL
-    }
-
-    public enum Role {
-        USER, ADMIN
-    }
 }
