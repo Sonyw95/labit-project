@@ -15,15 +15,13 @@ const createApiInstance = (baseURL = import.meta.env.REACT_APP_API_URL || 'http:
     // 요청 인터셉터
     instance.interceptors.request.use(
         (config) => {
-            const token = storage.local.get('auth_token');
+            const token = storage.local.get('authToken');
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
             return config;
         },
-        (error) => {
-            return Promise.reject(error);
-        }
+        (error) => Promise.reject(error)
     );
 
     // 응답 인터셉터
@@ -31,8 +29,8 @@ const createApiInstance = (baseURL = import.meta.env.REACT_APP_API_URL || 'http:
         (response) => response,
         (error) => {
             if (error.response?.status === 401) {
-                storage.local.remove('auth_token');
-                storage.local.remove('user_info');
+                storage.local.remove('authToken');
+                storage.local.remove('userInfo');
                 window.location.href = '/login';
             }
             return Promise.reject(error);
