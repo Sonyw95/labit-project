@@ -25,13 +25,20 @@ import Skeleton from "./components/common/Skeleton.jsx";
 import theme from "@/styles/theme.js";
 
 // React Query 클라이언트 설정
-const createQueryClient = () => new QueryClient({
+const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
+            retry: 2,
             staleTime: 5 * 60 * 1000,
             cacheTime: 10 * 60 * 1000,
-            retry: 3,
             refetchOnWindowFocus: false,
+            // 🐛 디버깅을 위해 로그 추가
+            onError: (error) => {
+                console.error('🔥 Query Error:', error);
+            },
+            onSuccess: (data) => {
+                console.log('✅ Query Success:', data);
+            }
         },
     },
 });
@@ -147,59 +154,8 @@ const MantineProviders = memo(({ children }) => (
     </MantineProvider>
 ));
 
-MantineProviders.displayName = 'MantineProviders';
-
-// // 앱 콘텐츠 컴포넌트
-// const AppContent = memo(() => {
-//     const [showTest, setShowTest] = React.useState(false);
-//
-//     return (
-//         <div>
-//             {/* Toast 테스트 버튼 (개발 환경에서만) */}
-//             {process.env.NODE_ENV === 'development' && (
-//                 <div style={{
-//                     position: 'fixed',
-//                     top: '10px',
-//                     left: '10px',
-//                     zIndex: 9999,
-//                     background: 'white',
-//                     padding: '10px',
-//                     borderRadius: '8px',
-//                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-//                     border: '1px solid #ddd'
-//                 }}>
-//                     <button
-//                         onClick={() => setShowTest(!showTest)}
-//                         style={{
-//                             background: '#2196f3',
-//                             color: 'white',
-//                             border: 'none',
-//                             padding: '8px 16px',
-//                             borderRadius: '4px',
-//                             cursor: 'pointer',
-//                             marginBottom: showTest ? '10px' : '0'
-//                         }}
-//                     >
-//                         {showTest ? 'Hide' : 'Show'} Toast Test
-//                     </button>
-//                     {showTest && <ToastTest />}
-//                 </div>
-//             )}
-//
-//             {/* 메인 콘텐츠 */}
-//             <Suspense fallback={<GlobalLoading />}>
-//                 <TechBlogLayout />
-//             </Suspense>
-//         </div>
-//     );
-// });
-//
-// AppContent.displayName = 'AppContent';
-
 // 메인 App 컴포넌트
 const App = memo(() => {
-    const queryClient = useMemo(() => createQueryClient(), []);
-
     const handleErrorReset = () => {
         queryClient.clear();
         window.location.reload();

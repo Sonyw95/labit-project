@@ -12,12 +12,13 @@ import Navbar from "@/components/layout/Navbar.jsx";
 import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/constants/data.js";
 import MobileNav from "@/components/layout/MobileNav.jsx";
 import {Outlet} from "react-router-dom";
-import {useNavigation} from "@/hooks/useNavigation.js";
+import {useNavigation} from "../hooks/useNavigation.js";
 
 const MainPageLayout = () => {
     const [drawerOpened, setDrawerOpened] = useState(false);
     const {dark} = useTheme();
-    const { navigationItems, isLoading: navLoading, error: navError } = useNavigation();
+    const {navigationItems} = useNavigation();
+    console.log(navigationItems)
     return (
         <AppShell
             header={{height: 60, offset: true}}
@@ -61,12 +62,12 @@ const MainPageLayout = () => {
                 height: '100vh',
                 zIndex: 100
             }}>
-                <Navbar
-                    navigationItems={navigationItems}
-                    isLoading={navLoading}
-                    error={navError}
-                    popularTags={POPULAR_TAGS}
-                />
+                {/*<Navbar*/}
+                {/*    navigationItems={navigationItems}*/}
+                {/*    isLoading={navLoading}*/}
+                {/*    error={navError}*/}
+                {/*    popularTags={POPULAR_TAGS}*/}
+                {/*/>*/}
             </AppShell.Navbar>
 
             <ScrollArea component={AppShell.Main} h={200} scrollbars="y">
