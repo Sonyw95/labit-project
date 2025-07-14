@@ -23,7 +23,7 @@ import {
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {useClickOutside} from "../../hooks/useClickOutside.js";
 import {storage} from "../../utils/storage.js";
-import {apiClient} from "../../services/apiClient.js";
+import {apiClient} from "@/api/apiClient.js";
 
 // SearchBar 컴포넌트
 const SearchBar = memo(({

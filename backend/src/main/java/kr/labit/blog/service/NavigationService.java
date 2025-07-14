@@ -2,6 +2,7 @@ package kr.labit.blog.service;
 
 import kr.labit.blog.dto.NavigationItemDto;
 import kr.labit.blog.entity.NavigationItem;
+import kr.labit.blog.entity.User;
 import kr.labit.blog.repository.NavigationItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

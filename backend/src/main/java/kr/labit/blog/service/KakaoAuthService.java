@@ -2,16 +2,22 @@ package kr.labit.blog.service;
 
 import kr.labit.blog.dto.AuthResponseDto;
 import kr.labit.blog.dto.KakaoUserInfoDto;
+import kr.labit.blog.entity.User;
+import kr.labit.blog.repository.UserRepository;
 import kr.labit.blog.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +26,8 @@ public class KakaoAuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RestTemplate restTemplate;
+
+    private final WebClient kakaoWebClient;
 
     @Value("${kakao.api.user-info-url}")
     private String kakaoUserInfoUrl;
@@ -58,19 +65,22 @@ public class KakaoAuthService {
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
+        try {
+            // WebClient를 사용한 비동기 호출
+            Mono<KakaoUserInfoDto> response = kakaoWebClient
+                    .get()
+                    .uri("/v2/user/me")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(KakaoUserInfoDto.class);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            // 동기식으로 결과 반환 (필요시 비동기로 변경 가능)
+            return response.block();
 
-        ResponseEntity<KakaoUserInfoDto> response = restTemplate.exchange(
-                kakaoUserInfoUrl,
-                HttpMethod.GET,
-                entity,
-                KakaoUserInfoDto.class
-        );
-
-        return response.getBody();
+        } catch (Exception e) {
+            log.error("Failed to get Kakao user info", e);
+            throw new RuntimeException("카카오 사용자 정보 조회 실패", e);
+        }
     }
 
     private User findOrCreateUser(KakaoUserInfoDto kakaoUserInfo) {

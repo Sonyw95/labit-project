@@ -35,7 +35,7 @@ import {useTheme} from "@/hooks/useTheme.js";
 import {useAuth} from "@/contexts/AuthContext.jsx";
 import {useDebounce} from "@/hooks/useDebounce.js";
 import {useQuery} from "@tanstack/react-query";
-import {apiClient} from "@/services/apiClient.js";
+import {apiClient} from "@/api/apiClient.js";
 import {showToast} from "@/components/common/Toast.jsx";
 import InfiniteScroll from "@/components/common/InfiniteScroll.jsx";
 import PostCard2 from "@/components/blog/PostCard2.jsx";

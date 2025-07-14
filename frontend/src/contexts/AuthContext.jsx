@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { apiClient } from '../services/apiClient';
+import { apiClient } from '@/api/apiClient';
 import {storage} from "../utils/storage.js";
 
 const AuthContext = createContext();

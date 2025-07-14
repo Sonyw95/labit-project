@@ -1,5 +1,5 @@
 // tests/apiClient.test.js
-import { apiClient } from '../services/apiClient';
+import { apiClient } from '@/api/apiClient';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 
 describe('API Client Tests', () => {

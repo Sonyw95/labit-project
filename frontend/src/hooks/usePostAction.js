@@ -5,7 +5,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { modals } from '@mantine/modals';
 import {useAuth} from "@/contexts/AuthContext.jsx";
-import {apiClient} from "@/services/apiClient.js";
+import {apiClient} from "@/api/apiClient.js";
 import {showToast} from "@/components/common/Toast.jsx";
 
 // 포스트 관리 훅

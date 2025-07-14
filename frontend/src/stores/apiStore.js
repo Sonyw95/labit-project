@@ -1,52 +1,102 @@
-// stores/apiStore.js - Zustand 스토어
 import { create } from 'zustand';
-import { persist} from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 export const useApiStore = create(
-    persist(
-        (set, get) => ({
-            // 로딩 상태 관리
-            loading: {},
-            errors: {},
+    devtools(
+        persist(
+            (set, get) => ({
+                // Loading states
+                isLoading: false,
+                navigationLoading: false,
+                authLoading: false,
 
-            setLoading: (key, loading) =>
-                set((state) => ({
-                    loading: { ...state.loading, [key]: loading }
-                }), false, 'setLoading'),
+                // Error states
+                error: null,
+                navigationError: null,
+                authError: null,
 
-            setError: (key, error) =>
-                set((state) => ({
-                    errors: { ...state.errors, [key]: error }
-                }), false, 'setError'),
+                // Navigation data
+                navigationItems: [],
 
-            clearError: (key) =>
-                set((state) => {
-                    const {  ...rest } = state.errors;
-                    return { errors: rest };
-                }, false, 'clearError'),
+                // Auth data (persist 미들웨어가 자동으로 localStorage 관리)
+                user: null,
+                isAuthenticated: false,
+                accessToken: null,
+                refreshToken: null,
 
-            clearAllErrors: () =>
-                set({ errors: {} }, false, 'clearAllErrors'),
+                // Actions
+                setLoading: (isLoading) => set({ isLoading }),
+                setNavigationLoading: (navigationLoading) => set({ navigationLoading }),
+                setAuthLoading: (authLoading) => set({ authLoading }),
 
-            // API 요청 래퍼
-            apiRequest: async (key, apiCall) => {
-                const { setLoading, setError, clearError } = get();
+                setError: (error) => set({ error }),
+                setNavigationError: (navigationError) => set({ navigationError }),
+                setAuthError: (authError) => set({ authError }),
 
-                setLoading(key, true);
-                clearError(key);
+                clearError: () => set({ error: null, navigationError: null, authError: null }),
 
-                try {
-                    const result = await apiCall();
-                    return { success: true, data: result.data };
-                } catch (error) {
-                    const errorMessage = error.response?.data?.message || error.message;
-                    setError(key, errorMessage);
-                    return { success: false, error: errorMessage };
-                } finally {
-                    setLoading(key, false);
-                }
+                // Navigation actions
+                setNavigationItems: (navigationItems) => set({ navigationItems }),
+
+                // Auth actions (persist가 자동으로 localStorage 처리)
+                setAuth: (authData) => set({
+                    user: authData.userInfo,
+                    isAuthenticated: true,
+                    accessToken: authData.accessToken,
+                    refreshToken: authData.refreshToken,
+                }),
+
+                clearAuth: () => set({
+                    user: null,
+                    isAuthenticated: false,
+                    accessToken: null,
+                    refreshToken: null,
+                }),
+
+                updateUser: (userInfo) => set({ user: userInfo }),
+
+                // Reset all states
+                reset: () => set({
+                    isLoading: false,
+                    navigationLoading: false,
+                    authLoading: false,
+                    error: null,
+                    navigationError: null,
+                    authError: null,
+                    navigationItems: [],
+                    user: null,
+                    isAuthenticated: false,
+                    accessToken: null,
+                    refreshToken: null,
+                }),
+            }),
+            {
+                name: 'api-store',
+                // 🔥 persist할 상태만 선택 (중요한 상태만 저장)
+                partialize: (state) => ({
+                    user: state.user,
+                    isAuthenticated: state.isAuthenticated,
+                    accessToken: state.accessToken,
+                    refreshToken: state.refreshToken,
+                }),
+                // 🔥 버전 관리 (스키마 변경 시 유용)
+                version: 1,
+                // 🔥 마이그레이션 함수 (필요시)
+                migrate: (persistedState, version) => {
+                    if (version === 0) {
+                        // 이전 버전에서 마이그레이션 로직
+                        return {
+                            ...persistedState,
+                            // 새로운 필드 추가 등
+                        };
+                    }
+                    return persistedState;
+                },
             }
-        }),
-        { name: 'api-store' }
+        ),
+        {
+            name: 'api-store-devtools',
+        }
     )
 );
+

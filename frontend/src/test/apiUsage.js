@@ -1,5 +1,5 @@
 // examples/apiUsage.js - API 사용 예시
-import { apiClient } from '../services/apiClient';
+import { apiClient } from '@/api/apiClient';
 import { useApi } from '../hooks/useApi';
 import { useQuery } from '@tanstack/react-query';
 

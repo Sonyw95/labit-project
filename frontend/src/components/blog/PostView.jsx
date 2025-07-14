@@ -45,7 +45,7 @@ import {useAuth} from "../../contexts/AuthContext.jsx";
 import {useTheme} from "../../hooks/useTheme.js";
 import {showToast} from "../common/Toast.jsx";
 import {formatters} from "../../utils/formatters.js";
-import {apiClient} from "../../services/apiClient.js";
+import {apiClient} from "@/api/apiClient.js";
 import {useScrollPosition} from "../../hooks/useScrollPosition.js";
 
 // 코멘트 컴포넌트
