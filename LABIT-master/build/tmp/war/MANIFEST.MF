@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: LABIT-master
-Implementation-Version: 0.0.1-SNAPSHOT
-System-JDK: 21.0.7 (Oracle Corporation)
-Build-JDK-Version: 21
-Gradle-Version: 8.14.2
-Created-By: sonyw32@naver.com
-Create-Date: 2025-07-12 20:12:05
-
