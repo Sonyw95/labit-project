@@ -37,6 +37,9 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 1000
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@mantine/core', '@mantine/hooks'],
+  },
   define: {
     // // 환경 변수를 빌드 시점에 정의
     // 'process.env': process.env

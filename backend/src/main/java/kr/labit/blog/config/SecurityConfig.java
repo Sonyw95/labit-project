@@ -1,11 +1,15 @@
 package kr.labit.blog.config;
 
+import kr.labit.blog.filter.JwtAuthenticationFilter;
+import kr.labit.blog.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -15,8 +19,11 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-    @Bean
+
+    private final JwtTokenProvider tokenProvider;
+
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // CORS 설정
@@ -48,6 +55,9 @@ public class SecurityConfig {
 
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated()
+                ).addFilterBefore(
+                        new JwtAuthenticationFilter(tokenProvider),
+                        UsernamePasswordAuthenticationFilter.class
                 );
 
 //                // H2 Console을 위한 frame options 비활성화 (개발용)
