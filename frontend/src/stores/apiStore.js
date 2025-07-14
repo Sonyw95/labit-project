@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-export const useApiStore = create(
+const useApiStore = create(
     devtools(
         persist(
             (set, get) => ({
@@ -100,3 +100,4 @@ export const useApiStore = create(
     )
 );
 
+export default useApiStore;

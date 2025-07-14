@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import {authApi} from "@/api/authApi.js";
-import {useApiStore} from "@/stores/apiStore.js";
+import useApiStore from "@/stores/apiStore.js";
 import {useApi} from "@/hooks/useApi.js";
 
 export const useAuth = () => {

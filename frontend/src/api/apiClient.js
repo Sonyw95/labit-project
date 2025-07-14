@@ -1,6 +1,6 @@
 // services/apiClient.js
 import axios from 'axios';
-import {useApiStore} from "@/stores/apiStore.js";
+import useApiStore from "@/stores/apiStore.js";
 
 // Axios 인스턴스 생성
 const createApiInstance = (baseURL = import.meta.env.REACT_APP_API_URL || 'http://localhost:8080/api') => {
