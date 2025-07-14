@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
     AppShell, ScrollArea,
 } from '@mantine/core';
@@ -15,10 +15,11 @@ import {Outlet} from "react-router-dom";
 import {useNavigation} from "../hooks/useNavigation.js";
 
 const MainPageLayout = () => {
+    console.log('Main')
     const [drawerOpened, setDrawerOpened] = useState(false);
     const {dark} = useTheme();
     const {navigationItems} = useNavigation();
-    console.log(navigationItems)
+
     return (
         <AppShell
             header={{height: 60, offset: true}}
@@ -46,12 +47,12 @@ const MainPageLayout = () => {
             </AppShell.Header>
 
 
-            <MobileNav
-                opened={drawerOpened}
-                onClose={() => setDrawerOpened(false)}
-                navigationItems={NAVIGATION_ITEMS}
-                popularTags={POPULAR_TAGS}
-            />
+            {/*<MobileNav*/}
+            {/*    opened={drawerOpened}*/}
+            {/*    onClose={() => setDrawerOpened(false)}*/}
+            {/*    navigationItems={NAVIGATION_ITEMS}*/}
+            {/*    popularTags={POPULAR_TAGS}*/}
+            {/*/>*/}
             <AppShell.Navbar p="md" style={{
                 background: dark ? '#161b22' : '#ffffff',
                 borderRight: `1px solid ${dark ? '#21262d' : '#e5e7eb'}`,

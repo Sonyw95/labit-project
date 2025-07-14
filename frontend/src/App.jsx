@@ -2,11 +2,11 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
-import React, { lazy, memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import {
     MantineProvider,
     ColorSchemeScript,
-    createTheme, Box, Button, Text, Title,
+    Box, Button, Text, Title,
 } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
@@ -24,25 +24,36 @@ import AppRouter from "./Router.jsx";
 import Skeleton from "./components/common/Skeleton.jsx";
 import theme from "@/styles/theme.js";
 
-// React Query 클라이언트 설정
+// 🔍 디버깅을 위한 QueryClient 설정
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            retry: 2,
-            staleTime: 5 * 60 * 1000,
-            cacheTime: 10 * 60 * 1000,
+            retry: 0,
+            staleTime: 0, // 🔍 테스트를 위해 0으로 설정
+            cacheTime: 0, // 🔍 테스트를 위해 0으로 설정
             refetchOnWindowFocus: false,
-            // 🐛 디버깅을 위해 로그 추가
+            // 🔍 전역 콜백으로 모든 쿼리 모니터링
             onError: (error) => {
-                console.error('🔥 Query Error:', error);
+                console.error('🔥 Global Query Error:', error);
             },
             onSuccess: (data) => {
-                console.log('✅ Query Success:', data);
+                console.log('✅ Global Query Success:', data);
+            },
+            onSettled: (data, error) => {
+                console.log('🏁 Global Query Settled:', { data, error });
+            }
+        },
+        mutations: {
+            retry: 1,
+            onError: (error) => {
+                console.error('🔥 Global Mutation Error:', error);
+            },
+            onSuccess: (data) => {
+                console.log('✅ Global Mutation Success:', data);
             }
         },
     },
 });
-
 // 로딩 컴포넌트
 const GlobalLoading = memo(() => (
     <Box style={{
@@ -56,8 +67,6 @@ const GlobalLoading = memo(() => (
         <Skeleton type="card" count={3} />
     </Box>
 ));
-
-GlobalLoading.displayName = 'GlobalLoading';
 
 // 에러 경계 컴포넌트
 class ErrorBoundary extends React.Component {
