@@ -20,13 +20,6 @@ import NavigationTree from "../components/NavigationTree.jsx";
 const MainPageLayout = () => {
     console.log('Main')
     const [drawerOpened, setDrawerOpened] = useState(false);
-    const {
-        navigationTree,
-        isLoading,
-        error,
-        actions
-    } = useNavigation();
-
     const {dark} = useTheme();
 
     return (

@@ -27,8 +27,27 @@ instance.interceptors.request.use(
 // 응답 인터셉터
 instance.interceptors.response.use(
     (response) => response,
-    (error) => {
-        console.error('API Error:', error);
+    async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            // 토큰 만료 시 로그아웃 처리
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+
+            // 토큰 만료 알림
+            if (window.showToast) {
+                window.showToast('세션이 만료되었습니다. 다시 로그인해주세요.', 'warning');
+            }
+
+            // 로그인 페이지로 리다이렉트
+            window.location.href = '/login';
+
+            return Promise.reject(error);
+        }
+
         return Promise.reject(error);
     }
 );
