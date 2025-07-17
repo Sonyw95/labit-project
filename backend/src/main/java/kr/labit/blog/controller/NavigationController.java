@@ -1,15 +1,10 @@
 package kr.labit.blog.controller;
 
-import kr.labit.blog.dto.NavigationItemDto;
+import kr.labit.blog.dto.NavigationDto;
 import kr.labit.blog.service.NavigationService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,22 +12,36 @@ import java.util.List;
 @RequestMapping("/api/navigation")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "${app.frontend-url}")
-@Slf4j
 public class NavigationController {
 
     private final NavigationService navigationService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<NavigationItemDto>> getNavigationItems() {
-        List<NavigationItemDto> navigationItems = navigationService.getNavigationItemsByUserRole();
-        return ResponseEntity.ok(navigationItems);
+    /**
+     * 전체 네비게이션 트리 조회
+     */
+    @GetMapping("/tree")
+    public ResponseEntity<List<NavigationDto>> getNavigationTree() {
+        List<NavigationDto> navigationTree = navigationService.getNavigationTree();
+        return ResponseEntity.ok(navigationTree);
     }
 
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<NavigationItemDto>> getAdminNavigationItems() {
-        List<NavigationItemDto> navigationItems = navigationService.getAllNavigationItems();
-        return ResponseEntity.ok(navigationItems);
+    /**
+     * 현재 URL을 기준으로 확장된 네비게이션 트리 조회
+     */
+    @GetMapping("/tree/expanded")
+    public ResponseEntity<List<NavigationDto>> getNavigationTreeWithExpanded(
+            @RequestParam(required = false) String currentUrl) {
+        List<NavigationDto> navigationTree = navigationService.getNavigationTreeWithExpanded(currentUrl);
+        return ResponseEntity.ok(navigationTree);
+    }
+
+    /**
+     * 특정 URL의 네비게이션 경로 조회 (breadcrumb)
+     */
+    @GetMapping("/path")
+    public ResponseEntity<List<NavigationDto>> getNavigationPath(
+            @RequestParam String url) {
+        List<NavigationDto> navigationPath = navigationService.getNavigationPath(url);
+        return ResponseEntity.ok(navigationPath);
     }
 }

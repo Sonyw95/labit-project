@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, { useState} from 'react';
 import {
     AppShell, ScrollArea,
 } from '@mantine/core';
@@ -8,17 +8,16 @@ import '../styles/animation.css';
 import {useTheme} from "@/hooks/useTheme.js";
 import Header from "@/components/layout/Header.jsx";
 import {backgroundBlur} from "@/utils/backgroundBlur.js";
-import Navbar from "@/components/layout/Navbar.jsx";
-import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/constants/data.js";
-import MobileNav from "@/components/layout/MobileNav.jsx";
+// import Navbar from "@/components/layout/Navbar.jsx";
+// import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/constants/data.js";
+// import MobileNav from "@/components/layout/MobileNav.jsx";
 import {Outlet} from "react-router-dom";
-import {useNavigation} from "../hooks/useNavigation.js";
+import NavigationTree from "@/components/NavigationTree.jsx";
 
 const MainPageLayout = () => {
     console.log('Main')
     const [drawerOpened, setDrawerOpened] = useState(false);
     const {dark} = useTheme();
-    const {navigationItems} = useNavigation();
 
     return (
         <AppShell
@@ -63,6 +62,7 @@ const MainPageLayout = () => {
                 height: '100vh',
                 zIndex: 100
             }}>
+                <NavigationTree />
                 {/*<Navbar*/}
                 {/*    navigationItems={navigationItems}*/}
                 {/*    isLoading={navLoading}*/}

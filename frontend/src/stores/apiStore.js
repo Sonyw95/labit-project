@@ -5,99 +5,133 @@ const useApiStore = create(
     devtools(
         persist(
             (set, get) => ({
-                // Loading states
+                // 상태
+                navigationTree: [],
+                expandedNodes: new Set(),
+                activeNodeId: null,
+                currentPath: [],
                 isLoading: false,
-                navigationLoading: false,
-                authLoading: false,
-
-                // Error states
                 error: null,
-                navigationError: null,
-                authError: null,
 
-                // Navigation data
-                navigationItems: [],
+                // 액션
+                setNavigationTree: (tree) => set({ navigationTree: tree }),
 
-                // Auth data (persist 미들웨어가 자동으로 localStorage 관리)
-                user: null,
-                isAuthenticated: false,
-                accessToken: null,
-                refreshToken: null,
+                setExpandedNodes: (nodes) => set({ expandedNodes: new Set(nodes) }),
 
-                // Actions
-                setLoading: (isLoading) => set({ isLoading }),
-                setNavigationLoading: (navigationLoading) => set({ navigationLoading }),
-                setAuthLoading: (authLoading) => set({ authLoading }),
+                toggleNode: (nodeId) => set((state) => {
+                    const newExpanded = new Set(state.expandedNodes);
+                    if (newExpanded.has(nodeId)) {
+                        newExpanded.delete(nodeId);
+                    } else {
+                        newExpanded.add(nodeId);
+                    }
+                    return { expandedNodes: newExpanded };
+                }),
+
+                expandNode: (nodeId) => set((state) => {
+                    const newExpanded = new Set(state.expandedNodes);
+                    newExpanded.add(nodeId);
+                    return { expandedNodes: newExpanded };
+                }),
+
+                collapseNode: (nodeId) => set((state) => {
+                    const newExpanded = new Set(state.expandedNodes);
+                    newExpanded.delete(nodeId);
+                    return { expandedNodes: newExpanded };
+                }),
+
+                setActiveNode: (nodeId) => set({ activeNodeId: nodeId }),
+
+                setCurrentPath: (path) => set({ currentPath: path }),
+
+                setLoading: (loading) => set({ isLoading: loading }),
 
                 setError: (error) => set({ error }),
-                setNavigationError: (navigationError) => set({ navigationError }),
-                setAuthError: (authError) => set({ authError }),
 
-                clearError: () => set({ error: null, navigationError: null, authError: null }),
+                clearError: () => set({ error: null }),
 
-                // Navigation actions
-                setNavigationItems: (navigationItems) => set({ navigationItems }),
+                // 특정 노드까지의 경로를 확장
+                expandToNode: (nodeId) => {
+                    const { navigationTree } = get();
+                    const pathToNode = findPathToNode(navigationTree, nodeId);
+                    if (pathToNode.length > 0) {
+                        set((state) => {
+                            const newExpanded = new Set(state.expandedNodes);
+                            pathToNode.forEach(id => newExpanded.add(id));
+                            return { expandedNodes: newExpanded };
+                        });
+                    }
+                },
 
-                // Auth actions (persist가 자동으로 localStorage 처리)
-                setAuth: (authData) => set({
-                    user: authData.userInfo,
-                    isAuthenticated: true,
-                    accessToken: authData.accessToken,
-                    refreshToken: authData.refreshToken,
-                }),
+                // 현재 URL에 따른 활성 상태 설정
+                setActiveByUrl: (url) => {
+                    const { navigationTree } = get();
+                    const node = findNodeByUrl(navigationTree, url);
+                    if (node) {
+                        set({ activeNodeId: node.navId });
+                        get().expandToNode(node.navId);
+                    }
+                },
 
-                clearAuth: () => set({
-                    user: null,
-                    isAuthenticated: false,
-                    accessToken: null,
-                    refreshToken: null,
-                }),
-
-                updateUser: (userInfo) => set({ user: userInfo }),
-
-                // Reset all states
+                // 리셋
                 reset: () => set({
+                    navigationTree: [],
+                    expandedNodes: new Set(),
+                    activeNodeId: null,
+                    currentPath: [],
                     isLoading: false,
-                    navigationLoading: false,
-                    authLoading: false,
                     error: null,
-                    navigationError: null,
-                    authError: null,
-                    navigationItems: [],
-                    user: null,
-                    isAuthenticated: false,
-                    accessToken: null,
-                    refreshToken: null,
                 }),
             }),
             {
-                name: 'api-store',
-                // 🔥 persist할 상태만 선택 (중요한 상태만 저장)
+                name: 'navigation-store',
                 partialize: (state) => ({
-                    user: state.user,
-                    isAuthenticated: state.isAuthenticated,
-                    accessToken: state.accessToken,
-                    refreshToken: state.refreshToken,
+                    expandedNodes: Array.from(state.expandedNodes),
+                    activeNodeId: state.activeNodeId,
                 }),
-                // 🔥 버전 관리 (스키마 변경 시 유용)
-                version: 1,
-                // 🔥 마이그레이션 함수 (필요시)
-                migrate: (persistedState, version) => {
-                    if (version === 0) {
-                        // 이전 버전에서 마이그레이션 로직
-                        return {
-                            ...persistedState,
-                            // 새로운 필드 추가 등
-                        };
+                onRehydrateStorage: () => (state) => {
+                    if (state && state.expandedNodes && Array.isArray(state.expandedNodes)) {
+                        state.expandedNodes = new Set(state.expandedNodes);
                     }
-                    return persistedState;
                 },
             }
         ),
-        {
-            name: 'api-store-devtools',
-        }
+        { name: 'navigation-store' }
     )
 );
+// 헬퍼 함수들
+const findPathToNode = (nodes, targetId, currentPath = []) => {
+    for (const node of nodes) {
+        const newPath = [...currentPath, node.navId];
+
+        if (node.navId === targetId) {
+            return newPath;
+        }
+
+        if (node.children && node.children.length > 0) {
+            const result = findPathToNode(node.children, targetId, newPath);
+            if (result.length > 0) {
+                return result;
+            }
+        }
+    }
+    return [];
+};
+
+const findNodeByUrl = (nodes, url) => {
+    for (const node of nodes) {
+        if (node.navUrl === url) {
+            return node;
+        }
+
+        if (node.children && node.children.length > 0) {
+            const result = findNodeByUrl(node.children, url);
+            if (result) {
+                return result;
+            }
+        }
+    }
+    return null;
+};
 
 export default useApiStore;

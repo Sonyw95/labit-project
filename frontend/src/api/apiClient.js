@@ -1,76 +1,45 @@
-// services/apiClient.js
+// src/api/apiClient.js
 import axios from 'axios';
-import useApiStore from "@/stores/apiStore.js";
 
-// Axios 인스턴스 생성
-const createApiInstance = (baseURL = import.meta.env.REACT_APP_API_URL || 'http://localhost:8080/api') => {
-    const instance = axios.create({
-        baseURL,
-        timeout: 10000,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
-    // 요청 인터셉터 - 토큰 자동 첨부
-    instance.interceptors.request.use(
-        (config) => {
-            // 🔥 Zustand store에서 토큰 가져오기 (persist가 관리)
-            const { accessToken } = useApiStore.getState();
-            if (accessToken) {
-                config.headers.Authorization = `Bearer ${accessToken}`;
-            }
-            return config;
-        },
-        (error) => Promise.reject(error)
-    );
+const instance = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    // validateStatus (status) {
+    //     return status >= 400;
+    // }
+});
 
-    // 응답 인터셉터 - 토큰 갱신 및 에러 처리
-    instance.interceptors.response.use(
-        (response) => response,
-        async (error) => {
-            const originalRequest = error.config;
-
-            if (error.response?.status === 401 && !originalRequest._retry) {
-                originalRequest._retry = true;
-
-                try {
-                    const { refreshToken, setAuth, clearAuth } = useApiStore.getState();
-
-                    if (refreshToken) {
-                        const response = await axios.post(`${baseURL}/auth/kakao/refresh`, {}, {
-                            headers: {
-                                Authorization: `Bearer ${refreshToken}`
-                            }
-                        });
-
-                        const authData = response.data;
-                        setAuth(authData); // 🔥 persist가 자동으로 저장
-
-                        // 원래 요청 재시도
-                        originalRequest.headers.Authorization = `Bearer ${authData.accessToken}`;
-                        return instance(originalRequest);
-                    }
-                } catch (refreshError) {
-                    // 토큰 갱신 실패시 로그아웃
-                    const { clearAuth } = useApiStore.getState();
-                    clearAuth(); // 🔥 persist가 자동으로 localStorage에서 제거
-                    window.location.href = '/login';
-                }
-            }
-
-            return Promise.reject(error);
+// 요청 인터셉터
+instance.interceptors.request.use(
+    (config) => {
+        // 필요시 인증 토큰 추가
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
-    );
-    return instance;
-};
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
-const api = createApiInstance();
+// 응답 인터셉터
+instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.error('API Error:', error);
+        return Promise.reject(error);
+    }
+);
 
 // API 클라이언트 클래스
 export class ApiClient {
     constructor() {
-        this.api = api;
+        this.api = instance;
     }
     async get(url, config) {
         const response = await this.api.get(url, config);
@@ -98,3 +67,19 @@ export const apiClient = new ApiClient();
 
 
 
+export const navigationService = {
+    // 전체 네비게이션 트리 조회
+    getNavigationTree: () => apiClient.get('/navigation/tree'),
+
+    // 확장된 네비게이션 트리 조회
+    getNavigationTreeWithExpanded: (currentUrl) =>
+        apiClient.get('/navigation/tree/expanded', {
+            params: { currentUrl }
+        }),
+
+    // 네비게이션 경로 조회
+    getNavigationPath: (url) =>
+        apiClient.get('/navigation/path', {
+            params: { url }
+        }),
+};
