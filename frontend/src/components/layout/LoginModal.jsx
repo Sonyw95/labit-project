@@ -214,11 +214,11 @@ import {
     Box,
 } from '@mantine/core';
 import { IconMail, IconLock } from "@tabler/icons-react";
-import {useAuth} from "@/contexts/AuthContext.jsx";
 import {useTheme} from "@/hooks/useTheme.js";
 import {validators} from "@/utils/validators.js";
 import {showToast} from "@/components/common/Toast.jsx";
 import IconBrandKakao from "@/utils/IconBrandKakao.jsx";
+import {useAuth} from "../../hooks/api/useAuth.js";
 
 const LoginModal = memo(({ opened, onClose, onSwitchToSignup }) => {
     const [formData, setFormData] = useState({

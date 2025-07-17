@@ -104,11 +104,14 @@ const useApiStore = create(
                     }
                 },
 // 카카오 로그인
-                login: async (code) => {
+                login: async () => {
                     set({ isLoading: true, error: null });
 
                     try {
-                        const response = await authService.kakaoLogin(code);
+                        const code = await authService.openKakaoLoginPopup();
+
+                        const response = await authService.loginWithKakaoCode(code);
+
                         const { accessToken, user } = response.data.data;
 
                         // 토큰 저장

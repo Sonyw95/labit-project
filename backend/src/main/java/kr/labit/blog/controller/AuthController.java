@@ -5,10 +5,14 @@ import kr.labit.blog.service.AuthService;
 import kr.labit.blog.util.jwt.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RestController
@@ -18,6 +22,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String kakaoRedirectUri;
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String kakaoClientId;
 
     /**
      * 카카오 로그인
@@ -36,6 +45,25 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/kakao/url")
+    public ResponseEntity<ApiResponseOLD<String>> getKakaoLoginUrl() {
+        try {
+            String encodedRedirectUri = URLEncoder.encode(kakaoRedirectUri, StandardCharsets.UTF_8);
+
+            String kakaoLoginUrl = String.format(
+                    "https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code&scope=profile_nickname,profile_image,account_email",
+                    kakaoClientId, encodedRedirectUri
+            );
+
+            log.info("Generated Kakao login URL: {}", kakaoLoginUrl);
+
+            return ResponseEntity.ok(ApiResponseOLD.success(kakaoLoginUrl));
+        } catch (Exception e) {
+            log.error("Failed to generate Kakao login URL", e);
+            return ResponseEntity.badRequest()
+                    .body(ApiResponseOLD.error("카카오 로그인 URL 생성에 실패했습니다.", "URL_GENERATION_FAILED"));
+        }
+    }
     /**
      * 로그아웃
      */

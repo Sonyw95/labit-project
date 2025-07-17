@@ -77,7 +77,7 @@ public class AuthService {
                 .profileImage(userInfo.getProfileImageUrl())
                 .thumbnailImage(userInfo.getThumbnailImageUrl())
                 .userRole(User.UserRole.USER)
-                .isActive("Y")
+                .isActive('Y')
                 .build();
 
         return userRepository.save(newUser);

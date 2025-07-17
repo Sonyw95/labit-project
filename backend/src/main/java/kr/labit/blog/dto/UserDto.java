@@ -20,7 +20,7 @@ public class UserDto {
     private String profileImage;
     private String thumbnailImage;
     private String userRole;
-    private String isActive;
+    private char isActive;
     private LocalDateTime lastLoginAt;
     private LocalDateTime createdAt;
 
