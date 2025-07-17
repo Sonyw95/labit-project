@@ -1,14 +1,14 @@
-import {useNavigate} from "react-router-dom";
-import {useNavigationClick, useNavigationState} from "@/hooks/api/useNavigation.js";
+import {useNavigation, useNavigationClick} from "../hooks/api/useNavigation.js";
 import {memo} from "react";
-import {Collapse, Group, Stack, UnstyledButton} from "@mantine/core";
+import {Collapse, Group, Stack, UnstyledButton, Text, Box} from "@mantine/core";
 import {IconChevronDown, IconChevronRight} from "@tabler/icons-react";
-import {Icons} from "@/utils/Icons.jsx";
+import {Icons} from "../utils/Icons.jsx";
+import {useNavigate} from "react-router-dom";
 
 const NavigationItem = memo(({ node, level = 0 }) => {
     const navigate = useNavigate();
     const { handleNavigationClick } = useNavigationClick();
-    const { expandedNodes, activeNodeId } = useNavigationState();
+    const { expandedNodes, activeNodeId } = useNavigation();
 
     const isExpanded = expandedNodes.has(node.navId);
     const isActive = activeNodeId === node.navId;
@@ -41,14 +41,14 @@ const NavigationItem = memo(({ node, level = 0 }) => {
     };
 
     return (
-        <div>
+        <Box>
             <UnstyledButton
                 onClick={handleClick}
                 styles={{
                     root: buttonStyles
                 }}
             >
-                <Group spacing="xs" noWrap>
+                <Group spacing="xs">
                     {hasChildren && (
                         isExpanded ? (
                             <IconChevronDown size={16} color="#868e96" />
@@ -80,7 +80,9 @@ const NavigationItem = memo(({ node, level = 0 }) => {
                     </Stack>
                 </Collapse>
             )}
-        </div>
+        </Box>
     );
 });
+
+
 export default NavigationItem;

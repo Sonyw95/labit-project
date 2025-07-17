@@ -1,6 +1,6 @@
 import {Badge, NavLink, rem, Stack} from "@mantine/core";
 import {IconSparkles} from "@tabler/icons-react";
-import React from "react";
+import React, {memo} from "react";
 import {NavLink as Links} from "react-router-dom";
 import {Icons} from "@/utils/Icons.jsx";
 import {useNavState} from "@/hooks/useNavState.js";
@@ -9,18 +9,19 @@ import {useNavState} from "@/hooks/useNavState.js";
 const handleClick = (root, onClose) => {
     onClose && root && onClose();
 }
-const Navigated = ( ({item, onClose, openedItems, toggleItem}) => {
+const Navigated = memo(( ({item, onClose, openedItems, toggleItem}) => {
     const subItem = item?.subLinks;
+    const href = item.navUrl
     return (
         <NavLink
-            key={item.href}
+            key={item.navUrl}
             component={Links}
-            to={ item.href }
+            to={ href }
             onClick={() => handleClick(item.root, onClose)}
-            onChange={(opened) => toggleItem(item.href)}
+            onChange={(opened) => toggleItem(href)}
 
             label={item.label}
-            opened={openedItems.has(item.href)}
+            opened={openedItems.has(href)}
             leftSection={
                 <Icons icon={item.icon} size={18} style={{
                     transition: 'all 0.3s ease',
@@ -50,14 +51,16 @@ const Navigated = ( ({item, onClose, openedItems, toggleItem}) => {
             ))}
         </NavLink>
     )
-})
-export default function NavigationItem({navigationItems, onClose}) {
+}))
+const NavigationItem = memo(({navigationItems, onClose})=> {
     const { openedItems, toggleItem } = useNavState(navigationItems);
+    console.log(navigationItems)
     return (
         <Stack gap="xs">
             {navigationItems.map((item) => (
-                <Navigated item={item} key={item.href} onClose={onClose} openedItems={openedItems} toggleItem={toggleItem}/>
+                <Navigated item={item}  onClose={onClose} openedItems={openedItems} toggleItem={toggleItem}/>
             ))}
         </Stack>
     )
-}
+})
+export default NavigationItem;

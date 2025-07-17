@@ -14,41 +14,61 @@ const useApiStore = create(
                 error: null,
 
                 // 액션
-                setNavigationTree: (tree) => set({ navigationTree: tree }),
+                setNavigationTree: (tree) => {
+                    set({ navigationTree: tree });
+                },
 
-                setExpandedNodes: (nodes) => set({ expandedNodes: new Set(nodes) }),
+                setExpandedNodes: (nodes) => {
+                    set({ expandedNodes: new Set(nodes) });
+                },
 
-                toggleNode: (nodeId) => set((state) => {
-                    const newExpanded = new Set(state.expandedNodes);
-                    if (newExpanded.has(nodeId)) {
-                        newExpanded.delete(nodeId);
-                    } else {
+                toggleNode: (nodeId) => {
+                    set((state) => {
+                        const newExpanded = new Set(state.expandedNodes);
+                        if (newExpanded.has(nodeId)) {
+                            newExpanded.delete(nodeId);
+                        } else {
+                            newExpanded.add(nodeId);
+                        }
+                        return { expandedNodes: newExpanded };
+                    });
+                },
+
+                expandNode: (nodeId) => {
+                    set((state) => {
+                        const newExpanded = new Set(state.expandedNodes);
                         newExpanded.add(nodeId);
-                    }
-                    return { expandedNodes: newExpanded };
-                }),
+                        return { expandedNodes: newExpanded };
+                    });
+                },
 
-                expandNode: (nodeId) => set((state) => {
-                    const newExpanded = new Set(state.expandedNodes);
-                    newExpanded.add(nodeId);
-                    return { expandedNodes: newExpanded };
-                }),
+                collapseNode: (nodeId) => {
+                    set((state) => {
+                        const newExpanded = new Set(state.expandedNodes);
+                        newExpanded.delete(nodeId);
+                        return { expandedNodes: newExpanded };
+                    });
+                },
 
-                collapseNode: (nodeId) => set((state) => {
-                    const newExpanded = new Set(state.expandedNodes);
-                    newExpanded.delete(nodeId);
-                    return { expandedNodes: newExpanded };
-                }),
+                setActiveNode: (nodeId) => {
+                    set({ activeNodeId: nodeId });
+                },
 
-                setActiveNode: (nodeId) => set({ activeNodeId: nodeId }),
+                setCurrentPath: (path) => {
+                    set({ currentPath: path });
+                },
 
-                setCurrentPath: (path) => set({ currentPath: path }),
+                setLoading: (loading) => {
+                    set({ isLoading: loading });
+                },
 
-                setLoading: (loading) => set({ isLoading: loading }),
+                setError: (error) => {
+                    set({ error });
+                },
 
-                setError: (error) => set({ error }),
-
-                clearError: () => set({ error: null }),
+                clearError: () => {
+                    set({ error: null });
+                },
 
                 // 특정 노드까지의 경로를 확장
                 expandToNode: (nodeId) => {
@@ -74,17 +94,19 @@ const useApiStore = create(
                 },
 
                 // 리셋
-                reset: () => set({
-                    navigationTree: [],
-                    expandedNodes: new Set(),
-                    activeNodeId: null,
-                    currentPath: [],
-                    isLoading: false,
-                    error: null,
-                }),
+                reset: () => {
+                    set({
+                        navigationTree: [],
+                        expandedNodes: new Set(),
+                        activeNodeId: null,
+                        currentPath: [],
+                        isLoading: false,
+                        error: null,
+                    });
+                },
             }),
             {
-                name: 'navigation-store',
+                name: 'api-store',
                 partialize: (state) => ({
                     expandedNodes: Array.from(state.expandedNodes),
                     activeNodeId: state.activeNodeId,

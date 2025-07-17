@@ -1,58 +1,76 @@
-import useApiStore from "@/stores/apiStore.js";
-import {useLocation} from "react-router-dom";
-import {useQuery} from "@tanstack/react-query";
-import {navigationService} from "@/api/apiClient.js";
-import {useEffect} from "react";
+// src/hooks/useNavigation.js
+import {useQuery} from '@tanstack/react-query';
+import {useLocation} from 'react-router-dom';
+import {useCallback, useEffect, useMemo} from 'react';
+import useApiStore from "../../stores/apiStore.js";
+import {navigationService} from "../../api/navigationApi.js";
 
-export const useNavigationTree = () => {
+// 네비게이션 트리 조회 훅
+export const useNavigation = () => {
     const location = useLocation();
-    const {
-        setNavigationTree,
-        setActiveByUrl,
-        setLoading,
-        setError,
-        clearError,
-
-    } = useApiStore();
+    const store = useApiStore();
 
     const query = useQuery({
-        queryKey: ['navigationTree', location.pathname],
+        queryKey: ['navigationTree'],
         queryFn: async () => {
-            console.log('API TREE')
-            return {data: await navigationService.getNavigationTree()};
+            return await navigationService.getNavigationTree();
         },
         staleTime: 1000 * 60 * 5, // 5분
-        cacheTime: 1000 * 60 * 10, // 10분
+        gcTime: 1000 * 60 * 10, // 10분
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        retry: 0,
-        // retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-        onSuccess: (data) => {
-            setNavigationTree(data);
-            setActiveByUrl(location.pathname);
-            clearError();
-        },
-        onError: (error) => {
-            setError(error.message || '네비게이션 데이터를 가져오는데 실패했습니다.');
-        },
-        onSettled: () => {
-
-            setLoading(false);
-        },
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     });
 
-    // 로딩 상태 동기화
+    // 데이터와 상태를 한 번에 업데이트하여 렌더링 최소화
     useEffect(() => {
-        setLoading(query.isLoading);
-    }, [query.isLoading, setLoading]);
+        if (query.data && Array.isArray(query.data)) {
+            store.setNavigationTree(query.data);
+            store.setActiveByUrl(location.pathname);
+            store.clearError();
+        }
+    }, [query.data, location.pathname]);
 
-    return {
-        data: query.data,
-        isLoading: query.isLoading,
-        error: query.error,
+    useEffect(() => {
+        if (query.error) {
+            store.setError(query.error?.message || '네비게이션 데이터를 가져오는데 실패했습니다.');
+        }
+    }, [query.error, store]);
+
+    useEffect(() => {
+        store.setLoading(query.isLoading);
+    }, [query.isLoading]);
+
+    // 액션들을 메모이제이션
+    const actions = useMemo(() => ({
+        toggleNode: store.toggleNode,
+        expandNode: store.expandNode,
+        collapseNode: store.collapseNode,
+        clearError: store.clearError,
         refetch: query.refetch,
-        isRefetching: query.isRefetching,
-    };
+    }), [store.toggleNode, store.expandNode, store.collapseNode, store.clearError, query.refetch]);
+
+    // 결과를 메모이제이션하여 불필요한 리렌더링 방지
+    return useMemo(() => ({
+        navigationTree: store.navigationTree,
+        expandedNodes: store.expandedNodes,
+        activeNodeId: store.activeNodeId,
+        currentPath: store.currentPath,
+        isLoading: query.isLoading,
+        error: query.error || store.error,
+        currentUrl: location.pathname,
+        actions,
+    }), [
+        store.navigationTree,
+        store.expandedNodes,
+        store.activeNodeId,
+        store.currentPath,
+        query.isLoading,
+        query.error,
+        store.error,
+        location.pathname,
+        actions,
+    ]);
 };
 
 // 네비게이션 경로 조회 훅
@@ -84,45 +102,28 @@ export const useNavigationPath = (url) => {
     };
 };
 
-// 현재 위치에 따른 네비게이션 상태 관리 훅
-export const useNavigationState = () => {
-    const location = useLocation();
-    const {
-        navigationTree,
-        expandedNodes,
-        activeNodeId,
-        currentPath,
-        isLoading,
-        error,
-        setActiveByUrl,
-        toggleNode,
-        expandNode,
-        collapseNode,
-        clearError,
-    } = useApiStore();
-
-    // 경로 변경 시 활성 상태 업데이트
-    useEffect(() => {
-        console.log('API State')
-        if (navigationTree.length > 0) {
-            setActiveByUrl(location.pathname);
-        }
-    }, [location.pathname, navigationTree, setActiveByUrl]);
-
+// 레거시 호환성을 위한 개별 훅들 (deprecated)
+export const useNavigationTree = () => {
+    const navigation = useNavigation();
     return {
-        navigationTree,
-        expandedNodes,
-        activeNodeId,
-        currentPath,
-        isLoading,
-        error,
-        currentUrl: location.pathname,
-        actions: {
-            toggleNode,
-            expandNode,
-            collapseNode,
-            clearError,
-        },
+        data: navigation.navigationTree,
+        isLoading: navigation.isLoading,
+        error: navigation.error,
+        refetch: navigation.actions.refetch,
+    };
+};
+
+export const useNavigationState = () => {
+    const navigation = useNavigation();
+    return {
+        navigationTree: navigation.navigationTree,
+        expandedNodes: navigation.expandedNodes,
+        activeNodeId: navigation.activeNodeId,
+        currentPath: navigation.currentPath,
+        isLoading: navigation.isLoading,
+        error: navigation.error,
+        currentUrl: navigation.currentUrl,
+        actions: navigation.actions,
     };
 };
 
@@ -130,7 +131,7 @@ export const useNavigationState = () => {
 export const useNavigationClick = () => {
     const { expandNode, collapseNode, expandedNodes, setActiveNode } = useApiStore();
 
-    const handleNavigationClick = (node, navigate) => {
+    const handleNavigationClick = useCallback((node, navigate) => {
         if (node.navUrl) {
             // URL이 있는 경우 라우팅
             setActiveNode(node.navId);
@@ -143,7 +144,7 @@ export const useNavigationClick = () => {
                 expandNode(node.navId);
             }
         }
-    };
+    }, [expandedNodes, expandNode, collapseNode, setActiveNode]);
 
     return { handleNavigationClick };
 };

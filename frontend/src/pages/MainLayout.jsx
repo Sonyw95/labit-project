@@ -9,14 +9,24 @@ import {useTheme} from "@/hooks/useTheme.js";
 import Header from "@/components/layout/Header.jsx";
 import {backgroundBlur} from "@/utils/backgroundBlur.js";
 // import Navbar from "@/components/layout/Navbar.jsx";
-// import {NAVIGATION_ITEMS, POPULAR_TAGS} from "@/constants/data.js";
+// import {POPULAR_TAGS} from "@/constants/data.js";
 // import MobileNav from "@/components/layout/MobileNav.jsx";
 import {Outlet} from "react-router-dom";
-import NavigationTree from "@/components/NavigationTree.jsx";
+// import NavigationTree from "@/components/NavigationTree.jsx";
+// import Navbar from "../components/layout/Navbar.jsx";
+import {useNavigation} from "../hooks/api/useNavigation.js";
+import NavigationTree from "../components/NavigationTree.jsx";
 
 const MainPageLayout = () => {
     console.log('Main')
     const [drawerOpened, setDrawerOpened] = useState(false);
+    const {
+        navigationTree,
+        isLoading,
+        error,
+        actions
+    } = useNavigation();
+
     const {dark} = useTheme();
 
     return (
@@ -64,9 +74,9 @@ const MainPageLayout = () => {
             }}>
                 <NavigationTree />
                 {/*<Navbar*/}
-                {/*    navigationItems={navigationItems}*/}
-                {/*    isLoading={navLoading}*/}
-                {/*    error={navError}*/}
+                {/*    navigationItems={navigationTree}*/}
+                {/*    isLoading={isLoading}*/}
+                {/*    error={error}*/}
                 {/*    popularTags={POPULAR_TAGS}*/}
                 {/*/>*/}
             </AppShell.Navbar>
