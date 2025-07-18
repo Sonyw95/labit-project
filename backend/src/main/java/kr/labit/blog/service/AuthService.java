@@ -21,7 +21,9 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+
     private final KakaoOAuthService kakaoOAuthService;
+
     private final JwtTokenProvider jwtTokenProvider;
 
     public LoginResponseDto kakaoLogin(String code) {

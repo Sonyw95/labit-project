@@ -103,8 +103,17 @@ const useApiStore = create(
                         get().expandToNode(node.navId);
                     }
                 },
-// 카카오 로그인
-                login: async () => {
+// 카카오 로그
+                login: async() => {
+                    set({
+                        isLoading: false,
+                        error: '테스트',
+                        user: null,
+                        isAuthenticated: false
+                    });
+                    return { success: false, error: '테스트' };
+                },
+                loginWithKakao: async () => {
                     set({ isLoading: true, error: null });
 
                     try {
