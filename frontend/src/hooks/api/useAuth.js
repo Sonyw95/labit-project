@@ -2,7 +2,7 @@
 import {useCallback, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import useApiStore from "../../stores/apiStore.js";
-import {tokenUtils} from "../../api/authAPi.js";
+import {tokenUtils} from "@/api/authAPi.js";
 import {showToast} from "../../components/common/Toast.jsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 
@@ -53,12 +53,12 @@ export const useAuthState = () => {
 
 // 카카오 로그인 훅
 export const useKakaoLogin = () => {
-    const login = useApiStore(state => state.login);
+    const loginWithKakao = useApiStore(state => state.login);
     const navigate = useNavigate();
 
     return useMutation({
         mutationFn: async (code) => {
-            const result = await login(code);
+            const result = await loginWithKakao(code);
             if (!result.success) {
                 throw new Error(result.error);
             }

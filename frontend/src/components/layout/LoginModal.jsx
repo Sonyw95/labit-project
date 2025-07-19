@@ -218,7 +218,7 @@ import {useTheme} from "@/hooks/useTheme.js";
 import {validators} from "@/utils/validators.js";
 import {showToast} from "@/components/common/Toast.jsx";
 import IconBrandKakao from "@/utils/IconBrandKakao.jsx";
-import {useAuth} from "../../hooks/api/useAuth.js";
+import {useAuth, useKakaoLogin} from "@/hooks/api/useAuth.js";
 
 const LoginModal = memo(({ opened, onClose, onSwitchToSignup }) => {
     const [formData, setFormData] = useState({
@@ -228,44 +228,44 @@ const LoginModal = memo(({ opened, onClose, onSwitchToSignup }) => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const { login, loginWithKakao } = useAuth();
     const { dark } = useTheme();
 
     const handleSubmit = useCallback(async (e) => {
-        e?.preventDefault();
+        // e?.preventDefault();
+        //
+        // if (!validators.email(formData.email)) {
+        //     showToast.error('오류', '올바른 이메일 주소를 입력해주세요.');
+        //     return;
+        // }
+        //
+        // if (!validators.password(formData.password).isValid) {
+        //     showToast.error('오류', '비밀번호는 8자 이상이어야 합니다.');
+        //     return;
+        // }
+        //
+        // setLoading(true);
+        //
+        // try {
+        //     const result = await login({
+        //         email: formData.email,
+        //         password: formData.password
+        //     });
+        //
+        //     if (result.success) {
+        //         showToast.success('성공', '로그인되었습니다.');
+        //         resetForm();
+        //         onClose();
+        //     } else {
+        //         showToast.error('오류', result.error);
+        //     }
+        // } catch (error) {
+        //     showToast.error('오류', '로그인 중 오류가 발생했습니다.');
+        // } finally {
+        //     setLoading(false);
+        // }
+    }, [formData, /*login,*/ onClose]);
 
-        if (!validators.email(formData.email)) {
-            showToast.error('오류', '올바른 이메일 주소를 입력해주세요.');
-            return;
-        }
-
-        if (!validators.password(formData.password).isValid) {
-            showToast.error('오류', '비밀번호는 8자 이상이어야 합니다.');
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            const result = await login({
-                email: formData.email,
-                password: formData.password
-            });
-
-            if (result.success) {
-                showToast.success('성공', '로그인되었습니다.');
-                resetForm();
-                onClose();
-            } else {
-                showToast.error('오류', result.error);
-            }
-        } catch (error) {
-            showToast.error('오류', '로그인 중 오류가 발생했습니다.');
-        } finally {
-            setLoading(false);
-        }
-    }, [formData, login, onClose]);
-
+    const loginWithKakao = useKakaoLogin;
     const handleKakaoLogin = useCallback(async () => {
         setLoading(true);
         try {
@@ -279,6 +279,7 @@ const LoginModal = memo(({ opened, onClose, onSwitchToSignup }) => {
             }
         } catch (error) {
             showToast.error('오류', '카카오 로그인 중 오류가 발생했습니다.');
+            console.log(error)
         } finally {
             setLoading(false);
         }
