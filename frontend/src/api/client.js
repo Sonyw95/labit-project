@@ -1,4 +1,5 @@
 import axios from "axios";
+import useAuthStore from "../stores/authStore.js";
 
 const instance = axios.create({
     baseURL: 'http://localhost:8080/api',
@@ -11,9 +12,9 @@ const instance = axios.create({
 // Request interceptor
 instance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        const { accessToken } = useAuthStore.getState();
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
         }
         return config;
     },
@@ -25,12 +26,16 @@ instance.interceptors.response.use(
     (response) => response.data,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem('authToken');
-            window.location.href = '/login';
+            const { logout } = useAuthStore.getState();
+            logout();
+
+            // 로그인 페이지로 리다이렉트하지 않고 현재 페이지에서 로그인 UI 표시
+            console.log('토큰이 만료되었습니다. 다시 로그인해주세요.');
         }
         return Promise.reject(error);
     }
 );
+
 
 class Api {
     constructor() {

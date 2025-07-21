@@ -3,7 +3,7 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import './App.css'
 
-import React, { memo } from 'react';
+import React, {memo, useEffect} from 'react';
 import {
     MantineProvider,
 } from '@mantine/core';
@@ -18,20 +18,41 @@ import {ThemeProvider} from "@/contexts/ThemeContext.jsx";
 import {ToastProvider} from "@/contexts/ToastContext.jsx";
 import {ModalsProvider} from "@mantine/modals";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import useAuthStore from "./stores/authStore.js";
+import {isTokenExpired} from "./utils/authUtils.js";
 // import {NotificationProvider} from "@/contexts/NotificationContext.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             refetchOnWindowFocus: false,
+            retry: (failureCount, error) => {
+                // 401 에러는 재시도하지 않음
+                if (error?.response?.status === 401) {
+                    return false;
+                }
+                return failureCount < 1;
+            },
+            staleTime: 5 * 60 * 1000, // 5분
+            cacheTime: 10 * 60 * 1000, // 10분
+        },
+        mutations: {
             retry: 1,
-            staleTime: 5 * 60 * 1000,
         },
     },
 });
 
 // 메인 App 컴포넌트
 const App = memo(() => {
+    const { accessToken, logout } = useAuthStore();
+
+    // 앱 시작시 토큰 유효성 검사
+    useEffect(() => {
+        if (accessToken && isTokenExpired(accessToken)) {
+            console.log('저장된 토큰이 만료되었습니다. 로그아웃 처리합니다.');
+            logout();
+        }
+    }, [accessToken, logout]);
 
     return (
         <QueryClientProvider client={queryClient}>

@@ -3,6 +3,8 @@ package kr.labit.blog.service;
 
 import kr.labit.blog.dto.NavigationResponseDto;
 import kr.labit.blog.entity.LabNavigation;
+import kr.labit.blog.entity.LabUsers;
+import kr.labit.blog.entity.UserRole;
 import kr.labit.blog.repository.LabNavigationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +26,13 @@ public class NavigationService {
     private final LabNavigationRepository navigationRepository;
 
     /**
-     * 트리 형태의 네비게이션 메뉴 조회 (캐시 적용)
+     * 사용자 역할에 따른 네비게이션 트리 조회
      */
-    @Cacheable(value = "navigationTree", unless = "#result.isEmpty()")
-    public List<NavigationResponseDto> getNavigationTree() {
-        log.info("네비게이션 트리 조회 시작");
+    public List<NavigationResponseDto> getNavigationTreeByUserRole(LabUsers user) {
+        log.info("사용자 역할별 네비게이션 트리 조회: 사용자 = {}",
+                user != null ? user.getNickname() : "게스트");
 
         try {
-            // 모든 활성화된 메뉴 조회
             List<LabNavigation> allMenus = navigationRepository.findAllActiveOrderBySortOrder();
 
             if (allMenus.isEmpty()) {
@@ -39,8 +40,11 @@ public class NavigationService {
                 return new ArrayList<>();
             }
 
+            // 사용자 권한에 따라 메뉴 필터링
+            List<LabNavigation> filteredMenus = filterMenusByUserRole(allMenus, user);
+
             // 트리 구조 구성
-            List<LabNavigation> treeMenus = buildNavigationTree(allMenus);
+            List<LabNavigation> treeMenus = buildNavigationTree(filteredMenus);
 
             // DTO로 변환
             List<NavigationResponseDto> result = treeMenus.stream()
@@ -54,6 +58,43 @@ public class NavigationService {
             log.error("네비게이션 트리 조회 중 오류 발생", e);
             throw new RuntimeException("네비게이션 메뉴를 불러올 수 없습니다.", e);
         }
+    }
+
+    /**
+     * 사용자 권한에 따른 메뉴 필터링
+     */
+    private List<LabNavigation> filterMenusByUserRole(List<LabNavigation> allMenus, LabUsers user) {
+        // 현재는 모든 메뉴를 반환하지만, 필요시 권한별로 필터링 로직 추가
+        // 예: 관리자 전용 메뉴, 특정 역할 전용 메뉴 등
+
+        UserRole userRole = user != null ? user.getRole() : UserRole.USER;
+
+        return allMenus.stream()
+                .filter(menu -> isMenuAccessible(menu, userRole))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 메뉴 접근 권한 확인
+     */
+    private boolean isMenuAccessible(LabNavigation menu, UserRole userRole) {
+        // 기본적으로 모든 메뉴는 접근 가능
+        // 필요시 메뉴별 접근 권한 로직 추가
+
+        // 예시: 관리자 메뉴는 ADMIN 이상만 접근 가능
+        if (menu.getDescription() != null && menu.getDescription().contains("관리자")) {
+            return userRole == UserRole.ADMIN || userRole == UserRole.SUPER_ADMIN;
+        }
+
+        return true;
+    }
+
+    /**
+     * 트리 형태의 네비게이션 메뉴 조회 (캐시 적용)
+     */
+    @Cacheable(value = "navigationTree", unless = "#result.isEmpty()")
+    public List<NavigationResponseDto> getNavigationTree() {
+        return getNavigationTreeByUserRole(null);
     }
 
     /**

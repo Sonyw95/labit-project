@@ -5,10 +5,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.labit.blog.dto.NavigationResponseDto;
+import kr.labit.blog.entity.LabUsers;
 import kr.labit.blog.service.NavigationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +27,20 @@ public class NavigationController {
     private final NavigationService navigationService;
 
     @GetMapping("/tree")
-    @Operation(summary = "네비게이션 트리 조회", description = "전체 네비게이션 메뉴를 트리 형태로 조회합니다.")
+    @Operation(summary = "네비게이션 트리 조회", description = "사용자 권한에 따른 네비게이션 메뉴를 트리 형태로 조회합니다.")
     public ResponseEntity<List<NavigationResponseDto>> getNavigationTree() {
         log.info("네비게이션 트리 조회 요청");
 
-        List<NavigationResponseDto> navigationTree = navigationService.getNavigationTree();
+        // 현재 사용자 정보 확인
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LabUsers currentUser = null;
+
+        if (authentication != null && authentication.isAuthenticated() &&
+                authentication.getPrincipal() instanceof LabUsers) {
+            currentUser = (LabUsers) authentication.getPrincipal();
+        }
+
+        List<NavigationResponseDto> navigationTree = navigationService.getNavigationTreeByUserRole(currentUser);
 
         return ResponseEntity.ok(navigationTree);
     }

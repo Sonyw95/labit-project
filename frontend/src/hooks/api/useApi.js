@@ -1,5 +1,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {mainPageService, navigationService, postService, userService} from "@/api/service.js";
+import useAuthStore from "../../stores/authStore.js";
+import {authService} from "../../api/service.js";
 
 export const queryKeys = {
     users: {
@@ -17,7 +19,10 @@ export const queryKeys = {
     navigation: {
         tree: ['navigation', 'tree'],
         path: (href) => ['navigation', 'path', href],
-    }
+    },
+    userInfo: ['auth', 'userInfo'],
+    tokenValidation: ['auth', 'tokenValidation'],
+
 };
 
 // User Hooks
@@ -143,11 +148,91 @@ export const useNavigationPath = ( href ) => {
 // 네비게이션 캐시 무효화
 export const useEvictNavigationCache = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: navigationService.evictNavigationCache,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['navigation'] });
+        }
+    })
+}
+
+// 사용자 정보 조회
+export const useUserInfo = () => {
+    const { isAuthenticated } = useAuthStore();
+    return useQuery({
+        queryKey: queryKeys.userInfo,
+        queryFn: authService.getUserInfo,
+        enabled: isAuthenticated,
+        staleTime: 5 * 60 * 1000,
+        retry: 1,
+        onError: (error) => {
+            if( error.response?.status === 401 ){
+                useAuthStore.getState().logout();
+            }
+        }
+    })
+}
+
+// 카카오 인증 주소
+export const useKakaoAuthPath = () => {
+    return useQuery({
+        queryKey: queryKeys.userInfo,
+        queryFn: authService.getKakaoAuthPath,
+        staleTime: 5 * 60 * 1000,
+        retry: 1,
+    })
+}
+
+// 카카오 로그인
+export const useKakaoLogin = () => {
+    const queryClient = useQueryClient();
+    const { login, setError } = useAuthStore();
+    return useMutation({
+        mutationFn: authService.kakaoLogin,
+        onSuccess: ( response) => {
+            const { accessToken } = response;
+            login(accessToken);
+
+            // 사용자 정보 캐시 무효화 -> 새로조회
+            queryClient.invalidateQueries({ queryKey: queryKeys.userInfo });
+        },
+        onError: (error) => {
+            console.error( '카카오 로그인 실패: ', error);
+            setError(error?.message);
+        }
+    })
+}
+
+// 로그아웃
+ export const useLogout = () => {
+    const queryClient = useQueryClient();
+    const { logout, kakaoAccessToken } = useAuthStore();
+    return useMutation({
+        mutationFn: () => authService.logout(kakaoAccessToken),
+        onSuccess: () => {
+            logout();
+            queryClient.removeQueries({ queryKey: ['auth'] })
+            queryClient.clear();
+        },
+        onSettled: () => {
+            // 성공/ 실패 상관없이 클라이언트 상태 초기화
+            logout();
+            queryClient.clear();
+        }
+    })
+ }
+
+ // 토큰 갱신
+export const useTokenRefresh = () => {
+    const { setToken } = useAuthStore();
+    return useMutation({
+        mutationFn: authService.refreshToken,
+        onSuccess: ( response ) => {
+            const { accessToken } = response;
+            setToken(accessToken);
+        },
+        onError: () => {
+            useAuthStore.getState().logout();
         }
     })
 }

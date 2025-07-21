@@ -3,20 +3,16 @@ import {
     AppShell,
     Group,
     Text,
-    NavLink,
     ScrollArea,
     Badge,
     ActionIcon,
     Stack,
     UnstyledButton,
-    rem, Box, LoadingOverlay, Alert,
+    rem, Box, LoadingOverlay, Alert, Avatar,
 } from '@mantine/core';
 import {
     IconAlertCircle,
     IconBrandGithub,
-    IconBrandLinkedin,
-    IconSettings,
-    IconSparkles,
 } from '@tabler/icons-react';
 import {useNavigationTree} from "@/hooks/api/useApi.js";
 import useNavigationStore from "@/stores/navigationStore.js";
@@ -31,7 +27,7 @@ const POPULAR_TAGS = [
     { name: 'AWS', count: 6, color: 'yellow' },
 ];
 
-const NavigationMenu = memo(({ isDark }) => {
+const NavigationMenu = memo(({ isDark, logo }) => {
     return (
         <AppShell.Navbar p="md" style={{
             background: isDark ? '#161b22' : '#ffffff',
@@ -44,29 +40,34 @@ const NavigationMenu = memo(({ isDark }) => {
             zIndex: 100
         }}>
             <AppShell.Section>
-                <UserProfile />
+                <UserProfile isDark={ isDark } logo={logo} />
             </AppShell.Section>
 
-
-            <AppShell.Section grow my="md" component={ScrollArea}>
+            <ScrollArea component={AppShell.Section}  grow my="md" scrollbars="y">
                 <NavigationItems isDark={isDark} />
-            </AppShell.Section>
+            </ScrollArea>
 
             {/*<AppShell.Section>*/}
             {/*    <PopularTags isDark={isDark} />*/}
             {/*</AppShell.Section>*/}
 
-            {/*<AppShell.Section mt="md">*/}
-            {/*    <SocialLinks isDark={isDark} />*/}
-            {/*</AppShell.Section>*/}
+            <AppShell.Section mt="md">
+                <SocialLinks isDark={isDark} />
+            </AppShell.Section>
         </AppShell.Navbar>
     );
 });
 
 
-const UserProfile = () => (
+const UserProfile = ({isDark, logo}) => (
     <Group mb="md">
-        <UserAvatar />
+        <Avatar
+            src={logo}
+            radius="xl"
+            style={{
+                border: `3px solid ${isDark ? '#4c6ef5' : '#339af0'}`,
+                boxShadow: 'none',
+            }}/>
         <div style={{ flex: 1 }}>
             <Text size="sm" fw={600}>
                 LABit
@@ -86,25 +87,6 @@ const UserProfile = () => (
             </Badge>
         </div>
     </Group>
-);
-
-const UserAvatar = () => (
-    <div style={{
-        width: '48px',
-        height: '48px',
-        borderRadius: '50%',
-        background: '#4c6ef5',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        border: '3px solid #4c6ef5',
-        boxShadow: 'none',
-    }}>
-        LB
-    </div>
 );
 const NavigationItems = memo(() => {
 // React Query로 네비게이션 데이터 가져오기
@@ -291,16 +273,16 @@ const SocialLinks = ({ isDark }) => (
             icon={IconBrandGithub}
             isDark={isDark}
         />
-        <SocialLink
-            href="https://linkedin.com"
-            icon={IconBrandLinkedin}
-            isDark={isDark}
-        />
-        <SocialLink
-            href="#"
-            icon={IconSettings}
-            isDark={isDark}
-        />
+        {/*<SocialLink*/}
+        {/*    href="https://linkedin.com"*/}
+        {/*    icon={IconBrandLinkedin}*/}
+        {/*    isDark={isDark}*/}
+        {/*/>*/}
+        {/*<SocialLink*/}
+        {/*    href="#"*/}
+        {/*    icon={IconSettings}*/}
+        {/*    isDark={isDark}*/}
+        {/*/>*/}
     </Group>
 );
 

@@ -1,6 +1,8 @@
 import React, {lazy, Suspense} from "react";
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import MainPage from "@/components/example/MainPage.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -14,9 +16,12 @@ const AppRouter = () => {
             children: [
                 { index: true, element: <Navigate to="/home"/> },
                 { path: '/home', element: <MainPage/> },
+
+
                 { path: '/posts/:page', element: <></> },
 
 
+                { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminPage/></ProtectedRoute>}
             ]
         },
     ]);

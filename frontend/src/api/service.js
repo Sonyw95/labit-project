@@ -31,6 +31,31 @@ export const navigationService = {
 
 }
 
+export const authService = {
+
+    // 카카오 로그인 인증 주소
+    getKakaoAuthPath: () => api.get('/auth/kakao/path'),
+
+    // 카카오 로그인
+    kakaoLogin: (code) => api.post('/auth/kakao/login', null, {
+        params: { code }
+    }),
+
+    // 로그아웃
+    logout: (kakaoAccessToken) => api.post('/auth/logout', null, {
+        params: { kakaoAccessToken }
+    }),
+
+    // 내 정보 조회
+    getUserInfo: () => api.get('/auth/me'),
+
+    // 토큰 갱신
+    refreshToken: () => api.post('/auth/token/refresh'),
+
+    // 토큰 검증
+    validateToken: () => api.get('/auth/token/validate'),
+}
+
 
 // Main Page API (복수 API 동시 요청)
 export const mainPageService = {

@@ -6,21 +6,16 @@ import {
 import {Outlet} from "react-router-dom";
 import Header from "@/components/main/Header.jsx";
 import {NavigationMenu} from "@/components/main/navigation/NavigationMenu.jsx";
+import {useTheme} from "../../contexts/ThemeContext.jsx";
 // import MobileDrawer from "@/components/main/MobileDrawer.jsx";
 
-// Import components (these would be separate files in a real project)
-// import { CustomLoader } from './CustomLoader';
-// import { NavigationMenu } from './NavigationMenu';
-// import { HeroSection } from './HeroSection';
-// import { RecentPosts } from './RecentPosts';
-// import { useLoadingEffect } from './hooks/useLoadingEffect';
 
 const MainLayout = () => {
     const [navOpened, setNavOpened] = useState(false);
+    const { dark, toggleColorScheme } = useTheme();
+
+
     // const { loading } = useLoadingEffect();
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const isDark = colorScheme === 'dark';
-    //
     // if (loading) {
     //     return <CustomLoader isDark={isDark} />;
     // }
@@ -34,13 +29,13 @@ const MainLayout = () => {
                 collapsed: {mobile: true},
             }}
             style={{
-                background: isDark ? '#1a1a1a' : '#f8fafc',
+                background: dark ? '#1a1a1a' : '#f8fafc',
             }}
         >
             {/* Header */}
-            <Header isDark={isDark} navOpened={navOpened} setNavOpened={setNavOpened} toggleColorScheme={toggleColorScheme} />
+            <Header isDark={dark} navOpened={navOpened} setNavOpened={setNavOpened} toggleColorScheme={toggleColorScheme} />
 
-            <NavigationMenu isDark={isDark} />
+            <NavigationMenu isDark={dark} logo="/upload/images/logo.png"/>
 
             {/*<MobileDrawer/>*/}
 

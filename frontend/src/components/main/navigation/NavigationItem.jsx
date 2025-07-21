@@ -16,6 +16,7 @@ const NavigationItem = memo(({
 
     const hasChildren = menuItem.children && menuItem.children.length > 0;
 
+
     // 메뉴 클릭 핸들러
     const handleClick = () => {
         if (hasChildren) {
@@ -51,24 +52,18 @@ const NavigationItem = memo(({
             onClick={handleClick}
             style={{
                 paddingLeft: `${12 + depth * 16}px`,
-                borderRadius: '8px',
+                borderRadius: rem(8),
                 margin: '2px 8px',
+                transition: 'all 0.3s ease',
             }}
+            // style={{
+            //     margin: '2px 8px',
+            //     borderRadius: rem(8),
+            //     padding: rem(12),
+            //     marginBottom: rem(4),
+            //     border: 'none',
+            // }}
             styles={{
-                // root: {
-                //     '&[data-active]': {
-                //         backgroundColor: 'var(--mantine-color-blue-light)',
-                //         color: 'var(--mantine-color-blue-filled)',
-                //         fontWeight: 600,
-                //     },
-                //     '&:hover': {
-                //         backgroundColor: 'var(--mantine-color-gray-light)',
-                //     },
-                // },
-                label: {
-                    fontSize: depth > 0 ? '14px' : '15px',
-                    fontWeight: depth > 0 ? 400 : 500,
-                },
                 description: {
                     fontSize: '12px',
                     color: 'var(--mantine-color-dimmed)',
@@ -100,40 +95,17 @@ const NavigationItem = memo(({
                     }
                     style={{
                         paddingLeft: `${12 + depth * 16}px`,
-                        borderRadius: '8px',
+                        borderRadius: rem(8),
                         margin: '2px 8px',
+                        transition: 'all 0.3s ease',
                     }}
                     styles={{
-                        // root: {
-                        //     '&[data-active]': {
-                        //         backgroundColor: 'var(--mantine-color-blue-light)',
-                        //         color: 'var(--mantine-color-blue-filled)',
-                        //         fontWeight: 600,
-                        //     },
-                        //     '&:hover': {
-                        //         backgroundColor: 'var(--mantine-color-gray-light)',
-                        //     },
-                        // },
-                        label: {
-                            fontSize: depth > 0 ? '14px' : '15px',
-                            fontWeight: depth > 0 ? 400 : 500,
-                        },
                         description: {
                             fontSize: '12px',
                             color: 'var(--mantine-color-dimmed)',
                         },
                     }}
                 />
-                // <RouterNavLink
-                //     to={menuItem.href}
-                //     style={{ textDecoration: 'none' }}
-                // >
-                //     {({ isActive }) => (
-                //         <Box style={{ opacity: isActive ? 1 : 0.9 }}>
-                //             {navLinkContent}
-                //         </Box>
-                //     )}
-                // </RouterNavLink>
             ) : (
                 navLinkContent
             )}

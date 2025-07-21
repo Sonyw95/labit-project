@@ -3,6 +3,9 @@ import {ActionIcon, AppShell, Burger, Group} from "@mantine/core";
 import {IconBell, IconMoon, IconSearch, IconSun} from "@tabler/icons-react";
 import {backgroundBlur} from "@/utils/helpers.jsx";
 import {showToast} from "@/components/advanced/Toast.jsx";
+import useAuthStore from "../../stores/authStore.js";
+import UserMenu from "../common/Auth/UserMenu.jsx";
+import UserInfo from "../common/Auth/UserInfo.jsx";
 
 const Header = memo(({
                          isDark, navOpened, setNavOpened, toggleColorScheme
@@ -10,6 +13,9 @@ const Header = memo(({
     const handleNotification = useCallback(() => {
         showToast.info('알림', '같은 레벨 내에서만 이동 asd .')
     }, [showToast]);
+
+    const { isAuthenticated } = useAuthStore();
+
     return (
         <AppShell.Header
             ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
@@ -100,6 +106,7 @@ const Header = memo(({
                     >
                         {isDark ? <IconSun size={18} /> : <IconMoon size={18} />}
                     </ActionIcon>
+                    { isAuthenticated ? <UserMenu/> : <UserInfo/> }
                 </Group>
             </Group>
         </AppShell.Header>
