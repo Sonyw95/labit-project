@@ -1,34 +1,25 @@
-// ========================================
-// hooks/useMediaQuery.js - 미디어 쿼리 훅 (반응형)
-// ========================================
-import {useEffect, useRef, useState} from "react";
+// useMediaQuery - 반응형 처리
+import {useEffect, useState} from "react";
 
 export const useMediaQuery = (query) => {
-    const [matches, setMatches] = useState(false);
-    const mediaQueryRef = useRef(null);
+    const [matches, setMatches] = useState(() => {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+        return window.matchMedia(query).matches;
+    });
 
     useEffect(() => {
         if (typeof window === 'undefined') {
             return;
         }
 
-        mediaQueryRef.current = window.matchMedia(query);
-        setMatches(mediaQueryRef.current.matches);
+        const mediaQuery = window.matchMedia(query);
+        const handleChange = () => setMatches(mediaQuery.matches);
 
-        const handler = (event) => setMatches(event.matches);
-
-        mediaQueryRef.current.addEventListener('change', handler);
-
-        return () => {
-            if (mediaQueryRef.current) {
-                mediaQueryRef.current.removeEventListener('change', handler);
-            }
-        };
+        mediaQuery.addListener(handleChange);
+        return () => mediaQuery.removeListener(handleChange);
     }, [query]);
 
     return matches;
 };
-// 편의 함수들
-export const useIsMobile = () => useMediaQuery('(max-width: 768px)');
-export const useIsTablet = () => useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
-export const useIsDesktop = () => useMediaQuery('(min-width: 1025px)');

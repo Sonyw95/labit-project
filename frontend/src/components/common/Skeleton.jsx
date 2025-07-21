@@ -2,7 +2,7 @@
 // Skeleton 컴포넌트
 import {Skeleton, Stack} from '@mantine/core';
 import {memo} from "react";
-import {useTheme} from "../../hooks/useTheme.js";
+import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 const SkeletonLoader = memo(({
                                  type = 'text',
@@ -13,7 +13,7 @@ const SkeletonLoader = memo(({
                                  animate = true,
                                  ...props
                              }) => {
-    const { dark } = useTheme();
+    const { isDark } = useTheme();
 
     const getSkeletonConfig = () => {
         switch (type) {
@@ -43,15 +43,10 @@ const SkeletonLoader = memo(({
                     width={config.width}
                     radius={config.radius || radius}
                     animate={animate}
-                    style={{
-                        background: dark ? '#21262d' : '#f1f3f4',
-                    }}
                 />
             ))}
         </Stack>
     );
 });
 
-SkeletonLoader.displayName = 'SkeletonLoader';
-
-export default Skeleton;
+export default SkeletonLoader;

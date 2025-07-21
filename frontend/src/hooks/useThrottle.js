@@ -1,24 +1,13 @@
-// ========================================
-// hooks/useThrottle.js - 스로틀 훅 (성능 최적화)
-// ========================================
-import {useEffect, useRef, useState} from "react";
+import {useCallback} from "react";
 
-export const useThrottle = (value, limit) => {
-    const [throttledValue, setThrottledValue] = useState(value);
-    const lastRan = useRef(Date.now());
+export const useThrottle = (callback, delay) => {
+    // eslint-disable-next-line no-undef
+    const lastRun = useRef(Date.now());
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            if (Date.now() - lastRan.current >= limit) {
-                setThrottledValue(value);
-                lastRan.current = Date.now();
-            }
-        }, limit - (Date.now() - lastRan.current));
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, limit]);
-
-    return throttledValue;
+    return useCallback((...args) => {
+        if (Date.now() - lastRun.current >= delay) {
+            callback(...args);
+            lastRun.current = Date.now();
+        }
+    }, [callback, delay]);
 };

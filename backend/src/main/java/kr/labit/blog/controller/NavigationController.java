@@ -1,8 +1,13 @@
 package kr.labit.blog.controller;
 
-import kr.labit.blog.dto.NavigationDto;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import kr.labit.blog.dto.NavigationResponseDto;
 import kr.labit.blog.service.NavigationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,37 +16,44 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/navigation")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${app.frontend-url}")
+@Slf4j
+@Tag(name = "Navigation", description = "네비게이션 메뉴 API")
+@CrossOrigin(origins = "${app.frontend-url}", maxAge = 3600)
 public class NavigationController {
 
     private final NavigationService navigationService;
 
-    /**
-     * 전체 네비게이션 트리 조회
-     */
     @GetMapping("/tree")
-    public ResponseEntity<List<NavigationDto>> getNavigationTree() {
-        List<NavigationDto> navigationTree = navigationService.getNavigationTree();
+    @Operation(summary = "네비게이션 트리 조회", description = "전체 네비게이션 메뉴를 트리 형태로 조회합니다.")
+    public ResponseEntity<List<NavigationResponseDto>> getNavigationTree() {
+        log.info("네비게이션 트리 조회 요청");
+
+        List<NavigationResponseDto> navigationTree = navigationService.getNavigationTree();
+
         return ResponseEntity.ok(navigationTree);
     }
 
-    /**
-     * 현재 URL을 기준으로 확장된 네비게이션 트리 조회
-     */
-    @GetMapping("/tree/expanded")
-    public ResponseEntity<List<NavigationDto>> getNavigationTreeWithExpanded(
-            @RequestParam(required = false) String currentUrl) {
-        List<NavigationDto> navigationTree = navigationService.getNavigationTreeWithExpanded(currentUrl);
-        return ResponseEntity.ok(navigationTree);
-    }
-
-    /**
-     * 특정 URL의 네비게이션 경로 조회 (breadcrumb)
-     */
     @GetMapping("/path")
-    public ResponseEntity<List<NavigationDto>> getNavigationPath(
-            @RequestParam String url) {
-        List<NavigationDto> navigationPath = navigationService.getNavigationPath(url);
-        return ResponseEntity.ok(navigationPath);
+    @Operation(summary = "네비게이션 경로 조회", description = "특정 URL의 네비게이션 경로를 조회합니다 (breadcrumb용).")
+    public ResponseEntity<List<NavigationResponseDto>> getNavigationPath(
+            @Parameter(description = "조회할 URL 경로", example = "/posts/java")
+            @RequestParam String href) {
+
+        log.info("네비게이션 경로 조회 요청: {}", href);
+
+        List<NavigationResponseDto> path = navigationService.getNavigationPath(href);
+
+        return ResponseEntity.ok(path);
+    }
+
+    @PostMapping("/cache/evict")
+    @Operation(summary = "네비게이션 캐시 무효화", description = "네비게이션 캐시를 무효화합니다.")
+    public ResponseEntity<String> evictNavigationCache() {
+        log.info("네비게이션 캐시 무효화 요청");
+
+        navigationService.evictNavigationCache();
+
+        return ResponseEntity.ok("네비게이션 캐시가 무효화되었습니다.");
     }
 }
+

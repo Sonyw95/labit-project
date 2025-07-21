@@ -1,20 +1,13 @@
-// ========================================
-// hooks/useClickOutside.js - 외부 클릭 감지 훅
-// ========================================
 import {useEffect, useRef} from "react";
 
 export const useClickOutside = (callback) => {
-    const ref = useRef();
-    const callbackRef = useRef(callback);
+    const ref = useRef(null);
 
-    useEffect(() => {
-        callbackRef.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
+    useEffect
+    (() => {
         const handleClick = (event) => {
             if (ref.current && !ref.current.contains(event.target)) {
-                callbackRef.current(event);
+                callback();
             }
         };
 
@@ -25,7 +18,7 @@ export const useClickOutside = (callback) => {
             document.removeEventListener('mousedown', handleClick);
             document.removeEventListener('touchstart', handleClick);
         };
-    }, []);
+    }, [callback]);
 
     return ref;
 };

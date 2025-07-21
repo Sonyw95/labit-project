@@ -1,14 +1,16 @@
 package kr.labit.blog.service;
 
-import kr.labit.blog.dto.NavigationDto;
-import kr.labit.blog.entity.Navigation;
-import kr.labit.blog.repository.NavigationRepository;
+
+import kr.labit.blog.dto.NavigationResponseDto;
+import kr.labit.blog.entity.LabNavigation;
+import kr.labit.blog.repository.LabNavigationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,150 +18,114 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class NavigationService {
 
-    private final NavigationRepository navigationRepository;
+    private final LabNavigationRepository navigationRepository;
 
     /**
-     * 전체 네비게이션 트리 구조 조회
+     * 트리 형태의 네비게이션 메뉴 조회 (캐시 적용)
      */
-    public List<NavigationDto> getNavigationTree() {
-        List<Navigation> allNavigations = navigationRepository.findAllActiveNavigations();
-        return buildNavigationTree(allNavigations);
+    @Cacheable(value = "navigationTree", unless = "#result.isEmpty()")
+    public List<NavigationResponseDto> getNavigationTree() {
+        log.info("네비게이션 트리 조회 시작");
+
+        try {
+            // 모든 활성화된 메뉴 조회
+            List<LabNavigation> allMenus = navigationRepository.findAllActiveOrderBySortOrder();
+
+            if (allMenus.isEmpty()) {
+                log.warn("활성화된 네비게이션 메뉴가 없습니다.");
+                return new ArrayList<>();
+            }
+
+            // 트리 구조 구성
+            List<LabNavigation> treeMenus = buildNavigationTree(allMenus);
+
+            // DTO로 변환
+            List<NavigationResponseDto> result = treeMenus.stream()
+                    .map(NavigationResponseDto::fromEntity)
+                    .collect(Collectors.toList());
+
+            log.info("네비게이션 트리 조회 완료: {} 개의 루트 메뉴", result.size());
+            return result;
+
+        } catch (Exception e) {
+            log.error("네비게이션 트리 조회 중 오류 발생", e);
+            throw new RuntimeException("네비게이션 메뉴를 불러올 수 없습니다.", e);
+        }
     }
 
     /**
-     * 특정 URL의 네비게이션 경로 조회 (breadcrumb 용)
+     * 특정 경로의 네비게이션 경로 조회 (breadcrumb용)
      */
-    public List<NavigationDto> getNavigationPath(String url) {
-        Navigation navigation = navigationRepository.findByNavUrl(url);
-        if (navigation == null) {
+    public List<NavigationResponseDto> getNavigationPath(String href) {
+        log.info("네비게이션 경로 조회: {}", href);
+
+        List<LabNavigation> menus = navigationRepository.findByHref(href);
+        if (menus.isEmpty()) {
             return new ArrayList<>();
         }
 
-        List<Navigation> pathNavigations = navigationRepository.findNavigationPath(navigation.getNavId());
-        return pathNavigations.stream()
-                .map(this::convertToDto)
+        LabNavigation targetMenu = menus.get(0);
+        List<LabNavigation> path = buildNavigationPath(targetMenu);
+
+        return path.stream()
+                .map(NavigationResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 활성 상태인 네비게이션의 부모들을 찾아서 확장 상태 설정
+     * 메뉴 트리 구조 생성
      */
-    public List<NavigationDto> getNavigationTreeWithExpanded(String currentUrl) {
-        List<Navigation> allNavigations = navigationRepository.findAllActiveNavigations();
-        List<NavigationDto> tree = buildNavigationTree(allNavigations);
+    private List<LabNavigation> buildNavigationTree(List<LabNavigation> allMenus) {
+        // 부모 ID별로 그룹핑
+        Map<Long, List<LabNavigation>> menusByParentId = allMenus.stream()
+                .filter(menu -> menu.getParentId() != null)
+                .collect(Collectors.groupingBy(LabNavigation::getParentId));
 
-        if (currentUrl != null && !currentUrl.isEmpty()) {
-            Navigation currentNav = navigationRepository.findByNavUrl(currentUrl);
-            if (currentNav != null) {
-                setExpandedState(tree, currentNav.getNavId());
+        // 루트 메뉴들 찾기
+        List<LabNavigation> rootMenus = allMenus.stream()
+                .filter(menu -> menu.getParentId() == null)
+                .collect(Collectors.toList());
+
+        // 각 메뉴에 자식 메뉴들 연결
+        allMenus.forEach(menu -> {
+            List<LabNavigation> children = menusByParentId.get(menu.getId());
+            if (children != null) {
+                menu.setChildren(children);
             }
-        }
-
-        return tree;
-    }
-
-    /**
-     * 네비게이션 리스트를 트리 구조로 변환
-     */
-    private List<NavigationDto> buildNavigationTree(List<Navigation> navigations) {
-        Map<Long, NavigationDto> navigationMap = new HashMap<>();
-        List<NavigationDto> rootNavigations = new ArrayList<>();
-
-        // 1단계: 모든 네비게이션을 DTO로 변환하고 맵에 저장
-        for (Navigation nav : navigations) {
-            NavigationDto dto = convertToDto(nav);
-            navigationMap.put(nav.getNavId(), dto);
-        }
-
-        // 2단계: 부모-자식 관계 설정
-        for (Navigation nav : navigations) {
-            NavigationDto dto = navigationMap.get(nav.getNavId());
-
-            if (nav.getParentId() == null) {
-                // 루트 네비게이션
-                rootNavigations.add(dto);
-            } else {
-                // 자식 네비게이션
-                NavigationDto parent = navigationMap.get(nav.getParentId());
-                if (parent != null) {
-                    if (parent.getChildren() == null) {
-                        parent.setChildren(new ArrayList<>());
-                    }
-                    parent.getChildren().add(dto);
-                    parent.setHasChildren(true);
-                }
-            }
-        }
-
-        // 3단계: 자식 정렬
-        sortNavigationTree(rootNavigations);
-
-        return rootNavigations;
-    }
-
-    /**
-     * 네비게이션 트리 정렬
-     */
-    private void sortNavigationTree(List<NavigationDto> navigations) {
-        if (navigations == null || navigations.isEmpty()) {
-            return;
-        }
-
-        navigations.sort((a, b) -> {
-            int orderA = a.getNavOrder() != null ? a.getNavOrder() : 0;
-            int orderB = b.getNavOrder() != null ? b.getNavOrder() : 0;
-            return Integer.compare(orderA, orderB);
         });
 
-        for (NavigationDto nav : navigations) {
-            if (nav.getChildren() != null) {
-                sortNavigationTree(nav.getChildren());
-            }
-        }
+        return rootMenus;
     }
 
     /**
-     * 현재 활성 네비게이션의 부모들을 확장 상태로 설정
+     * 특정 메뉴까지의 경로 생성 (breadcrumb)
      */
-    private boolean setExpandedState(List<NavigationDto> navigations, Long activeNavId) {
-        if (navigations == null || navigations.isEmpty()) {
-            return false;
-        }
+    private List<LabNavigation> buildNavigationPath(LabNavigation targetMenu) {
+        List<LabNavigation> path = new ArrayList<>();
+        LabNavigation currentMenu = targetMenu;
 
-        for (NavigationDto nav : navigations) {
-            if (activeNavId.equals(nav.getNavId())) {
-                return true;
-            }
+        while (currentMenu != null) {
+            path.add(0, currentMenu); // 앞쪽에 추가하여 역순으로 만들기
 
-            if (nav.getChildren() != null) {
-                boolean foundInChildren = setExpandedState(nav.getChildren(), activeNavId);
-                if (foundInChildren) {
-                    nav.setIsExpanded(true);
-                    return true;
-                }
+            if (currentMenu.getParentId() != null) {
+                currentMenu = navigationRepository.findById(currentMenu.getParentId())
+                        .orElse(null);
+            } else {
+                break;
             }
         }
 
-        return false;
+        return path;
     }
 
     /**
-     * Navigation Entity를 DTO로 변환
+     * 네비게이션 캐시 무효화
      */
-    private NavigationDto convertToDto(Navigation navigation) {
-        return NavigationDto.builder()
-                .navId(navigation.getNavId())
-                .navName(navigation.getNavName())
-                .navUrl(navigation.getNavUrl())
-                .navIcon(navigation.getNavIcon())
-                .parentId(navigation.getParentId())
-                .navOrder(navigation.getNavOrder())
-                .navLevel(navigation.getNavLevel())
-                .isActive(navigation.getIsActive())
-                .hasChildren(false)
-                .isExpanded(false)
-                .build();
+    @org.springframework.cache.annotation.CacheEvict(value = "navigationTree", allEntries = true)
+    public void evictNavigationCache() {
+        log.info("네비게이션 캐시 무효화");
     }
 }

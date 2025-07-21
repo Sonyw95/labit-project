@@ -1,9 +1,16 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import { notifications } from '@mantine/notifications';
-import {getToastColor} from "../utils/colorHelpers.js";
 
 const ToastContext = createContext(undefined);
-
+const getToastColor = (type) => {
+    switch (type) {
+        case 'success': return 'green';
+        case 'error': return 'red';
+        case 'warning': return 'yellow';
+        case 'info': return 'blue';
+        default: return 'blue';
+    }
+};
 const toastReducer = (state, action) => {
     switch (action.type) {
         case 'ADD_TOAST':
