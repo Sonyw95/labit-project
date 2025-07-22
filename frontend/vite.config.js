@@ -38,7 +38,11 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', '@mantine/core', '@mantine/hooks'],
+    include: ['react', 'react-dom', '@mantine/core', '@mantine/hooks',  '@mantine/tiptap',
+      '@tiptap/react',
+      '@tiptap/starter-kit',
+      '@tiptap/extension-text-style',
+      '@tiptap/extension-color',],
   },
   define: {
     // // 환경 변수를 빌드 시점에 정의

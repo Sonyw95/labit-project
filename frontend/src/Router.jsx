@@ -1,11 +1,11 @@
 import React, {lazy, Suspense} from "react";
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
-import MainPage from "@/components/example/MainPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
 import UserSettings from "@/components/common/Auth/UserSettings.jsx";
 import HomePage from "@/stores/HomePage.jsx";
+import PostEdit from "./pages/PostEdit.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -21,6 +21,7 @@ const AppRouter = () => {
                 { path: '/home', element: <HomePage/> },
 
 
+                { path: '/post/edit', element: <PostEdit/> },
                 { path: '/posts/:page', element: <></> },
 
 

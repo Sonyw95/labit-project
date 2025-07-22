@@ -660,3 +660,560 @@ SELECT
 FROM DUAL;
 
 COMMIT;
+
+
+
+
+
+
+
+
+
+
+-- ============================================================================
+-- LAB_POST & LAB_COMMENT 테이블 스키마 (Oracle Database)
+-- ============================================================================
+
+-- 1. LAB_POST 시퀀스 생성
+CREATE SEQUENCE LAB_POST_SEQ
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+-- 2. LAB_POST 테이블 생성
+CREATE TABLE LAB_POST (
+                          ID                  NUMBER(19)      NOT NULL,
+                          TITLE               VARCHAR2(200)   NOT NULL,
+                          CONTENT             CLOB,
+                          SUMMARY             VARCHAR2(500),
+                          THUMBNAIL_URL       VARCHAR2(500),
+                          TAGS                VARCHAR2(1000),
+                          CATEGORY_ID         NUMBER(19),
+                          AUTHOR_ID           NUMBER(19)      NOT NULL,
+                          STATUS              VARCHAR2(20)    DEFAULT 'DRAFT' NOT NULL,
+                          VIEW_COUNT          NUMBER(19)      DEFAULT 0 NOT NULL,
+                          LIKE_COUNT          NUMBER(19)      DEFAULT 0 NOT NULL,
+                          COMMENT_COUNT       NUMBER(19)      DEFAULT 0 NOT NULL,
+                          IS_FEATURED         NUMBER(1)       DEFAULT 0 NOT NULL,
+                          PUBLISHED_DATE      TIMESTAMP,
+                          CREATED_DATE        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                          MODIFIED_DATE       TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+
+    -- 제약조건
+                          CONSTRAINT PK_LAB_POST PRIMARY KEY (ID),
+                          CONSTRAINT FK_LAB_POST_CATEGORY FOREIGN KEY (CATEGORY_ID) REFERENCES LAB_NAVIGATION(ID),
+                          CONSTRAINT FK_LAB_POST_AUTHOR FOREIGN KEY (AUTHOR_ID) REFERENCES LAB_USERS(ID),
+                          CONSTRAINT CK_LAB_POST_STATUS CHECK (STATUS IN ('DRAFT', 'PUBLISHED', 'PRIVATE', 'DELETED')),
+                          CONSTRAINT CK_LAB_POST_FEATURED CHECK (IS_FEATURED IN (0, 1)),
+                          CONSTRAINT CK_LAB_POST_VIEW_COUNT CHECK (VIEW_COUNT >= 0),
+                          CONSTRAINT CK_LAB_POST_LIKE_COUNT CHECK (LIKE_COUNT >= 0),
+                          CONSTRAINT CK_LAB_POST_COMMENT_COUNT CHECK (COMMENT_COUNT >= 0)
+);
+
+-- 3. LAB_COMMENT 시퀀스 생성
+CREATE SEQUENCE LAB_COMMENT_SEQ
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+-- 4. LAB_COMMENT 테이블 생성
+CREATE TABLE LAB_COMMENT (
+                             ID                  NUMBER(19)      NOT NULL,
+                             POST_ID             NUMBER(19)      NOT NULL,
+                             AUTHOR_ID           NUMBER(19)      NOT NULL,
+                             PARENT_ID           NUMBER(19),
+                             CONTENT             CLOB            NOT NULL,
+                             DEPTH               NUMBER(3)       DEFAULT 0 NOT NULL,
+                             IS_DELETED          NUMBER(1)       DEFAULT 0 NOT NULL,
+                             LIKE_COUNT          NUMBER(19)      DEFAULT 0 NOT NULL,
+                             CREATED_DATE        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                             MODIFIED_DATE       TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+
+    -- 제약조건
+                             CONSTRAINT PK_LAB_COMMENT PRIMARY KEY (ID),
+                             CONSTRAINT FK_LAB_COMMENT_POST FOREIGN KEY (POST_ID) REFERENCES LAB_POST(ID) ON DELETE CASCADE,
+                             CONSTRAINT FK_LAB_COMMENT_AUTHOR FOREIGN KEY (AUTHOR_ID) REFERENCES LAB_USERS(ID),
+                             CONSTRAINT FK_LAB_COMMENT_PARENT FOREIGN KEY (PARENT_ID) REFERENCES LAB_COMMENT(ID),
+                             CONSTRAINT CK_LAB_COMMENT_DEPTH CHECK (DEPTH >= 0 AND DEPTH <= 2),
+                             CONSTRAINT CK_LAB_COMMENT_DELETED CHECK (IS_DELETED IN (0, 1)),
+                             CONSTRAINT CK_LAB_COMMENT_LIKE_COUNT CHECK (LIKE_COUNT >= 0)
+);
+
+-- 5. 인덱스 생성
+-- LAB_POST 인덱스
+CREATE INDEX IDX_LAB_POST_AUTHOR ON LAB_POST(AUTHOR_ID);
+CREATE INDEX IDX_LAB_POST_CATEGORY ON LAB_POST(CATEGORY_ID);
+CREATE INDEX IDX_LAB_POST_STATUS ON LAB_POST(STATUS);
+CREATE INDEX IDX_LAB_POST_PUBLISHED ON LAB_POST(PUBLISHED_DATE);
+CREATE INDEX IDX_LAB_POST_FEATURED ON LAB_POST(IS_FEATURED);
+CREATE INDEX IDX_LAB_POST_VIEW_COUNT ON LAB_POST(VIEW_COUNT);
+CREATE INDEX IDX_LAB_POST_CREATED ON LAB_POST(CREATED_DATE);
+CREATE INDEX IDX_LAB_POST_TAGS ON LAB_POST(TAGS);
+
+-- LAB_COMMENT 인덱스
+CREATE INDEX IDX_LAB_COMMENT_POST ON LAB_COMMENT(POST_ID);
+CREATE INDEX IDX_LAB_COMMENT_AUTHOR ON LAB_COMMENT(AUTHOR_ID);
+CREATE INDEX IDX_LAB_COMMENT_PARENT ON LAB_COMMENT(PARENT_ID);
+CREATE INDEX IDX_LAB_COMMENT_DEPTH ON LAB_COMMENT(DEPTH);
+CREATE INDEX IDX_LAB_COMMENT_CREATED ON LAB_COMMENT(CREATED_DATE);
+CREATE INDEX IDX_LAB_COMMENT_DELETED ON LAB_COMMENT(IS_DELETED);
+
+-- 6. 컬럼 주석 추가
+-- LAB_POST 주석
+COMMENT ON TABLE LAB_POST IS '포스트 정보 관리 테이블';
+COMMENT ON COLUMN LAB_POST.ID IS '포스트 고유 ID (Primary Key)';
+COMMENT ON COLUMN LAB_POST.TITLE IS '포스트 제목';
+COMMENT ON COLUMN LAB_POST.CONTENT IS '포스트 내용 (HTML 형식)';
+COMMENT ON COLUMN LAB_POST.SUMMARY IS '포스트 요약';
+COMMENT ON COLUMN LAB_POST.THUMBNAIL_URL IS '썸네일 이미지 URL';
+COMMENT ON COLUMN LAB_POST.TAGS IS '태그 목록 (쉼표로 구분)';
+COMMENT ON COLUMN LAB_POST.CATEGORY_ID IS '카테고리 ID (LAB_NAVIGATION 참조)';
+COMMENT ON COLUMN LAB_POST.AUTHOR_ID IS '작성자 ID';
+COMMENT ON COLUMN LAB_POST.STATUS IS '포스트 상태 (DRAFT, PUBLISHED, PRIVATE, DELETED)';
+COMMENT ON COLUMN LAB_POST.VIEW_COUNT IS '조회수';
+COMMENT ON COLUMN LAB_POST.LIKE_COUNT IS '좋아요 수';
+COMMENT ON COLUMN LAB_POST.COMMENT_COUNT IS '댓글 수';
+COMMENT ON COLUMN LAB_POST.IS_FEATURED IS '추천 포스트 여부 (1: 추천, 0: 일반)';
+COMMENT ON COLUMN LAB_POST.PUBLISHED_DATE IS '발행일시';
+COMMENT ON COLUMN LAB_POST.CREATED_DATE IS '생성일시';
+COMMENT ON COLUMN LAB_POST.MODIFIED_DATE IS '수정일시';
+
+-- LAB_COMMENT 주석
+COMMENT ON TABLE LAB_COMMENT IS '댓글 정보 관리 테이블';
+COMMENT ON COLUMN LAB_COMMENT.ID IS '댓글 고유 ID (Primary Key)';
+COMMENT ON COLUMN LAB_COMMENT.POST_ID IS '포스트 ID';
+COMMENT ON COLUMN LAB_COMMENT.AUTHOR_ID IS '작성자 ID';
+COMMENT ON COLUMN LAB_COMMENT.PARENT_ID IS '부모 댓글 ID (대댓글인 경우)';
+COMMENT ON COLUMN LAB_COMMENT.CONTENT IS '댓글 내용';
+COMMENT ON COLUMN LAB_COMMENT.DEPTH IS '댓글 깊이 (0: 댓글, 1: 대댓글)';
+COMMENT ON COLUMN LAB_COMMENT.IS_DELETED IS '삭제 여부 (1: 삭제됨, 0: 활성)';
+COMMENT ON COLUMN LAB_COMMENT.LIKE_COUNT IS '좋아요 수';
+COMMENT ON COLUMN LAB_COMMENT.CREATED_DATE IS '생성일시';
+COMMENT ON COLUMN LAB_COMMENT.MODIFIED_DATE IS '수정일시';
+
+-- 7. 트리거 생성 (수정일시 자동 업데이트)
+CREATE OR REPLACE TRIGGER TRG_LAB_POST_UPDATE
+    BEFORE UPDATE ON LAB_POST
+    FOR EACH ROW
+BEGIN
+    :NEW.MODIFIED_DATE := CURRENT_TIMESTAMP;
+END;
+
+CREATE OR REPLACE TRIGGER TRG_LAB_COMMENT_UPDATE
+    BEFORE UPDATE ON LAB_COMMENT
+    FOR EACH ROW
+BEGIN
+    :NEW.MODIFIED_DATE := CURRENT_TIMESTAMP;
+END;
+
+-- ============================================================================
+-- 초기 데이터 삽입 (샘플 포스트)
+-- ============================================================================
+
+-- 샘플 포스트 1 (Java 카테고리)
+INSERT INTO LAB_POST (
+    ID, TITLE, CONTENT, SUMMARY, CATEGORY_ID, AUTHOR_ID, STATUS,
+    VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
+) VALUES (
+             LAB_POST_SEQ.NEXTVAL,
+             'Java 기초 문법 완벽 가이드',
+             '<h2>Java 기초 문법</h2><p>Java는 객체지향 프로그래밍 언어입니다...</p><pre><code class="language-java">public class HelloWorld {
+             public static void main(String[] args) {
+                 System.out.println("Hello, World!");
+             }
+         }</code></pre>',
+             'Java 프로그래밍의 기초 문법을 상세히 설명하는 가이드입니다.',
+             3, -- Java 카테고리 ID
+             1, -- 작성자 ID (관리자)
+             'PUBLISHED',
+             150,
+             25,
+             1,
+             CURRENT_TIMESTAMP
+         );
+
+-- 샘플 포스트 2 (Spring Boot 카테고리)
+INSERT INTO LAB_POST (
+    ID, TITLE, CONTENT, SUMMARY, TAGS, CATEGORY_ID, AUTHOR_ID, STATUS,
+    VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
+) VALUES (
+             LAB_POST_SEQ.NEXTVAL,
+             'Spring Boot 프로젝트 시작하기',
+             '<h2>Spring Boot란?</h2><p>Spring Boot는 Spring 기반 애플리케이션을 쉽게 만들 수 있게 해주는 프레임워크입니다...</p>',
+             'Spring Boot 프로젝트를 처음 시작하는 방법을 알아봅시다.',
+             'spring,spring-boot,java,framework',
+             4, -- Spring Boot 카테고리 ID
+             1, -- 작성자 ID
+             'PUBLISHED',
+             89,
+             12,
+             1,
+             CURRENT_TIMESTAMP
+         );
+
+-- 샘플 포스트 3 (React 카테고리)
+INSERT INTO LAB_POST (
+    ID, TITLE, CONTENT, SUMMARY, TAGS, CATEGORY_ID, AUTHOR_ID, STATUS,
+    VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
+) VALUES (
+             LAB_POST_SEQ.NEXTVAL,
+             'React Hooks 완벽 정리',
+             '<h2>React Hooks</h2><p>React Hooks는 함수형 컴포넌트에서 상태와 생명주기를 관리할 수 있게 해주는 기능입니다...</p><pre><code class="language-javascript">import { useState, useEffect } from "react";
+
+         function Counter() {
+             const [count, setCount] = useState(0);
+
+             useEffect(() => {
+                 document.title = `Count: ${count}`;
+             }, [count]);
+
+             return (
+                 <div>
+                     <p>Count: {count}</p>
+                     <button onClick={() => setCount(count + 1)}>
+                         Increment
+                     </button>
+                 </div>
+             );
+         }</code></pre>',
+             'React Hooks의 종류와 사용법을 자세히 알아봅시다.',
+             'react,hooks,javascript,frontend',
+             6, -- React 카테고리 ID
+             1, -- 작성자 ID
+             'PUBLISHED',
+             203,
+             45,
+             1,
+             CURRENT_TIMESTAMP
+         );
+
+-- 샘플 댓글들
+INSERT INTO LAB_COMMENT (
+    ID, POST_ID, AUTHOR_ID, CONTENT, DEPTH
+) VALUES (
+             LAB_COMMENT_SEQ.NEXTVAL,
+             1, -- Java 포스트
+             2, -- 일반 사용자
+             '정말 유용한 자료네요! Java 공부하는데 많은 도움이 되었습니다.',
+             0
+         );
+
+INSERT INTO LAB_COMMENT (
+    ID, POST_ID, AUTHOR_ID, PARENT_ID, CONTENT, DEPTH
+) VALUES (
+             LAB_COMMENT_SEQ.NEXTVAL,
+             1, -- Java 포스트
+             1, -- 관리자
+             1, -- 위 댓글의 대댓글
+             '도움이 되셨다니 기쁩니다! 더 좋은 내용으로 찾아뵙겠습니다.',
+             1
+         );
+
+INSERT INTO LAB_COMMENT (
+    ID, POST_ID, AUTHOR_ID, CONTENT, DEPTH, LIKE_COUNT
+) VALUES (
+             LAB_COMMENT_SEQ.NEXTVAL,
+             3, -- React 포스트
+             2, -- 일반 사용자
+             'React Hooks 정리가 정말 깔끔하네요. useEffect 부분이 특히 이해하기 쉬웠습니다.',
+             0,
+             3
+         );
+
+-- ============================================================================
+-- 유용한 쿼리들
+-- ============================================================================
+
+-- 1. 발행된 포스트 목록 (최신순)
+SELECT
+    p.ID,
+    p.TITLE,
+    p.SUMMARY,
+    p.VIEW_COUNT,
+    p.LIKE_COUNT,
+    p.COMMENT_COUNT,
+    p.PUBLISHED_DATE,
+    u.NICKNAME AS AUTHOR_NAME,
+    n.LABEL AS CATEGORY_NAME
+FROM LAB_POST p
+         JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
+         LEFT JOIN LAB_NAVIGATION n ON p.CATEGORY_ID = n.ID
+WHERE p.STATUS = 'PUBLISHED'
+ORDER BY p.PUBLISHED_DATE DESC;
+
+-- 2. 카테고리별 포스트 수 통계
+SELECT
+    n.LABEL AS CATEGORY_NAME,
+    COUNT(p.ID) AS POST_COUNT,
+    SUM(p.VIEW_COUNT) AS TOTAL_VIEWS,
+    SUM(p.LIKE_COUNT) AS TOTAL_LIKES
+FROM LAB_NAVIGATION n
+         LEFT JOIN LAB_POST p ON n.ID = p.CATEGORY_ID AND p.STATUS = 'PUBLISHED'
+WHERE n.HREF IS NOT NULL
+GROUP BY n.ID, n.LABEL
+ORDER BY POST_COUNT DESC;
+
+-- 3. 포스트별 댓글 트리 구조 조회
+WITH COMMENT_TREE AS (
+    -- 최상위 댓글
+    SELECT
+        c.ID,
+        c.POST_ID,
+        c.CONTENT,
+        c.DEPTH,
+        c.CREATED_DATE,
+        u.NICKNAME AS AUTHOR_NAME,
+        CAST(c.ID AS VARCHAR2(1000)) AS PATH
+    FROM LAB_COMMENT c
+             JOIN LAB_USERS u ON c.AUTHOR_ID = u.ID
+    WHERE c.PARENT_ID IS NULL
+      AND c.IS_DELETED = 0
+      AND c.POST_ID = 1  -- 특정 포스트 ID
+
+    UNION ALL
+
+    -- 대댓글
+    SELECT
+        c.ID,
+        c.POST_ID,
+        c.CONTENT,
+        c.DEPTH,
+        c.CREATED_DATE,
+        u.NICKNAME AS AUTHOR_NAME,
+        ct.PATH || '/' || c.ID
+    FROM LAB_COMMENT c
+             JOIN LAB_USERS u ON c.AUTHOR_ID = u.ID
+             JOIN COMMENT_TREE ct ON c.PARENT_ID = ct.ID
+    WHERE c.IS_DELETED = 0
+)
+SELECT * FROM COMMENT_TREE
+ORDER BY PATH;
+
+-- 4. 인기 포스트 조회 (조회수 + 좋아요 기준)
+SELECT
+    p.ID,
+    p.TITLE,
+    p.VIEW_COUNT,
+    p.LIKE_COUNT,
+    p.COMMENT_COUNT,
+    (p.VIEW_COUNT + p.LIKE_COUNT * 2 + p.COMMENT_COUNT * 3) AS POPULARITY_SCORE,
+    u.NICKNAME AS AUTHOR_NAME
+FROM LAB_POST p
+         JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
+WHERE p.STATUS = 'PUBLISHED'
+  AND p.PUBLISHED_DATE >= CURRENT_TIMESTAMP - INTERVAL '30' DAY
+ORDER BY POPULARITY_SCORE DESC
+    FETCH FIRST 10 ROWS ONLY;
+
+-- 5. 태그별 포스트 검색
+SELECT
+    p.ID,
+    p.TITLE,
+    p.TAGS,
+    p.VIEW_COUNT,
+    p.PUBLISHED_DATE
+FROM LAB_POST p
+WHERE p.STATUS = 'PUBLISHED'
+  AND (p.TAGS LIKE '%react%' OR p.TAGS LIKE '%javascript%')
+ORDER BY p.PUBLISHED_DATE DESC;
+
+-- 6. 사용자별 포스트 통계
+SELECT
+    u.NICKNAME,
+    COUNT(p.ID) AS POST_COUNT,
+    SUM(p.VIEW_COUNT) AS TOTAL_VIEWS,
+    SUM(p.LIKE_COUNT) AS TOTAL_LIKES,
+    SUM(p.COMMENT_COUNT) AS TOTAL_COMMENTS,
+    AVG(p.VIEW_COUNT) AS AVG_VIEWS
+FROM LAB_USERS u
+         LEFT JOIN LAB_POST p ON u.ID = p.AUTHOR_ID AND p.STATUS = 'PUBLISHED'
+GROUP BY u.ID, u.NICKNAME
+HAVING COUNT(p.ID) > 0
+ORDER BY POST_COUNT DESC;
+
+-- 7. 최근 7일간 활동 통계
+SELECT
+    TO_CHAR(TRUNC(p.PUBLISHED_DATE), 'YYYY-MM-DD') AS DATE_STR,
+    COUNT(p.ID) AS POSTS_PUBLISHED,
+    COUNT(c.ID) AS COMMENTS_POSTED
+FROM LAB_POST p
+         FULL OUTER JOIN LAB_COMMENT c ON TO_CHAR(TRUNC(p.PUBLISHED_DATE), 'YYYY-MM-DD') = TO_CHAR(TRUNC(c.CREATED_DATE), 'YYYY-MM-DD')
+WHERE p.PUBLISHED_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
+   OR c.CREATED_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
+GROUP BY TRUNC(p.PUBLISHED_DATE), TRUNC(c.CREATED_DATE)
+ORDER BY DATE_STR DESC;
+
+-- ============================================================================
+-- 관리용 프로시저
+-- ============================================================================
+
+-- 포스트 조회수 증가 프로시저
+CREATE OR REPLACE PROCEDURE PROC_INCREMENT_POST_VIEW(
+    p_post_id IN NUMBER
+) IS
+BEGIN
+    UPDATE LAB_POST
+    SET VIEW_COUNT = VIEW_COUNT + 1
+    WHERE ID = p_post_id;
+
+    COMMIT;
+END;
+
+-- 포스트의 댓글 수 업데이트 프로시저
+CREATE OR REPLACE PROCEDURE PROC_UPDATE_POST_COMMENT_COUNT(
+    p_post_id IN NUMBER
+) IS
+    v_comment_count NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_comment_count
+    FROM LAB_COMMENT
+    WHERE POST_ID = p_post_id
+      AND IS_DELETED = 0;
+
+    UPDATE LAB_POST
+    SET COMMENT_COUNT = v_comment_count
+    WHERE ID = p_post_id;
+
+    COMMIT;
+END;
+
+-- 포스트 상태 일괄 변경 프로시저
+CREATE OR REPLACE PROCEDURE PROC_BULK_UPDATE_POST_STATUS(
+    p_author_id IN NUMBER,
+    p_old_status IN VARCHAR2,
+    p_new_status IN VARCHAR2
+) IS
+BEGIN
+    UPDATE LAB_POST
+    SET STATUS = p_new_status,
+        PUBLISHED_DATE = CASE
+                             WHEN p_new_status = 'PUBLISHED' AND PUBLISHED_DATE IS NULL
+                                 THEN CURRENT_TIMESTAMP
+                             ELSE PUBLISHED_DATE
+            END
+    WHERE AUTHOR_ID = p_author_id
+      AND STATUS = p_old_status;
+
+    COMMIT;
+END;
+
+-- 오래된 임시저장 포스트 정리 프로시저
+CREATE OR REPLACE PROCEDURE PROC_CLEANUP_OLD_DRAFTS(
+    p_days_old IN NUMBER DEFAULT 30
+) IS
+BEGIN
+    DELETE FROM LAB_POST
+    WHERE STATUS = 'DRAFT'
+      AND CREATED_DATE < CURRENT_TIMESTAMP - INTERVAL p_days_old DAY
+    AND CONTENT IS NULL;
+
+    COMMIT;
+END;
+
+-- ============================================================================
+-- 성능 최적화를 위한 VIEW
+-- ============================================================================
+
+-- 발행된 포스트 VIEW
+CREATE OR REPLACE VIEW V_PUBLISHED_POSTS AS
+SELECT
+    p.ID,
+    p.TITLE,
+    p.CONTENT,
+    p.SUMMARY,
+    p.THUMBNAIL_URL,
+    p.TAGS,
+    p.VIEW_COUNT,
+    p.LIKE_COUNT,
+    p.COMMENT_COUNT,
+    p.IS_FEATURED,
+    p.PUBLISHED_DATE,
+    p.CREATED_DATE,
+    p.MODIFIED_DATE,
+    u.NICKNAME AS AUTHOR_NAME,
+    u.PROFILE_IMAGE AS AUTHOR_IMAGE,
+    n.LABEL AS CATEGORY_NAME,
+    n.HREF AS CATEGORY_HREF
+FROM LAB_POST p
+         JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
+         LEFT JOIN LAB_NAVIGATION n ON p.CATEGORY_ID = n.ID
+WHERE p.STATUS = 'PUBLISHED';
+
+-- 댓글 통계 VIEW
+CREATE OR REPLACE VIEW V_COMMENT_STATS AS
+SELECT
+    p.ID AS POST_ID,
+    p.TITLE AS POST_TITLE,
+    COUNT(c.ID) AS TOTAL_COMMENTS,
+    COUNT(CASE WHEN c.DEPTH = 0 THEN 1 END) AS ROOT_COMMENTS,
+    COUNT(CASE WHEN c.DEPTH > 0 THEN 1 END) AS REPLY_COMMENTS,
+    MAX(c.CREATED_DATE) AS LAST_COMMENT_DATE
+FROM LAB_POST p
+         LEFT JOIN LAB_COMMENT c ON p.ID = c.POST_ID AND c.IS_DELETED = 0
+WHERE p.STATUS = 'PUBLISHED'
+GROUP BY p.ID, p.TITLE;
+
+-- 포스트 인기도 VIEW
+CREATE OR REPLACE VIEW V_POST_POPULARITY AS
+SELECT
+    p.ID,
+    p.TITLE,
+    p.VIEW_COUNT,
+    p.LIKE_COUNT,
+    p.COMMENT_COUNT,
+    (p.VIEW_COUNT + p.LIKE_COUNT * 2 + p.COMMENT_COUNT * 3) AS POPULARITY_SCORE,
+    RANK() OVER (ORDER BY (p.VIEW_COUNT + p.LIKE_COUNT * 2 + p.COMMENT_COUNT * 3) DESC) AS POPULARITY_RANK
+FROM LAB_POST p
+WHERE p.STATUS = 'PUBLISHED';
+
+-- ============================================================================
+-- 데이터 검증 쿼리
+-- ============================================================================
+
+-- 1. 고아 댓글 검사 (존재하지 않는 포스트나 부모 댓글 참조)
+SELECT 'Orphaned comments (invalid post)' AS issue_type, COUNT(*) AS count
+FROM LAB_COMMENT c
+WHERE NOT EXISTS (SELECT 1 FROM LAB_POST p WHERE p.ID = c.POST_ID)
+
+UNION ALL
+
+SELECT 'Orphaned comments (invalid parent)' AS issue_type, COUNT(*) AS count
+FROM LAB_COMMENT c
+WHERE c.PARENT_ID IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM LAB_COMMENT p WHERE p.ID = c.PARENT_ID);
+
+-- 2. 댓글 수 불일치 검사
+SELECT
+    p.ID AS POST_ID,
+    p.TITLE,
+    p.COMMENT_COUNT AS STORED_COUNT,
+    COUNT(c.ID) AS ACTUAL_COUNT,
+    ABS(p.COMMENT_COUNT - COUNT(c.ID)) AS DIFFERENCE
+FROM LAB_POST p
+         LEFT JOIN LAB_COMMENT c ON p.ID = c.POST_ID AND c.IS_DELETED = 0
+GROUP BY p.ID, p.TITLE, p.COMMENT_COUNT
+HAVING p.COMMENT_COUNT != COUNT(c.ID);
+
+-- 3. 잘못된 댓글 깊이 검사
+SELECT c.*
+FROM LAB_COMMENT c
+         LEFT JOIN LAB_COMMENT parent ON c.PARENT_ID = parent.ID
+WHERE (c.PARENT_ID IS NULL AND c.DEPTH != 0)
+   OR (c.PARENT_ID IS NOT NULL AND c.DEPTH != parent.DEPTH + 1);
+
+-- 4. 발행일시가 없는 발행된 포스트 검사
+SELECT ID, TITLE, STATUS, PUBLISHED_DATE
+FROM LAB_POST
+WHERE STATUS = 'PUBLISHED'
+  AND PUBLISHED_DATE IS NULL;
+
+-- 5. 태그 형식 검사 (쉼표로 끝나거나 연속 쉼표 있는 경우)
+SELECT ID, TITLE, TAGS
+FROM LAB_POST
+WHERE TAGS IS NOT NULL
+  AND (TAGS LIKE '%,,' OR TAGS LIKE '%,' OR TAGS LIKE ',%');
+
+COMMIT;
