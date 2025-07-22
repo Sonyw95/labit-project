@@ -187,6 +187,7 @@ const UserDropdownContent = memo(({ user, openSettings, handleLogout, dark, togg
             {/*    </Group>*/}
             {/*</Menu.Item>*/}
 
+            <Menu.Divider />
 
             <Menu.Item leftSection={<IconPalette size={16} />} onClick={toggleColorScheme}>
                 <Group justify="space-between" w="100%">
@@ -202,8 +203,6 @@ const UserDropdownContent = memo(({ user, openSettings, handleLogout, dark, togg
                     />
                 </Group>
             </Menu.Item>
-
-            <Menu.Divider />
 
             {/*<Menu.Item leftSection={<IconShield size={16} />}>*/}
             {/*    <Text size="sm" fw={500}>보안 설정</Text>*/}
