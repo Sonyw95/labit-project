@@ -18,6 +18,7 @@ import {useNavigationTree} from "@/hooks/api/useApi.js";
 import useNavigationStore from "@/stores/navigationStore.js";
 import {useLocation, useNavigation} from "react-router-dom";
 import NavigationItem from "@/components/main/navigation/NavigationItem.jsx";
+import Skeleton from "@/components/common/Skeleton.jsx";
 
 const POPULAR_TAGS = [
     { name: 'React', count: 15, color: 'blue' },
@@ -122,14 +123,7 @@ const NavigationItems = memo(() => {
     }, [pathname, navigationTree, activePath, updateNavigationState])
 
     if (isLoading) {
-        return (
-            <Box pos="relative" h={200}>
-                <LoadingOverlay
-                    overlayProps={{ radius: 'sm', blur: 1 }}
-                    loaderProps={{ size: 'md' }}
-                />
-            </Box>
-        );
+        return <Skeleton type='card'/>
     }
 
     if (error) {

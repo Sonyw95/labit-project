@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getTokenFromRequest(request);
+            log.info("JWT token: {}", jwt);
 
             if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
                 Long kakaoId = jwtTokenProvider.getKakaoIdFromToken(jwt);

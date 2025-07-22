@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
     AppShell, ScrollArea,
-    useMantineColorScheme,
 } from '@mantine/core';
 import {Outlet} from "react-router-dom";
 import Header from "@/components/main/Header.jsx";

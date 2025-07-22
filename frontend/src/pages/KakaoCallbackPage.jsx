@@ -75,7 +75,7 @@ function KakaoCallbackPage() {
             // 직접 API 호출 (mutation 객체 의존성 제거)
             const response = await authService.kakaoLogin(code);
 
-            console.log('카카오 로그인 API 성공');
+            console.log('카카오 로그인 API 성공', response);
 
             if (!response?.accessToken) {
                 throw new Error('액세스 토큰을 받지 못했습니다.');
@@ -87,9 +87,7 @@ function KakaoCallbackPage() {
 
             // 로그인 성공 시 홈으로 이동 (약간의 지연 후)
             console.log('카카오 로그인 성공, 홈으로 이동');
-            setTimeout(() => {
-                navigate('/home', { replace: true });
-            }, 1000);
+            navigate('/home', { replace: true });
 
         } catch (err) {
             console.error('카카오 콜백 처리 실패:', err);

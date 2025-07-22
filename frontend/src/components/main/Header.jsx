@@ -5,7 +5,7 @@ import {backgroundBlur} from "@/utils/helpers.jsx";
 import {showToast} from "@/components/advanced/Toast.jsx";
 import useAuthStore from "../../stores/authStore.js";
 import UserMenu from "../common/Auth/UserMenu.jsx";
-import UserInfo from "../common/Auth/UserInfo.jsx";
+import UserLogin from "../common/Auth/UserLogin.jsx";
 
 const Header = memo(({
                          isDark, navOpened, setNavOpened, toggleColorScheme
@@ -76,20 +76,20 @@ const Header = memo(({
                     >
                         <IconSearch size={18} />
                     </ActionIcon>
-                    <ActionIcon
-                        variant="subtle"
-                        size="lg"
-                        radius="md"
-                        onClick={handleNotification}
-                        style={{
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                                background: isDark ? '#21262d' : '#f3f4f6',
-                            }
-                        }}
-                    >
-                        <IconBell size={18} />
-                    </ActionIcon>
+                    {/*<ActionIcon*/}
+                    {/*    variant="subtle"*/}
+                    {/*    size="lg"*/}
+                    {/*    radius="md"*/}
+                    {/*    onClick={handleNotification}*/}
+                    {/*    style={{*/}
+                    {/*        transition: 'all 0.3s ease',*/}
+                    {/*        '&:hover': {*/}
+                    {/*            background: isDark ? '#21262d' : '#f3f4f6',*/}
+                    {/*        }*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    <IconBell size={18} />*/}
+                    {/*</ActionIcon>*/}
                     <ActionIcon
                         variant="light"
                         size="lg"
@@ -106,7 +106,7 @@ const Header = memo(({
                     >
                         {isDark ? <IconSun size={18} /> : <IconMoon size={18} />}
                     </ActionIcon>
-                    { isAuthenticated ? <UserMenu/> : <UserInfo/> }
+                    { isAuthenticated ? <UserMenu/> : <UserLogin/> }
                 </Group>
             </Group>
         </AppShell.Header>

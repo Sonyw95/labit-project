@@ -4,6 +4,7 @@ import MainPage from "@/components/example/MainPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
+import UserSettings from "@/components/common/Auth/UserSettings.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -22,6 +23,7 @@ const AppRouter = () => {
                 { path: '/posts/:page', element: <></> },
 
 
+                { path: '/setting/user', element: <UserSettings/>},
                 { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminPage/></ProtectedRoute>}
             ]
         },

@@ -2,6 +2,7 @@ package kr.labit.blog.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.context.annotation.Profile;
 
 @Data
 public class KakaoUserInfoDto {
@@ -11,25 +12,45 @@ public class KakaoUserInfoDto {
     @JsonProperty("connected_at")
     private String connectedAt;
 
+    @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 
     @Data
     public static class KakaoAccount {
-        private Boolean profileNeedsAgreement;
-        private Profile profile;
-        private Boolean emailNeedsAgreement;
-        private Boolean isEmailValid;
-        private Boolean isEmailVerified;
+
         private String email;
+
+        private Profile profile;
+
+        @JsonProperty("email_needs_agreement")
+        private Boolean emailNeedsAgreement;
+
+        @JsonProperty("has_email")
+        private Boolean hasEmail;
+
+        @JsonProperty("is_email_valid")
+        private Boolean isEmailValid;
+
+        @JsonProperty("is_email_verified")
+        private Boolean isEmailVerified;
+
 
         @Data
         public static class Profile {
             private String nickname;
-            private String thumbnailImageUrl;
+
+            @JsonProperty("profile_image_url")
             private String profileImageUrl;
+
+            @JsonProperty("thumbnail_image_url")
+            private String thumbnailImageUrl;
+
+            @JsonProperty("is_default_image")
             private Boolean isDefaultImage;
         }
     }
+
+
 
     // 편의 메서드
     public String getNickname() {

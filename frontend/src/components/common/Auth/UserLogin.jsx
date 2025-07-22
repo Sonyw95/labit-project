@@ -4,7 +4,7 @@ import {IconLogin} from "@tabler/icons-react";
 import LoginModal from "./LoginModal.jsx";
 
 
-const UserInfo = memo(() => {
+const UserLogin = memo(() => {
     const [settingsOpened, setSettingsOpened] = useState(false);
 
     return (
@@ -40,4 +40,4 @@ const UserInfo = memo(() => {
         </>
     );
 });
-export default UserInfo;
+export default UserLogin;

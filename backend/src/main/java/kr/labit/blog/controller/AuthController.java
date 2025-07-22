@@ -46,7 +46,7 @@ public class AuthController {
     @Operation(summary = "카카오 로그인", description = "카카오 인증 코드로 로그인하고 JWT 토큰을 발급받습니다.")
     public ResponseEntity<LoginResponseDto> kakaoLogin(
             @Parameter(description = "카카오 인증 코드", required = true)
-            @RequestParam String code) {
+            @RequestParam( name = "code" ) String code) {
 
         log.info("카카오 로그인 요청: code = {}", code);
 

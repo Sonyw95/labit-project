@@ -24,6 +24,9 @@ public class KakaoService {
     @Value("${kakao.redirect.uri}")
     private String kakaoRedirectUri;
 
+    @Value("${kakao.security.code}")
+    private String kakaoSecurityCode;
+
     /**
      * 카카오 인증 주소
      */
@@ -48,6 +51,7 @@ public class KakaoService {
         params.add("client_id", kakaoClientId);
         params.add("redirect_uri", kakaoRedirectUri);
         params.add("code", authorizationCode);
+        params.add("client_secret", kakaoSecurityCode);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
