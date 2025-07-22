@@ -77,7 +77,7 @@ const PostEditPage = memo(() => {
             Link,
             Superscript,
             SubScript,
-            Highlight,
+            // Highlight,
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
             CodeBlockLowlight.configure({
                 lowlight,
@@ -398,24 +398,23 @@ const PostEditPage = memo(() => {
                                 </Card>
 
                                 {/* 태그 */}
-                                <Card withBorder>
-                                    <Card.Section withBorder inheritPadding py="xs">
-                                        <Text fw={500}>태그</Text>
-                                    </Card.Section>
+                                {/*<Card withBorder>*/}
+                                {/*    <Card.Section withBorder inheritPadding py="xs">*/}
+                                {/*        <Text fw={500}>태그</Text>*/}
+                                {/*    </Card.Section>*/}
 
-                                    <MultiSelect
-                                        mt="md"
-                                        placeholder="태그를 입력하세요"
-                                        data={[]}
-                                        searchable
-                                        creatable
-                                        getCreateLabel={(query) => `+ ${query} 태그 추가`}
-                                        onCreate={(query) => {
-                                            return { value: query, label: query };
-                                        }}
-                                        {...form.getInputProps('tags')}
-                                    />
-                                </Card>
+                                {/*    <MultiSelect*/}
+                                {/*        mt="md"*/}
+                                {/*        placeholder="태그를 입력하세요"*/}
+                                {/*        data={[]}*/}
+                                {/*        searchable*/}
+                                {/*        getCreateLabel={(query) => `+ ${query} 태그 추가`}*/}
+                                {/*        onCreate={(query) => {*/}
+                                {/*            return { value: query, label: query };*/}
+                                {/*        }}*/}
+                                {/*        {...form.getInputProps('tags')}*/}
+                                {/*    />*/}
+                                {/*</Card>*/}
 
                                 {/* 썸네일 */}
                                 <Card withBorder>

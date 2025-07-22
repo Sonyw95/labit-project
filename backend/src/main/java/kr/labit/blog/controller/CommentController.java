@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Comment", description = "댓글 관리 API")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "${app.frontend-url}", maxAge = 3600)
 public class CommentController {
 
     private final CommentService commentService;

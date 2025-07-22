@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Post", description = "포스트 관리 API")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "${app.frontend-url}", maxAge = 3600)
 public class PostController {
 
     private final PostService postService;

@@ -6,6 +6,7 @@ import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
 import UserSettings from "@/components/common/Auth/UserSettings.jsx";
 import HomePage from "@/stores/HomePage.jsx";
 import PostEdit from "./pages/PostEdit.jsx";
+import PostViewPage from "./pages/PostViewPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -22,6 +23,7 @@ const AppRouter = () => {
 
 
                 { path: '/post/edit', element: <PostEdit/> },
+                { path: '/post/view/:postId', element: <PostViewPage/> },
                 { path: '/posts/:page', element: <></> },
 
 

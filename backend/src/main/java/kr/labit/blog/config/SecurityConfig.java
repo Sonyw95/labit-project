@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/kakao/login",
                                 "/api/auth/kakao/path",
+                                "/api/posts/**",
                                 "/api/auth/token/validate",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

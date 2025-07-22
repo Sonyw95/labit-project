@@ -256,7 +256,7 @@ export const usePost = (id, options = {}) => {
         queryFn: () => postService.getPost(id),
         enabled: !!id && (options.enabled !== false),
         staleTime: 5 * 60 * 1000,
-        retry: 1,
+        retry: 0,
     });
 };
 

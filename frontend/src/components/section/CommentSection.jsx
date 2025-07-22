@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {memo, useState} from 'react';
 import {
     Stack,
     Text,
@@ -11,10 +11,12 @@ import {
 } from '@mantine/core';
 import { IconMessageCircle, IconSend } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import useAuthStore from "../../stores/authStore.js";
+import {useCreateComment} from "../../hooks/api/useApi.js";
+import CommentItem from "./CommentItem.jsx";
+import {showToast} from "../advanced/Toast.jsx";
 
-function CommentSection({ postId, comments = [] }) {
+const CommentSection = memo(({ postId, comments = [] }) => {
     const { isAuthenticated } = useAuthStore();
     const createCommentMutation = useCreateComment();
 
@@ -33,11 +35,7 @@ function CommentSection({ postId, comments = [] }) {
     // 댓글 작성
     const handleSubmitComment = async (values) => {
         if (!isAuthenticated) {
-            notifications.show({
-                title: '로그인 필요',
-                message: '댓글을 작성하려면 로그인이 필요합니다.',
-                color: 'yellow',
-            });
+            showToast.warning("로그인 필요", "댓글을 작성하려면 로그인이 필요합니다.");
             return;
         }
 
@@ -50,17 +48,10 @@ function CommentSection({ postId, comments = [] }) {
             form.reset();
             setIsWriting(false);
 
-            notifications.show({
-                title: '댓글 작성 완료',
-                message: '댓글이 성공적으로 작성되었습니다.',
-                color: 'green',
-            });
+            showToast.success("댓글 작성 완료", '댓글이 성공적으로 작성되었습니다.');
+
         } catch (error) {
-            notifications.show({
-                title: '댓글 작성 실패',
-                message: error.message || '댓글 작성 중 오류가 발생했습니다.',
-                color: 'red',
-            });
+            showToast.error("댓글 작성 실패", '댓글이 작성 중 오류가 발생했습니다.');
         }
     };
 
@@ -138,6 +129,6 @@ function CommentSection({ postId, comments = [] }) {
             </Stack>
         </Stack>
     );
-}
+})
 
 export default CommentSection;

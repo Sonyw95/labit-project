@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {memo, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Container,
@@ -28,13 +28,12 @@ import {
     IconCalendar,
     IconTag,
 } from '@tabler/icons-react';
-import { notifications } from '@mantine/notifications';
-import { usePost, useDeletePost, useTogglePostLike } from '../../hooks/usePostApi';
-import { useCommentsByPost } from '../../hooks/useCommentApi';
-import useAuthStore from '../../store/authStore';
-import CommentSection from '../../components/Comment/CommentSection';
+import useAuthStore from "../stores/authStore.js";
+import {useCommentsByPost, useDeletePost, usePost, useTogglePostLike} from "../hooks/api/useApi.js";
+import {showToast} from "../components/advanced/Toast.jsx";
+import CommentSection from "../components/section/CommentSection.jsx";
 
-function PostViewPage() {
+const PostViewPage = memo( () => {
     const { postId } = useParams();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuthStore();
@@ -51,18 +50,10 @@ function PostViewPage() {
     const handleDeletePost = async () => {
         try {
             await deletePostMutation.mutateAsync(postId);
-            notifications.show({
-                title: '포스트 삭제',
-                message: '포스트가 삭제되었습니다.',
-                color: 'green',
-            });
+            showToast.success('포스트 삭제', '포스트 삭제가 되었습니다..')
             navigate('/posts');
         } catch (error) {
-            notifications.show({
-                title: '삭제 실패',
-                message: '포스트 삭제 중 오류가 발생했습니다.',
-                color: 'red',
-            });
+            showToast.error('삭제 실패', '포스트 삭제 중 오류가 발생했습니다.')
         }
         setDeleteModalOpened(false);
     };
@@ -70,22 +61,13 @@ function PostViewPage() {
     // 좋아요 토글
     const handleToggleLike = async () => {
         if (!isAuthenticated) {
-            notifications.show({
-                title: '로그인 필요',
-                message: '좋아요를 누르려면 로그인이 필요합니다.',
-                color: 'yellow',
-            });
+            showToast.warning('로그인 필요', '좋아요를 누르려면 로그인이 필요합니다.')
             return;
         }
-
         try {
             await toggleLikeMutation.mutateAsync(postId);
         } catch (error) {
-            notifications.show({
-                title: '오류 발생',
-                message: '좋아요 처리 중 오류가 발생했습니다.',
-                color: 'red',
-            });
+            showToast.error("오류 발생", "좋아요 처리 중 오류가 발생했습니다.")
         }
     };
 
@@ -99,12 +81,8 @@ function PostViewPage() {
             });
         } catch (error) {
             // Web Share API를 지원하지 않는 경우 클립보드에 복사
-            navigator.clipboard.writeText(window.location.href);
-            notifications.show({
-                title: '링크 복사',
-                message: '포스트 링크가 클립보드에 복사되었습니다.',
-                color: 'blue',
-            });
+            await navigator.clipboard.writeText(window.location.href);
+            showToast.error("링크 복사", "포스트 링크가 클립보드에 복사되었습니다")
         }
     };
 
@@ -312,6 +290,6 @@ function PostViewPage() {
             </Stack>
         </Container>
     );
-}
+});
 
 export default PostViewPage;
