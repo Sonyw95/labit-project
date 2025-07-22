@@ -249,16 +249,15 @@ import {
     Text, Modal
 } from "@mantine/core";
 import {
-    IconBell,
     IconCamera,
-    IconCheck, IconDeviceMobile, IconDisc, IconInfoCircle, IconInfoOctagon, IconInfoSmall,
+    IconCheck,
     IconKey, IconMail,
-    IconPalette,
     IconShield,
     IconTrash,
     IconUser
 } from "@tabler/icons-react";
-import {useUserInfo} from "@/hooks/api/useApi.js";
+import {DatePickerInput} from "@mantine/dates";
+import dayjs from "dayjs";
 
 const UserSettings = memo(({
                                opened,
@@ -337,15 +336,25 @@ const UserSettings = memo(({
                                 {
 
                                     user.role.toLowerCase().includes('admin') && (
-                                        <Grid.Col span={12}>
-                                            <Textarea
-                                                label="자기소개"
-                                                value={formData.bio}
-                                                onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                                                rows={3}
-                                                maxLength={200}
-                                            />
-                                        </Grid.Col>
+                                       <>
+                                           <Grid.Col span={12}>
+                                               <DatePickerInput
+                                                   defaultValue={dayjs().format('YYYY-MM-DD')}
+                                                   label="개발 시작일"
+                                                   placeholder="개발 시작일"
+                                               />
+                                           </Grid.Col>
+                                           <Grid.Col span={12}>
+                                               <Textarea
+                                                   label="자기소개"
+                                                   value={formData.bio}
+                                                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                                   rows={3}
+                                                   maxLength={200}
+                                               />
+                                           </Grid.Col>
+
+                                       </>
                                     )
                                 }
                                 <Grid.Col span={12}>

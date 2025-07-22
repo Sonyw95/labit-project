@@ -90,22 +90,27 @@ const Header = memo(({
                     {/*>*/}
                     {/*    <IconBell size={18} />*/}
                     {/*</ActionIcon>*/}
-                    <ActionIcon
-                        variant="light"
-                        size="lg"
-                        radius="md"
-                        onClick={toggleColorScheme}
-                        style={{
-                            background: isDark ? '#21262d' : '#f3f4f6',
-                            border: 'none',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                                background: isDark ? '#30363d' : '#e5e7eb',
-                            }
-                        }}
-                    >
-                        {isDark ? <IconSun size={18} /> : <IconMoon size={18} />}
-                    </ActionIcon>
+                    {
+                        !isAuthenticated && (
+                            <ActionIcon
+                                variant="light"
+                                size="lg"
+                                radius="md"
+                                onClick={toggleColorScheme}
+                                style={{
+                                    background: isDark ? '#21262d' : '#f3f4f6',
+                                    border: 'none',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        background: isDark ? '#30363d' : '#e5e7eb',
+                                    }
+                                }}
+                            >
+                                {isDark ? <IconSun size={18} /> : <IconMoon size={18} />}
+                            </ActionIcon>
+                        )
+                    }
+
                     { isAuthenticated ? <UserMenu/> : <UserLogin/> }
                 </Group>
             </Group>

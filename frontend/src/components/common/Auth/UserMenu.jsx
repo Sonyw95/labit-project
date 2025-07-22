@@ -1,24 +1,22 @@
-import {memo, useState} from 'react';
+import React, {memo, useState} from 'react';
 import {
     Menu,
     Avatar,
     Text,
     Group,
     ActionIcon,
-    Modal,
-    Badge, UnstyledButton, Stack, Box, Indicator, LoadingOverlay,
+    Badge, UnstyledButton, Stack, Box, Indicator, LoadingOverlay, Container, Switch,
 } from '@mantine/core';
 import {
     IconUser,
-    IconSettings,
     IconLogout,
     IconChevronDown,
-    IconShield, IconBell,
+     IconSun, IconMoon, IconPalette,
 } from '@tabler/icons-react';
 import {useLogout, useUserInfo} from "@/hooks/api/useApi.js";
 import UserSettings from "./UserSettings.jsx";
-import {NavLink} from "react-router-dom";
 import {useDisclosure} from "@mantine/hooks";
+import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 
 const getRoleBadgeColor = (role) => {
@@ -42,6 +40,7 @@ const UserMenu = memo(( () => {
     const { data: user, isLoading } = useUserInfo();
     const logoutMutation = useLogout();
     const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
+    const { dark, toggleColorScheme  } = useTheme();
 
     const handleLogout = () => {
         logoutMutation.mutate();
@@ -61,7 +60,6 @@ const UserMenu = memo(( () => {
                 onOpen={() => setUserMenuOpened(true)}
                 withinPortal
             >
-                <LoadingOverlay visible={logoutMutation.isPending} loaderProps={{ children: 'Loading...' }} />
                 <Menu.Target>
                     <UnstyledButton
                         style={{
@@ -70,16 +68,24 @@ const UserMenu = memo(( () => {
                             transition: 'background-color 150ms ease',
                             border: '1px solid transparent',
                         }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--mantine-color-gray-0)';
-                            e.currentTarget.style.borderColor = 'var(--mantine-color-gray-2)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.borderColor = 'transparent';
-                        }}
+
+                        // onMouseEnter={(e) => {
+                        //     e.currentTarget.style.backgroundColor = 'var(--mantine-color-gray-0)';
+                        //     e.currentTarget.style.borderColor = 'var(--mantine-color-gray-2)';
+                        // }}
+                        // onMouseLeave={(e) => {
+                        //     e.currentTarget.style.backgroundColor = 'transparent';
+                        //     e.currentTarget.style.borderColor = 'transparent';
+                        // }}
                     >
+                        <LoadingOverlay
+                            visible={logoutMutation.isPending}
+                            zIndex={1000}
+                            overlayProps={{ radius: 'sm', blur: 2 }}
+                            loaderProps={{ color: 'pink', type: 'bars' }}
+                        />
                         <Group gap="sm">
+                            {/* ...other content */}
                             <Indicator
                                 inline
                                 size={12}
@@ -123,7 +129,7 @@ const UserMenu = memo(( () => {
                 </Menu.Target>
 
                 <Menu.Dropdown>
-                    <UserDropdownContent user={user} openSettings={openSettings} handleLogout={handleLogout}  />
+                    <UserDropdownContent user={user} openSettings={openSettings} handleLogout={handleLogout} dark={dark} toggleColorScheme={toggleColorScheme} />
                 </Menu.Dropdown>
             </Menu>
             <UserSettings
@@ -136,12 +142,12 @@ const UserMenu = memo(( () => {
 );
 }))
 
-const UserDropdownContent = memo(({ user, openSettings, handleLogout }) => {
+const UserDropdownContent = memo(({ user, openSettings, handleLogout, dark, toggleColorScheme }) => {
 
     return (
         <Stack gap="xs">
             {/* 사용자 정보 헤더 */}
-            <Group p="md" style={{ borderBottom: '1px solid var(--mantine-color-gray-2)' }}>
+            <Group p="sm" >
                 <Avatar src={user.profileImage} size="lg" radius="md" />
                 <Box style={{ flex: 1 }}>
                     <Text fw={600} size="sm">
@@ -155,6 +161,8 @@ const UserDropdownContent = memo(({ user, openSettings, handleLogout }) => {
                     </Badge>
                 </Box>
             </Group>
+
+            <Menu.Divider />
 
             {/* 메뉴 아이템들 */}
             <Menu.Item
@@ -179,23 +187,23 @@ const UserDropdownContent = memo(({ user, openSettings, handleLogout }) => {
             {/*    </Group>*/}
             {/*</Menu.Item>*/}
 
-            {/*<Menu.Item leftSection={<IconPalette size={16} />}>*/}
-            {/*    <Group justify="space-between" w="100%">*/}
-            {/*        <div>*/}
-            {/*            <Text size="sm" fw={500}>다크 모드</Text>*/}
-            {/*            <Text size="xs" c="dimmed">테마 설정</Text>*/}
-            {/*        </div>*/}
-            {/*        <Switch*/}
-            {/*            size="sm"*/}
-            {/*            checked={darkMode}*/}
-            {/*            onChange={(event) => setDarkMode(event.currentTarget.checked)}*/}
-            {/*            onLabel={<IconMoon size={12} />}*/}
-            {/*            offLabel={<IconSun size={12} />}*/}
-            {/*        />*/}
-            {/*    </Group>*/}
-            {/*</Menu.Item>*/}
 
-            {/*<Menu.Divider />*/}
+            <Menu.Item leftSection={<IconPalette size={16} />} onClick={toggleColorScheme}>
+                <Group justify="space-between" w="100%">
+                    <Box>
+                        <Text size="sm" fw={500}>다크 모드</Text>
+                        <Text size="xs" c="dimmed">테마 설정</Text>
+                    </Box>
+                    <Switch
+                        size="sm"
+                        checked={dark}
+                        onLabel={<IconMoon size={12} />}
+                        offLabel={<IconSun size={12} />}
+                    />
+                </Group>
+            </Menu.Item>
+
+            <Menu.Divider />
 
             {/*<Menu.Item leftSection={<IconShield size={16} />}>*/}
             {/*    <Text size="sm" fw={500}>보안 설정</Text>*/}

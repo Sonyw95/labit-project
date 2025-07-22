@@ -1,6 +1,7 @@
 // 필수! Mantine CSS 가져오기 (이게 없으면 Toast가 안 보임)
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
 import './App.css'
 
 import React, {memo, useEffect} from 'react';
