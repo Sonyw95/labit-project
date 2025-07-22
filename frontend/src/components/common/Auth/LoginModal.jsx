@@ -18,11 +18,20 @@ import {useKakaoAuthPath, useKakaoLogin} from "../../../hooks/api/useApi.js";
 function LoginModal ({ opened, onClose }) {
     const {data} = useKakaoAuthPath();
     const kakaoLoginMutation = useKakaoLogin();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleKakaoLogin = () => {
+        // 중복 클릭 방지
+        if (isLoading) {
+            console.log('이미 로그인 진행 중, 중복 클릭 방지');
+            return;
+        }
         window.location.href = `${data}&state${Math.random().toString(36).substring(2, 15)}`;
-    }
 
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 5000);
+    }
 
     const [formData, setFormData] = useState({
         email: '',

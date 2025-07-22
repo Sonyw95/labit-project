@@ -31,29 +31,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
+        try {
+            String jwt = getTokenFromRequest(request);
 
-        String jwt = getTokenFromRequest(request);
+            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
+                Long kakaoId = jwtTokenProvider.getKakaoIdFromToken(jwt);
 
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
-            Long kakaoId = jwtTokenProvider.getKakaoIdFromToken(jwt);
+                Optional<LabUsers> userOptional = userRepository.findActiveUserByKakaoId(kakaoId);
+                if (userOptional.isPresent()) {
+                    LabUsers user = userOptional.get();
 
-            Optional<LabUsers> userOptional = userRepository.findActiveUserByKakaoId(kakaoId);
-            if (userOptional.isPresent()) {
-                LabUsers user = userOptional.get();
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    user,
+                                    null,
+                                    Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getAuthority()))
+                            );
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                user,
-                                null,
-                                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getAuthority()))
-                        );
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                log.debug("JWT 인증 성공: 사용자 ID = {}, 역할 = {}", user.getId(), user.getRole());
+                    log.debug("JWT 인증 성공: 사용자 ID = {}, 역할 = {}", user.getId(), user.getRole());
+                } else {
+                    log.debug("사용자를 찾을 수 없음: kakaoId = {}", kakaoId);
+                }
+            } else {
+                log.debug("유효하지 않은 JWT 토큰");
             }
+        } catch (Exception e) {
+            log.error("JWT 인증 중 오류 발생", e);
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
