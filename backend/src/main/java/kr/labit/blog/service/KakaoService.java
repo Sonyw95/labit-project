@@ -29,7 +29,7 @@ public class KakaoService {
      */
     public String getKakaoAuthPath() {
         return  String.format(
-                "https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s",
+                "https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code",
                 kakaoClientId, kakaoRedirectUri
         );
     }

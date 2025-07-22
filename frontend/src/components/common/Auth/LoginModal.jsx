@@ -20,36 +20,9 @@ function LoginModal ({ opened, onClose }) {
     const kakaoLoginMutation = useKakaoLogin();
 
     const handleKakaoLogin = () => {
-        window.location.href = `${data}&response_type=code`;
+        window.location.href = `${data}&state${Math.random().toString(36).substring(2, 15)}`;
     }
 
-    // URL에서 인증 코드 확인 (리다이렉트 후)
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const error = urlParams.get('error');
-
-        if (error) {
-            console.error('카카오 로그인 오류:', error);
-            // URL 정리
-            window.history.replaceState({}, document.title, window.location.pathname);
-            return;
-        }
-
-        if (code && !kakaoLoginMutation.isLoading) {
-            kakaoLoginMutation.mutate(code, {
-                onSuccess: () => {
-                    // URL 정리
-                    window.history.replaceState({}, document.title, '/home');
-                },
-                onError: (error) => {
-                    console.error('로그인 처리 실패:', error);
-                    // URL 정리
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                },
-            });
-        }
-    }, [kakaoLoginMutation]);
 
     const [formData, setFormData] = useState({
         email: '',

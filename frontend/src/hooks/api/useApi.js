@@ -2,6 +2,7 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {mainPageService, navigationService, postService, userService} from "@/api/service.js";
 import useAuthStore from "../../stores/authStore.js";
 import {authService} from "../../api/service.js";
+import {showToast} from "../../components/advanced/Toast.jsx";
 
 export const queryKeys = {
     users: {
@@ -186,53 +187,75 @@ export const useKakaoAuthPath = () => {
 // 카카오 로그인
 export const useKakaoLogin = () => {
     const queryClient = useQueryClient();
-    const { login, setError } = useAuthStore();
+    const { login } = useAuthStore();
+
     return useMutation({
         mutationFn: authService.kakaoLogin,
-        onSuccess: ( response) => {
+        onSuccess: (response) => {
+            console.log('카카오 로그인 API 성공:', response);
+
             const { accessToken } = response;
+            if (!accessToken) {
+                throw new Error('액세스 토큰을 받지 못했습니다.');
+            }
+
             login(accessToken);
 
-            // 사용자 정보 캐시 무효화 -> 새로조회
+            // 사용자 정보 캐시 무효화하여 새로 조회
             queryClient.invalidateQueries({ queryKey: queryKeys.userInfo });
+
+            // 성공 알림
+            showToast.success('로그인 성공', '카카오 로그인이 완료되었습니다.');
         },
         onError: (error) => {
-            console.error( '카카오 로그인 실패: ', error);
-            setError(error?.message);
-        }
-    })
-}
+            console.error('카카오 로그인 실패:', error);
+
+            const errorMessage = error.response?.data?.message ||
+                error.message ||
+                '로그인에 실패했습니다.';
+            showToast.error('로그인 실패', errorMessage);
+            // 에러를 다시 throw하여 콜백 페이지에서 처리할 수 있도록
+            throw error;
+        },
+    });
+};
 
 // 로그아웃
- export const useLogout = () => {
+export const useLogout = () => {
     const queryClient = useQueryClient();
     const { logout, kakaoAccessToken } = useAuthStore();
+
     return useMutation({
         mutationFn: () => authService.logout(kakaoAccessToken),
         onSuccess: () => {
             logout();
-            queryClient.removeQueries({ queryKey: ['auth'] })
+            queryClient.removeQueries({ queryKey: ['auth'] });
             queryClient.clear();
+            showToast.success('로그아웃 완료', '성공적으로 로그아웃되었습니다.');
         },
         onSettled: () => {
-            // 성공/ 실패 상관없이 클라이언트 상태 초기화
+            // 로그아웃은 성공/실패와 관계없이 클라이언트 상태는 초기화
             logout();
             queryClient.clear();
-        }
-    })
- }
+        },
+    });
+};
 
  // 토큰 갱신
 export const useTokenRefresh = () => {
     const { setToken } = useAuthStore();
+
     return useMutation({
         mutationFn: authService.refreshToken,
-        onSuccess: ( response ) => {
+        onSuccess: (response) => {
             const { accessToken } = response;
             setToken(accessToken);
+            showToast.success('토큰 갱신', '인증 토큰이 갱신되었습니다.');
         },
         onError: () => {
+            // 토큰 갱신 실패시 로그아웃
             useAuthStore.getState().logout();
-        }
-    })
-}
+            showToast.success('세션 만료', '토큰 갱신에 실패했습니다. 다시 로그인해주세요.');
+        },
+    });
+};

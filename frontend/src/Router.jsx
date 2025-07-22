@@ -3,11 +3,12 @@ import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import MainPage from "@/components/example/MainPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
     const router = createBrowserRouter([
-        // { path: '*', element: <NotFoundPage/> },
+        { path: '/auth/kakao/callback', element: <KakaoCallbackPage/> },
         {
             path: '/',
             element: (
