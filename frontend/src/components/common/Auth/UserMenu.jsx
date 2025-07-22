@@ -18,6 +18,7 @@ import {
 import {useLogout, useUserInfo} from "@/hooks/api/useApi.js";
 import UserSettings from "./UserSettings.jsx";
 import {NavLink} from "react-router-dom";
+import {useDisclosure} from "@mantine/hooks";
 
 
 const getRoleBadgeColor = (role) => {
@@ -40,6 +41,7 @@ const UserMenu = memo(( () => {
     const [userMenuOpened, setUserMenuOpened] = useState(false);
     const { data: user, isLoading } = useUserInfo();
     const logoutMutation = useLogout();
+    const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
 
     const handleLogout = () => {
         logoutMutation.mutate();
@@ -50,83 +52,91 @@ const UserMenu = memo(( () => {
     }
 
     return (
-        <Menu
-            width={280}
-            position="bottom-end"
-            transitionProps={{ transition: 'pop-top-right' }}
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
-            withinPortal
-        >
-            <LoadingOverlay visible={logoutMutation.isPending} loaderProps={{ children: 'Loading...' }} />
-            <Menu.Target>
-                <UnstyledButton
-                    style={{
-                        padding: 'var(--mantine-spacing-xs)',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        transition: 'background-color 150ms ease',
-                        border: '1px solid transparent',
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'var(--mantine-color-gray-0)';
-                        e.currentTarget.style.borderColor = 'var(--mantine-color-gray-2)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.borderColor = 'transparent';
-                    }}
-                >
-                    <Group gap="sm">
-                        <Indicator
-                            inline
-                            size={12}
-                            offset={7}
-                            position="bottom-end"
-                            color={user.isOnline ? "green" : "gray"}
-                            withBorder
-                        >
-                            <Avatar
-                                src={user.profileImage}
-                                alt={user.nickname}
-                                radius="xl"
-                                size="md"
+        <>
+            <Menu
+                width={280}
+                position="bottom-end"
+                transitionProps={{ transition: 'pop-top-right' }}
+                onClose={() => setUserMenuOpened(false)}
+                onOpen={() => setUserMenuOpened(true)}
+                withinPortal
+            >
+                <LoadingOverlay visible={logoutMutation.isPending} loaderProps={{ children: 'Loading...' }} />
+                <Menu.Target>
+                    <UnstyledButton
+                        style={{
+                            padding: 'var(--mantine-spacing-xs)',
+                            borderRadius: 'var(--mantine-radius-sm)',
+                            transition: 'background-color 150ms ease',
+                            border: '1px solid transparent',
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'var(--mantine-color-gray-0)';
+                            e.currentTarget.style.borderColor = 'var(--mantine-color-gray-2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.borderColor = 'transparent';
+                        }}
+                    >
+                        <Group gap="sm">
+                            <Indicator
+                                inline
+                                size={12}
+                                offset={7}
+                                position="bottom-end"
+                                color={user.isOnline ? "green" : "gray"}
+                                withBorder
+                            >
+                                <Avatar
+                                    src={user.profileImage}
+                                    alt={user.nickname}
+                                    radius="xl"
+                                    size="md"
+                                />
+                            </Indicator>
+
+                            <Box style={{ flex: 1, minWidth: 0 }}>
+                                <Text size="sm" fw={600} truncate>
+                                    {user.nickname}
+                                </Text>
+                                <Text size="xs" c="dimmed" truncate>
+                                    {getRoleLabel(user.role)}
+                                </Text>
+                            </Box>
+
+                            {user.notifications > 0 && (
+                                <Badge size="sm" variant="filled" color="red" circle>
+                                    {user.notifications}
+                                </Badge>
+                            )}
+
+                            <IconChevronDown
+                                size={16}
+                                style={{
+                                    transform: userMenuOpened ? 'rotate(180deg)' : 'rotate(0deg)',
+                                    transition: 'transform 200ms ease',
+                                }}
                             />
-                        </Indicator>
+                        </Group>
+                    </UnstyledButton>
+                </Menu.Target>
 
-                        <Box style={{ flex: 1, minWidth: 0 }}>
-                            <Text size="sm" fw={600} truncate>
-                                {user.nickname}
-                            </Text>
-                            <Text size="xs" c="dimmed" truncate>
-                                {getRoleLabel(user.role)}
-                            </Text>
-                        </Box>
+                <Menu.Dropdown>
+                    <UserDropdownContent user={user} openSettings={openSettings} handleLogout={handleLogout}  />
+                </Menu.Dropdown>
+            </Menu>
+            <UserSettings
+                opened={settingsOpened}
+                onClose={closeSettings}
+                user={user}
+            />
+        </>
 
-                        {user.notifications > 0 && (
-                            <Badge size="sm" variant="filled" color="red" circle>
-                                {user.notifications}
-                            </Badge>
-                        )}
-
-                        <IconChevronDown
-                            size={16}
-                            style={{
-                                transform: userMenuOpened ? 'rotate(180deg)' : 'rotate(0deg)',
-                                transition: 'transform 200ms ease',
-                            }}
-                        />
-                    </Group>
-                </UnstyledButton>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-                <UserDropdownContent user={user} handleLogout={handleLogout}  />
-            </Menu.Dropdown>
-        </Menu>
-    );
+);
 }))
 
-const UserDropdownContent = memo(({ user, handleLogout }) => {
+const UserDropdownContent = memo(({ user, openSettings, handleLogout }) => {
 
     return (
         <Stack gap="xs">
@@ -149,26 +159,25 @@ const UserDropdownContent = memo(({ user, handleLogout }) => {
             {/* 메뉴 아이템들 */}
             <Menu.Item
                 leftSection={<IconUser size={16} />}
-                component={NavLink}
-                to="/setting/user"
+                onClick={()=> openSettings(true)}
             >
                 <Text size="sm" fw={500}>프로필 설정</Text>
                 <Text size="xs" c="dimmed">계정 정보 및 개인정보 관리</Text>
             </Menu.Item>
 
-            <Menu.Item leftSection={<IconBell    size={16} />}>
-                <Group justify="space-between" w="100%">
-                    <div>
-                        <Text size="sm" fw={500}>알림</Text>
-                        <Text size="xs" c="dimmed">알림 설정 관리</Text>
-                    </div>
-                    {user.notifications > 0 && (
-                        <Badge size="sm" color="red">
-                            {user.notifications}
-                        </Badge>
-                    )}
-                </Group>
-            </Menu.Item>
+            {/*<Menu.Item leftSection={<IconBell    size={16} />}>*/}
+            {/*    <Group justify="space-between" w="100%">*/}
+            {/*        <div>*/}
+            {/*            <Text size="sm" fw={500}>알림</Text>*/}
+            {/*            <Text size="xs" c="dimmed">알림 설정 관리</Text>*/}
+            {/*        </div>*/}
+            {/*        {user.notifications > 0 && (*/}
+            {/*            <Badge size="sm" color="red">*/}
+            {/*                {user.notifications}*/}
+            {/*            </Badge>*/}
+            {/*        )}*/}
+            {/*    </Group>*/}
+            {/*</Menu.Item>*/}
 
             {/*<Menu.Item leftSection={<IconPalette size={16} />}>*/}
             {/*    <Group justify="space-between" w="100%">*/}
@@ -186,12 +195,12 @@ const UserDropdownContent = memo(({ user, handleLogout }) => {
             {/*    </Group>*/}
             {/*</Menu.Item>*/}
 
-            <Menu.Divider />
+            {/*<Menu.Divider />*/}
 
-            <Menu.Item leftSection={<IconShield size={16} />}>
-                <Text size="sm" fw={500}>보안 설정</Text>
-                <Text size="xs" c="dimmed">비밀번호 및 2FA 설정</Text>
-            </Menu.Item>
+            {/*<Menu.Item leftSection={<IconShield size={16} />}>*/}
+            {/*    <Text size="sm" fw={500}>보안 설정</Text>*/}
+            {/*    <Text size="xs" c="dimmed">비밀번호 및 2FA 설정</Text>*/}
+            {/*</Menu.Item>*/}
 
 
             <Menu.Divider />

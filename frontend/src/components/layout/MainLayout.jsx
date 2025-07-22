@@ -41,6 +41,7 @@ const MainLayout = () => {
             <ScrollArea component={AppShell.Main} h={200} scrollbars="y">
                 <Outlet/>
             </ScrollArea>
+
         </AppShell>
     );
 };

@@ -23,7 +23,7 @@ const AppRouter = () => {
                 { path: '/posts/:page', element: <></> },
 
 
-                { path: '/setting/user', element: <UserSettings/>},
+                // { path: '/setting/user', element: <UserSettings/>},
                 { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminPage/></ProtectedRoute>}
             ]
         },

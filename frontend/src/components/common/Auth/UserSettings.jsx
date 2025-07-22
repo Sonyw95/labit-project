@@ -246,12 +246,12 @@ import {
     Textarea,
     TextInput,
     Title,
-    Text
+    Text, Modal
 } from "@mantine/core";
 import {
     IconBell,
     IconCamera,
-    IconCheck, IconDeviceMobile,
+    IconCheck, IconDeviceMobile, IconDisc, IconInfoCircle, IconInfoOctagon, IconInfoSmall,
     IconKey, IconMail,
     IconPalette,
     IconShield,
@@ -260,8 +260,11 @@ import {
 } from "@tabler/icons-react";
 import {useUserInfo} from "@/hooks/api/useApi.js";
 
-const UserSettings = memo(() => {
-    const { data: user, isLoading } = useUserInfo();
+const UserSettings = memo(({
+                               opened,
+                               onClose,
+                               user
+                           }) => {
     const [activeTab, setActiveTab] = useState('profile');
     const [formData, setFormData] = useState({
         name: user?.nickname,
@@ -269,279 +272,274 @@ const UserSettings = memo(() => {
     });
     const handleSave = () => {
     };
-    if( isLoading ){
-        return null;
-    }
     return (
-        <Tabs value={activeTab} onChange={setActiveTab}>
-            <Tabs.List grow>
-                <Tabs.Tab value="profile" leftSection={<IconUser size={16}/>}>
-                    프로필
-                </Tabs.Tab>
-                <Tabs.Tab value="security" leftSection={<IconShield size={16}/>}>
-                    보안
-                </Tabs.Tab>
-                <Tabs.Tab value="notifications" leftSection={<IconBell size={16}/>}>
-                    알림
-                </Tabs.Tab>
-                <Tabs.Tab value="preferences" leftSection={<IconPalette size={16}/>}>
-                    환경설정
-                </Tabs.Tab>
-            </Tabs.List>
+        <Modal opened={opened} onClose={onClose} size="lg">
+            <Tabs value={activeTab} onChange={setActiveTab}>
+                <Tabs.List grow>
+                    <Tabs.Tab value="profile" leftSection={<IconUser size={16}/>}>
+                        프로필
+                    </Tabs.Tab>
+                    <Tabs.Tab value="security" leftSection={<IconShield size={16}/>}>
+                        보안
+                    </Tabs.Tab>
+                    {/*<Tabs.Tab value="notifications" leftSection={<IconBell size={16}/>}>*/}
+                    {/*    알림*/}
+                    {/*</Tabs.Tab>*/}
+                    {/*<Tabs.Tab value="preferences" leftSection={<IconPalette size={16}/>}>*/}
+                    {/*    환경설정*/}
+                    {/*</Tabs.Tab>*/}
+                </Tabs.List>
 
-            {/* 프로필 탭 */}
-            <Tabs.Panel value="profile" pt="lg">
-                <Stack gap="lg">
-                    {/* 프로필 이미지 섹션 */}
-                    <Card withBorder radius="md" p="lg">
-                        <Group>
-                            <Avatar src={user.profileImage} size="xl" radius="md"/>
-                            <Stack gap="xs" style={{flex: 1}}>
-                                <Text fw={600}>프로필 사진</Text>
-                                <Text size="sm" c="dimmed">
-                                    JPG, PNG 파일을 업로드하세요. 최대 5MB까지 지원합니다.
-                                </Text>
-                                <Group gap="xs">
-                                    <Button variant="light" size="xs" leftSection={<IconCamera size={14}/>}>
-                                        사진 변경
-                                    </Button>
-                                    <Button variant="subtle" size="xs" color="red" leftSection={<IconTrash size={14}/>}>
-                                        삭제
-                                    </Button>
-                                </Group>
-                            </Stack>
-                        </Group>
-                    </Card>
-
-                    {/* 기본 정보 */}
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">기본 정보</Title>
-                        <Grid>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label="이름"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                    leftSection={<IconUser size={16}/>}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label="이메일"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                    leftSection={<IconMail size={16}/>}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label="전화번호"
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                    leftSection={<IconDeviceMobile size={16}/>}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label="위치"
-                                    value={formData.location}
-                                    onChange={(e) => setFormData({...formData, location: e.target.value})}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={12}>
-                                <Textarea
-                                    label="자기소개"
-                                    value={formData.bio}
-                                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                                    rows={3}
-                                    maxLength={200}
-                                />
-                            </Grid.Col>
-                        </Grid>
-                    </Card>
-                </Stack>
-            </Tabs.Panel>
-
-            {/* 보안 탭 */}
-            <Tabs.Panel value="security" pt="lg">
-                <Stack gap="lg">
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">비밀번호 변경</Title>
-                        <Stack gap="md">
-                            <PasswordInput
-                                label="현재 비밀번호"
-                                placeholder="현재 비밀번호를 입력하세요"
-                            />
-                            <PasswordInput
-                                label="새 비밀번호"
-                                placeholder="새 비밀번호를 입력하세요"
-                            />
-                            <PasswordInput
-                                label="새 비밀번호 확인"
-                                placeholder="새 비밀번호를 다시 입력하세요"
-                            />
-                            <Button variant="light" leftSection={<IconKey size={16}/>}>
-                                비밀번호 변경
-                            </Button>
-                        </Stack>
-                    </Card>
-
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">2단계 인증</Title>
-                        <Group justify="space-between" mb="md">
-                            <div>
-                                <Text fw={500}>2단계 인증 활성화</Text>
-                                <Text size="sm" c="dimmed">
-                                    계정 보안을 강화하기 위해 2단계 인증을 설정하세요
-                                </Text>
-                            </div>
-                            <Switch size="md"/>
-                        </Group>
-                        <Button variant="outline" size="sm">
-                            인증 앱 설정
-                        </Button>
-                    </Card>
-
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">활성 세션</Title>
-                        <Stack gap="md">
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>현재 세션 (Chrome, Windows)</Text>
-                                    <Text size="sm" c="dimmed">서울, 대한민국 • 지금</Text>
-                                </div>
-                                <Badge color="green">현재</Badge>
+                {/* 프로필 탭 */}
+                <Tabs.Panel value="profile" pt="lg">
+                    <Stack gap="lg">
+                        {/* 프로필 이미지 섹션 */}
+                        <Card withBorder radius="md" p="lg">
+                            <Group>
+                                <Avatar src={user.profileImage} size="xl" radius="md"/>
+                                <Stack gap="xs" style={{flex: 1}}>
+                                    <Text fw={600}>프로필 사진</Text>
+                                    <Text size="sm" c="dimmed">
+                                        JPG, PNG 파일을 업로드하세요. 최대 5MB까지 지원합니다.
+                                    </Text>
+                                    <Group gap="xs">
+                                        <Button variant="light" size="xs" leftSection={<IconCamera size={14}/>}>
+                                            사진 변경
+                                        </Button>
+                                        <Button variant="subtle" size="xs" color="red" leftSection={<IconTrash size={14}/>}>
+                                            삭제
+                                        </Button>
+                                    </Group>
+                                </Stack>
                             </Group>
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>Mobile App (iOS)</Text>
-                                    <Text size="sm" c="dimmed">서울, 대한민국 • 2시간 전</Text>
-                                </div>
-                                <Button variant="subtle" color="red" size="xs">
-                                    종료
+                        </Card>
+
+                        {/* 기본 정보 */}
+                        <Card withBorder radius="md" p="lg">
+                            <Title order={4} mb="md">기본 정보</Title>
+                            <Grid>
+                                <Grid.Col span={6}>
+                                    <TextInput
+                                        label="이름"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                        leftSection={<IconUser size={16}/>}
+                                    />
+                                </Grid.Col>
+                                <Grid.Col span={6}>
+                                    <TextInput
+                                        label="이메일"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                        leftSection={<IconMail size={16}/>}
+                                    />
+                                </Grid.Col>
+                                {
+
+                                    user.role.toLowerCase().includes('admin') && (
+                                        <Grid.Col span={12}>
+                                            <Textarea
+                                                label="자기소개"
+                                                value={formData.bio}
+                                                onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                                rows={3}
+                                                maxLength={200}
+                                            />
+                                        </Grid.Col>
+                                    )
+                                }
+                                <Grid.Col span={12}>
+                                    <Button fullWidth variant="light" leftSection={<IconCheck size={16}/>}>
+                                        정보 변경
+                                    </Button>
+                                </Grid.Col>
+                            </Grid>
+                        </Card>
+
+                    </Stack>
+                </Tabs.Panel>
+
+                {/* 보안 탭 */}
+                <Tabs.Panel value="security" pt="lg">
+                    <Stack gap="lg">
+                        <Card withBorder radius="md" p="lg">
+                            <Title order={4} mb="md">비밀번호 변경</Title>
+                            <Stack gap="md">
+                                <PasswordInput
+                                    label="현재 비밀번호"
+                                    placeholder="현재 비밀번호를 입력하세요"
+                                />
+                                <PasswordInput
+                                    label="새 비밀번호"
+                                    placeholder="새 비밀번호를 입력하세요"
+                                />
+                                <PasswordInput
+                                    label="새 비밀번호 확인"
+                                    placeholder="새 비밀번호를 다시 입력하세요"
+                                />
+                                <Button variant="light" leftSection={<IconKey size={16}/>}>
+                                    비밀번호 변경
                                 </Button>
-                            </Group>
-                        </Stack>
-                    </Card>
-                </Stack>
-            </Tabs.Panel>
+                            </Stack>
+                        </Card>
 
-            {/* 알림 탭 */}
-            <Tabs.Panel value="notifications" pt="lg">
-                <Stack gap="lg">
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">이메일 알림</Title>
-                        <Stack gap="md">
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>새 댓글 알림</Text>
-                                    <Text size="sm" c="dimmed">내 게시물에 새 댓글이 달릴 때</Text>
-                                </div>
-                                <Switch defaultChecked/>
-                            </Group>
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>좋아요 알림</Text>
-                                    <Text size="sm" c="dimmed">내 게시물이나 댓글에 좋아요가 달릴 때</Text>
-                                </div>
-                                <Switch defaultChecked/>
-                            </Group>
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>새 팔로워 알림</Text>
-                                    <Text size="sm" c="dimmed">새로운 팔로워가 생겼을 때</Text>
-                                </div>
-                                <Switch/>
-                            </Group>
-                        </Stack>
-                    </Card>
+                        {/*<Card withBorder radius="md" p="lg">*/}
+                        {/*    <Title order={4} mb="md">2단계 인증</Title>*/}
+                        {/*    <Group justify="space-between" mb="md">*/}
+                        {/*        <div>*/}
+                        {/*            <Text fw={500}>2단계 인증 활성화</Text>*/}
+                        {/*            <Text size="sm" c="dimmed">*/}
+                        {/*                계정 보안을 강화하기 위해 2단계 인증을 설정하세요*/}
+                        {/*            </Text>*/}
+                        {/*        </div>*/}
+                        {/*        <Switch size="md"/>*/}
+                        {/*    </Group>*/}
+                        {/*    <Button variant="outline" size="sm">*/}
+                        {/*        인증 앱 설정*/}
+                        {/*    </Button>*/}
+                        {/*</Card>*/}
 
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">푸시 알림</Title>
-                        <Stack gap="md">
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>브라우저 알림</Text>
-                                    <Text size="sm" c="dimmed">브라우저에서 알림을 받습니다</Text>
-                                </div>
-                                <Switch defaultChecked/>
-                            </Group>
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>모바일 알림</Text>
-                                    <Text size="sm" c="dimmed">모바일 앱에서 알림을 받습니다</Text>
-                                </div>
-                                <Switch defaultChecked/>
-                            </Group>
-                        </Stack>
-                    </Card>
-                </Stack>
-            </Tabs.Panel>
+                        {/*<Card withBorder radius="md" p="lg">*/}
+                        {/*    <Title order={4} mb="md">활성 세션</Title>*/}
+                        {/*    <Stack gap="md">*/}
+                        {/*        <Group justify="space-between">*/}
+                        {/*            <div>*/}
+                        {/*                <Text fw={500}>현재 세션 (Chrome, Windows)</Text>*/}
+                        {/*                <Text size="sm" c="dimmed">서울, 대한민국 • 지금</Text>*/}
+                        {/*            </div>*/}
+                        {/*            <Badge color="green">현재</Badge>*/}
+                        {/*        </Group>*/}
+                        {/*        <Group justify="space-between">*/}
+                        {/*            <div>*/}
+                        {/*                <Text fw={500}>Mobile App (iOS)</Text>*/}
+                        {/*                <Text size="sm" c="dimmed">서울, 대한민국 • 2시간 전</Text>*/}
+                        {/*            </div>*/}
+                        {/*            <Button variant="subtle" color="red" size="xs">*/}
+                        {/*                종료*/}
+                        {/*            </Button>*/}
+                        {/*        </Group>*/}
+                        {/*    </Stack>*/}
+                        {/*</Card>*/}
+                    </Stack>
+                </Tabs.Panel>
 
-            {/* 환경설정 탭 */}
-            <Tabs.Panel value="preferences" pt="lg">
-                <Stack gap="lg">
-                    {/*<Card withBorder radius="md" p="lg">*/}
-                    {/*    <Title order={4} mb="md">테마 설정</Title>*/}
-                    {/*    <Stack gap="md">*/}
-                    {/*        <Group justify="space-between">*/}
-                    {/*            <div>*/}
-                    {/*                <Text fw={500}>다크 모드</Text>*/}
-                    {/*                <Text size="sm" c="dimmed">어두운 테마를 사용합니다</Text>*/}
-                    {/*            </div>*/}
-                    {/*            <Switch/>*/}
-                    {/*        </Group>*/}
-                    {/*        <Select*/}
-                    {/*            label="언어"*/}
-                    {/*            value="ko"*/}
-                    {/*            data={[*/}
-                    {/*                {value: 'ko', label: '한국어'},*/}
-                    {/*                {value: 'en', label: 'English'},*/}
-                    {/*                {value: 'ja', label: '日本語'},*/}
-                    {/*            ]}*/}
-                    {/*        />*/}
-                    {/*    </Stack>*/}
-                    {/*</Card>*/}
+                {/* 알림 탭 */}
+                {/*<Tabs.Panel value="notifications" pt="lg">*/}
+                {/*    <Stack gap="lg">*/}
+                {/*        <Card withBorder radius="md" p="lg">*/}
+                {/*            <Title order={4} mb="md">이메일 알림</Title>*/}
+                {/*            <Stack gap="md">*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>새 댓글 알림</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">내 게시물에 새 댓글이 달릴 때</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch defaultChecked/>*/}
+                {/*                </Group>*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>좋아요 알림</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">내 게시물이나 댓글에 좋아요가 달릴 때</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch defaultChecked/>*/}
+                {/*                </Group>*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>새 팔로워 알림</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">새로운 팔로워가 생겼을 때</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch/>*/}
+                {/*                </Group>*/}
+                {/*            </Stack>*/}
+                {/*        </Card>*/}
 
-                    <Card withBorder radius="md" p="lg">
-                        <Title order={4} mb="md">개인정보 설정</Title>
-                        <Stack gap="md">
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>프로필 공개</Text>
-                                    <Text size="sm" c="dimmed">다른 사용자가 내 프로필을 볼 수 있습니다</Text>
-                                </div>
-                                <Switch defaultChecked/>
-                            </Group>
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>온라인 상태 표시</Text>
-                                    <Text size="sm" c="dimmed">다른 사용자에게 온라인 상태를 표시합니다</Text>
-                                </div>
-                                <Switch defaultChecked/>
-                            </Group>
-                            <Group justify="space-between">
-                                <div>
-                                    <Text fw={500}>이메일 공개</Text>
-                                    <Text size="sm" c="dimmed">프로필에서 이메일 주소를 공개합니다</Text>
-                                </div>
-                                <Switch/>
-                            </Group>
-                        </Stack>
-                    </Card>
-                </Stack>
-            </Tabs.Panel>
+                {/*        <Card withBorder radius="md" p="lg">*/}
+                {/*            <Title order={4} mb="md">푸시 알림</Title>*/}
+                {/*            <Stack gap="md">*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>브라우저 알림</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">브라우저에서 알림을 받습니다</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch defaultChecked/>*/}
+                {/*                </Group>*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>모바일 알림</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">모바일 앱에서 알림을 받습니다</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch defaultChecked/>*/}
+                {/*                </Group>*/}
+                {/*            </Stack>*/}
+                {/*        </Card>*/}
+                {/*    </Stack>*/}
+                {/*</Tabs.Panel>*/}
 
-            {/* 저장 버튼 */}
-            <Group justify="flex-end" mt="xl">
-                <Button variant="outline">
-                    취소
-                </Button>
-                <Button onClick={handleSave} leftSection={<IconCheck size={16}/>}>
-                    저장
-                </Button>
-            </Group>
-        </Tabs>
+                {/* 환경설정 탭 */}
+                {/*<Tabs.Panel value="preferences" pt="lg">*/}
+                {/*    <Stack gap="lg">*/}
+                {/*        /!*<Card withBorder radius="md" p="lg">*!/*/}
+                {/*        /!*    <Title order={4} mb="md">테마 설정</Title>*!/*/}
+                {/*        /!*    <Stack gap="md">*!/*/}
+                {/*        /!*        <Group justify="space-between">*!/*/}
+                {/*        /!*            <div>*!/*/}
+                {/*        /!*                <Text fw={500}>다크 모드</Text>*!/*/}
+                {/*        /!*                <Text size="sm" c="dimmed">어두운 테마를 사용합니다</Text>*!/*/}
+                {/*        /!*            </div>*!/*/}
+                {/*        /!*            <Switch/>*!/*/}
+                {/*        /!*        </Group>*!/*/}
+                {/*        /!*        <Select*!/*/}
+                {/*        /!*            label="언어"*!/*/}
+                {/*        /!*            value="ko"*!/*/}
+                {/*        /!*            data={[*!/*/}
+                {/*        /!*                {value: 'ko', label: '한국어'},*!/*/}
+                {/*        /!*                {value: 'en', label: 'English'},*!/*/}
+                {/*        /!*                {value: 'ja', label: '日本語'},*!/*/}
+                {/*        /!*            ]}*!/*/}
+                {/*        /!*        />*!/*/}
+                {/*        /!*    </Stack>*!/*/}
+                {/*        /!*</Card>*!/*/}
+
+                {/*        <Card withBorder radius="md" p="lg">*/}
+                {/*            <Title order={4} mb="md">개인정보 설정</Title>*/}
+                {/*            <Stack gap="md">*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>프로필 공개</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">다른 사용자가 내 프로필을 볼 수 있습니다</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch defaultChecked/>*/}
+                {/*                </Group>*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>온라인 상태 표시</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">다른 사용자에게 온라인 상태를 표시합니다</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch defaultChecked/>*/}
+                {/*                </Group>*/}
+                {/*                <Group justify="space-between">*/}
+                {/*                    <div>*/}
+                {/*                        <Text fw={500}>이메일 공개</Text>*/}
+                {/*                        <Text size="sm" c="dimmed">프로필에서 이메일 주소를 공개합니다</Text>*/}
+                {/*                    </div>*/}
+                {/*                    <Switch/>*/}
+                {/*                </Group>*/}
+                {/*            </Stack>*/}
+                {/*        </Card>*/}
+                {/*    </Stack>*/}
+                {/*</Tabs.Panel>*/}
+
+                {/* 저장 버튼 */}
+                {/*<Group justify="flex-end" mt="xl">*/}
+                {/*    <Button variant="outline">*/}
+                {/*        취소*/}
+                {/*    </Button>*/}
+                {/*    <Button onClick={handleSave} leftSection={<IconCheck size={16}/>}>*/}
+                {/*        저장*/}
+                {/*    </Button>*/}
+                {/*</Group>*/}
+            </Tabs>
+        </Modal>
     );
 });
 
