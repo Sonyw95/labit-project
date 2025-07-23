@@ -24,7 +24,7 @@ const AppRouter = () => {
 
 
                 { path: '/posts/:category', element: <PostList/> },
-                { path: '/post/edit', element: <PostEdit/> },
+                { path: '/post/edit/:postId', element: <PostEdit/> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
                 { path: '/posts/:page', element: <></> },
 

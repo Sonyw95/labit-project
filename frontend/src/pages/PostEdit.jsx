@@ -1,8 +1,5 @@
-// ============================================================================
-// src/pages/posts/PostEditPage.jsx - 포스트 편집 페이지
-// ============================================================================
 
-import {useState, useEffect, memo} from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Container,
@@ -33,7 +30,6 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { createLowlight } from 'lowlight';
-
 import { IconUpload, IconX, IconEye, IconDeviceFloppy } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 
@@ -41,20 +37,20 @@ import { useForm } from '@mantine/form';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
 import java from 'highlight.js/lib/languages/java';
+import css from 'highlight.js/lib/languages/css';
 import html from 'highlight.js/lib/languages/xml';
-import {useCreatePost, useNavigationTree, usePost, useUpdatePost} from "../hooks/api/useApi.js";
-import {showToast} from "../components/advanced/Toast.jsx";
+import {showToast} from "@/components/advanced/Toast.jsx";
+import {useCreatePost, useNavigationTree, usePost, useUpdatePost} from "@/hooks/api/useApi.js";
 
-
-
-const lowlight = createLowlight();
+const lowlight = createLowlight({})
 // 언어 등록
 lowlight.register('javascript', javascript);
 lowlight.register('python', python);
 lowlight.register('java', java);
+lowlight.register('css', css);
 lowlight.register('html', html);
-const PostEditPage = memo(() => {
 
+function PostEditPage() {
     const { postId } = useParams();
     const navigate = useNavigate();
     const isEdit = !!postId;
@@ -77,7 +73,7 @@ const PostEditPage = memo(() => {
             Link,
             Superscript,
             SubScript,
-            // Highlight,
+            Highlight,
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
             CodeBlockLowlight.configure({
                 lowlight,
@@ -164,8 +160,7 @@ const PostEditPage = memo(() => {
             // TODO: 실제 파일 업로드 API 호출
             // const uploadedUrl = await uploadFile(file);
             // form.setFieldValue('thumbnailUrl', uploadedUrl);
-
-            showToast.success('썸네일 업로드', '썸네일 이미지가 설정되었습니다.');
+            showToast.success('썸네일 업로드', '썸네일 이미지가 설정되었습니다.')
         }
     };
 
@@ -185,16 +180,16 @@ const PostEditPage = memo(() => {
 
             if (isEdit) {
                 await updatePostMutation.mutateAsync({ id: postId, data: postData });
-                showToast.success('포스트 수정 완료', '포스트가 성공적으로 수정되었습니다.');
+                showToast.success('포스트 수정 완료', '포스트가 성공적으로 수정되었습니다.')
             } else {
                 await createPostMutation.mutateAsync(postData);
-                showToast.success('포스트 생성 완료', '포스트가 성공적으로 생성되었습니다.');
+                showToast.success('포스트 생성 완료', '포스트가 성공적으로 생성되었습니다.')
             }
 
             // 성공 시 포스트 목록 또는 상세 페이지로 이동
             navigate('/posts');
         } catch (error) {
-            showToast.error('오류 발생', error.message || '포스트 저장 중 오류가 발생했습니다.');
+            showToast.error('오류 발생', '포스트 저장 중 오류가 발생했습니다.')
         }
     };
 
@@ -398,23 +393,24 @@ const PostEditPage = memo(() => {
                                 </Card>
 
                                 {/* 태그 */}
-                                {/*<Card withBorder>*/}
-                                {/*    <Card.Section withBorder inheritPadding py="xs">*/}
-                                {/*        <Text fw={500}>태그</Text>*/}
-                                {/*    </Card.Section>*/}
+                                <Card withBorder>
+                                    <Card.Section withBorder inheritPadding py="xs">
+                                        <Text fw={500}>태그</Text>
+                                    </Card.Section>
 
-                                {/*    <MultiSelect*/}
-                                {/*        mt="md"*/}
-                                {/*        placeholder="태그를 입력하세요"*/}
-                                {/*        data={[]}*/}
-                                {/*        searchable*/}
-                                {/*        getCreateLabel={(query) => `+ ${query} 태그 추가`}*/}
-                                {/*        onCreate={(query) => {*/}
-                                {/*            return { value: query, label: query };*/}
-                                {/*        }}*/}
-                                {/*        {...form.getInputProps('tags')}*/}
-                                {/*    />*/}
-                                {/*</Card>*/}
+                                    <MultiSelect
+                                        mt="md"
+                                        placeholder="태그를 입력하세요"
+                                        data={[]}
+                                        searchable
+                                        creatable
+                                        getCreateLabel={(query) => `+ ${query} 태그 추가`}
+                                        onCreate={(query) => {
+                                            return { value: query, label: query };
+                                        }}
+                                        {...form.getInputProps('tags')}
+                                    />
+                                </Card>
 
                                 {/* 썸네일 */}
                                 <Card withBorder>
@@ -499,6 +495,6 @@ const PostEditPage = memo(() => {
             </form>
         </Container>
     );
-})
+}
 
 export default PostEditPage;
