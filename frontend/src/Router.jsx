@@ -7,6 +7,7 @@ import UserSettings from "@/components/common/Auth/UserSettings.jsx";
 import HomePage from "@/stores/HomePage.jsx";
 import PostEdit from "./pages/PostEdit.jsx";
 import PostViewPage from "./pages/PostViewPage.jsx";
+import PostList from "@/components/section/post/PostList.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -22,6 +23,7 @@ const AppRouter = () => {
                 { path: '/home', element: <HomePage/> },
 
 
+                { path: '/posts/:category', element: <PostList/> },
                 { path: '/post/edit', element: <PostEdit/> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
                 { path: '/posts/:page', element: <></> },

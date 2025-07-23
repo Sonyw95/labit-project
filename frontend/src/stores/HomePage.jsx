@@ -202,144 +202,144 @@ function InteractiveCodeBlock({ dark }) {
     );
 }
 
-function HeroSection({dark}) {
-
-    const heroBackgroundStyle = {
-        background: dark
-            ? 'radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%)'
-            : 'radial-gradient(circle at 50% 50%, #1e293b 0%, #334155 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center'
-    };
-    return (
-        <Box
-            style={heroBackgroundStyle}
-            py={rem(120)}
-            // onMouseMove={handleMouseMove}
-        >
-
-            {/* Interactive Grid Background */}
-            <Box
-                pos="absolute"
-                top={0}
-                left={0}
-                right={0}
-                bottom={0}
-                style={{
-                    backgroundImage: dark
-                        ? `linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-               linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)`
-                        : `linear-gradient(rgba(0, 245, 255, 0.2) 1px, transparent 1px),
-               linear-gradient(90deg, rgba(0, 245, 255, 0.2) 1px, transparent 1px)`,
-                    backgroundSize: '40px 40px',
-                    opacity: 0.7
-                }}
-            />
-
-            {/* Mouse Follower Effect */}
-            {/*<Box*/}
-            {/*    pos="absolute"*/}
-            {/*    style={{*/}
-            {/*        // left: mousePosition.x - 150,*/}
-            {/*        // top: mousePosition.y - 150,*/}
-            {/*        width: 300,*/}
-            {/*        height: 300,*/}
-            {/*        background: dark*/}
-            {/*            ? 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)'*/}
-            {/*            : 'radial-gradient(circle, rgba(0, 245, 255, 0.15) 0%, transparent 70%)',*/}
-            {/*        borderRadius: '50%',*/}
-            {/*        pointerEvents: 'none',*/}
-            {/*        transition: 'all 0.3s ease'*/}
-            {/*    }}*/}
-            {/*/>*/}
-
-            <Container size="xl" style={{ position: 'relative', zIndex: 10 }}>
-                <Grid align="center" mih={400}>
-                    <Grid.Col span={{ base: 12, md: 12 }}>
-                        <Stack align="center" gap="xl">
-                            {/* Geometric Logo */}
-                            <Box
-                                style={{
-                                    position: 'relative',
-                                    width: 120,
-                                    height: 120
-                                }}
-                            >
-                                <Box
-                                    style={{
-                                        position: 'absolute',
-                                        width: '100%',
-                                        height: '100%',
-                                        background: 'linear-gradient(45deg, #00f5ff, #7c3aed)',
-                                        borderRadius: '20px',
-                                        animation: 'pulse 3s ease-in-out infinite',
-                                        transform: 'rotate(45deg)'
-                                    }}
-                                />
-                                <Box
-                                    style={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-50%, -50%)',
-                                        fontSize: '2rem',
-                                        zIndex: 2
-                                    }}
-                                >
-                                    ⚡
-                                </Box>
-                            </Box>
-
-                            {/* Interactive Buttons */}
-                            <Group gap="lg"/>
-                        </Stack>
-                    </Grid.Col>
-
-                    <Grid.Col span={{ base: 12, md: 12 }}>
-                        <Stack align="center" gap="xl">
-                            <InteractiveCodeBlock dark={dark} />
-                        </Stack>
-                    </Grid.Col>
-                </Grid>
-            </Container>
-
-            <style>
-                {`
-          @keyframes floatParticle {
-            0%, 100% { 
-              transform: translateY(0px) rotate(0deg); 
-              opacity: 0.8;
-            }
-            50% { 
-              transform: translateY(-20px) rotate(180deg); 
-              opacity: 1;
-            }
-          }
-          
-          @keyframes pulse {
-            0%, 100% { 
-              transform: rotate(45deg) scale(1);
-              opacity: 0.8;
-            }
-            50% { 
-              transform: rotate(45deg) scale(1.1);
-              opacity: 1;
-            }
-          }
-          
-          @keyframes slideGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-        `}
-            </style>
-        </Box>
-    );
-}
+// function HeroSection({dark}) {
+//
+//     const heroBackgroundStyle = {
+//         background: dark
+//             ? 'radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%)'
+//             : 'radial-gradient(circle at 50% 50%, #1e293b 0%, #334155 100%)',
+//         position: 'relative',
+//         overflow: 'hidden',
+//         minHeight: '100vh',
+//         display: 'flex',
+//         alignItems: 'center'
+//     };
+//     return (
+//         <Box
+//             style={heroBackgroundStyle}
+//             py={rem(120)}
+//             // onMouseMove={handleMouseMove}
+//         >
+//
+//             {/* Interactive Grid Background */}
+//             <Box
+//                 pos="absolute"
+//                 top={0}
+//                 left={0}
+//                 right={0}
+//                 bottom={0}
+//                 style={{
+//                     backgroundImage: dark
+//                         ? `linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+//                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)`
+//                         : `linear-gradient(rgba(0, 245, 255, 0.2) 1px, transparent 1px),
+//                linear-gradient(90deg, rgba(0, 245, 255, 0.2) 1px, transparent 1px)`,
+//                     backgroundSize: '40px 40px',
+//                     opacity: 0.7
+//                 }}
+//             />
+//
+//             {/* Mouse Follower Effect */}
+//             {/*<Box*/}
+//             {/*    pos="absolute"*/}
+//             {/*    style={{*/}
+//             {/*        // left: mousePosition.x - 150,*/}
+//             {/*        // top: mousePosition.y - 150,*/}
+//             {/*        width: 300,*/}
+//             {/*        height: 300,*/}
+//             {/*        background: dark*/}
+//             {/*            ? 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)'*/}
+//             {/*            : 'radial-gradient(circle, rgba(0, 245, 255, 0.15) 0%, transparent 70%)',*/}
+//             {/*        borderRadius: '50%',*/}
+//             {/*        pointerEvents: 'none',*/}
+//             {/*        transition: 'all 0.3s ease'*/}
+//             {/*    }}*/}
+//             {/*/>*/}
+//
+//             <Container size="xl" style={{ position: 'relative', zIndex: 10 }}>
+//                 <Grid align="center" mih={400}>
+//                     <Grid.Col span={{ base: 12, md: 12 }}>
+//                         <Stack align="center" gap="xl">
+//                             {/* Geometric Logo */}
+//                             <Box
+//                                 style={{
+//                                     position: 'relative',
+//                                     width: 120,
+//                                     height: 120
+//                                 }}
+//                             >
+//                                 <Box
+//                                     style={{
+//                                         position: 'absolute',
+//                                         width: '100%',
+//                                         height: '100%',
+//                                         background: 'linear-gradient(45deg, #00f5ff, #7c3aed)',
+//                                         borderRadius: '20px',
+//                                         animation: 'pulse 3s ease-in-out infinite',
+//                                         transform: 'rotate(45deg)'
+//                                     }}
+//                                 />
+//                                 <Box
+//                                     style={{
+//                                         position: 'absolute',
+//                                         top: '50%',
+//                                         left: '50%',
+//                                         transform: 'translate(-50%, -50%)',
+//                                         fontSize: '2rem',
+//                                         zIndex: 2
+//                                     }}
+//                                 >
+//                                     ⚡
+//                                 </Box>
+//                             </Box>
+//
+//                             {/* Interactive Buttons */}
+//                             <Group gap="lg"/>
+//                         </Stack>
+//                     </Grid.Col>
+//
+//                     <Grid.Col span={{ base: 12, md: 12 }}>
+//                         <Stack align="center" gap="xl">
+//                             <InteractiveCodeBlock dark={dark} />
+//                         </Stack>
+//                     </Grid.Col>
+//                 </Grid>
+//             </Container>
+//
+//             <style>
+//                 {`
+//           @keyframes floatParticle {
+//             0%, 100% {
+//               transform: translateY(0px) rotate(0deg);
+//               opacity: 0.8;
+//             }
+//             50% {
+//               transform: translateY(-20px) rotate(180deg);
+//               opacity: 1;
+//             }
+//           }
+//
+//           @keyframes pulse {
+//             0%, 100% {
+//               transform: rotate(45deg) scale(1);
+//               opacity: 0.8;
+//             }
+//             50% {
+//               transform: rotate(45deg) scale(1.1);
+//               opacity: 1;
+//             }
+//           }
+//
+//           @keyframes slideGradient {
+//             0% { background-position: 0% 50%; }
+//             50% { background-position: 100% 50%; }
+//             100% { background-position: 0% 50%; }
+//           }
+//         `}
+//             </style>
+//         </Box>
+//     );
+// }
 
 function FeaturedPostCard({ post, dark }) {
     const [liked, setLiked] = useState(false);
@@ -636,11 +636,11 @@ export default function Homepage() {
     return (
         <Box>
             {/* 새로운 히어로 섹션 */}
-            <HeroSection dark={dark}/>
+            {/*<HeroSection dark={dark}/>*/}
 
             <Container size="xl" py="xl">
                 {/* 추천 게시물 */}
-                <Stack gap="xl" my={rem(80)}>
+                <Stack gap="xl" my={rem(30)}>
                     <Group justify="space-between" align="flex-end">
                         <div>
                             <Group mb="sm">
@@ -714,83 +714,6 @@ export default function Homepage() {
                     </Center>
                 </Stack>
 
-                {/* 구독 영역 */}
-                <Paper
-                    mt={rem(80)}
-                    p="xl"
-                    radius="lg"
-                    withBorder
-                    style={{
-                        background: dark
-                            ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)'
-                            : 'linear-gradient(135deg, #f6f8ff 0%, #e8f2ff 100%)'
-                    }}
-                >
-                    <Grid>
-                        <Grid.Col span={{ base: 12, md: 6 }}>
-                            <Stack gap="lg">
-                                <div>
-                                    <Badge size="lg" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} mb="md">
-                                        💌 뉴스레터
-                                    </Badge>
-                                    <Title order={3} size="1.8rem" fw={700} mb="sm">
-                                        개발 트렌드를 놓치지 마세요!
-                                    </Title>
-                                    <Text c="dimmed" size="lg">
-                                        매주 화요일, 엄선된 개발 이야기와 최신 기술 트렌드를
-                                        여러분의 메일함으로 배달해드립니다.
-                                    </Text>
-                                </div>
-                                <Group>
-                                    <Button
-                                        variant="gradient"
-                                        gradient={{ from: 'blue', to: 'cyan' }}
-                                        size="lg"
-                                        radius="lg"
-                                        leftSection={<IconMail size={18} />}
-                                    >
-                                        이메일 구독하기
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="lg"
-                                        radius="lg"
-                                        leftSection={<IconRss size={18} />}
-                                    >
-                                        RSS 피드
-                                    </Button>
-                                </Group>
-                            </Stack>
-                        </Grid.Col>
-                        <Grid.Col span={{ base: 12, md: 6 }}>
-                            <Stack gap="lg">
-                                <div>
-                                    <Badge size="lg" variant="gradient" gradient={{ from: 'pink', to: 'violet' }} mb="md">
-                                        🌟 소셜 미디어
-                                    </Badge>
-                                    <Title order={3} size="1.8rem" fw={700} mb="sm">
-                                        개발 커뮤니티와 소통해요
-                                    </Title>
-                                    <Text c="dimmed" size="lg">
-                                        GitHub, Twitter, LinkedIn에서 더 많은 개발 이야기와
-                                        실시간 인사이트를 만나보세요.
-                                    </Text>
-                                </div>
-                                <Group>
-                                    <Button variant="outline" radius="lg" size="md" color="dark">
-                                        GitHub
-                                    </Button>
-                                    <Button variant="outline" radius="lg" size="md" color="blue">
-                                        Twitter
-                                    </Button>
-                                    <Button variant="outline" radius="lg" size="md" color="blue">
-                                        LinkedIn
-                                    </Button>
-                                </Group>
-                            </Stack>
-                        </Grid.Col>
-                    </Grid>
-                </Paper>
             </Container>
         </Box>
     );

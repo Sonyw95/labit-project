@@ -12,7 +12,7 @@ import {
 import { IconMessageCircle, IconSend } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import useAuthStore from "../../stores/authStore.js";
-import {useCreateComment} from "../../hooks/api/useApi.js";
+import {useCreateComment} from "@/hooks/api/useApi.js";
 import CommentItem from "./CommentItem.jsx";
 import {showToast} from "../advanced/Toast.jsx";
 

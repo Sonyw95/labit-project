@@ -1,6 +1,6 @@
-import React, {memo, useCallback} from "react";
+import React, {memo} from "react";
 import {ActionIcon, AppShell, Burger, Group} from "@mantine/core";
-import {IconBell, IconMoon, IconSearch, IconSun} from "@tabler/icons-react";
+import { IconMoon, IconSearch, IconSun} from "@tabler/icons-react";
 import {backgroundBlur} from "@/utils/helpers.jsx";
 import {showToast} from "@/components/advanced/Toast.jsx";
 import useAuthStore from "../../stores/authStore.js";
@@ -10,19 +10,16 @@ import UserLogin from "../common/Auth/UserLogin.jsx";
 const Header = memo(({
                          isDark, navOpened, setNavOpened, toggleColorScheme
                      }) => {
-    const handleNotification = useCallback(() => {
-        showToast.info('알림', '같은 레벨 내에서만 이동 asd .')
-    }, [showToast]);
-
     const { isAuthenticated } = useAuthStore();
 
     return (
         <AppShell.Header
             ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
             style={{
-                background: isDark ? '#161b22' : '#ffffff',
+                // background: isDark ? '#161b22' : '#ffffff',
+                // background: isDark ? '#161b22' : '#ffffff',
                 borderBottom: `1px solid ${isDark ? '#21262d' : '#e5e7eb'}`,
-                ...backgroundBlur({ color:isDark ? '#161b22' : '#ffffff', alpha: 0.7})
+                ...backgroundBlur({ color: isDark ? '#161b22' : '#ffffff', alpha: 0.7})
             }}>
 
             <Group h="100%" px="md" justify="space-between">

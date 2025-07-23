@@ -1,6 +1,7 @@
-import { memo, useState } from 'react';
+import {memo, useEffect, useRef, useState} from 'react';
 import {
     Container,
+    Paper,
     Stack,
     Text,
     Group,
@@ -15,11 +16,10 @@ import {
     Center,
     Box,
     Title,
-    Card,
-    ThemeIcon,
+    useMantineTheme,
+    rem,
 } from '@mantine/core';
 import {
-    IconHeart,
     IconShare,
     IconBookmark,
     IconEdit,
@@ -30,9 +30,14 @@ import {
     IconTag,
     IconArrowUp,
     IconMessageCircle,
-    IconHeartFilled,
 } from '@tabler/icons-react';
-import CommentSection from "../components/section/CommentSection.jsx";
+import {useTheme} from "@/contexts/ThemeContext.jsx";
+import {useCommentsByPost, useDeletePost, usePost, useTogglePostLike} from "@/hooks/api/useApi.js";
+import {useNavigate, useParams} from "react-router-dom";
+import useAuthStore from "@/stores/authStore.js";
+import {showToast} from "@/components/advanced/Toast.jsx";
+import CommentSection from "@/components/section/CommentSection.jsx";
+import hljs from 'highlight.js';
 
 // Mock data for demonstration
 const mockPost = {
@@ -40,16 +45,16 @@ const mockPost = {
     title: 'The Future of Web Design: Exploring Modern UI/UX Trends in 2025',
     summary: 'Discover the latest design trends that are shaping the digital landscape, from Bento Box layouts to immersive user experiences.',
     content: `
-        <div style="line-height: 1.8; font-size: 16px; color: #333;">
+        <div>
             <p>In the rapidly evolving world of web design, 2025 has emerged as a pivotal year where creativity meets functionality. The digital landscape is witnessing unprecedented changes that are reshaping how we interact with websites and applications.</p>
             
-            <h2 style="margin: 2rem 0 1rem 0; color: #2D3748; font-size: 1.5rem;">The Rise of Bento Box Layouts</h2>
+            <h2>The Rise of Bento Box Layouts</h2>
             <p>One of the most significant trends we're seeing is the adoption of Bento Box layouts. Inspired by Japanese lunch boxes, these modular designs create organized, digestible content sections that enhance user experience.</p>
             
-            <h2 style="margin: 2rem 0 1rem 0; color: #2D3748; font-size: 1.5rem;">Immersive Typography</h2>
+            <h2>Immersive Typography</h2>
             <p>Typography is no longer just functional—it's becoming a central design element. Large, expressive fonts are being used as visual centerpieces, creating hierarchy and emotional impact.</p>
             
-            <h2 style="margin: 2rem 0 1rem 0; color: #2D3748; font-size: 1.5rem;">Micro-Interactions and Animations</h2>
+            <h2>Micro-Interactions and Animations</h2>
             <p>Subtle animations and micro-interactions are adding personality to interfaces. These small details create delightful moments that enhance user engagement without overwhelming the experience.</p>
             
             <p>As we continue into 2025, these trends represent more than just aesthetic choices—they reflect a deeper understanding of user needs and technological capabilities.</p>
@@ -72,96 +77,74 @@ const mockPost = {
     thumbnailUrl: 'https://images.unsplash.com/photo-1559028006-448665bd7c7f?w=1200&auto=format&fit=crop&q=80',
     isLiked: false,
 };
+const ModernBlogPostPage = memo(() => {
+    const theme = useMantineTheme();
+    const { dark } = useTheme();
 
-const mockComments = [
-    {
-        id: '1',
-        author: { nickname: 'Alex Kim', profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=60' },
-        content: 'This is a fantastic overview of current design trends. The Bento Box layout is something I\'ve been experimenting with.',
-        createdDate: '2025-01-15T14:30:00Z',
-        likeCount: 5
-    },
-    {
-        id: '2',
-        author: { nickname: 'Maria Rodriguez', profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&auto=format&fit=crop&q=60' },
-        content: 'Really insightful article! I love how you explained the evolution from traditional layouts to these modern approaches.',
-        createdDate: '2025-01-15T16:45:00Z',
-        likeCount: 3
-    }
-];
+    const { postId } = useParams();
+    const { user, isAuthenticated } = useAuthStore();
+    const navigate = useNavigate();
 
-// const CommentSection = ({ comments }) => {
-//     return (
-//         <Stack spacing="xl">
-//             <Group align="center" spacing="md">
-//                 <ThemeIcon size={40} variant="gradient" gradient={{ from: 'violet', to: 'blue' }}>
-//                     <IconMessageCircle size={20} />
-//                 </ThemeIcon>
-//                 <Title order={2} size="h3" fw={600}>
-//                     Comments ({comments.length})
-//                 </Title>
-//             </Group>
-//
-//             <Stack spacing="lg">
-//                 {comments.map((comment) => (
-//                     <Card key={comment.id} shadow="sm" padding="lg" radius="md" withBorder>
-//                         <Group align="flex-start" spacing="md">
-//                             <Avatar src={comment.author.profileImage} size="md" radius="xl" />
-//                             <Box flex={1}>
-//                                 <Group justify="space-between" align="center" mb="xs">
-//                                     <Text fw={500} size="sm">
-//                                         {comment.author.nickname}
-//                                     </Text>
-//                                     <Text size="xs" c="dimmed">
-//                                         {new Date(comment.createdDate).toLocaleDateString()}
-//                                     </Text>
-//                                 </Group>
-//                                 <Text size="sm" mb="md">
-//                                     {comment.content}
-//                                 </Text>
-//                                 <Group spacing="xs">
-//                                     <ActionIcon variant="subtle" size="sm">
-//                                         <IconHeart size={14} />
-//                                     </ActionIcon>
-//                                     <Text size="xs" c="dimmed">{comment.likeCount}</Text>
-//                                 </Group>
-//                             </Box>
-//                         </Group>
-//                     </Card>
-//                 ))}
-//             </Stack>
-//         </Stack>
-//     );
-// };
-
-const PostViewPage = memo(() => {
-    const [isLiked, setIsLiked] = useState(mockPost.isLiked);
-    const [likeCount, setLikeCount] = useState(mockPost.likeCount);
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
-    const post = mockPost;
-    const comments = mockComments;
-    const user = { id: '1', role: 'USER' }; // Mock user
-    const isAuthenticated = true;
+    // API 훅
+    const { data: post, isLoading, error } = usePost(postId)
+    const { data: comments } = useCommentsByPost(postId);
+    const deletePostMutation = useDeletePost();
+    const toggleLikeMutation = useTogglePostLike();
+    const contentRef = useRef(null);
 
-    const handleToggleLike = () => {
+    useEffect(() => {
+        if (contentRef.current) {
+            const codeBlocks = contentRef.current.querySelectorAll('pre');
+
+            codeBlocks.forEach((pre) => {
+                const code = pre.querySelector('code');
+                if (code) {
+                    hljs.highlightElement(code);
+                }
+            });
+        }
+    }, [dark, post?.content]);
+    // 포스트 삭제
+    const handleDeletePost = async () => {
+        try {
+            await deletePostMutation.mutateAsync(postId);
+            showToast.success('포스트 삭제', '포스트가 삭제되었습니다.')
+            navigate('/posts');
+        } catch (error) {
+            showToast.error('삭제 실패', '포스트 삭제 중 오류가 발생했습니다.')
+        }
+        setDeleteModalOpened(false);
+    };
+
+    // 좋아요 토글
+    const handleToggleLike = async () => {
         if (!isAuthenticated) {
+            showToast.warning('로그인 필요', '좋아요를 누르려면 로그인이 필요합니다.')
             return;
         }
-        setIsLiked(!isLiked);
-        setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-    };
-
-    const handleShare = async () => {
         try {
-            await navigator.clipboard.writeText(window.location.href);
-            // Could add toast notification here
+            await toggleLikeMutation.mutateAsync(postId);
         } catch (error) {
-            console.error('Failed to copy link');
+            showToast.error('오류 발생', '좋아요 처리 중 오류가 발생했습니다.')
         }
     };
 
+    // 공유하기
+    const handleShare = async () => {
+        try {
+            await navigator.share({
+                title: post.title,
+                text: post.summary,
+                url: window.location.href,
+            });
+        } catch (error) {
+            // Web Share API를 지원하지 않는 경우 클립보드에 복사
+            await navigator.clipboard.writeText(window.location.href);
+            showToast.success('링크 복사', '포스트 링크가 클립보드에 복사되었습니다.')
+        }
+    };
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('ko-KR', {
             year: 'numeric',
@@ -184,36 +167,35 @@ const PostViewPage = memo(() => {
         <Box>
             {/* Hero Banner Section */}
             <Box
+                pos="relative"
+                h="60vh"
                 style={{
-                    background: `linear-gradient(135deg, 
-                        rgba(109, 40, 217, 0.9) 0%, 
-                        rgba(147, 51, 234, 0.8) 25%, 
-                        rgba(168, 85, 247, 0.7) 50%, 
-                        rgba(196, 181, 253, 0.6) 100%), 
-                        url(${post.thumbnailUrl})`,
+                    backgroundImage: `linear-gradient(135deg, 
+                        ${dark
+                        ? 'rgba(0, 0, 0, 0.7), rgba(30, 41, 59, 0.8)'
+                        : 'rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)'
+                    }), url(${post.thumbnailUrl})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundBlendMode: 'overlay',
-                    minHeight: '60vh',
                     display: 'flex',
                     alignItems: 'center',
-                    position: 'relative',
-                    overflow: 'hidden'
+                    justifyContent: 'center'
                 }}
             >
-                <Container size="lg" style={{ zIndex: 2 }}>
-                    <Stack spacing="xl" align="center">
+                <Container size="lg">
+                    <Stack align="center" gap="xl">
                         {/* Category Badge */}
                         <Badge
                             size="lg"
-                            variant="white"
-                            color={post.category.color}
+                            variant="filled"
                             style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                backdropFilter: 'blur(10px)',
-                                fontSize: '14px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                color: theme.colors.gray[8],
+                                fontSize: rem(14),
                                 fontWeight: 600,
-                                padding: '8px 16px'
+                                padding: `${rem(8)} ${rem(16)}`,
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)'
                             }}
                         >
                             {post.category.label}
@@ -222,14 +204,14 @@ const PostViewPage = memo(() => {
                         {/* Main Title */}
                         <Title
                             order={1}
-                            size="3.5rem"
+                            size={rem(56)}
                             fw={800}
                             ta="center"
                             c="white"
+                            lh={1.1}
+                            maw={900}
                             style={{
-                                lineHeight: 1.1,
-                                textShadow: '2px 4px 12px rgba(0,0,0,0.3)',
-                                maxWidth: '900px',
+                                textShadow: '2px 4px 20px rgba(0,0,0,0.8)',
                             }}
                         >
                             {post.title}
@@ -239,12 +221,12 @@ const PostViewPage = memo(() => {
                         <Text
                             size="xl"
                             ta="center"
-                            c="rgba(255,255,255,0.9)"
+                            c="rgba(255, 255, 255, 0.9)"
                             fw={400}
+                            maw={600}
+                            lh={1.6}
                             style={{
-                                maxWidth: '600px',
-                                lineHeight: 1.6,
-                                textShadow: '1px 2px 8px rgba(0,0,0,0.2)'
+                                textShadow: '1px 2px 12px rgba(0,0,0,0.6)'
                             }}
                         >
                             {post.summary}
@@ -252,43 +234,57 @@ const PostViewPage = memo(() => {
                     </Stack>
                 </Container>
 
-                {/* Decorative Elements */}
+                {/* Decorative Element */}
                 <Box
+                    pos="absolute"
+                    top="15%"
+                    right="8%"
+                    w={150}
+                    h={150}
                     style={{
-                        position: 'absolute',
-                        top: '10%',
-                        right: '10%',
-                        width: '200px',
-                        height: '200px',
                         background: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+                        borderRadius: '50%',
+                        filter: 'blur(1px)',
+                    }}
+                />
+                <Box
+                    pos="absolute"
+                    bottom="20%"
+                    left="5%"
+                    w={100}
+                    h={100}
+                    style={{
+                        background: 'linear-gradient(45deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))',
                         borderRadius: '50%',
                         filter: 'blur(1px)',
                     }}
                 />
             </Box>
 
-            <Container size="lg" mt="-4rem" style={{ position: 'relative', zIndex: 3 }}>
+            <Container size="lg" mt={rem(-64)} pos="relative" style={{ zIndex: 3 }}>
                 {/* Author Info Card */}
-                <Card
+                <Paper
                     shadow="xl"
-                    radius="xl"
-                    padding="xl"
+                    p="xl"
                     mb="xl"
+                    bg={dark ? theme.colors.dark[7] : theme.white}
                     style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95))',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(255,255,255,0.3)'
+                        border: dark
+                            ? `1px solid ${theme.colors.dark[4]}`
+                            : `1px solid ${theme.colors.gray[2]}`
                     }}
                 >
                     <Group justify="space-between" align="flex-start">
-                        <Group align="center" spacing="lg">
+                        <Group align="center" gap="lg">
                             <Avatar
                                 src={post.author.profileImage}
                                 alt={post.author.nickname}
                                 size="xl"
                                 radius="xl"
                                 style={{
-                                    border: '3px solid #e2e8f0',
+                                    border: dark
+                                        ? `3px solid ${theme.colors.dark[4]}`
+                                        : `3px solid ${theme.colors.gray[2]}`,
                                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                                 }}
                             />
@@ -296,18 +292,18 @@ const PostViewPage = memo(() => {
                                 <Text fw={700} size="lg" mb="xs">
                                     {post.author.nickname}
                                 </Text>
-                                <Group spacing="lg" c="dimmed">
-                                    <Group spacing="xs">
+                                <Group gap="lg" c="dimmed">
+                                    <Group gap="xs">
                                         <IconCalendar size={16} />
                                         <Text size="sm">
                                             {formatDate(post.publishedDate)}
                                         </Text>
                                     </Group>
-                                    <Group spacing="xs">
+                                    <Group gap="xs">
                                         <IconEye size={16} />
                                         <Text size="sm">{post.viewCount.toLocaleString()}</Text>
                                     </Group>
-                                    <Group spacing="xs">
+                                    <Group gap="xs">
                                         <IconMessageCircle size={16} />
                                         <Text size="sm">{post.commentCount}</Text>
                                     </Group>
@@ -316,23 +312,20 @@ const PostViewPage = memo(() => {
                         </Group>
 
                         {/* Action Buttons */}
-                        <Group spacing="md">
-                            <ActionIcon
-                                variant={isLiked ? "filled" : "light"}
-                                color={isLiked ? "red" : "gray"}
-                                size="xl"
-                                radius="xl"
-                                onClick={handleToggleLike}
-                                style={{
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        transform: 'scale(1.1)'
-                                    }
-                                }}
-                            >
-                                {isLiked ? <IconHeartFilled size={20} /> : <IconHeart size={20} />}
-                            </ActionIcon>
-                            <Text fw={600} size="sm">{likeCount}</Text>
+                        <Group gap="md">
+                            {/*<ActionIcon*/}
+                            {/*    variant={isLiked ? "filled" : "light"}*/}
+                            {/*    color={isLiked ? "red" : "gray"}*/}
+                            {/*    size="xl"*/}
+                            {/*    radius="xl"*/}
+                            {/*    onClick={handleToggleLike}*/}
+                            {/*    style={{*/}
+                            {/*        transition: 'all 0.2s ease',*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    {isLiked ? <IconHeartFilled size={20} /> : <IconHeart size={20} />}*/}
+                            {/*</ActionIcon>*/}
+                            {/*<Text fw={600} size="sm">{likeCount}</Text>*/}
 
                             <ActionIcon
                                 variant="light"
@@ -341,9 +334,6 @@ const PostViewPage = memo(() => {
                                 onClick={handleShare}
                                 style={{
                                     transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        transform: 'scale(1.1)'
-                                    }
                                 }}
                             >
                                 <IconShare size={20} />
@@ -355,9 +345,6 @@ const PostViewPage = memo(() => {
                                 radius="xl"
                                 style={{
                                     transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        transform: 'scale(1.1)'
-                                    }
                                 }}
                             >
                                 <IconBookmark size={20} />
@@ -392,47 +379,61 @@ const PostViewPage = memo(() => {
 
                     {/* Tags */}
                     {post.tags && post.tags.length > 0 && (
-                        <Group spacing="xs" mt="lg">
-                            <IconTag size={16} color="#6B7280" />
+                        <Group gap="xs" mt="lg">
+                            <IconTag size={16} style={{ color: theme.colors.gray[6] }} />
                             {post.tags.map((tag, index) => (
                                 <Badge
                                     key={index}
                                     variant="gradient"
                                     gradient={{ from: 'violet', to: 'blue', deg: 45 }}
                                     size="sm"
-                                    style={{ fontWeight: 500 }}
+                                    fw={500}
                                 >
                                     {tag}
                                 </Badge>
                             ))}
                         </Group>
                     )}
-                </Card>
+                    <Divider size="sm" mb="xl" mt="xl" />
 
-                {/* Content Section */}
-                <Card shadow="sm" radius="xl" padding="3rem" mb="xl">
-                    <div
-                        dangerouslySetInnerHTML={{ __html: post.content }}
+                    {/* Content Section */}
+                    {/*<Container shadow="sm" p={rem(48)} mb="xl">*/}
+                    {/*    <Box*/}
+                    {/*        ref={contentRef}*/}
+                    {/*        dangerouslySetInnerHTML={{__html: post.content}}*/}
+                    {/*        style={{*/}
+                    {/*            lineHeight: 1.8,*/}
+                    {/*            fontSize: rem(14),*/}
+                    {/*            color: dark ? theme.colors.gray[3] : theme.colors.gray[7],*/}
+                    {/*        }}*/}
+                    {/*    />*/}
+                    {/*</Container>*/}
+                    <Box
+                        ref={contentRef}
+                        dangerouslySetInnerHTML={{__html: post.content}}
+                        mt={100}
                         style={{
                             lineHeight: 1.8,
-                            fontSize: '18px',
-                            color: '#374151'
+                            fontSize: rem(18),
+                            color: dark ? theme.colors.gray[3] : theme.colors.gray[7],
                         }}
                     />
-                </Card>
+                </Paper>
 
                 {/* Floating Action Button */}
                 <ActionIcon
                     variant="gradient"
-                    gradient={{ from: 'violet', to: 'blue' }}
+                    gradient={{from: 'violet', to: 'blue'}}
                     size="xl"
                     radius="xl"
+                    pos="fixed"
+                    bottom={rem(32)}
+                    right={rem(32)}
                     style={{
-                        position: 'fixed',
-                        bottom: '2rem',
-                        right: '2rem',
                         zIndex: 1000,
-                        boxShadow: '0 8px 25px rgba(109, 40, 217, 0.3)',
+                        boxShadow: dark
+                            ? '0 8px 25px rgba(139, 92, 246, 0.4)'
+                            : '0 8px 25px rgba(109, 40, 217, 0.3)',
                         transition: 'all 0.3s ease'
                     }}
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -482,4 +483,4 @@ const PostViewPage = memo(() => {
     );
 });
 
-export default PostViewPage;
+export default ModernBlogPostPage;
