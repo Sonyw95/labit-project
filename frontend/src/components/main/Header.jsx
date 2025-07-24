@@ -11,7 +11,7 @@ import {
     ScrollArea,
     UnstyledButton,
     Collapse,
-    rem
+    rem, Loader
 } from "@mantine/core";
 import {
     IconMoon,
@@ -36,6 +36,7 @@ import UserMenu from "../common/Auth/UserMenu.jsx";
 import UserLogin from "../common/Auth/UserLogin.jsx";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
 import {NavLink, useNavigate} from "react-router-dom";
+import {useNavigationTree} from "../../hooks/api/useApi.js";
 
 const Header = memo(({
                          isDark, navOpened, setNavOpened, toggleColorScheme
@@ -55,47 +56,16 @@ const Header = memo(({
         border: dark ? '#2B2D31' : '#E9ECEF',
         hover: dark ? '#2B2D31' : '#F8F9FA',
     };
+    // API hooks (기존 유지)
+    const {
+        data: categories,
+        isLoading,
+        error
+    } = useNavigationTree();
 
-    // 카테고리 데이터 (실제로는 props나 store에서 가져올 수 있음)
-    const categories = [
-        {
-            id: 2,
-            label: 'Backend',
-            icon: IconServer,
-            children: [
-                { id: 4, label: 'Java', href: '/posts/java', icon: IconCoffee },
-                { id: 5, label: 'Spring Boot', href: '/posts/spring-boot', icon: IconLeaf },
-                {
-                    id: 6,
-                    label: 'Database',
-                    icon: IconDatabase,
-                    children: [
-                        {
-                            id: 10,
-                            label: 'Oracle',
-                            href: '/posts/oracle',
-                            icon: IconCircle,
-                            children: [
-                                { id: 12, label: 'Mantine', href: '/posts/mantine', icon: IconComponents },
-                                { id: 13, label: 'Tailwind CSS', href: '/posts/tailwind', icon: IconBrush }
-                            ]
-                        },
-                        { id: 11, label: 'JPA/Hibernate', href: '/posts/jpa', icon: IconLayersIntersect }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 3,
-            label: 'Frontend',
-            icon: IconDeviceHeartMonitor,
-            children: [
-                { id: 7, label: 'React', href: '/posts/react', icon: IconComponents },
-                { id: 8, label: 'JavaScript', href: '/posts/javascript', icon: IconBrush },
-                { id: 9, label: 'CSS', href: '/posts/css', icon: IconCircle }
-            ]
-        }
-    ];
+    if( isLoading ){
+        return<Loader/>;
+    }
 
     const toggleCategory = (categoryId) => {
         setOpenCategories(prev => {

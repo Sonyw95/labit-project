@@ -14,7 +14,6 @@ import {
     Stack,
     Badge,
     Tooltip,
-    useMantineColorScheme,
     rem,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -41,9 +40,10 @@ import {
     useUpdateNavigation,
     useUpdateNavigationOrder
 } from "../../hooks/api/useApi.js";
+import {useTheme} from "../../contexts/ThemeContext.jsx";
 
 const NavigationManagement = () => {
-    const { colorScheme } = useMantineColorScheme();
+    const { dark } = useTheme();
     const [opened, { open, close }] = useDisclosure(false);
     const [editingItem, setEditingItem] = useState(null);
     const [expandedItems, setExpandedItems] = useState(new Set());
@@ -51,16 +51,16 @@ const NavigationManagement = () => {
     // velog 스타일 색상 팔레트
     const velogColors = useMemo(() => ({
         primary: '#12B886',
-        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
-        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        text: dark ? '#ECECEC' : '#212529',
+        subText: dark ? '#ADB5BD' : '#495057',
+        background: dark ? '#1A1B23' : '#FFFFFF',
+        border: dark ? '#2B2D31' : '#E9ECEF',
+        hover: dark ? '#2B2D31' : '#F8F9FA',
         success: '#12B886',
         error: '#FA5252',
         warning: '#FD7E14',
-        cardBg: colorScheme === 'dark' ? '#242529' : '#FFFFFF',
-    }), [colorScheme]);
+        cardBg: dark ? '#242529' : '#FFFFFF',
+    }), [dark]);
 
     // API hooks (기존 유지)
     const {
@@ -91,7 +91,9 @@ const NavigationManagement = () => {
 
     // 평면 구조로 변환 (DnD용) - 메모이제이션
     const flatNavigations = useMemo(() => {
-        if (!navigations) return [];
+        if (!navigations) {
+            return [];
+        }
 
         const flatten = (items, depth = 0) => {
             return items.reduce((acc, item) => {
@@ -108,7 +110,9 @@ const NavigationManagement = () => {
 
     // 부모 메뉴 옵션 생성 - 메모이제이션
     const parentOptions = useMemo(() => {
-        if (!navigations) return [];
+        if (!navigations) {
+            return [];
+        }
 
         const buildOptions = (items, depth = 0) => {
             return items.reduce((acc, item) => {
@@ -242,7 +246,7 @@ const NavigationManagement = () => {
                                 transition: 'all 0.2s ease',
                                 boxShadow: snapshot.isDragging
                                     ? `0 4px 12px ${velogColors.primary}30`
-                                    : colorScheme === 'dark'
+                                    : dark
                                         ? '0 2px 4px rgba(0, 0, 0, 0.3)'
                                         : '0 2px 4px rgba(0, 0, 0, 0.1)',
                             }}
@@ -406,7 +410,7 @@ const NavigationManagement = () => {
                 )}
             </Draggable>
         );
-    }, [expandedItems, handleToggleExpand, handleToggleStatus, handleOpenModal, handleDelete, velogColors, colorScheme]);
+    }, [expandedItems, handleToggleExpand, handleToggleStatus, handleOpenModal, handleDelete, velogColors, dark]);
 
     // 빈 상태 컴포넌트
     const EmptyState = useMemo(() => (
@@ -476,7 +480,9 @@ const NavigationManagement = () => {
     }
 
     return (
-        <Box style={{ backgroundColor: velogColors.background }}>
+        <Box
+            // style={{ backgroundColor: velogColors.background }}
+        >
             {/* velog 스타일 헤더 */}
             <Group justify="space-between" mb="xl">
                 <Stack gap="xs">

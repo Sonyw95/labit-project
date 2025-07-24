@@ -38,6 +38,8 @@ public class SecurityConfig {
                                 "/api/auth/kakao/login",
                                 "/api/auth/kakao/path",
                                 "/api/posts/**",
+                                "/api/assets/**",
+                                "/api/dashboard/**",
                                 "/api/comments/**",
                                 "/api/auth/token/validate",
                                 "/swagger-ui/**",

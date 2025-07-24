@@ -1,13 +1,17 @@
 package kr.labit.blog.service;
 
 
-import kr.labit.blog.dto.NavigationResponseDto;
+import jakarta.persistence.EntityNotFoundException;
+import kr.labit.blog.dto.navigation.NavigationOrderDto;
+import kr.labit.blog.dto.navigation.NavigationRequestDto;
+import kr.labit.blog.dto.navigation.NavigationResponseDto;
 import kr.labit.blog.entity.LabNavigation;
 import kr.labit.blog.entity.LabUsers;
 import kr.labit.blog.entity.UserRole;
 import kr.labit.blog.repository.LabNavigationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,9 @@ import java.util.stream.Collectors;
 public class NavigationService {
 
     private final LabNavigationRepository navigationRepository;
+
+    private final ActivityLogService activityLogService;
+
 
     /**
      * 사용자 역할에 따른 네비게이션 트리 조회
@@ -169,4 +176,241 @@ public class NavigationService {
     public void evictNavigationCache() {
         log.info("네비게이션 캐시 무효화");
     }
+
+    /**
+     * 네비게이션 메뉴 생성
+     */
+    @Transactional
+    @CacheEvict(value = {"adminNavigations", "navigationTree"}, allEntries = true)
+    public NavigationResponseDto createNavigation(NavigationRequestDto requestDto) {
+        log.info("네비게이션 메뉴 생성: {}", requestDto.getLabel());
+
+        // 부모 메뉴 검증
+        if (requestDto.getParentId() != null) {
+            LabNavigation parent = navigationRepository.findById(requestDto.getParentId())
+                    .orElseThrow(() -> new EntityNotFoundException("부모 메뉴를 찾을 수 없습니다: " + requestDto.getParentId()));
+        }
+
+        // sortOrder 계산
+        Integer maxSortOrder = getMaxSortOrder(requestDto.getParentId());
+        Integer depth = calculateDepth(requestDto.getParentId());
+
+        LabNavigation navigation = LabNavigation.builder()
+                .label(requestDto.getLabel())
+                .href(requestDto.getHref())
+                .parentId(requestDto.getParentId())
+                .sortOrder(maxSortOrder + 1)
+                .depth(depth)
+                .icon(requestDto.getIcon())
+                .description(requestDto.getDescription())
+                .isActive(requestDto.getIsActive())
+                .build();
+
+        LabNavigation saved = navigationRepository.save(navigation);
+
+        // 활동 로그 기록
+        activityLogService.logActivity("네비게이션 메뉴 생성", "메뉴 생성: " + saved.getLabel(),
+                "success", "navigation", saved.getId());
+
+        return NavigationResponseDto.fromEntity(saved);
+    }
+
+    /**
+     * 네비게이션 메뉴 수정
+     */
+    @Transactional
+    @CacheEvict(value = {"adminNavigations", "navigationTree"}, allEntries = true)
+    public NavigationResponseDto updateNavigation(Long id, NavigationRequestDto requestDto) {
+        log.info("네비게이션 메뉴 수정: ID={}", id);
+
+        LabNavigation navigation = navigationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("네비게이션 메뉴를 찾을 수 없습니다: " + id));
+
+        String oldValue = navigation.getLabel();
+
+        // 부모 메뉴 검증 (자기 자신이나 자식 메뉴로 설정되지 않도록)
+        if (requestDto.getParentId() != null) {
+            validateParentChange(id, requestDto.getParentId());
+        }
+
+        // 업데이트
+        navigation.setLabel(requestDto.getLabel());
+        navigation.setHref(requestDto.getHref());
+        navigation.setIcon(requestDto.getIcon());
+        navigation.setDescription(requestDto.getDescription());
+        navigation.setIsActive(requestDto.getIsActive());
+
+        // 부모가 변경되면 depth와 sortOrder 재계산
+        if (!java.util.Objects.equals(navigation.getParentId(), requestDto.getParentId())) {
+            navigation.setParentId(requestDto.getParentId());
+            navigation.setDepth(calculateDepth(requestDto.getParentId()));
+            navigation.setSortOrder(getMaxSortOrder(requestDto.getParentId()) + 1);
+        }
+
+        LabNavigation updated = navigationRepository.save(navigation);
+
+        // 활동 로그 기록
+        activityLogService.logActivity("네비게이션 메뉴 수정",
+                String.format("메뉴 수정: %s -> %s", oldValue, updated.getLabel()),
+                "success", "navigation", updated.getId());
+
+        return NavigationResponseDto.fromEntity(updated);
+    }
+
+    /**
+     * 네비게이션 메뉴 삭제
+     */
+    @Transactional
+    @CacheEvict(value = {"adminNavigations", "navigationTree"}, allEntries = true)
+    public void deleteNavigation(Long id) {
+        log.info("네비게이션 메뉴 삭제: ID={}", id);
+
+        LabNavigation navigation = navigationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("네비게이션 메뉴를 찾을 수 없습니다: " + id));
+
+        // 하위 메뉴가 있는지 확인
+        List<LabNavigation> children = navigationRepository.findChildrenByParentId(id);
+        if (!children.isEmpty()) {
+            throw new IllegalStateException("하위 메뉴가 있는 메뉴는 삭제할 수 없습니다.");
+        }
+
+        String deletedLabel = navigation.getLabel();
+        navigationRepository.delete(navigation);
+
+        // 활동 로그 기록
+        activityLogService.logActivity("네비게이션 메뉴 삭제", "메뉴 삭제: " + deletedLabel,
+                "success", "navigation", id);
+    }
+
+    /**
+     * 네비게이션 순서 변경
+     */
+    @Transactional
+    @CacheEvict(value = {"adminNavigations", "navigationTree"}, allEntries = true)
+    public void updateNavigationOrder(List<NavigationOrderDto> orderData) {
+        log.info("네비게이션 순서 변경: {} 개 메뉴", orderData.size());
+
+        for (NavigationOrderDto order : orderData) {
+            LabNavigation navigation = navigationRepository.findById(order.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("네비게이션 메뉴를 찾을 수 없습니다: " + order.getId()));
+
+            navigation.setSortOrder(order.getSortOrder());
+            navigation.setParentId(order.getParentId());
+            navigation.setDepth(calculateDepth(order.getParentId()));
+
+            navigationRepository.save(navigation);
+        }
+
+        // 활동 로그 기록
+        activityLogService.logActivity("네비게이션 순서 변경",
+                orderData.size() + "개 메뉴 순서 변경", "success", "navigation", null);
+    }
+
+    /**
+     * 네비게이션 활성화/비활성화 토글
+     */
+    @Transactional
+    @CacheEvict(value = {"adminNavigations", "navigationTree"}, allEntries = true)
+    public void toggleNavigationStatus(Long id) {
+        log.info("네비게이션 상태 토글: ID={}", id);
+
+        LabNavigation navigation = navigationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("네비게이션 메뉴를 찾을 수 없습니다: " + id));
+
+        boolean newStatus = !navigation.getIsActive();
+        navigation.setIsActive(newStatus);
+
+        navigationRepository.save(navigation);
+
+        // 활동 로그 기록
+        activityLogService.logActivity("네비게이션 상태 변경",
+                String.format("메뉴 %s: %s", navigation.getLabel(), newStatus ? "활성화" : "비활성화"),
+                "success", "navigation", id);
+    }
+
+    /**
+     * 부모 메뉴 변경
+     */
+    @Transactional
+    @CacheEvict(value = {"adminNavigations", "navigationTree"}, allEntries = true)
+    public void updateNavigationParent(Long id, Long parentId) {
+        log.info("네비게이션 부모 변경: ID={}, 새 부모 ID={}", id, parentId);
+
+        LabNavigation navigation = navigationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("네비게이션 메뉴를 찾을 수 없습니다: " + id));
+
+        // 부모 메뉴 검증
+        if (parentId != null) {
+            validateParentChange(id, parentId);
+        }
+
+        Long oldParentId = navigation.getParentId();
+        navigation.setParentId(parentId);
+        navigation.setDepth(calculateDepth(parentId));
+        navigation.setSortOrder(getMaxSortOrder(parentId) + 1);
+
+        navigationRepository.save(navigation);
+
+        // 활동 로그 기록
+        activityLogService.logActivity("네비게이션 부모 변경",
+                String.format("메뉴 %s 부모 변경: %s -> %s", navigation.getLabel(), oldParentId, parentId),
+                "success", "navigation", id);
+    }
+
+    // 헬퍼 메소드들
+
+    private Integer getMaxSortOrder(Long parentId) {
+        List<LabNavigation> siblings;
+        if (parentId == null) {
+            siblings = navigationRepository.findRootMenus();
+        } else {
+            siblings = navigationRepository.findChildrenByParentId(parentId);
+        }
+
+        return siblings.stream()
+                .mapToInt(nav -> nav.getSortOrder() != null ? nav.getSortOrder() : 0)
+                .max()
+                .orElse(0);
+    }
+
+    private Integer calculateDepth(Long parentId) {
+        if (parentId == null) {
+            return 0;
+        }
+
+        LabNavigation parent = navigationRepository.findById(parentId)
+                .orElseThrow(() -> new EntityNotFoundException("부모 메뉴를 찾을 수 없습니다: " + parentId));
+
+        return (parent.getDepth() != null ? parent.getDepth() : 0) + 1;
+    }
+
+    private void validateParentChange(Long navigationId, Long newParentId) {
+        if (navigationId.equals(newParentId)) {
+            throw new IllegalArgumentException("자기 자신을 부모로 설정할 수 없습니다.");
+        }
+
+        // 순환 참조 검사 (자식 메뉴를 부모로 설정하는 것 방지)
+        LabNavigation newParent = navigationRepository.findById(newParentId)
+                .orElseThrow(() -> new EntityNotFoundException("부모 메뉴를 찾을 수 없습니다: " + newParentId));
+
+        checkCircularReference(navigationId, newParent);
+    }
+
+    private void checkCircularReference(Long navigationId, LabNavigation candidate) {
+        if (candidate.getParentId() == null) {
+            return; // 루트에 도달했으므로 순환 참조 없음
+        }
+
+        if (candidate.getParentId().equals(navigationId)) {
+            throw new IllegalArgumentException("순환 참조가 발생합니다.");
+        }
+
+        LabNavigation parent = navigationRepository.findById(candidate.getParentId())
+                .orElse(null);
+
+        if (parent != null) {
+            checkCircularReference(navigationId, parent);
+        }
+    }
+
 }

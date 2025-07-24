@@ -1,4 +1,4 @@
-package kr.labit.blog.dto;
+package kr.labit.blog.dto.navigation;
 
 import kr.labit.blog.entity.LabNavigation;
 import lombok.Builder;
