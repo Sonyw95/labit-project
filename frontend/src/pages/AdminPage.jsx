@@ -1,6 +1,6 @@
 import {memo} from "react";
 import {useUserInfo} from "../hooks/api/useApi.js";
-import {Badge, Card, Container, Grid, Group, Stack, Title, Text} from "@mantine/core";
+import {Badge, Card, Container, Grid, Group, Stack, Title, Text, Box} from "@mantine/core";
 import {IconShield} from "@tabler/icons-react";
 
 const AdminPage = memo(( () => {
@@ -33,22 +33,22 @@ const AdminPage = memo(( () => {
                 {/* 페이지 헤더 */}
                 <Group>
                     <IconShield size={32} color="var(--mantine-color-red-6)" />
-                    <div>
+                    <Box>
                         <Title order={1}>관리자 페이지</Title>
                         <Text c="dimmed">시스템 관리 및 설정</Text>
-                    </div>
+                    </Box>
                 </Group>
 
                 {/* 현재 사용자 정보 */}
                 {user && (
                     <Card withBorder padding="lg">
                         <Group justify="space-between">
-                            <div>
+                            <Box>
                                 <Text fw={500}>현재 로그인 사용자</Text>
                                 <Text size="sm" c="dimmed">
                                     {user.nickname} ({user.email})
                                 </Text>
-                            </div>
+                            </Box>
                             <Badge color="red" variant="light">
                                 {user.role === 'SUPER_ADMIN' ? '슈퍼관리자' : '관리자'}
                             </Badge>
@@ -57,7 +57,7 @@ const AdminPage = memo(( () => {
                 )}
 
                 {/* 관리 기능들 */}
-                <div>
+                <Box>
                     <Title order={2} mb="md">관리 기능</Title>
                     <Grid>
                         {adminFeatures.map((feature, index) => {
@@ -77,7 +77,7 @@ const AdminPage = memo(( () => {
                             );
                         })}
                     </Grid>
-                </div>
+                </Box>
 
                 {/* 주의사항 */}
                 <Card withBorder padding="lg" style={{ backgroundColor: 'var(--mantine-color-red-light)' }}>

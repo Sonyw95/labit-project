@@ -1,7 +1,7 @@
 import {useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {navigationService, postService, userService} from "@/api/service.js";
+import {navigationService, postService} from "@/api/service.js";
 import useAuthStore from "../../stores/authStore.js";
-import {authService, commentService, uploadService} from "../../api/service.js";
+import {assetService, authService, commentService, dashBoardService, uploadService} from "../../api/service.js";
 import {showToast} from "../../components/advanced/Toast.jsx";
 
 export const queryKeys = {
@@ -19,6 +19,7 @@ export const queryKeys = {
     },
     navigation: {
         tree: ['navigation', 'tree'],
+        all: ['admin', 'navigation', 'all'],
         path: (href) => ['navigation', 'path', href],
     },
     post: {
@@ -32,6 +33,18 @@ export const queryKeys = {
         popularPosts: ['posts', 'popular'],
         recentPosts: ['posts', 'recent'],
     },
+
+    dashboard: {
+        stats: ['admin', 'dashboard', 'stats'],
+        systemStatus: ['admin', 'dashboard', 'system-status'],
+        activityLogs: (limit) => ['admin', 'dashboard', 'activity-logs', limit],
+    },
+
+    assets: {
+        all: ['admin', 'assets', 'all'],
+        folder: (id) => ['admin', 'assets', 'folder', id],
+    },
+
     comments: ['comments'],
     commentsByPost: (postId) => ['comments', 'post', postId],
     commentsByAuthor: (authorId) => ['comments', 'author', authorId],
@@ -41,49 +54,6 @@ export const queryKeys = {
     tokenValidation: ['auth', 'tokenValidation'],
 };
 
-// User Hooks
-export const useUserProfile = () => {
-    return useQuery({
-        queryKey: queryKeys.users.profile(),
-        queryFn: userService.getProfile,
-        staleTime: 5 * 60 * 1000, // 5분
-        retry: 1,
-    });
-};
-
-export const useUpdateProfile = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: userService.updateProfile,
-        onSuccess: (data) => {
-            queryClient.setQueryData(queryKeys.users.profile(), data);
-            queryClient.invalidateQueries({ queryKey: queryKeys.mainPage.data });
-        },
-    });
-};
-
-export const useDeleteAccount = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: userService.deleteAccount,
-        onSuccess: () => {
-            queryClient.clear();
-            localStorage.removeItem('authToken');
-        },
-    });
-};
-
-// Main Page Hook (복수 API)
-// export const useMainPageData = () => {
-//     return useQuery({
-//         queryKey: queryKeys.mainPage.data,
-//         queryFn: mainPageService.getMainPageData,
-//         staleTime: 2 * 60 * 1000, // 2분
-//         retry: 1,
-//     });
-// };
 
 // 네비게이션 트리 조회
 export const useNavigationTree = () => {
@@ -579,6 +549,9 @@ export const useUploadThumbnail = () => {
     });
 };
 
+
+
+
 // 파일 업로드
 export const useUploadFile = () => {
     return useMutation({
@@ -588,6 +561,246 @@ export const useUploadFile = () => {
         },
         onError: (error) => {
             showToast.error("파일 업로드 실패", "파일 업로드 중 오류가 발생했습니다.")
+        },
+    });
+};
+
+
+// Dashboard Hooks
+export const useAdminDashboardStats = () => {
+    return useQuery({
+        queryKey: queryKeys.dashboard.stats,
+        queryFn: dashBoardService.getDashboardStats,
+        staleTime: 5 * 60 * 1000, // 5분
+        retry: 1,
+    });
+};
+export const useAdminSystemStatus = () => {
+    return useQuery({
+        queryKey: queryKeys.dashboard.systemStatus,
+        queryFn: dashBoardService.getSystemStatus,
+        staleTime: 30 * 1000, // 30초
+        refetchInterval: 60 * 1000, // 1분마다 자동 갱신
+        retry: 1,
+    });
+};
+
+export const useAdminActivityLogs = (limit = 10) => {
+    return useQuery({
+        queryKey: queryKeys.dashboard.activityLogs(limit),
+        queryFn: () => dashBoardService.getRecentActivityLogs(limit),
+        staleTime: 2 * 60 * 1000, // 2분
+        retry: 1,
+    });
+};
+
+export const useCreateNavigation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: navigationService.createNavigation,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.navigation.all });
+            queryClient.invalidateQueries({ queryKey: ['navigation'] }); // 일반 사용자 네비게이션도 갱신
+            showToast.success('메뉴 생성 완료', '새로운 메뉴가 생성되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('메뉴 생성 실패', error.message || '메뉴 생성 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useUpdateNavigation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, data }) => navigationService.updateNavigation(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.navigation.all });
+            queryClient.invalidateQueries({ queryKey: ['navigation'] });
+            showToast.success('메뉴 수정 완료', '메뉴가 성공적으로 수정되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('메뉴 수정 실패', error.message || '메뉴 수정 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useDeleteNavigation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: navigationService.deleteNavigation,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.navigation.all });
+            queryClient.invalidateQueries({ queryKey: ['navigation'] });
+            showToast.success('메뉴 삭제 완료', '메뉴가 삭제되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('메뉴 삭제 실패', error.message || '메뉴 삭제 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useUpdateNavigationOrder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: navigationService.updateNavigationOrder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.navigation.all });
+            queryClient.invalidateQueries({ queryKey: ['navigation'] });
+            showToast.success('순서 변경 완료', '메뉴 순서가 변경되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('순서 변경 실패', error.message || '순서 변경 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useToggleNavigationStatus = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: navigationService.toggleNavigationStatus,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.navigation.all });
+            queryClient.invalidateQueries({ queryKey: ['navigation'] });
+            showToast.success('상태 변경 완료', '메뉴 상태가 변경되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('상태 변경 실패', error.message || '상태 변경 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useUpdateNavigationParent = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, parentId }) => navigationService.updateNavigationParent(id, parentId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.navigation.all });
+            queryClient.invalidateQueries({ queryKey: ['navigation'] });
+            showToast.success('부모 메뉴 변경 완료', '부모 메뉴가 변경되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('부모 메뉴 변경 실패', error.message || '부모 메뉴 변경 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+// Asset Management Hooks
+export const useAdminAssets = () => {
+    return useQuery({
+        queryKey: queryKeys.assets.all,
+        queryFn: assetService.getAllAssets,
+        staleTime: 5 * 60 * 1000, // 5분
+        retry: 1,
+    });
+};
+
+export const useCreateAssetFolder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: assetService.createAssetFolder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('폴더 생성 완료', '새로운 폴더가 생성되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('폴더 생성 실패', error.message || '폴더 생성 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useUpdateAssetFolder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, data }) => assetService.updateAssetFolder(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('폴더 수정 완료', '폴더가 성공적으로 수정되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('폴더 수정 실패', error.message || '폴더 수정 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useDeleteAssetFolder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: assetService.deleteAssetFolder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('폴더 삭제 완료', '폴더가 삭제되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('폴더 삭제 실패', error.message || '폴더 삭제 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useMoveAsset = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ assetId, targetFolderId }) => assetService.moveAsset(assetId, targetFolderId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('에셋 이동 완료', '에셋이 이동되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('에셋 이동 실패', error.message || '에셋 이동 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useUpdateAssetOrder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: assetService.updateAssetOrder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('순서 변경 완료', '에셋 순서가 변경되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('순서 변경 실패', error.message || '순서 변경 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useUploadAssetFile = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ file, folderId }) => assetService.uploadAssetFile(file, folderId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('파일 업로드 완료', '파일이 성공적으로 업로드되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('파일 업로드 실패', error.message || '파일 업로드 중 오류가 발생했습니다.');
+        },
+    });
+};
+
+export const useDeleteAssetFile = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: assetService.deleteAssetFile,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all });
+            showToast.success('파일 삭제 완료', '파일이 삭제되었습니다.');
+        },
+        onError: (error) => {
+            showToast.error('파일 삭제 실패', error.message || '파일 삭제 중 오류가 발생했습니다.');
         },
     });
 };

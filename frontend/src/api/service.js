@@ -1,12 +1,5 @@
 import {api} from "@/api/client.js";
 
-export const userService = {
-    getProfile: () => api.get('/users/profile'),
-    updateProfile: (data) => api.put('/users/profile', data),
-    deleteAccount: () => api.delete('/users/account'),
-    createUser: (userData) => api.post('/users', userData),
-};
-
 
 // Navigation API
 export const navigationService = {
@@ -21,7 +14,78 @@ export const navigationService = {
     // 네비게이션 캐시 무효화
     evictNavigationCache: () => api.post('/navigation/cache/evict'),
 
+
+    // 네비게이션 메뉴 생성
+    createNavigation: (navigationData) => api.post('/navigation/create', navigationData),
+
+    // 네비게이션 메뉴 수정
+    updateNavigation: (id, navigationData) => api.put(`/navigation/${id}`, navigationData),
+
+    // 네비게이션 메뉴 삭제
+    deleteNavigation: (id) => api.delete(`/navigation/${id}`),
+
+    // 네비게이션 메뉴 순서 변경 (Drag & Drop 후)
+    updateNavigationOrder: (orderData) => api.put('/navigation/order', orderData),
+
+    // 네비게이션 메뉴 활성화/비활성화
+    toggleNavigationStatus: (id) => api.patch(`/navigation/${id}/toggle-status`),
+
+    // 부모 메뉴 변경
+    updateNavigationParent: (id, parentId) => api.patch(`/navigation/${id}/parent`, { parentId }),
 }
+
+export const dashBoardService = {
+    // 대시보드 통계 조회
+    getDashboardStats: () => api.get('/admin/dashboard/stats'),
+
+    // 시스템 상태 조회
+    getSystemStatus: () => api.get('/admin/dashboard/system-status'),
+
+    // 최근 활동 로그 조회
+    getRecentActivityLogs: (limit = 10) => api.get('/admin/dashboard/activity-logs', {
+        params: { limit }
+    }),
+}
+
+
+export const assetService = {
+    // 모든 에셋 조회 (관리자용)
+    getAllAssets: () => api.get('/assets/all'),
+
+    // 에셋 폴더 생성
+    createAssetFolder: (folderData) => api.post('/assets/folder', folderData),
+
+    // 에셋 폴더 수정
+    updateAssetFolder: (id, folderData) => api.put(`/assets/folder/${id}`, folderData),
+
+    // 에셋 폴더 삭제
+    deleteAssetFolder: (id) => api.delete(`/assets/folder/${id}`),
+
+    // 에셋 이동
+    moveAsset: (assetId, targetFolderId) => api.patch(`/assets/${assetId}/move`, { targetFolderId }),
+
+    // 에셋 순서 변경
+    updateAssetOrder: (orderData) => api.put('/assets/order', orderData),
+
+    // 에셋 파일 업로드
+    uploadAssetFile: async (file, folderId) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (folderId) {
+            formData.append('folderId', folderId);
+        }
+
+        return await api.post('/assets/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
+    // 에셋 파일 삭제
+    deleteAssetFile: (id) => api.delete(`/assets/file/${id}`),
+}
+
 
 export const authService = {
 
@@ -225,3 +289,5 @@ export const uploadService = {
         params: { url }
     }),
 };
+
+

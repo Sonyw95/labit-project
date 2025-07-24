@@ -1,6 +1,5 @@
 import React, {lazy, Suspense} from "react";
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
-import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
 import UserSettings from "@/components/common/Auth/UserSettings.jsx";
@@ -8,6 +7,7 @@ import PostViewPage from "./pages/PostViewPage.jsx";
 import PostList from "@/components/section/post/PostList.jsx";
 import MainPage from "@/stores/HomePage.jsx";
 import PostEditPage from "./pages/PostEdit.jsx";
+import AdminManagementPage from "./pages/AdminManagementPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -30,7 +30,7 @@ const AppRouter = () => {
 
 
                 // { path: '/setting/user', element: <UserSettings/>},
-                { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminPage/></ProtectedRoute>}
+                { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminManagementPage/></ProtectedRoute>}
             ]
         },
     ]);
