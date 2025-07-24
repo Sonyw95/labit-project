@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     Container,
     Tabs,
     Title,
-    Paper,
     Group,
     Badge,
     Text,
     LoadingOverlay,
     Alert,
     ActionIcon,
-    Tooltip, Box,
+    Tooltip,
+    Box,
+    Stack,
+    useMantineColorScheme,
+    rem,
 } from '@mantine/core';
 import {
     IconDashboard,
@@ -19,14 +22,29 @@ import {
     IconRefresh,
     IconAlertCircle,
 } from '@tabler/icons-react';
-import {useAdminDashboardStats, useAdminSystemStatus} from "../hooks/api/useApi.js";
+import { useAdminDashboardStats, useAdminSystemStatus } from "../hooks/api/useApi.js";
 import NavigationManagement from "../components/admin/NavigationManagement.jsx";
 import AssetManagement from "../components/admin/AssetManagement.jsx";
 import AdminDashboard from "../components/admin/AdminDashboard.jsx";
 
 const AdminManagementPage = () => {
+    const { colorScheme } = useMantineColorScheme();
     const [activeTab, setActiveTab] = useState('dashboard');
 
+    // velog 스타일 색상
+    const velogColors = useMemo(() => ({
+        primary: '#12B886',
+        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        success: '#12B886',
+        error: '#FA5252',
+        warning: '#FD7E14',
+    }), [colorScheme]);
+
+    // API hooks (기존 유지)
     const {
         data: dashboardStats,
         isLoading: statsLoading,
@@ -38,11 +56,8 @@ const AdminManagementPage = () => {
         isLoading: statusLoading
     } = useAdminSystemStatus();
 
-    const handleRefreshData = () => {
-        refetchStats();
-    };
-
-    const tabs = [
+    // 탭 설정 (메모이제이션으로 리렌더링 방지)
+    const adminTabs = useMemo(() => [
         {
             value: 'dashboard',
             label: '대시보드',
@@ -61,90 +76,247 @@ const AdminManagementPage = () => {
             icon: IconFolder,
             component: AssetManagement,
         },
-    ];
+    ], []);
+
+    // 데이터 새로고침 핸들러 (useCallback으로 리렌더링 방지)
+    const handleRefreshData = useCallback(() => {
+        refetchStats();
+    }, [refetchStats]);
+
+    // 시스템 상태 확인 (메모이제이션)
+    const isSystemHealthy = useMemo(() =>
+        systemStatus?.status === 'healthy', [systemStatus?.status]
+    );
+
+    const isDataLoading = useMemo(() =>
+        statsLoading || statusLoading, [statsLoading, statusLoading]
+    );
+
+    // 시스템 상태 뱃지 컴포넌트
+    const SystemStatusBadge = useMemo(() => {
+        if (!systemStatus) return null;
+
+        return (
+            <Badge
+                size="md"
+                radius="md"
+                variant="filled"
+                style={{
+                    backgroundColor: isSystemHealthy ? velogColors.success : velogColors.error,
+                    color: 'white',
+                    fontWeight: 500,
+                }}
+                leftSection={
+                    !isSystemHealthy && <IconAlertCircle size={14} />
+                }
+            >
+                시스템 {isSystemHealthy ? '정상' : '오류'}
+            </Badge>
+        );
+    }, [systemStatus, isSystemHealthy, velogColors.success, velogColors.error]);
+
+    // 새로고침 버튼 컴포넌트
+    const RefreshButton = useMemo(() => (
+        <Tooltip label="데이터 새로고침" position="bottom">
+            <ActionIcon
+                variant="subtle"
+                size="lg"
+                radius="md"
+                onClick={handleRefreshData}
+                loading={isDataLoading}
+                style={{
+                    color: velogColors.subText,
+                    backgroundColor: 'transparent',
+                    transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = velogColors.hover;
+                    e.currentTarget.style.color = velogColors.text;
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = velogColors.subText;
+                }}
+            >
+                <IconRefresh size={20} />
+            </ActionIcon>
+        </Tooltip>
+    ), [handleRefreshData, isDataLoading, velogColors]);
 
     return (
-        <Container size="xl" py="xl">
-            <Paper shadow="sm" p="md" radius="md" mb="xl">
-                <Group justify="space-between" mb="lg">
-                    <Box>
-                        <Title order={1} size="h2" mb="xs">
-                            관리자 페이지
-                        </Title>
-                        <Text c="dimmed" size="sm">
-                            시스템 관리 및 콘텐츠 관리를 위한 관리자 도구
-                        </Text>
+        <Box
+            style={{
+                backgroundColor: velogColors.background,
+                minHeight: '100vh',
+                transition: 'background-color 0.2s ease'
+            }}
+        >
+            <Container size="xl" py="xl">
+                <Stack gap="2rem">
+                    {/* velog 스타일 헤더 */}
+                    <Box
+                        p="xl"
+                        style={{
+                            backgroundColor: velogColors.background,
+                            borderBottom: `1px solid ${velogColors.border}`,
+                            borderRadius: rem(12),
+                            boxShadow: colorScheme === 'dark'
+                                ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+                                : '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        }}
+                    >
+                        <Group justify="space-between" align="flex-start">
+                            <Stack gap="xs">
+                                <Title
+                                    order={1}
+                                    size="2rem"
+                                    style={{
+                                        color: velogColors.text,
+                                        fontWeight: 700,
+                                        letterSpacing: '-0.02em',
+                                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                        lineHeight: 1.2,
+                                    }}
+                                >
+                                    관리자 페이지
+                                </Title>
+                                <Text
+                                    size="md"
+                                    style={{
+                                        color: velogColors.subText,
+                                        fontWeight: 400,
+                                        lineHeight: 1.5,
+                                    }}
+                                >
+                                    시스템 관리 및 콘텐츠 관리를 위한 관리자 도구
+                                </Text>
+                            </Stack>
+
+                            <Group gap="md" align="flex-start">
+                                {SystemStatusBadge}
+                                {RefreshButton}
+                            </Group>
+                        </Group>
+
+                        {/* 시스템 오류 알림 */}
+                        {!isSystemHealthy && (
+                            <Alert
+                                icon={<IconAlertCircle size={18} />}
+                                color="red"
+                                variant="light"
+                                mt="lg"
+                                radius="md"
+                                styles={{
+                                    root: {
+                                        backgroundColor: `${velogColors.error}10`,
+                                        border: `1px solid ${velogColors.error}30`,
+                                    },
+                                    message: {
+                                        color: velogColors.text,
+                                    }
+                                }}
+                            >
+                                시스템에 문제가 발생했습니다. 시스템 관리자에게 문의하세요.
+                            </Alert>
+                        )}
                     </Box>
 
-                    <Group>
-                        {systemStatus && (
-                            <Badge
-                                color={systemStatus.status === 'healthy' ? 'green' : 'red'}
-                                variant="filled"
-                                leftSection={
-                                    systemStatus.status !== 'healthy' &&
-                                    <IconAlertCircle size={12} />
-                                }
-                            >
-                                시스템 {systemStatus.status === 'healthy' ? '정상' : '오류'}
-                            </Badge>
-                        )}
-
-                        <Tooltip label="데이터 새로고침">
-                            <ActionIcon
-                                variant="subtle"
-                                onClick={handleRefreshData}
-                                loading={statsLoading || statusLoading}
-                            >
-                                <IconRefresh size={16} />
-                            </ActionIcon>
-                        </Tooltip>
-                    </Group>
-                </Group>
-
-                {systemStatus?.status !== 'healthy' && (
-                    <Alert
-                        icon={<IconAlertCircle size={16} />}
-                        color="red"
-                        variant="light"
-                        mb="md"
+                    {/* velog 스타일 탭 컨테이너 */}
+                    <Box
+                        style={{
+                            backgroundColor: velogColors.background,
+                            borderRadius: rem(12),
+                            border: `1px solid ${velogColors.border}`,
+                            boxShadow: colorScheme === 'dark'
+                                ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+                                : '0 2px 8px rgba(0, 0, 0, 0.06)',
+                            overflow: 'hidden',
+                        }}
                     >
-                        시스템에 문제가 발생했습니다. 시스템 관리자에게 문의하세요.
-                    </Alert>
-                )}
-            </Paper>
-
-            <Tabs
-                value={activeTab}
-                onChange={setActiveTab}
-                variant="outline"
-                radius="md"
-            >
-                <Tabs.List grow mb="xl">
-                    {tabs.map((tab) => (
-                        <Tabs.Tab
-                            key={tab.value}
-                            value={tab.value}
-                            leftSection={<tab.icon size={16} />}
+                        <Tabs
+                            value={activeTab}
+                            onChange={setActiveTab}
+                            variant="unstyled"
+                            keepMounted={false}
                         >
-                            {tab.label}
-                        </Tabs.Tab>
-                    ))}
-                </Tabs.List>
+                            {/* velog 스타일 탭 리스트 */}
+                            <Tabs.List
+                                style={{
+                                    backgroundColor: velogColors.hover,
+                                    borderBottom: `1px solid ${velogColors.border}`,
+                                    padding: rem(4),
+                                    gap: rem(4),
+                                }}
+                            >
+                                {adminTabs.map((tab) => (
+                                    <Tabs.Tab
+                                        key={tab.value}
+                                        value={tab.value}
+                                        leftSection={<tab.icon size={18} />}
+                                        style={{
+                                            flex: 1,
+                                            padding: `${rem(12)} ${rem(16)}`,
+                                            borderRadius: rem(8),
+                                            fontSize: rem(14),
+                                            fontWeight: 500,
+                                            color: activeTab === tab.value ? 'white' : velogColors.subText,
+                                            backgroundColor: activeTab === tab.value
+                                                ? velogColors.primary
+                                                : 'transparent',
+                                            border: 'none',
+                                            transition: 'all 0.2s ease',
+                                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (activeTab !== tab.value) {
+                                                e.currentTarget.style.backgroundColor = velogColors.background;
+                                                e.currentTarget.style.color = velogColors.text;
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (activeTab !== tab.value) {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                                e.currentTarget.style.color = velogColors.subText;
+                                            }
+                                        }}
+                                    >
+                                        {tab.label}
+                                    </Tabs.Tab>
+                                ))}
+                            </Tabs.List>
 
-                {tabs.map((tab) => (
-                    <Tabs.Panel key={tab.value} value={tab.value}>
-                        <Paper shadow="xs" p="lg" radius="md" pos="relative">
-                            <LoadingOverlay
-                                visible={statsLoading || statusLoading}
-                                overlayProps={{ blur: 2 }}
-                            />
-                            <tab.component />
-                        </Paper>
-                    </Tabs.Panel>
-                ))}
-            </Tabs>
-        </Container>
+                            {/* 탭 패널 */}
+                            {adminTabs.map((tab) => (
+                                <Tabs.Panel key={tab.value} value={tab.value}>
+                                    <Box
+                                        p="xl"
+                                        pos="relative"
+                                        style={{
+                                            backgroundColor: velogColors.background,
+                                            minHeight: '500px',
+                                        }}
+                                    >
+                                        <LoadingOverlay
+                                            visible={isDataLoading}
+                                            overlayProps={{
+                                                blur: 2,
+                                                backgroundOpacity: 0.3,
+                                                color: velogColors.background,
+                                            }}
+                                            loaderProps={{
+                                                color: velogColors.primary,
+                                                size: 'lg'
+                                            }}
+                                        />
+                                        <tab.component />
+                                    </Box>
+                                </Tabs.Panel>
+                            ))}
+                        </Tabs>
+                    </Box>
+                </Stack>
+            </Container>
+        </Box>
     );
 };
 

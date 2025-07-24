@@ -51,7 +51,7 @@ const Header = memo(({
         primary: '#12B886',
         text: dark ? '#ECECEC' : '#212529',
         subText: dark ? '#ADB5BD' : '#495057',
-        background: dark ? '#1A1B23' : '#FFFFFF',
+        background: dark ? '#1A1B23' : '#f8f9fa',
         border: dark ? '#2B2D31' : '#E9ECEF',
         hover: dark ? '#2B2D31' : '#F8F9FA',
     };
@@ -397,9 +397,10 @@ const Header = memo(({
                 // ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
                 style={{
                     borderBottom: `1px solid ${velogColors.border}`,
+                    // backgroundColor: velogColors.background,
                     ...backgroundBlur({
                         color: velogColors.background,
-                        alpha: 0.8
+                        alpha: 1
                     }),
                     height: '64px', // velog 헤더 높이
                 }}>

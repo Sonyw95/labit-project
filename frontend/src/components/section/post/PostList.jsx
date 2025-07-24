@@ -36,7 +36,7 @@ function PostList() {
         primary: '#12B886',
         text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
         subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#f8f9fa',
         border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
         hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
     };
@@ -343,7 +343,7 @@ function PostList() {
                             </Stack>
                         </Center>
                     ) : (
-                        <Grid gutter="xl">
+                        <Grid gutter="md">
                             {visiblePosts.map((post, index) => (
                                 <Grid.Col
                                     key={`${post.id}-${index}`}
@@ -351,7 +351,7 @@ function PostList() {
                                         sm: 6,      // 태블릿: 2개씩
                                         md: 6,      // 중간 화면: 2개씩
                                         lg: 4,      // 데스크톱: 3개씩
-                                        xl: 4       // 큰 화면: 3개씩
+                                        xl: 3       // 큰 화면: 3개씩
                                     }}
                                     style={{ display: 'flex' }}
                                 >
