@@ -2,12 +2,13 @@ import {memo, useState} from 'react';
 import {
     Stack,
     Text,
-    Paper,
     Textarea,
     Button,
     Group,
     Alert,
     Divider,
+    Box,
+    useMantineColorScheme,
 } from '@mantine/core';
 import { IconMessageCircle, IconSend } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
@@ -19,8 +20,20 @@ import {showToast} from "../advanced/Toast.jsx";
 const CommentSection = memo(({ postId, comments = [] }) => {
     const { isAuthenticated } = useAuthStore();
     const createCommentMutation = useCreateComment();
+    const { colorScheme } = useMantineColorScheme();
 
     const [isWriting, setIsWriting] = useState(false);
+
+    // velog 스타일 색상
+    const velogColors = {
+        primary: '#12B886',
+        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        inputBg: colorScheme === 'dark' ? '#2B2D31' : '#FFFFFF',
+    };
 
     // 댓글 작성 폼
     const form = useForm({
@@ -56,41 +69,76 @@ const CommentSection = memo(({ postId, comments = [] }) => {
     };
 
     return (
-        <Stack spacing="lg">
+        <Stack gap="xl">
             {/* 댓글 헤더 */}
-            <Group justify="space-between">
-                <Group spacing="xs">
-                    <IconMessageCircle size={20} />
-                    <Text fw={600} size="lg">
-                        댓글 {comments.length}개
-                    </Text>
-                </Group>
+            <Group gap="sm">
+                <IconMessageCircle size={24} color={velogColors.primary} />
+                <Text
+                    fw={700}
+                    size="xl"
+                    c={velogColors.text}
+                    style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+                >
+                    댓글 {comments.length}개
+                </Text>
             </Group>
 
             {/* 댓글 작성 영역 */}
-            <Paper withBorder p="md">
+            <Box>
                 {!isAuthenticated ? (
-                    <Alert color="blue" title="로그인이 필요합니다">
-                        댓글을 작성하려면 로그인해주세요.
-                    </Alert>
+                    <Box
+                        p="xl"
+                        style={{
+                            backgroundColor: velogColors.hover,
+                            border: `1px solid ${velogColors.border}`,
+                            borderRadius: '12px',
+                            textAlign: 'center'
+                        }}
+                    >
+                        <Text c={velogColors.subText} size="lg">
+                            댓글을 작성하려면 로그인해주세요.
+                        </Text>
+                    </Box>
                 ) : (
                     <form onSubmit={form.onSubmit(handleSubmitComment)}>
-                        <Stack spacing="md">
+                        <Stack gap="md">
                             <Textarea
                                 placeholder="댓글을 입력하세요..."
-                                minRows={isWriting ? 4 : 2}
+                                minRows={isWriting ? 5 : 3}
                                 autosize
                                 {...form.getInputProps('content')}
                                 onFocus={() => setIsWriting(true)}
+                                styles={{
+                                    input: {
+                                        backgroundColor: velogColors.inputBg,
+                                        border: `2px solid ${velogColors.border}`,
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        color: velogColors.text,
+                                        '&:focus': {
+                                            borderColor: velogColors.primary,
+                                        },
+                                        '&::placeholder': {
+                                            color: velogColors.subText,
+                                        }
+                                    }
+                                }}
                             />
 
                             {isWriting && (
-                                <Group justify="flex-end">
+                                <Group justify="flex-end" gap="md">
                                     <Button
-                                        variant="outline"
+                                        variant="subtle"
+                                        color="gray"
                                         onClick={() => {
                                             setIsWriting(false);
                                             form.reset();
+                                        }}
+                                        style={{
+                                            color: velogColors.subText,
+                                            '&:hover': {
+                                                backgroundColor: velogColors.hover
+                                            }
                                         }}
                                     >
                                         취소
@@ -99,24 +147,36 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                                         type="submit"
                                         leftSection={<IconSend size={16} />}
                                         loading={createCommentMutation.isLoading}
+                                        style={{
+                                            backgroundColor: velogColors.primary,
+                                            '&:hover': {
+                                                backgroundColor: '#0CA678'
+                                            }
+                                        }}
                                     >
-                                        댓글 작성
+                                        댓글 등록
                                     </Button>
                                 </Group>
                             )}
                         </Stack>
                     </form>
                 )}
-            </Paper>
+            </Box>
 
-            <Divider />
+            {/* 구분선 */}
+            <Divider color={velogColors.border} />
 
             {/* 댓글 목록 */}
-            <Stack spacing="md">
+            <Stack gap="lg">
                 {comments.length === 0 ? (
-                    <Text c="dimmed" ta="center" py="xl">
-                        첫 번째 댓글을 작성해보세요!
-                    </Text>
+                    <Box py="3rem" style={{ textAlign: 'center' }}>
+                        <Text c={velogColors.subText} size="lg">
+                            아직 댓글이 없어요.
+                        </Text>
+                        <Text c={velogColors.subText} size="md" mt="xs">
+                            첫 번째 댓글을 작성해보세요! 💬
+                        </Text>
+                    </Box>
                 ) : (
                     comments.map((comment) => (
                         <CommentItem

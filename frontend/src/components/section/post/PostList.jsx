@@ -13,7 +13,8 @@ import {
     Transition,
     Group,
     ActionIcon,
-    Tooltip,
+    Box,
+    useMantineColorScheme,
 } from '@mantine/core';
 import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -27,6 +28,17 @@ const INFINITE_SCROLL_THRESHOLD = POSTS_PER_PAGE;
 
 function PostList() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const { colorScheme } = useMantineColorScheme();
+
+    // velog 스타일 색상
+    const velogColors = {
+        primary: '#12B886',
+        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+    };
 
     // 상태 관리
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -161,124 +173,256 @@ function PostList() {
     // 로딩 상태
     if (isLoading) {
         return (
-            <Container size="lg">
-                <Center h={400}>
-                    <Stack align="center" spacing="md">
-                        <Loader size="lg" />
-                        <Text>포스트를 불러오는 중...</Text>
-                    </Stack>
-                </Center>
-            </Container>
+            <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+                <Container size="lg" py="xl">
+                    <Center h={400}>
+                        <Stack align="center" gap="lg">
+                            <Loader size="lg" color={velogColors.primary} />
+                            <Text size="lg" c={velogColors.subText}>
+                                포스트를 불러오는 중...
+                            </Text>
+                        </Stack>
+                    </Center>
+                </Container>
+            </Box>
         );
     }
 
     // 에러 상태
     if (isError) {
         return (
-            <Container size="lg">
-                <Alert
-                    icon={<IconAlertCircle size={16} />}
-                    title="포스트 로드 실패"
-                    color="red"
-                    action={
-                        <ActionIcon variant="light" color="red" onClick={() => refetch()}>
-                            <IconRefresh size={16} />
-                        </ActionIcon>
-                    }
-                >
-                    {error?.message || '포스트를 불러오는 중 오류가 발생했습니다.'}
-                </Alert>
-            </Container>
+            <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+                <Container size="lg" py="xl">
+                    <Center>
+                        <Box
+                            p="xl"
+                            style={{
+                                backgroundColor: velogColors.hover,
+                                border: `1px solid ${velogColors.border}`,
+                                borderRadius: '12px',
+                                textAlign: 'center',
+                                maxWidth: '400px'
+                            }}
+                        >
+                            <Stack align="center" gap="lg">
+                                <IconAlertCircle size={48} color="red" />
+                                <Text size="lg" fw={600} c={velogColors.text}>
+                                    포스트 로드 실패
+                                </Text>
+                                <Text size="md" c={velogColors.subText}>
+                                    {error?.message || '포스트를 불러오는 중 오류가 발생했습니다.'}
+                                </Text>
+                                <ActionIcon
+                                    variant="filled"
+                                    size="lg"
+                                    onClick={() => refetch()}
+                                    style={{ backgroundColor: velogColors.primary }}
+                                >
+                                    <IconRefresh size={20} />
+                                </ActionIcon>
+                            </Stack>
+                        </Box>
+                    </Center>
+                </Container>
+            </Box>
         );
     }
 
     return (
-        <Container size="lg">
-            <Stack spacing="xl">
-                {/* Breadcrumbs */}
+        <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+            <Container size="lg" py="xl">
+                <Stack gap="3rem">
+                    {/* velog 스타일 헤더 */}
+                    <Group justify="space-between" align="center">
+                        {/* 좌측: 정렬 탭 */}
+                        <Tabs
+                            value={selectedCategory === 'all' ? 'latest' : selectedCategory}
+                            onChange={(value) => {
+                                if (['latest', 'trending', 'week'].includes(value)) {
+                                    setSelectedCategory('all');
+                                } else {
+                                    handleCategoryChange(value);
+                                }
+                            }}
+                            variant="unstyled"
+                            styles={{
+                                list: {
+                                    gap: '2rem',
+                                },
+                                tab: {
+                                    fontSize: '18px',
+                                    fontWeight: 600,
+                                    color: velogColors.subText,
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    borderBottom: `3px solid transparent`,
+                                    borderRadius: 0,
+                                    padding: '0.5rem 0',
+                                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                    transition: 'all 0.2s ease',
+                                    '&:hover': {
+                                        color: velogColors.text,
+                                        backgroundColor: 'transparent',
+                                    },
+                                    '&[data-active]': {
+                                        color: velogColors.primary,
+                                        borderBottomColor: velogColors.primary,
+                                        backgroundColor: 'transparent',
+                                    }
+                                }
+                            }}
+                        >
+                            <Tabs.List>
+                                <Tabs.Tab value="latest">최신</Tabs.Tab>
+                                <Tabs.Tab value="trending">트렌딩</Tabs.Tab>
+                                <Tabs.Tab value="week">이번 주</Tabs.Tab>
+                            </Tabs.List>
+                        </Tabs>
 
-                {/* 카테고리 탭 */}
-                <Tabs
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                    variant="pills"
-                >
-                    <Tabs.List>
-                        {categoryOptions.map((category) => (
-                            <Tabs.Tab key={category.id} value={category.id}>
-                                {category.label}
-                            </Tabs.Tab>
-                        ))}
-                    </Tabs.List>
-                </Tabs>
-
-                {/* 포스트 그리드 */}
-                {visiblePosts.length === 0 ? (
-                    <Center h={300}>
-                        <Text size="lg" c="dimmed">
-                            {selectedCategory === 'all'
-                                ? '아직 작성된 포스트가 없습니다.'
-                                : '해당 카테고리에 포스트가 없습니다.'
-                            }
-                        </Text>
-                    </Center>
-                ) : (
-                    <Grid>
-                        {visiblePosts.map((post, index) => (
-                            <Grid.Col key={`${post.id}-${index}`} span={{ base: 12, sm: 6, lg: 4 }}>
-                                <Transition
-                                    mounted
-                                    transition="fade"
-                                    duration={300}
-                                    timingFunction="ease"
-                                >
-                                    {(styles) => (
-                                        <div style={styles}>
-                                            <PostCard post={post} />
-                                        </div>
-                                    )}
-                                </Transition>
-                            </Grid.Col>
-                        ))}
-                    </Grid>
-                )}
-
-                {/* 무한 스크롤 로더 */}
-                {!showPagination && hasNextPage && (
-                    <Center>
-                        <Group>
-                            {isFetchingNextPage ? (
-                                <Loader size="md" />
-                            ) : (
-                                <Tooltip label="스크롤하여 더 많은 포스트 보기">
-                                    <ActionIcon
-                                        size="lg"
-                                        variant="light"
-                                        onClick={handleLoadMore}
+                        {/* 우측: 카테고리 드롭다운 */}
+                        {categoryOptions.length > 1 && (
+                            <Group gap="md">
+                                <Text size="sm" c={velogColors.subText}>카테고리:</Text>
+                                <Box>
+                                    <select
+                                        value={selectedCategory}
+                                        onChange={(e) => handleCategoryChange(e.target.value)}
+                                        style={{
+                                            backgroundColor: velogColors.background,
+                                            border: `1px solid ${velogColors.border}`,
+                                            borderRadius: '6px',
+                                            padding: '6px 12px',
+                                            color: velogColors.text,
+                                            fontSize: '14px',
+                                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                            cursor: 'pointer',
+                                            outline: 'none',
+                                        }}
                                     >
-                                        <IconRefresh size={18} />
-                                    </ActionIcon>
-                                </Tooltip>
-                            )}
-                        </Group>
-                    </Center>
-                )}
+                                        {categoryOptions.map((category) => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </Box>
+                            </Group>
+                        )}
+                    </Group>
 
-                {/* 페이지네이션 */}
-                {showPagination && totalPages > 1 && (
-                    <Center>
-                        <Pagination
-                            value={currentPage}
-                            onChange={setCurrentPage}
-                            total={totalPages}
-                            size="md"
-                            withEdges
-                            siblings={2}
-                        />
-                    </Center>
-                )}
-            </Stack>
-        </Container>
+                    {/* 구분선 */}
+                    <Box style={{ height: '1px', backgroundColor: velogColors.border, margin: '1rem 0' }} />
+
+                    {/* 포스트 그리드 */}
+                    {visiblePosts.length === 0 ? (
+                        <Center py="6rem">
+                            <Stack align="center" gap="lg">
+                                <Text size="xl" c={velogColors.subText} fw={500}>
+                                    {selectedCategory === 'all'
+                                        ? '아직 작성된 포스트가 없어요'
+                                        : '해당 카테고리에 포스트가 없어요'
+                                    }
+                                </Text>
+                                <Text size="md" c={velogColors.subText}>
+                                    첫 번째 포스트를 작성해보세요! ✍️
+                                </Text>
+                            </Stack>
+                        </Center>
+                    ) : (
+                        <Grid gutter="xl">
+                            {visiblePosts.map((post, index) => (
+                                <Grid.Col
+                                    key={`${post.id}-${index}`}
+                                    span={{ base: 12, sm: 6, lg: 4 }}
+                                    style={{ display: 'flex' }}
+                                >
+                                    <Transition
+                                        mounted
+                                        transition="fade-up"
+                                        duration={300}
+                                        timingFunction="ease"
+                                    >
+                                        {(styles) => (
+                                            <div style={{ ...styles, width: '100%', display: 'flex' }}>
+                                                <PostCard post={post} />
+                                            </div>
+                                        )}
+                                    </Transition>
+                                </Grid.Col>
+                            ))}
+                        </Grid>
+                    )}
+
+                    {/* 무한 스크롤 로더 - velog 스타일 */}
+                    {!showPagination && hasNextPage && (
+                        <Center py="xl">
+                            {isFetchingNextPage ? (
+                                <Group gap="md">
+                                    <Loader size="md" color={velogColors.primary} />
+                                    <Text size="md" c={velogColors.subText}>
+                                        더 많은 포스트 로딩중...
+                                    </Text>
+                                </Group>
+                            ) : (
+                                <ActionIcon
+                                    size="xl"
+                                    variant="outline"
+                                    onClick={handleLoadMore}
+                                    style={{
+                                        borderColor: velogColors.border,
+                                        color: velogColors.primary,
+                                        backgroundColor: velogColors.background,
+                                        '&:hover': {
+                                            backgroundColor: velogColors.hover,
+                                            borderColor: velogColors.primary,
+                                        }
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = velogColors.hover;
+                                        e.currentTarget.style.borderColor = velogColors.primary;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = velogColors.background;
+                                        e.currentTarget.style.borderColor = velogColors.border;
+                                    }}
+                                >
+                                    <IconRefresh size={24} />
+                                </ActionIcon>
+                            )}
+                        </Center>
+                    )}
+
+                    {/* 페이지네이션 - velog 스타일 */}
+                    {showPagination && totalPages > 1 && (
+                        <Center py="xl">
+                            <Pagination
+                                value={currentPage}
+                                onChange={setCurrentPage}
+                                total={totalPages}
+                                size="lg"
+                                withEdges
+                                siblings={2}
+                                styles={{
+                                    control: {
+                                        backgroundColor: velogColors.background,
+                                        color: velogColors.text,
+                                        border: `1px solid ${velogColors.border}`,
+                                        '&:hover': {
+                                            backgroundColor: velogColors.hover,
+                                        },
+                                        '&[data-active]': {
+                                            backgroundColor: velogColors.primary,
+                                            borderColor: velogColors.primary,
+                                            color: 'white',
+                                        }
+                                    }
+                                }}
+                            />
+                        </Center>
+                    )}
+                </Stack>
+            </Container>
+        </Box>
     );
 }
 

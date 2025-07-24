@@ -146,7 +146,10 @@ const PostViewPage = memo(() => {
     }
 
     return (
-        <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+        <Box
+            // bg={velogColors.background}
+             style={{ minHeight: '100vh' }}
+        >
             <Container size="md" py="xl">
                 <Stack gap="xl">
                     {/* 포스트 헤더 */}

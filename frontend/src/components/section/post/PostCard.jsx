@@ -8,30 +8,47 @@ import {
     Avatar,
     ActionIcon,
     Stack,
-    Tooltip,
     Box,
-    rem,
     useMantineColorScheme,
-    useMantineTheme,
 } from '@mantine/core';
 import {
     IconHeart,
+    IconHeartFilled,
     IconEye,
     IconMessageCircle,
     IconCalendar,
     IconTag,
-    IconTrendingUp,
 } from '@tabler/icons-react';
 
 const PostCard = memo(({ post }) => {
     const { colorScheme } = useMantineColorScheme();
-    const theme = useMantineTheme();
+
+    // velog 스타일 색상
+    const velogColors = {
+        primary: '#12B886',
+        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        cardBg: colorScheme === 'dark' ? '#1E1F25' : '#FFFFFF',
+    };
 
     // 날짜 포맷팅 (메모이제이션으로 리렌더링 방지)
     const formattedDate = useMemo(() => {
         const date = new Date(post.publishedDate || post.createdDate);
+        const now = new Date();
+        const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+        if (diffInDays === 0) {
+            return '오늘';
+        } else if (diffInDays === 1) {
+            return '1일 전';
+        } else if (diffInDays < 7) {
+            return `${diffInDays}일 전`;
+        }
+
         return date.toLocaleDateString('ko-KR', {
-            year: 'numeric',
             month: 'long',
             day: 'numeric',
         });
@@ -50,10 +67,11 @@ const PostCard = memo(({ post }) => {
         if (!post.summary) {
             return '';
         }
-        return post.summary.length > 120
-            ? `${post.summary.substring(0, 120)}...`
+        const maxLength = post.thumbnailUrl ? 120 : 250; // 길이 조정 (150→120, 300→250)
+        return post.summary.length > maxLength
+            ? `${post.summary.substring(0, maxLength)}...`
             : post.summary;
-    }, [post.summary]);
+    }, [post.summary, post.thumbnailUrl]);
 
     const handleCardClick = () => {
         console.log('Navigate to post:', post.id);
@@ -71,95 +89,56 @@ const PostCard = memo(({ post }) => {
 
     return (
         <Card
-            shadow="sm"
-            radius="xl"
+            shadow="none"
+            radius="md"
             withBorder={false}
             style={{
                 cursor: 'pointer',
-                height: '100%',
-                background: colorScheme === 'dark'
-                    ? `linear-gradient(145deg, ${theme.colors.dark[7]}, ${theme.colors.dark[6]})`
-                    : `linear-gradient(145deg, ${theme.white}, ${theme.colors.gray[0]})`,
-                border: colorScheme === 'dark'
-                    ? `1px solid ${theme.colors.dark[4]}`
-                    : `1px solid ${theme.colors.gray[2]}`,
-                transition: 'all 0.3s ease',
-                overflow: 'hidden'
+                height: '400px', // 높이 축소 480px → 400px
+                backgroundColor: velogColors.cardBg,
+                border: `1px solid ${velogColors.border}`,
+                transition: 'all 0.2s ease',
+                overflow: 'hidden',
+                '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: colorScheme === 'dark'
+                        ? '0 8px 25px rgba(0, 0, 0, 0.3)'
+                        : '0 8px 25px rgba(0, 0, 0, 0.08)',
+                }
             }}
             onClick={handleCardClick}
             onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = colorScheme === 'dark'
-                    ? '0 12px 40px rgba(0, 0, 0, 0.4)'
-                    : '0 12px 40px rgba(0, 0, 0, 0.1)';
+                    ? '0 8px 25px rgba(0, 0, 0, 0.3)'
+                    : '0 8px 25px rgba(0, 0, 0, 0.08)';
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = colorScheme === 'dark'
-                    ? '0 4px 20px rgba(0, 0, 0, 0.2)'
-                    : '0 4px 20px rgba(0, 0, 0, 0.05)';
+                e.currentTarget.style.boxShadow = 'none';
             }}
         >
-            <Stack gap="md" style={{ height: '100%', position: 'relative' }}>
-                {/* 썸네일 이미지 */}
+            <Stack gap="sm" style={{ height: '100%' }}>
+                {/* 썸네일 이미지 - 있을 때만 표시 */}
                 {post.thumbnailUrl && (
                     <Card.Section>
-                        <Box pos="relative" style={{ overflow: 'hidden' }}>
+                        <Box style={{ overflow: 'hidden' }}>
                             <Image
                                 src={post.thumbnailUrl}
                                 alt={post.title}
-                                height={220}
+                                height={160} // 이미지 높이 축소 200px → 160px
                                 fit="cover"
-                                fallbackSrc="https://via.placeholder.com/400x220?text=No+Image"
+                                fallbackSrc="https://via.placeholder.com/400x160?text=No+Image"
                                 style={{
                                     transition: 'transform 0.3s ease'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                    e.currentTarget.style.transform = 'scale(1.02)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'scale(1)';
                                 }}
                             />
-
-                            {/* Featured Badge Overlay */}
-                            {post.isFeatured && (
-                                <Badge
-                                    variant="filled"
-                                    color="orange"
-                                    size="sm"
-                                    leftSection={<IconTrendingUp size={12} />}
-                                    style={{
-                                        position: 'absolute',
-                                        top: rem(12),
-                                        right: rem(12),
-                                        fontWeight: 600,
-                                        textTransform: 'none'
-                                    }}
-                                >
-                                    추천
-                                </Badge>
-                            )}
-
-                            {/* Category Badge Overlay */}
-                            {post.category && (
-                                <Badge
-                                    variant="filled"
-                                    size="sm"
-                                    style={{
-                                        position: 'absolute',
-                                        top: rem(12),
-                                        left: rem(12),
-                                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                        color: 'white',
-                                        fontWeight: 500,
-                                        textTransform: 'none',
-                                        backdropFilter: 'blur(10px)'
-                                    }}
-                                >
-                                    {post.category.label}
-                                </Badge>
-                            )}
                         </Box>
                     </Card.Section>
                 )}
@@ -168,77 +147,79 @@ const PostCard = memo(({ post }) => {
                     {/* 제목 */}
                     <Text
                         fw={700}
-                        size="lg"
+                        size="xl"
                         lineClamp={2}
-                        mb="sm"
+                        mb="xs"
                         style={{
-                            color: colorScheme === 'dark' ? theme.colors.gray[1] : theme.colors.gray[9],
-                            lineHeight: 1.3,
-                            letterSpacing: '-0.01em'
+                            color: velogColors.text,
+                            lineHeight: 1.4,
+                            letterSpacing: '-0.01em',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            minHeight: '2.4rem', // 제목 높이 조정 (2.8rem → 2.4rem)
                         }}
                     >
                         {post.title}
                     </Text>
 
                     {/* 요약 */}
-                    {truncatedSummary && (
-                        <Text
-                            size="sm"
-                            c="dimmed"
-                            lineClamp={3}
-                            mb="md"
-                            style={{
-                                flex: 1,
-                                lineHeight: 1.6,
-                                color: colorScheme === 'dark' ? theme.colors.gray[4] : theme.colors.gray[6]
-                            }}
-                        >
-                            {truncatedSummary}
-                        </Text>
-                    )}
+                    <Text
+                        size="md"
+                        c={velogColors.subText}
+                        lineClamp={post.thumbnailUrl ? 2 : 6} // 라인 수 조정 (3→2, 8→6)
+                        mb="md"
+                        style={{
+                            flex: 1,
+                            lineHeight: 1.6,
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        }}
+                    >
+                        {truncatedSummary || '요약이 없습니다.'}
+                    </Text>
 
-                    {/* 태그 */}
-                    {tags.length > 0 && (
-                        <Group gap="xs" mb="md">
-                            <IconTag
-                                size={14}
-                                style={{
-                                    color: colorScheme === 'dark' ? theme.colors.gray[5] : theme.colors.gray[5]
-                                }}
-                            />
-                            {tags.map((tag, index) => (
-                                <Badge
-                                    key={index}
-                                    variant="light"
-                                    size="xs"
-                                    color="gray"
-                                    style={{
-                                        textTransform: 'none',
-                                        fontWeight: 500
-                                    }}
-                                >
-                                    {tag}
-                                </Badge>
-                            ))}
-                        </Group>
-                    )}
+                    {/* 태그 영역 - 항상 동일한 높이 유지 */}
+                    <Box style={{ minHeight: '28px', display: 'flex', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        {tags.length > 0 ? (
+                            <Group gap="xs">
+                                {tags.map((tag, index) => (
+                                    <Badge
+                                        key={index}
+                                        variant="light"
+                                        size="sm"
+                                        style={{
+                                            backgroundColor: `${velogColors.primary}15`,
+                                            color: velogColors.primary,
+                                            border: 'none',
+                                            textTransform: 'none',
+                                            fontWeight: 500,
+                                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                        }}
+                                    >
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </Group>
+                        ) : (
+                            <Box /> // 빈 공간 유지
+                        )}
+                    </Box>
 
                     {/* 하단 정보 */}
                     <Group justify="space-between" mt="auto">
                         {/* 작성자 정보 */}
                         <Group
-                            gap="xs"
+                            gap="sm"
                             onClick={handleAuthorClick}
                             style={{
                                 cursor: 'pointer',
-                                padding: rem(4),
-                                borderRadius: rem(8),
-                                transition: 'background-color 0.2s ease'
+                                padding: '4px 8px',
+                                borderRadius: '8px',
+                                transition: 'background-color 0.2s ease',
+                                '&:hover': {
+                                    backgroundColor: velogColors.hover,
+                                }
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = colorScheme === 'dark'
-                                    ? theme.colors.dark[5]
-                                    : theme.colors.gray[1];
+                                e.currentTarget.style.backgroundColor = velogColors.hover;
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor = 'transparent';
@@ -249,16 +230,21 @@ const PostCard = memo(({ post }) => {
                                 size="sm"
                                 alt={post.author.nickname}
                                 style={{
-                                    border: colorScheme === 'dark'
-                                        ? `2px solid ${theme.colors.dark[4]}`
-                                        : `2px solid ${theme.colors.gray[2]}`
+                                    border: `2px solid ${velogColors.border}`
                                 }}
                             />
                             <Box>
-                                <Text size="sm" fw={600}>
+                                <Text
+                                    size="sm"
+                                    fw={600}
+                                    c={velogColors.text}
+                                    style={{
+                                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                    }}
+                                >
                                     {post.author.nickname}
                                 </Text>
-                                <Group gap="xs" c="dimmed">
+                                <Group gap="xs" c={velogColors.subText}>
                                     <IconCalendar size={12} />
                                     <Text size="xs">{formattedDate}</Text>
                                 </Group>
@@ -266,38 +252,38 @@ const PostCard = memo(({ post }) => {
                         </Group>
 
                         {/* 통계 정보 */}
-                        <Group gap="lg">
-                            <Tooltip label="좋아요" position="top">
-                                <ActionIcon
-                                    variant="subtle"
-                                    size="sm"
-                                    onClick={handleLikeClick}
-                                    style={{
-                                        borderRadius: rem(8),
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = theme.colors.red[1];
-                                        e.currentTarget.style.color = theme.colors.red[6];
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                        e.currentTarget.style.color = 'inherit';
-                                    }}
-                                >
-                                    <Group gap={4}>
+                        <Group gap="md">
+                            <ActionIcon
+                                variant="subtle"
+                                size="sm"
+                                onClick={handleLikeClick}
+                                color={post.isLiked ? 'red' : 'gray'}
+                                style={{
+                                    borderRadius: '8px',
+                                    transition: 'all 0.2s ease',
+                                    '&:hover': {
+                                        backgroundColor: post.isLiked ? '#FFE8E8' : velogColors.hover,
+                                    }
+                                }}
+                            >
+                                <Group gap={4}>
+                                    {post.isLiked ? (
+                                        <IconHeartFilled size={14} />
+                                    ) : (
                                         <IconHeart size={14} />
-                                        <Text size="xs" fw={500}>{post.likeCount}</Text>
-                                    </Group>
-                                </ActionIcon>
-                            </Tooltip>
+                                    )}
+                                    <Text size="xs" fw={500} c={velogColors.subText}>
+                                        {post.likeCount}
+                                    </Text>
+                                </Group>
+                            </ActionIcon>
 
-                            <Group gap={4} c="dimmed">
+                            <Group gap={4} c={velogColors.subText}>
                                 <IconEye size={14} />
                                 <Text size="xs" fw={500}>{post.viewCount}</Text>
                             </Group>
 
-                            <Group gap={4} c="dimmed">
+                            <Group gap={4} c={velogColors.subText}>
                                 <IconMessageCircle size={14} />
                                 <Text size="xs" fw={500}>{post.commentCount}</Text>
                             </Group>
