@@ -410,7 +410,7 @@ const Header = memo(({
                         <Burger
                             opened={navOpened}
                             onClick={() => setNavOpened(!navOpened)}
-                            hiddenFrom="sm"
+                            hiddenFrom="lg"
                             size="sm"
                             color={velogColors.text}
                         />
@@ -441,7 +441,7 @@ const Header = memo(({
                         </Box>
 
                         {/* 카테고리 네비게이션 - 데스크톱에서만 표시 */}
-                        <Group gap="xs" visibleFrom="md">
+                        <Group gap="xs" visibleFrom="lg">
                             {categories.map((category) => (
                                 <CategoryButton key={category.id} category={category} />
                             ))}
@@ -449,7 +449,7 @@ const Header = memo(({
                     </Group>
 
                     {/* 우측: 액션 버튼들 */}
-                    <Group gap="sm">
+                    <Group gap="sm" visibleFrom="lg">
                         {/* 검색 버튼 */}
                         <ActionIcon
                             variant="subtle"

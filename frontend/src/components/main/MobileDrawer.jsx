@@ -1,359 +1,441 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Drawer,
     Stack,
     Group,
     Text,
     Box,
-    ThemeIcon,
-    Badge,
     UnstyledButton,
-    Divider,
+    Avatar,
     Button,
-    ActionIcon,
+    Divider,
+    Switch,
+    ScrollArea,
+    Collapse,
     rem,
     useMantineColorScheme
 } from '@mantine/core';
 import {
-    IconCode,
-    IconPalette,
-    IconBrandGithub,
-    IconBrandLinkedin,
-    IconSettings,
-    IconLogout,
-    IconLogin,
-
+    IconHome,
+    IconTrendingUp,
+    IconClock,
+    IconCalendarWeek,
+    IconSearch,
+    IconEdit,
+    IconMoon,
+    IconSun,
+    IconChevronDown,
+    IconServer,
+    IconDeviceHeartMonitor,
+    IconCoffee,
+    IconLeaf,
+    IconDatabase,
+    IconCircle,
+    IconComponents,
+    IconBrush,
+    IconLayersIntersect,
+    IconUser,
+    IconLogin
 } from '@tabler/icons-react';
-// import NavItem from "@/components/NavItem.jsx";
-const MobileDrawer= ({
-                         opened,
-                         onClose,
-                         navigationItems,
-                         popularTags,
-                         isLoggedIn,
-                         setIsLoggedIn,
-                         pathname,
-                         dark,
-                     }) => {
-    const { toggleColorScheme } = useMantineColorScheme();
+import useAuthStore from '../../stores/authStore.js';
+import { showToast } from '@/components/advanced/Toast.jsx';
+import {useTheme} from "../../contexts/ThemeContext.jsx";
 
-    return (
-        <Drawer
-            keepMounted={false}
-            opened={opened}
-            onClose={onClose}
-            // hidden="xl"
-            hiddenFrom="lg"
-            size="xs"
-            position="left"
-            title={
-                <Group gap="xs">
-                    <ThemeIcon
-                        size="md"
-                        radius="md"
+const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/images/logo.png" }) => {
+    const { dark } = useTheme();
+    const { isAuthenticated, user } = useAuthStore();
+    const [openCategories, setOpenCategories] = useState(new Set([2, 3])); // Backend, Frontend 기본 열림
+
+    // velog 스타일 색상
+    const velogColors = {
+        primary: '#12B886',
+        text: dark ? '#ECECEC' : '#212529',
+        subText: dark ? '#ADB5BD' : '#495057',
+        background: dark ? '#1A1B23' : '#FFFFFF',
+        border: dark ? '#2B2D31' : '#E9ECEF',
+        hover: dark ? '#2B2D31' : '#F8F9FA',
+    };
+
+    // 카테고리 데이터 (실제로는 props나 store에서 가져올 수 있음)
+    const categories = [
+        {
+            id: 2,
+            label: 'Backend',
+            icon: IconServer,
+            children: [
+                { id: 4, label: 'Java', href: '/posts/java', icon: IconCoffee },
+                { id: 5, label: 'Spring Boot', href: '/posts/spring-boot', icon: IconLeaf },
+                {
+                    id: 6,
+                    label: 'Database',
+                    icon: IconDatabase,
+                    children: [
+                        {
+                            id: 10,
+                            label: 'Oracle',
+                            href: '/posts/oracle',
+                            icon: IconCircle,
+                            children: [
+                                { id: 12, label: 'Mantine', href: '/posts/mantine', icon: IconComponents },
+                                { id: 13, label: 'Tailwind CSS', href: '/posts/tailwind', icon: IconBrush }
+                            ]
+                        },
+                        { id: 11, label: 'JPA/Hibernate', href: '/posts/jpa', icon: IconLayersIntersect }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 3,
+            label: 'Frontend',
+            icon: IconDeviceHeartMonitor,
+            children: [
+                { id: 7, label: 'React', href: '/posts/react', icon: IconComponents },
+                { id: 8, label: 'JavaScript', href: '/posts/javascript', icon: IconBrush },
+                { id: 9, label: 'CSS', href: '/posts/css', icon: IconCircle }
+            ]
+        }
+    ];
+
+    const toggleCategory = (categoryId) => {
+        setOpenCategories(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(categoryId)) {
+                newSet.delete(categoryId);
+            } else {
+                newSet.add(categoryId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleNavigation = (href) => {
+        if (href) {
+            window.location.href = href;
+            onClose();
+        }
+    };
+
+    const handleMainNavigation = (path) => {
+        window.location.href = path;
+        onClose();
+    };
+
+    const CategoryItem = ({ category, level = 0 }) => {
+        const Icon = category.icon;
+        const hasChildren = category.children && category.children.length > 0;
+        const isClickable = category.href;
+        const isOpen = openCategories.has(category.id);
+
+        const handleClick = () => {
+            if (hasChildren && !isClickable) {
+                toggleCategory(category.id);
+            } else if (isClickable) {
+                handleNavigation(category.href);
+            }
+        };
+
+        return (
+            <Box>
+                <UnstyledButton
+                    onClick={handleClick}
+                    style={{
+                        width: '100%',
+                        padding: `${rem(12)} ${rem(16)}`,
+                        paddingLeft: rem(16 + level * 20),
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: rem(12),
+                        borderRadius: rem(8),
+                        transition: 'all 0.15s ease',
+                        backgroundColor: 'transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = velogColors.hover;
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                >
+                    <Box style={{ color: level === 0 ? velogColors.primary : velogColors.subText }}>
+                        <Icon size={level === 0 ? 20 : 18} />
+                    </Box>
+
+                    <Text
+                        size={level === 0 ? "md" : "sm"}
+                        fw={level === 0 ? 600 : 400}
                         style={{
-                            background: '#4c6ef5',
+                            color: velogColors.text,
+                            flex: 1
                         }}
                     >
-                        <IconCode size={16} />
-                    </ThemeIcon>
-                    <Box>
-                        <Text
-                            size="md"
-                            fw={700}
+                        {category.label}
+                    </Text>
+
+                    {hasChildren && (
+                        <Box style={{ color: velogColors.subText }}>
+                            <IconChevronDown
+                                size={16}
+                                style={{
+                                    transform: isOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+                                    transition: 'transform 0.2s ease'
+                                }}
+                            />
+                        </Box>
+                    )}
+
+                    {isClickable && (
+                        <Box
                             style={{
-                                color: dark ? '#ffffff' : '#1e293b',
+                                width: rem(6),
+                                height: rem(6),
+                                borderRadius: '50%',
+                                backgroundColor: velogColors.primary,
+                                opacity: 0.7,
                             }}
-                        >
-                            LABit
-                        </Text>
-                    </Box>
-                </Group>
-            }
-            overlayProps={{
-                backgroundOpacity: 0.3,
-                blur: 4,
+                        />
+                    )}
+                </UnstyledButton>
+
+                {hasChildren && (
+                    <Collapse in={isOpen} transitionDuration={200}>
+                        <Box mt="xs">
+                            {category.children.map((child) => (
+                                <CategoryItem key={child.id} category={child} level={level + 1} />
+                            ))}
+                        </Box>
+                    </Collapse>
+                )}
+            </Box>
+        );
+    };
+
+    const MenuButton = ({ icon: Icon, label, onClick, variant = 'default' }) => (
+        <UnstyledButton
+            onClick={onClick}
+            style={{
+                width: '100%',
+                padding: `${rem(14)} ${rem(16)}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: rem(14),
+                borderRadius: rem(8),
+                backgroundColor: variant === 'primary' ? velogColors.primary : 'transparent',
+                color: variant === 'primary' ? 'white' : velogColors.text,
+                transition: 'all 0.15s ease',
             }}
-            transitionProps={{
-                transition: 'slide-right',
-                duration: 300,
-                timingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            onMouseEnter={(e) => {
+                if (variant !== 'primary') {
+                    e.currentTarget.style.backgroundColor = velogColors.hover;
+                }
             }}
-            styles={{
-                header: {
-                    background: dark ? '#161b22' : '#ffffff',  // 매우 어두운 네비바
-                    borderBottom: `1px solid ${dark ? '#2a2a2a' : '#e2e8f0'}`,
-                    padding: rem(16),
-                },
-                content: {
-                    background: dark ? '#161b22' : '#ffffff',  // 매우 어두운 네비바
-                },
-                close: {
-                    color: dark ? '#ffffff' : '#1e293b',
-                    '&:hover': {
-                        background: dark ? '#2a2a2a' : '#f3f4f6',
-                    }
+            onMouseLeave={(e) => {
+                if (variant !== 'primary') {
+                    e.currentTarget.style.backgroundColor = 'transparent';
                 }
             }}
         >
-            <Stack gap="lg" style={{ padding: rem(8) }}>
-                {/* User Profile Section */}
-                {isLoggedIn && (
-                    <Box
+            <Icon size={20} />
+            <Text size="md" fw={variant === 'primary' ? 600 : 500}>
+                {label}
+            </Text>
+        </UnstyledButton>
+    );
+
+    return (
+        <Drawer
+            opened={opened}
+            onClose={onClose}
+            position="left"
+            size="lg"
+            styles={{
+                content: {
+                    backgroundColor: velogColors.background,
+                },
+                header: {
+                    backgroundColor: velogColors.background,
+                    borderBottom: `1px solid ${velogColors.border}`,
+                    padding: rem(20),
+                },
+                body: {
+                    padding: 0,
+                }
+            }}
+            title={
+                <Group gap="sm" align="center">
+                    <Avatar
+                        src={logo}
+                        size="md"
+                        radius="lg"
                         style={{
-                            padding: rem(16),
-                            background: dark ? '#1a1a1a' : '#f8fafc',
-                            borderRadius: rem(12),
-                        }}
-                    >
-                        {/*<Group gap="md">*/}
-                        {/*    <Avatar*/}
-                        {/*        src={userProfile.avatar}*/}
-                        {/*        size={48}*/}
-                        {/*        radius="xl"*/}
-                        {/*        style={{*/}
-                        {/*            border: `3px solid ${dark ? '#4c6ef5' : '#339af0'}`,*/}
-                        {/*        }}*/}
-                        {/*    />*/}
-                        {/*    <Box style={{ flex: 1, minWidth: 0 }}>*/}
-                        {/*        <Text*/}
-                        {/*            fw={600}*/}
-                        {/*            size="sm"*/}
-                        {/*            style={{ color: dark ? '#ffffff' : '#1e293b' }}*/}
-                        {/*            truncate*/}
-                        {/*        >*/}
-                        {/*            {userProfile.name}*/}
-                        {/*        </Text>*/}
-                        {/*        <Text*/}
-                        {/*            size="xs"*/}
-                        {/*            style={{ color: dark ? '#999999' : '#64748b' }}*/}
-                        {/*            truncate*/}
-                        {/*        >*/}
-                        {/*            {userProfile.email}*/}
-                        {/*        </Text>*/}
-                        {/*        <Badge*/}
-                        {/*            size="xs"*/}
-                        {/*            style={{*/}
-                        {/*                background: dark ? '#2a2a2a' : '#e2e8f0',*/}
-                        {/*                color: dark ? '#ffffff' : '#475569',*/}
-                        {/*                marginTop: rem(4),*/}
-                        {/*            }}*/}
-                        {/*        >*/}
-                        {/*            {userProfile.role}*/}
-                        {/*        </Badge>*/}
-                        {/*    </Box>*/}
-                        {/*</Group>*/}
-                    </Box>
-                )}
-
-                {/* Navigation Items */}
-                {/*<NavItem navigationItems={navigationItems} dark={dark} onClose={onClose} pathname={pathname}/>*/}
-                <Divider style={{ borderColor: dark ? '#2a2a2a' : '#e2e8f0' }} />
-
-                {/* Popular Tags */}
-                <Box>
-                    <Text
-                        size="sm"
-                        fw={600}
-                        mb="md"
-                        style={{
-                            color: dark ? '#ffffff' : '#1e293b',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px'
-                        }}
-                    >
-                        인기 태그
-                    </Text>
-                    <Stack gap="xs">
-                        {popularTags.map((tag) => (
-                            <UnstyledButton
-                                key={tag.name}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    padding: rem(12),
-                                    borderRadius: rem(8),
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        background: dark ? '#1a1a1a' : '#f8fafc',
-                                    }
-                                }}
-                            >
-                                <Badge
-                                    size="sm"
-                                    style={{
-                                        background: tag.color === 'blue' ? '#3b82f6' :
-                                            tag.color === 'green' ? '#10b981' :
-                                                tag.color === 'orange' ? '#f59e0b' :
-                                                    tag.color === 'indigo' ? '#6366f1' :
-                                                        '#eab308',
-                                        color: 'white'
-                                    }}
-                                >
-                                    {tag.name}
-                                </Badge>
-                                <Text
-                                    size="sm"
-                                    style={{ color: dark ? '#666666' : '#64748b' }}
-                                >
-                                    {tag.count}
-                                </Text>
-                            </UnstyledButton>
-                        ))}
-                    </Stack>
-                </Box>
-
-                <Divider style={{ borderColor: dark ? '#2a2a2a' : '#e2e8f0' }} />
-
-                {/* Settings & Actions */}
-                <Stack gap="xs">
-                    <UnstyledButton
-                        onClick={toggleColorScheme}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            padding: rem(16),
-                            borderRadius: rem(12),
+                            backgroundColor: velogColors.primary,
+                            border: `1px solid ${velogColors.border}`,
                             transition: 'all 0.2s ease',
-                            '&:hover': {
-                                background: dark ? '#1a1a1a' : '#f8fafc',
-                            }
+                        }}
+                    />
+                    <Text
+                        size="lg"
+                        fw={600}
+                        style={{
+                            color: velogColors.text,
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            letterSpacing: '-0.01em'
                         }}
                     >
-                        <Group gap="md">
-                            <ThemeIcon
-                                size="md"
-                                radius="md"
-                                variant="light"
+                        My Blog
+                    </Text>
+                </Group>
+            }
+        >
+            <ScrollArea h="100%" type="never">
+                <Stack gap="0" p="md">
+                    {/* 사용자 정보 또는 로그인 */}
+                    <Box mb="lg">
+                        {isAuthenticated ? (
+                            <Group
+                                p="md"
                                 style={{
-                                    background: dark ? '#2a2a2a' : '#f1f5f9',
-                                    color: dark ? '#ffffff' : '#64748b',
+                                    backgroundColor: velogColors.hover,
+                                    borderRadius: rem(12),
+                                    border: `1px solid ${velogColors.border}`
                                 }}
                             >
-                                <IconPalette size={18} />
-                            </ThemeIcon>
-                            <Text
-                                size="md"
-                                fw={500}
-                                style={{
-                                    color: dark ? '#ffffff' : '#1e293b',
-                                }}
-                            >
-                                테마 변경
-                            </Text>
-                        </Group>
-                    </UnstyledButton>
-
-                    {/* Social Links */}
-                    <Group justify="center" mt="md">
-                        <ActionIcon
-                            component="a"
-                            href="https://github.com"
-                            variant="light"
-                            size="lg"
-                            radius="md"
-                            style={{
-                                background: dark ? '#2a2a2a' : '#f1f5f9',
-                                color: dark ? '#ffffff' : '#64748b',
-                                '&:hover': {
-                                    background: dark ? '#3a3a3a' : '#e2e8f0',
-                                }
-                            }}
-                        >
-                            <IconBrandGithub size={20} />
-                        </ActionIcon>
-                        <ActionIcon
-                            component="a"
-                            href="https://linkedin.com"
-                            variant="light"
-                            size="lg"
-                            radius="md"
-                            style={{
-                                background: dark ? '#2a2a2a' : '#f1f5f9',
-                                color: dark ? '#ffffff' : '#64748b',
-                                '&:hover': {
-                                    background: dark ? '#3a3a3a' : '#e2e8f0',
-                                }
-                            }}
-                        >
-                            <IconBrandLinkedin size={20} />
-                        </ActionIcon>
-                        <ActionIcon
-                            variant="light"
-                            size="lg"
-                            radius="md"
-                            style={{
-                                background: dark ? '#2a2a2a' : '#f1f5f9',
-                                color: dark ? '#ffffff' : '#64748b',
-                                '&:hover': {
-                                    background: dark ? '#3a3a3a' : '#e2e8f0',
-                                }
-                            }}
-                        >
-                            <IconSettings size={20} />
-                        </ActionIcon>
-                    </Group>
-
-                    {/* Login/Logout Button */}
-                    {isLoggedIn ? (
-                        <Button
-                            leftSection={<IconLogout size={16} />}
-                            onClick={() => {
-                                setIsLoggedIn(false);
-                                onClose();
-                            }}
-                            variant="outline"
-                            fullWidth
-                            style={{
-                                borderColor: '#ef4444',
-                                color: '#ef4444',
-                                marginTop: rem(16),
-                                '&:hover': {
-                                    background: 'rgba(239, 68, 68, 0.05)',
-                                }
-                            }}
-                        >
-                            로그아웃
-                        </Button>
-                    ) : (
-                        <Stack gap="sm" mt="md">
+                                <Avatar
+                                    size="md"
+                                    radius="xl"
+                                    style={{ backgroundColor: velogColors.primary }}
+                                >
+                                    <IconUser size={20} />
+                                </Avatar>
+                                <Box style={{ flex: 1 }}>
+                                    <Text size="md" fw={600} c={velogColors.text}>
+                                        {user?.username || '사용자'}
+                                    </Text>
+                                    <Text size="sm" c={velogColors.subText}>
+                                        개발자
+                                    </Text>
+                                </Box>
+                            </Group>
+                        ) : (
                             <Button
-                                leftSection={<IconLogin size={16} />}
+                                variant="outline"
+                                size="md"
+                                fullWidth
+                                leftSection={<IconLogin size={18} />}
                                 onClick={() => {
-                                    setIsLoggedIn(true);
+                                    showToast.info('로그인', '로그인 페이지로 이동합니다.');
                                     onClose();
                                 }}
-                                fullWidth
-                                style={{
-                                    background: '#4c6ef5',
-                                    '&:hover': {
-                                        background: '#3b82f6',
+                                styles={{
+                                    root: {
+                                        backgroundColor: velogColors.primary,
+                                        borderColor: velogColors.border,
+                                        color: velogColors.background,
+                                        '&:hover': {
+                                            backgroundColor: velogColors.hover,
+                                        }
                                     }
                                 }}
                             >
                                 로그인
                             </Button>
-                            <Button
-                                variant="outline"
-                                fullWidth
-                                style={{
-                                    borderColor: dark ? '#2a2a2a' : '#e2e8f0',
-                                    color: dark ? '#ffffff' : '#475569',
-                                    '&:hover': {
-                                        background: dark ? '#1a1a1a' : '#f8fafc',
+                        )}
+                    </Box>
+
+                    {/* 메인 네비게이션 */}
+                    <Stack gap="xs" mb="lg">
+                        <MenuButton
+                            icon={IconHome}
+                            label="홈"
+                            onClick={() => handleMainNavigation('/')}
+                        />
+                        <MenuButton
+                            icon={IconTrendingUp}
+                            label="트렌딩"
+                            onClick={() => handleMainNavigation('/trending')}
+                        />
+                        <MenuButton
+                            icon={IconClock}
+                            label="최신"
+                            onClick={() => handleMainNavigation('/latest')}
+                        />
+                        <MenuButton
+                            icon={IconCalendarWeek}
+                            label="이번 주"
+                            onClick={() => handleMainNavigation('/week')}
+                        />
+                        <MenuButton
+                            icon={IconSearch}
+                            label="검색"
+                            onClick={() => {
+                                showToast.info('검색', '검색 기능을 준비 중입니다.');
+                                onClose();
+                            }}
+                        />
+                    </Stack>
+
+                    <Divider color={velogColors.border} mb="lg" />
+
+                    {/* 카테고리 */}
+                    <Box mb="lg">
+                        <Text
+                            size="sm"
+                            fw={600}
+                            c={velogColors.subText}
+                            mb="md"
+                            px="md"
+                        >
+                            카테고리
+                        </Text>
+                        <Stack gap="xs">
+                            {categories.map((category) => (
+                                <CategoryItem key={category.id} category={category} />
+                            ))}
+                        </Stack>
+                    </Box>
+
+                    <Divider color={velogColors.border} mb="lg" />
+
+                    {/* 설정 */}
+                    <Box mb="lg">
+                        <Group justify="space-between" p="md">
+                            <Group gap="md">
+                                {dark ? <IconMoon size={20} /> : <IconSun size={20} />}
+                                <Text size="md" fw={500} c={velogColors.text}>
+                                    다크 모드
+                                </Text>
+                            </Group>
+                            <Switch
+                                checked={dark}
+                                onChange={toggleColorScheme}
+                                size="md"
+                                styles={{
+                                    track: {
+                                        backgroundColor: dark
+                                            ? velogColors.primary
+                                            : velogColors.border,
                                     }
                                 }}
-                            >
-                                회원가입
-                            </Button>
-                        </Stack>
+                            />
+                        </Group>
+                    </Box>
+
+                    {/* 새 글 작성 (로그인한 경우만) */}
+                    {isAuthenticated && (
+                        <Box mt="auto" pt="lg">
+                            <MenuButton
+                                icon={IconEdit}
+                                label="새 글 작성"
+                                variant="primary"
+                                onClick={() => {
+                                    showToast.info('글 작성', '글 작성 페이지로 이동합니다.');
+                                    onClose();
+                                }}
+                            />
+                        </Box>
                     )}
                 </Stack>
-            </Stack>
+            </ScrollArea>
         </Drawer>
     );
 };

@@ -6,6 +6,7 @@ import {Outlet} from "react-router-dom";
 import Header from "@/components/main/Header.jsx";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
 import NavigationMenu from "@/components/main/navigation/NavigationMenu.jsx";
+import MobileDrawer from "../main/MobileDrawer.jsx";
 // import MobileDrawer from "@/components/main/MobileDrawer.jsx";
 
 
@@ -36,7 +37,7 @@ const MainLayout = () => {
 
             {/*<NavigationMenu isDark={dark} logo="/upload/images/logo.png"/>*/}
 
-            {/*<MobileDrawer/>*/}
+            <MobileDrawer opened={navOpened} onClose={setNavOpened} toggleColorScheme={toggleColorScheme}/>
 
             <ScrollArea component={AppShell.Main} h={200} scrollbars="y">
                 <Outlet/>
