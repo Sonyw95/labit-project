@@ -67,7 +67,7 @@ const PostCard = memo(({ post }) => {
         if (!post.summary) {
             return '';
         }
-        const maxLength = post.thumbnailUrl ? 120 : 250; // 길이 조정 (150→120, 300→250)
+        const maxLength = post.thumbnailUrl ? 100 : 200; // 길이 조정
         return post.summary.length > maxLength
             ? `${post.summary.substring(0, maxLength)}...`
             : post.summary;
@@ -93,8 +93,9 @@ const PostCard = memo(({ post }) => {
             radius="md"
             withBorder={false}
             style={{
+                width:'100%',
                 cursor: 'pointer',
-                height: '400px', // 높이 축소 480px → 400px
+                minHeight: post.thumbnailUrl ? '450px' : '380px', // 최소 높이로 변경
                 backgroundColor: velogColors.cardBg,
                 border: `1px solid ${velogColors.border}`,
                 transition: 'all 0.2s ease',
@@ -126,7 +127,7 @@ const PostCard = memo(({ post }) => {
                             <Image
                                 src={post.thumbnailUrl}
                                 alt={post.title}
-                                height={160} // 이미지 높이 축소 200px → 160px
+                                height={160} // 이미지 높이 축소
                                 fit="cover"
                                 fallbackSrc="https://via.placeholder.com/400x160?text=No+Image"
                                 style={{
@@ -143,7 +144,7 @@ const PostCard = memo(({ post }) => {
                     </Card.Section>
                 )}
 
-                <Box p="md" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box p="md" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                     {/* 제목 */}
                     <Text
                         fw={700}
@@ -155,22 +156,23 @@ const PostCard = memo(({ post }) => {
                             lineHeight: 1.4,
                             letterSpacing: '-0.01em',
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            minHeight: '2.4rem', // 제목 높이 조정 (2.8rem → 2.4rem)
+                            minHeight: '2.4rem',
                         }}
                     >
                         {post.title}
                     </Text>
 
-                    {/* 요약 */}
+                    {/* 요약 - flex 속성 제거하고 고정 높이 설정 */}
                     <Text
                         size="md"
                         c={velogColors.subText}
-                        lineClamp={post.thumbnailUrl ? 2 : 6} // 라인 수 조정 (3→2, 8→6)
+                        lineClamp={post.thumbnailUrl ? 2 : 4}
                         mb="md"
                         style={{
-                            flex: 1,
                             lineHeight: 1.6,
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            height: post.thumbnailUrl ? '3.2rem' : '6.4rem', // 고정 높이 설정
+                            overflow: 'hidden',
                         }}
                     >
                         {truncatedSummary || '요약이 없습니다.'}
@@ -203,8 +205,18 @@ const PostCard = memo(({ post }) => {
                         )}
                     </Box>
 
-                    {/* 하단 정보 */}
-                    <Group justify="space-between" mt="auto">
+                    {/* 하단 정보 - margin-top auto로 항상 하단에 고정 */}
+                    <Group
+                        justify="space-between"
+                        mt="auto"
+                        align="flex-start"
+                        style={{
+                            flexShrink: 0,
+                            gap: '0.5rem',
+                            minHeight: '50px',
+                        }}
+                        wrap="wrap" // 모바일에서 줄바꿈 허용
+                    >
                         {/* 작성자 정보 */}
                         <Group
                             gap="sm"
@@ -214,6 +226,8 @@ const PostCard = memo(({ post }) => {
                                 padding: '4px 8px',
                                 borderRadius: '8px',
                                 transition: 'background-color 0.2s ease',
+                                flex: '1 1 auto',
+                                minWidth: '120px',
                                 '&:hover': {
                                     backgroundColor: velogColors.hover,
                                 }
@@ -230,14 +244,16 @@ const PostCard = memo(({ post }) => {
                                 size="sm"
                                 alt={post.author.nickname}
                                 style={{
-                                    border: `2px solid ${velogColors.border}`
+                                    border: `2px solid ${velogColors.border}`,
+                                    flexShrink: 0
                                 }}
                             />
-                            <Box>
+                            <Box style={{ flex: 1, minWidth: 0 }}>
                                 <Text
                                     size="sm"
                                     fw={600}
                                     c={velogColors.text}
+                                    truncate
                                     style={{
                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                     }}
@@ -245,47 +261,70 @@ const PostCard = memo(({ post }) => {
                                     {post.author.nickname}
                                 </Text>
                                 <Group gap="xs" c={velogColors.subText}>
-                                    <IconCalendar size={12} />
-                                    <Text size="xs">{formattedDate}</Text>
+                                    <IconCalendar size={12} style={{ flexShrink: 0 }} />
+                                    <Text
+                                        size="xs"
+                                        truncate
+                                        style={{ flex: 1, minWidth: 0 }}
+                                    >
+                                        {formattedDate}
+                                    </Text>
                                 </Group>
                             </Box>
                         </Group>
 
                         {/* 통계 정보 */}
-                        <Group gap="md">
-                            <ActionIcon
-                                variant="subtle"
-                                size="sm"
-                                onClick={handleLikeClick}
-                                color={post.isLiked ? 'red' : 'gray'}
-                                style={{
-                                    borderRadius: '8px',
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        backgroundColor: post.isLiked ? '#FFE8E8' : velogColors.hover,
-                                    }
-                                }}
-                            >
-                                <Group gap={4}>
+                        <Group gap="xs" style={{ flexShrink: 0 }}>
+                            <Group gap="xs" style={{ flexShrink: 0 }}>
+                                <ActionIcon
+                                    variant="subtle"
+                                    size="xs"
+                                    onClick={handleLikeClick}
+                                    color={post.isLiked ? 'red' : 'gray'}
+                                    style={{
+                                        borderRadius: '6px',
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            backgroundColor: post.isLiked ? '#FFE8E8' : velogColors.hover,
+                                        }
+                                    }}
+                                >
                                     {post.isLiked ? (
-                                        <IconHeartFilled size={14} />
+                                        <IconHeartFilled size={12} />
                                     ) : (
-                                        <IconHeart size={14} />
+                                        <IconHeart size={12} />
                                     )}
-                                    <Text size="xs" fw={500} c={velogColors.subText}>
-                                        {post.likeCount}
-                                    </Text>
-                                </Group>
-                            </ActionIcon>
-
-                            <Group gap={4} c={velogColors.subText}>
-                                <IconEye size={14} />
-                                <Text size="xs" fw={500}>{post.viewCount}</Text>
+                                </ActionIcon>
+                                <Text
+                                    size="xs"
+                                    fw={500}
+                                    c={velogColors.subText}
+                                    style={{ whiteSpace: 'nowrap' }}
+                                >
+                                    {post.likeCount}
+                                </Text>
                             </Group>
 
-                            <Group gap={4} c={velogColors.subText}>
-                                <IconMessageCircle size={14} />
-                                <Text size="xs" fw={500}>{post.commentCount}</Text>
+                            <Group gap="xs" c={velogColors.subText} style={{ flexShrink: 0 }}>
+                                <IconEye size={12} />
+                                <Text
+                                    size="xs"
+                                    fw={500}
+                                    style={{ whiteSpace: 'nowrap' }}
+                                >
+                                    {post.viewCount}
+                                </Text>
+                            </Group>
+
+                            <Group gap="xs" c={velogColors.subText} style={{ flexShrink: 0 }}>
+                                <IconMessageCircle size={12} />
+                                <Text
+                                    size="xs"
+                                    fw={500}
+                                    style={{ whiteSpace: 'nowrap' }}
+                                >
+                                    {post.commentCount}
+                                </Text>
                             </Group>
                         </Group>
                     </Group>

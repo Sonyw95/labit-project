@@ -4,8 +4,8 @@ import {
 } from '@mantine/core';
 import {Outlet} from "react-router-dom";
 import Header from "@/components/main/Header.jsx";
-import {NavigationMenu} from "@/components/main/navigation/NavigationMenu.jsx";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
+import NavigationMenu from "@/components/main/navigation/NavigationMenu.jsx";
 // import MobileDrawer from "@/components/main/MobileDrawer.jsx";
 
 
@@ -22,19 +22,19 @@ const MainLayout = () => {
     return (
         <AppShell
             header={{height: 60, offset: true}}
-            navbar={{
-                width: 280,
-                breakpoint: 'lg',
-                collapsed: {mobile: true},
-            }}
+            // navbar={{
+            //     width: 280,
+            //     breakpoint: 'lg',
+            //     collapsed: {mobile: true},
+            // }}
             style={{
-                background: dark ? '#1a1a1a' : '#f8fafc',
+                background: dark ? '#1A1B23' : '#FFFFFF',
             }}
         >
             {/* Header */}
             <Header isDark={dark} navOpened={navOpened} setNavOpened={setNavOpened} toggleColorScheme={toggleColorScheme} />
 
-            <NavigationMenu isDark={dark} logo="/upload/images/logo.png"/>
+            {/*<NavigationMenu isDark={dark} logo="/upload/images/logo.png"/>*/}
 
             {/*<MobileDrawer/>*/}
 

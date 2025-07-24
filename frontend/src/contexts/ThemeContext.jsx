@@ -1,5 +1,4 @@
-import React, {createContext, useContext, useState, useCallback, useEffect, useMemo} from 'react';
-import {useLocalStorage} from "@/hooks/useLocalStorage.js";
+import React, {createContext, useContext, useMemo} from 'react';
 import {useMantineColorScheme} from "@mantine/core";
 
 const ThemeContext = createContext();

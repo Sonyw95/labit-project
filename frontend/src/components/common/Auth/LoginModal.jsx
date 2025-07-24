@@ -1,5 +1,4 @@
-
-import React, {useState, useCallback, memo, useEffect} from 'react';
+import React, {useState, useCallback, memo} from 'react';
 import {
     Text,
     Button,
@@ -8,17 +7,28 @@ import {
     TextInput,
     PasswordInput,
     Stack,
-    Box,
+    Box, Center,
 } from '@mantine/core';
 import { IconMail, IconLock } from "@tabler/icons-react";
-import {useTheme} from "../../../contexts/ThemeContext.jsx";
-import {IconBrandKakao} from "../../../utils/helpers.jsx";
-import {useKakaoAuthPath, useKakaoLogin} from "../../../hooks/api/useApi.js";
+import {IconBrandKakao} from "@/utils/helpers.jsx";
+import {useKakaoAuthPath} from "@/hooks/api/useApi.js";
+import {useTheme} from "@/contexts/ThemeContext.jsx";
 
-function LoginModal ({ opened, onClose }) {
+const LoginModal = memo(({ opened, onClose }) => {
     const {data} = useKakaoAuthPath();
-    const kakaoLoginMutation = useKakaoLogin();
     const [isLoading, setIsLoading] = useState(false);
+    const { dark } = useTheme();
+
+    // velog 스타일 색상
+    const velogColors = {
+        primary: '#12B886',
+        text: dark ? '#ECECEC' : '#212529',
+        subText: dark ? '#ADB5BD' : '#495057',
+        background: dark ? '#1A1B23' : '#FFFFFF',
+        border: dark ? '#2B2D31' : '#E9ECEF',
+        hover: dark ? '#2B2D31' : '#F8F9FA',
+        inputBg: dark ? '#2B2D31' : '#FFFFFF',
+    };
 
     const handleKakaoLogin = () => {
         // 중복 클릭 방지
@@ -40,7 +50,6 @@ function LoginModal ({ opened, onClose }) {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const { dark } = useTheme();
 
     const handleSubmit = useCallback(async (e) => {
     }, [formData, /*login,*/ onClose]);
@@ -67,26 +76,28 @@ function LoginModal ({ opened, onClose }) {
             opened={opened}
             onClose={handleClose}
             title={
-                <Text size="xl" fw={600} c={dark ? 'white' : 'dark'}>
+                <Text
+                    size="1.5rem"
+                    fw={700}
+                    c={velogColors.text}
+                    style={{
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    }}
+                >
                     로그인
                 </Text>
             }
-            size="sm"
+            size="md"
             centered
             overlayProps={{
-                backgroundOpacity: 0.55,
-                blur: 3,
+                backgroundOpacity: 0.6,
+                blur: 4,
             }}
-            styles={(theme) => ({
+            styles={{
                 content: {
-                    background: dark
-                        ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%)'
-                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.95) 100%)',
-                    backdropFilter: 'blur(20px)',
-                    borderRadius: theme.radius.lg,
-                    border: `1px solid ${dark
-                        ? 'rgba(255, 255, 255, 0.1)'
-                        : 'rgba(0, 0, 0, 0.1)'}`,
+                    backgroundColor: velogColors.background,
+                    border: `1px solid ${velogColors.border}`,
+                    borderRadius: '16px',
                     boxShadow: dark
                         ? '0 25px 50px rgba(0, 0, 0, 0.5)'
                         : '0 25px 50px rgba(0, 0, 0, 0.15)',
@@ -94,42 +105,54 @@ function LoginModal ({ opened, onClose }) {
                 header: {
                     backgroundColor: 'transparent',
                     borderBottom: 'none',
-                    paddingBottom: 0,
+                    paddingBottom: '0.5rem',
+                },
+                body: {
+                    padding: '2rem',
+                },
+                close: {
+                    color: velogColors.subText,
+                    '&:hover': {
+                        backgroundColor: velogColors.hover,
+                    }
                 }
-            })}
+            }}
         >
             <Box component="form" onSubmit={handleSubmit}>
-                <Stack gap="lg" pt="md">
+                <Stack gap="xl" pt="md">
                     <TextInput
                         label="이메일"
                         placeholder="이메일을 입력하세요"
                         type="email"
                         value={formData.email}
                         onChange={handleInputChange('email')}
-                        leftSection={<IconMail size={16} />}
+                        leftSection={<IconMail size={18} />}
                         required
-                        styles={(theme) => ({
+                        size="md"
+                        styles={{
                             input: {
-                                backgroundColor: dark
-                                    ? 'rgba(255, 255, 255, 0.05)'
-                                    : 'rgba(0, 0, 0, 0.02)',
-                                border: `1px solid ${dark
-                                    ? 'rgba(255, 255, 255, 0.1)'
-                                    : 'rgba(0, 0, 0, 0.1)'}`,
-                                borderRadius: theme.radius.md,
+                                backgroundColor: velogColors.inputBg,
+                                border: `2px solid ${velogColors.border}`,
+                                borderRadius: '8px',
+                                color: velogColors.text,
+                                fontSize: '16px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                 transition: 'all 0.2s ease',
                                 '&:focus': {
-                                    borderColor: theme.colors.blue[6],
-                                    boxShadow: `0 0 0 2px ${theme.colors.blue[2]}`,
+                                    borderColor: velogColors.primary,
+                                    outline: 'none',
+                                },
+                                '&::placeholder': {
+                                    color: velogColors.subText,
                                 }
                             },
                             label: {
-                                color: dark
-                                    ? theme.colors.gray[3]
-                                    : theme.colors.gray[7],
-                                fontWeight: 500,
+                                color: velogColors.text,
+                                fontWeight: 600,
+                                marginBottom: '8px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                             }
-                        })}
+                        }}
                     />
 
                     <PasswordInput
@@ -137,32 +160,32 @@ function LoginModal ({ opened, onClose }) {
                         placeholder="비밀번호를 입력하세요"
                         value={formData.password}
                         onChange={handleInputChange('password')}
-                        leftSection={<IconLock size={16} />}
+                        leftSection={<IconLock size={18} />}
                         visible={showPassword}
                         onVisibilityChange={setShowPassword}
                         required
-                        styles={(theme) => ({
+                        size="md"
+                        styles={{
                             input: {
-                                backgroundColor: dark
-                                    ? 'rgba(255, 255, 255, 0.05)'
-                                    : 'rgba(0, 0, 0, 0.02)',
-                                border: `1px solid ${dark
-                                    ? 'rgba(255, 255, 255, 0.1)'
-                                    : 'rgba(0, 0, 0, 0.1)'}`,
-                                borderRadius: theme.radius.md,
+                                backgroundColor: velogColors.inputBg,
+                                border: `2px solid ${velogColors.border}`,
+                                borderRadius: '8px',
+                                color: velogColors.text,
+                                fontSize: '16px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                 transition: 'all 0.2s ease',
                                 '&:focus': {
-                                    borderColor: theme.colors.blue[6],
-                                    boxShadow: `0 0 0 2px ${theme.colors.blue[2]}`,
+                                    borderColor: velogColors.primary,
+                                    outline: 'none',
                                 }
                             },
                             label: {
-                                color: dark
-                                    ? theme.colors.gray[3]
-                                    : theme.colors.gray[7],
-                                fontWeight: 500,
+                                color: velogColors.text,
+                                fontWeight: 600,
+                                marginBottom: '8px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                             }
-                        })}
+                        }}
                     />
 
                     <Button
@@ -170,89 +193,79 @@ function LoginModal ({ opened, onClose }) {
                         onClick={handleSubmit}
                         loading={loading}
                         fullWidth
-                        size="md"
-                        styles={(theme) => ({
-                            root: {
-                                border: 'none',
-                                borderRadius: theme.radius.md,
-                                fontSize: 16,
-                                fontWeight: 600,
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    background: 'linear-gradient(135deg, #5a67d8 0%, #6b4499 100%)',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 10px 25px rgba(102, 126, 234, 0.3)',
-                                },
-                                '&:active': {
-                                    transform: 'translateY(0)',
-                                }
+                        size="lg"
+                        style={{
+                            backgroundColor: velogColors.primary,
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            fontWeight: 600,
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            border: 'none',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                                backgroundColor: '#0CA678',
                             }
-                        })}
+                        }}
                     >
                         로그인
                     </Button>
+
                     <Divider
                         label="또는"
                         labelPosition="center"
-                        styles={(theme) => ({
+                        styles={{
                             label: {
-                                color: dark
-                                    ? theme.colors.gray[5]
-                                    : theme.colors.gray[6],
+                                color: velogColors.subText,
                                 fontWeight: 500,
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            },
+                            line: {
+                                borderColor: velogColors.border,
                             }
-                        })}
+                        }}
                     />
+
                     <Button
-                        variant="outline"
-                        leftSection={<IconBrandKakao size={18} />}
+                        variant="filled"
+                        leftSection={<IconBrandKakao size={20} />}
                         onClick={handleKakaoLogin}
                         loading={loading}
                         fullWidth
-                        size="md"
-                        styles={(theme) => ({
+                        size="lg"
+                        styles={{
                             root: {
                                 backgroundColor: '#FEE500',
                                 color: '#3C1E1E',
-                                border: '1px solid #FEE500',
-                                borderRadius: theme.radius.md,
-                                fontSize: 16,
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '16px',
                                 fontWeight: 600,
-                                transition: 'all 0.3s ease',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                transition: 'all 0.2s ease',
                                 '&:hover': {
                                     backgroundColor: '#FDD835',
-                                    borderColor: '#FDD835',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 10px 25px rgba(254, 229, 0, 0.3)',
                                 },
-                                '&:active': {
-                                    transform: 'translateY(0)',
-                                }
                             }
-                        })}
+                        }}
                     >
                         카카오로 로그인
                     </Button>
 
-                    {/*<Text size="sm" ta="center" c={dark ? 'gray.4' : 'gray.6'}>*/}
-                    {/*    계정이 없으신가요?{' '}*/}
-                    {/*    <Text*/}
-                    {/*        component="span"*/}
-                    {/*        c="blue"*/}
-                    {/*        fw={600}*/}
-                    {/*        style={{*/}
-                    {/*            cursor: 'pointer',*/}
-                    {/*            textDecoration: 'underline',*/}
-                    {/*            textUnderlineOffset: '2px'*/}
-                    {/*        }}*/}
-                    {/*        onClick={onSwitchToSignup}*/}
-                    {/*    >*/}
-                    {/*        회원가입*/}
-                    {/*    </Text>*/}
+                    {/*<Text*/}
+                    {/*    size="sm"*/}
+                    {/*    ta="center"*/}
+                    {/*    c={velogColors.subText}*/}
+                    {/*    style={{*/}
+                    {/*        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',*/}
+                    {/*        marginTop: '1rem'*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    LABit.*/}
                     {/*</Text>*/}
                 </Stack>
             </Box>
         </Modal>
     );
-};
+}) ;
+
 export default LoginModal;

@@ -9,12 +9,13 @@ import {
     Center,
     Loader,
     Text,
-    Alert,
     Transition,
     Group,
     ActionIcon,
     Box,
     useMantineColorScheme,
+    UnstyledButton,
+    rem,
 } from '@mantine/core';
 import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -174,7 +175,7 @@ function PostList() {
     if (isLoading) {
         return (
             <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
-                <Container size="lg" py="xl">
+                <Container size="xl" py="xl">
                     <Center h={400}>
                         <Stack align="center" gap="lg">
                             <Loader size="lg" color={velogColors.primary} />
@@ -192,7 +193,7 @@ function PostList() {
     if (isError) {
         return (
             <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
-                <Container size="lg" py="xl">
+                <Container size="xl" py="xl">
                     <Center>
                         <Box
                             p="xl"
@@ -230,88 +231,101 @@ function PostList() {
 
     return (
         <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
-            <Container size="lg" py="xl">
-                <Stack gap="3rem">
-                    {/* velog 스타일 헤더 */}
-                    <Group justify="space-between" align="center">
-                        {/* 좌측: 정렬 탭 */}
-                        <Tabs
-                            value={selectedCategory === 'all' ? 'latest' : selectedCategory}
-                            onChange={(value) => {
-                                if (['latest', 'trending', 'week'].includes(value)) {
-                                    setSelectedCategory('all');
-                                } else {
-                                    handleCategoryChange(value);
-                                }
-                            }}
-                            variant="unstyled"
-                            styles={{
-                                list: {
-                                    gap: '2rem',
-                                },
-                                tab: {
-                                    fontSize: '18px',
-                                    fontWeight: 600,
-                                    color: velogColors.subText,
-                                    backgroundColor: 'transparent',
-                                    border: 'none',
-                                    borderBottom: `3px solid transparent`,
-                                    borderRadius: 0,
-                                    padding: '0.5rem 0',
-                                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        color: velogColors.text,
-                                        backgroundColor: 'transparent',
-                                    },
-                                    '&[data-active]': {
-                                        color: velogColors.primary,
-                                        borderBottomColor: velogColors.primary,
-                                        backgroundColor: 'transparent',
-                                    }
-                                }
-                            }}
-                        >
-                            <Tabs.List>
-                                <Tabs.Tab value="latest">최신</Tabs.Tab>
-                                <Tabs.Tab value="trending">트렌딩</Tabs.Tab>
-                                <Tabs.Tab value="week">이번 주</Tabs.Tab>
-                            </Tabs.List>
-                        </Tabs>
+            <Container size="xl" py="xl">
+                <Stack gap="2rem">
+                    {/* velog 스타일 네비게이션 */}
+                    <Box>
+                        {/* 메인 탭 (트렌딩, 최신, 이번 주) */}
+                        <Group gap="xl" mb="lg">
+                            {['trending', 'latest', 'week'].map((tab) => {
+                                const labels = { trending: '트렌딩', latest: '최신', week: '이번 주' };
+                                const isActive = selectedCategory === 'all' && tab === 'latest';
 
-                        {/* 우측: 카테고리 드롭다운 */}
-                        {categoryOptions.length > 1 && (
-                            <Group gap="md">
-                                <Text size="sm" c={velogColors.subText}>카테고리:</Text>
-                                <Box>
-                                    <select
-                                        value={selectedCategory}
-                                        onChange={(e) => handleCategoryChange(e.target.value)}
+                                return (
+                                    <UnstyledButton
+                                        key={tab}
+                                        onClick={() => {
+                                            setSelectedCategory('all');
+                                            const newSearchParams = new URLSearchParams(searchParams);
+                                            newSearchParams.delete('category');
+                                            setSearchParams(newSearchParams);
+                                        }}
                                         style={{
-                                            backgroundColor: velogColors.background,
-                                            border: `1px solid ${velogColors.border}`,
-                                            borderRadius: '6px',
-                                            padding: '6px 12px',
-                                            color: velogColors.text,
-                                            fontSize: '14px',
+                                            fontSize: rem(20),
+                                            fontWeight: 600,
+                                            color: isActive ? velogColors.text : velogColors.subText,
+                                            padding: `${rem(8)} 0`,
+                                            borderBottom: isActive ? `2px solid ${velogColors.primary}` : '2px solid transparent',
+                                            transition: 'all 0.2s ease',
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                                            cursor: 'pointer',
-                                            outline: 'none',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isActive) {
+                                                e.currentTarget.style.color = velogColors.text;
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isActive) {
+                                                e.currentTarget.style.color = velogColors.subText;
+                                            }
                                         }}
                                     >
-                                        {categoryOptions.map((category) => (
-                                            <option key={category.id} value={category.id}>
-                                                {category.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </Box>
+                                        {labels[tab]}
+                                    </UnstyledButton>
+                                );
+                            })}
+                        </Group>
+
+                        {/* 카테고리 필터 */}
+                        {categoryOptions.length > 1 && (
+                            <Group gap="md" wrap="wrap">
+                                {categoryOptions.map((category) => {
+                                    const isActive = selectedCategory === category.id;
+
+                                    return (
+                                        <UnstyledButton
+                                            key={category.id}
+                                            onClick={() => handleCategoryChange(category.id)}
+                                            style={{
+                                                fontSize: rem(14),
+                                                fontWeight: 500,
+                                                color: isActive ? 'white' : velogColors.subText,
+                                                backgroundColor: isActive ? velogColors.primary : 'transparent',
+                                                padding: `${rem(6)} ${rem(12)}`,
+                                                borderRadius: rem(12),
+                                                border: isActive ? 'none' : `1px solid ${velogColors.border}`,
+                                                transition: 'all 0.2s ease',
+                                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (!isActive) {
+                                                    e.currentTarget.style.backgroundColor = velogColors.hover;
+                                                    e.currentTarget.style.color = velogColors.text;
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isActive) {
+                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                    e.currentTarget.style.color = velogColors.subText;
+                                                }
+                                            }}
+                                        >
+                                            {category.label}
+                                        </UnstyledButton>
+                                    );
+                                })}
                             </Group>
                         )}
-                    </Group>
+                    </Box>
 
                     {/* 구분선 */}
-                    <Box style={{ height: '1px', backgroundColor: velogColors.border, margin: '1rem 0' }} />
+                    <Box
+                        style={{
+                            height: '1px',
+                            backgroundColor: velogColors.border,
+                            margin: `${rem(8)} 0`
+                        }}
+                    />
 
                     {/* 포스트 그리드 */}
                     {visiblePosts.length === 0 ? (
@@ -333,7 +347,12 @@ function PostList() {
                             {visiblePosts.map((post, index) => (
                                 <Grid.Col
                                     key={`${post.id}-${index}`}
-                                    span={{ base: 12, sm: 6, lg: 4 }}
+                                    span={{
+                                        sm: 6,      // 태블릿: 2개씩
+                                        md: 6,      // 중간 화면: 2개씩
+                                        lg: 4,      // 데스크톱: 3개씩
+                                        xl: 4       // 큰 화면: 3개씩
+                                    }}
                                     style={{ display: 'flex' }}
                                 >
                                     <Transition
@@ -343,9 +362,9 @@ function PostList() {
                                         timingFunction="ease"
                                     >
                                         {(styles) => (
-                                            <div style={{ ...styles, width: '100%', display: 'flex' }}>
+                                            <Box style={{ ...styles, display: 'flex' , width: '100%'}}>
                                                 <PostCard post={post} />
-                                            </div>
+                                            </Box>
                                         )}
                                     </Transition>
                                 </Grid.Col>

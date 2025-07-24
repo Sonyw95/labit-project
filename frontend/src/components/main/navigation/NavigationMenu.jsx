@@ -298,4 +298,4 @@ const SocialLink = ({ href, icon: Icon, isDark }) => (
     </ActionIcon>
 );
 
-export { NavigationMenu };
+export default NavigationMenu;
