@@ -42,7 +42,7 @@ const MainPage = memo(() => {
             primary: '#12B886',
             text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
             subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-            background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+            background: colorScheme === 'dark' ? '#1A1B23' : '#f8f9fa',
             border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
             hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
             section: colorScheme === 'dark' ? '#1E1F25' : '#FAFAFA',

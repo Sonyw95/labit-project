@@ -396,8 +396,9 @@ const Header = memo(({
             <AppShell.Header
                 // ml={{lg: 'var(--app-shell-navbar-width, 280px)'}}
                 style={{
-                    borderBottom: `1px solid ${velogColors.border}`,
+                    // borderBottom: `1px solid ${velogColors.border}`,
                     // backgroundColor: velogColors.background,
+                    border: 'none',
                     ...backgroundBlur({
                         color: velogColors.background,
                         alpha: 1
