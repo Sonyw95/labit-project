@@ -14,7 +14,8 @@ import {
     Stack,
     Badge,
     Tooltip,
-    Paper,
+    useMantineColorScheme,
+    rem,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
@@ -35,15 +36,33 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
     useCreateNavigation,
     useDeleteNavigation,
-    useNavigationTree, useToggleNavigationStatus,
-    useUpdateNavigation, useUpdateNavigationOrder
+    useNavigationTree,
+    useToggleNavigationStatus,
+    useUpdateNavigation,
+    useUpdateNavigationOrder
 } from "../../hooks/api/useApi.js";
 
 const NavigationManagement = () => {
+    const { colorScheme } = useMantineColorScheme();
     const [opened, { open, close }] = useDisclosure(false);
     const [editingItem, setEditingItem] = useState(null);
     const [expandedItems, setExpandedItems] = useState(new Set());
 
+    // velog 스타일 색상 팔레트
+    const velogColors = useMemo(() => ({
+        primary: '#12B886',
+        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        success: '#12B886',
+        error: '#FA5252',
+        warning: '#FD7E14',
+        cardBg: colorScheme === 'dark' ? '#242529' : '#FFFFFF',
+    }), [colorScheme]);
+
+    // API hooks (기존 유지)
     const {
         data: navigations,
         isLoading,
@@ -70,12 +89,9 @@ const NavigationManagement = () => {
         },
     });
 
-
-    // 평면 구조로 변환 (DnD용)
+    // 평면 구조로 변환 (DnD용) - 메모이제이션
     const flatNavigations = useMemo(() => {
-        if (!navigations) {
-            return [];
-        }
+        if (!navigations) return [];
 
         const flatten = (items, depth = 0) => {
             return items.reduce((acc, item) => {
@@ -88,13 +104,11 @@ const NavigationManagement = () => {
         };
 
         return flatten(navigations);
-    }, [expandedItems]);
+    }, [navigations, expandedItems]);
 
-    // 부모 메뉴 옵션 생성
+    // 부모 메뉴 옵션 생성 - 메모이제이션
     const parentOptions = useMemo(() => {
-        if (!navigations) {
-            return [];
-        }
+        if (!navigations) return [];
 
         const buildOptions = (items, depth = 0) => {
             return items.reduce((acc, item) => {
@@ -116,6 +130,13 @@ const NavigationManagement = () => {
         ];
     }, [navigations]);
 
+    // 로딩 및 변형 상태 - 메모이제이션
+    const isFormLoading = useMemo(() =>
+            createMutation.isPending || updateMutation.isPending,
+        [createMutation.isPending, updateMutation.isPending]
+    );
+
+    // 이벤트 핸들러들 - useCallback으로 리렌더링 방지
     const handleOpenModal = useCallback((item = null) => {
         setEditingItem(item);
         if (item) {
@@ -172,20 +193,15 @@ const NavigationManagement = () => {
     }, []);
 
     const handleDragEnd = useCallback((result) => {
-        if (!result.destination) {
-            return;
-        }
+        if (!result.destination) return;
 
         const { source, destination } = result;
-        if (source.index === destination.index) {
-            return;
-        }
+        if (source.index === destination.index) return;
 
         const items = Array.from(flatNavigations);
         const [reorderedItem] = items.splice(source.index, 1);
         items.splice(destination.index, 0, reorderedItem);
 
-        // 순서 업데이트를 위한 데이터 준비
         const orderData = items.map((item, index) => ({
             id: item.id,
             sortOrder: index,
@@ -195,7 +211,8 @@ const NavigationManagement = () => {
         updateOrderMutation.mutate(orderData);
     }, [flatNavigations, updateOrderMutation]);
 
-    const renderNavigationItem = useCallback((item, index) => {
+    // 네비게이션 아이템 컴포넌트 - 메모이제이션
+    const NavigationItem = useCallback(({ item, index }) => {
         const hasChildren = item.children && item.children.length > 0;
         const isExpanded = expandedItems.has(item.id);
 
@@ -210,51 +227,90 @@ const NavigationManagement = () => {
                             marginLeft: item.depth * 20,
                         }}
                     >
-                        <Paper
-                            p="sm"
-                            mb="xs"
-                            shadow={snapshot.isDragging ? 'md' : 'xs'}
-                            bg={snapshot.isDragging ? 'blue.0' : undefined}
+                        <Box
+                            p="md"
+                            mb="sm"
                             style={{
+                                backgroundColor: snapshot.isDragging
+                                    ? `${velogColors.primary}15`
+                                    : velogColors.cardBg,
+                                border: `1px solid ${snapshot.isDragging
+                                    ? velogColors.primary
+                                    : velogColors.border}`,
+                                borderRadius: rem(8),
                                 opacity: item.isActive ? 1 : 0.6,
+                                transition: 'all 0.2s ease',
+                                boxShadow: snapshot.isDragging
+                                    ? `0 4px 12px ${velogColors.primary}30`
+                                    : colorScheme === 'dark'
+                                        ? '0 2px 4px rgba(0, 0, 0, 0.3)'
+                                        : '0 2px 4px rgba(0, 0, 0, 0.1)',
                             }}
                         >
                             <Group justify="space-between">
-                                <Group>
-                                    <div {...provided.dragHandleProps}>
+                                <Group gap="sm">
+                                    {/* 드래그 핸들 */}
+                                    <Box {...provided.dragHandleProps}>
                                         <IconGripVertical
-                                            size={16}
-                                            style={{ cursor: 'grab' }}
+                                            size={18}
+                                            style={{
+                                                cursor: 'grab',
+                                                color: velogColors.subText
+                                            }}
                                         />
-                                    </div>
+                                    </Box>
 
+                                    {/* 펼치기/접기 버튼 */}
                                     {hasChildren && (
                                         <ActionIcon
                                             variant="subtle"
                                             size="sm"
                                             onClick={() => handleToggleExpand(item.id)}
+                                            style={{
+                                                color: velogColors.subText,
+                                                backgroundColor: 'transparent',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = velogColors.hover;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                            }}
                                         >
                                             {isExpanded ? (
-                                                <IconChevronDown size={14} />
+                                                <IconChevronDown size={16} />
                                             ) : (
-                                                <IconChevronRight size={14} />
+                                                <IconChevronRight size={16} />
                                             )}
                                         </ActionIcon>
                                     )}
 
+                                    {/* 메뉴 정보 */}
                                     <Group gap="xs">
                                         {item.icon && (
-                                            <Text size="sm" c="dimmed">
+                                            <Text
+                                                size="sm"
+                                                style={{ color: velogColors.subText }}
+                                            >
                                                 {item.icon}
                                             </Text>
                                         )}
-                                        <Text fw={500}>{item.label}</Text>
+                                        <Text
+                                            fw={500}
+                                            style={{ color: velogColors.text }}
+                                        >
+                                            {item.label}
+                                        </Text>
                                         {item.href && (
                                             <Badge
                                                 variant="light"
-                                                color="blue"
                                                 size="xs"
                                                 leftSection={<IconLink size={10} />}
+                                                style={{
+                                                    backgroundColor: `${velogColors.primary}15`,
+                                                    color: velogColors.primary,
+                                                    border: `1px solid ${velogColors.primary}30`,
+                                                }}
                                             >
                                                 {item.href}
                                             </Badge>
@@ -262,12 +318,23 @@ const NavigationManagement = () => {
                                     </Group>
                                 </Group>
 
+                                {/* 액션 버튼들 */}
                                 <Group gap="xs">
                                     <Tooltip label={item.isActive ? '활성화됨' : '비활성화됨'}>
                                         <ActionIcon
                                             variant="subtle"
-                                            color={item.isActive ? 'green' : 'red'}
+                                            size="sm"
+                                            color={item.isActive ? velogColors.success : velogColors.error}
                                             onClick={() => handleToggleStatus(item.id)}
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = velogColors.hover;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                            }}
                                         >
                                             {item.isActive ? (
                                                 <IconEye size={16} />
@@ -280,7 +347,20 @@ const NavigationManagement = () => {
                                     <Tooltip label="수정">
                                         <ActionIcon
                                             variant="subtle"
+                                            size="sm"
                                             onClick={() => handleOpenModal(item)}
+                                            style={{
+                                                color: velogColors.subText,
+                                                backgroundColor: 'transparent',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = velogColors.hover;
+                                                e.currentTarget.style.color = velogColors.text;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                                e.currentTarget.style.color = velogColors.subText;
+                                            }}
                                         >
                                             <IconEdit size={16} />
                                         </ActionIcon>
@@ -289,8 +369,18 @@ const NavigationManagement = () => {
                                     <Tooltip label="삭제">
                                         <ActionIcon
                                             variant="subtle"
-                                            color="red"
+                                            size="sm"
+                                            color={velogColors.error}
                                             onClick={() => handleDelete(item.id)}
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = `${velogColors.error}15`;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                            }}
                                         >
                                             <IconTrash size={16} />
                                         </ActionIcon>
@@ -298,92 +388,219 @@ const NavigationManagement = () => {
                                 </Group>
                             </Group>
 
+                            {/* 설명 */}
                             {item.description && (
-                                <Text size="xs" c="dimmed" mt="xs">
+                                <Text
+                                    size="xs"
+                                    mt="xs"
+                                    style={{
+                                        color: velogColors.subText,
+                                        paddingLeft: rem(42) // 아이콘들과 정렬
+                                    }}
+                                >
                                     {item.description}
                                 </Text>
                             )}
-                        </Paper>
+                        </Box>
                     </Box>
                 )}
             </Draggable>
         );
-    }, [expandedItems, handleToggleExpand, handleToggleStatus, handleOpenModal, handleDelete]);
+    }, [expandedItems, handleToggleExpand, handleToggleStatus, handleOpenModal, handleDelete, velogColors, colorScheme]);
 
+    // 빈 상태 컴포넌트
+    const EmptyState = useMemo(() => (
+        <Box
+            p="3rem"
+            style={{
+                backgroundColor: velogColors.cardBg,
+                border: `1px solid ${velogColors.border}`,
+                borderRadius: rem(12),
+                textAlign: 'center',
+            }}
+        >
+            <IconFolder
+                size={64}
+                style={{
+                    color: velogColors.subText,
+                    opacity: 0.5
+                }}
+            />
+            <Text
+                size="lg"
+                mt="md"
+                fw={500}
+                style={{ color: velogColors.text }}
+            >
+                등록된 네비게이션 메뉴가 없습니다
+            </Text>
+            <Text
+                size="sm"
+                mt="xs"
+                style={{ color: velogColors.subText }}
+            >
+                새 메뉴를 추가해보세요
+            </Text>
+        </Box>
+    ), [velogColors]);
+
+    // 로딩 상태
     if (isLoading) {
-        return <Text>네비게이션 데이터를 불러오는 중...</Text>;
+        return (
+            <Box style={{ color: velogColors.text }}>
+                <Text>네비게이션 데이터를 불러오는 중...</Text>
+            </Box>
+        );
     }
 
+    // 에러 상태
     if (error) {
         return (
-            <Alert icon={<IconAlertCircle size={16} />} color="red">
+            <Alert
+                icon={<IconAlertCircle size={18} />}
+                color="red"
+                variant="light"
+                styles={{
+                    root: {
+                        backgroundColor: `${velogColors.error}10`,
+                        border: `1px solid ${velogColors.error}30`,
+                    },
+                    message: {
+                        color: velogColors.text,
+                    }
+                }}
+            >
                 네비게이션 데이터를 불러오는데 실패했습니다.
             </Alert>
         );
     }
 
     return (
-        <Box>
-            <Group justify="between" mb="lg">
-                <div>
-                    <Text size="lg" fw={600} mb="xs">
+        <Box style={{ backgroundColor: velogColors.background }}>
+            {/* velog 스타일 헤더 */}
+            <Group justify="space-between" mb="xl">
+                <Stack gap="xs">
+                    <Text
+                        size="xl"
+                        fw={700}
+                        style={{
+                            color: velogColors.text,
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            letterSpacing: '-0.02em'
+                        }}
+                    >
                         네비게이션 관리
                     </Text>
-                    <Text size="sm" c="dimmed">
+                    <Text
+                        size="sm"
+                        style={{ color: velogColors.subText }}
+                    >
                         드래그 앤 드롭으로 메뉴 순서를 변경할 수 있습니다
                     </Text>
-                </div>
+                </Stack>
+
                 <Button
-                    leftSection={<IconPlus size={16} />}
+                    leftSection={<IconPlus size={18} />}
                     onClick={() => handleOpenModal()}
+                    size="md"
+                    radius="md"
+                    style={{
+                        backgroundColor: velogColors.primary,
+                        border: 'none',
+                        fontWeight: 500,
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#0CA678';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = velogColors.primary;
+                    }}
                 >
                     새 메뉴 추가
                 </Button>
             </Group>
 
-            <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="navigation-list">
-                    {(provided) => (
-                        <Box {...provided.droppableProps} ref={provided.innerRef}>
-                            {flatNavigations.map((item, index) =>
-                                renderNavigationItem(item, index)
-                            )}
-                            {provided.placeholder}
-                        </Box>
-                    )}
-                </Droppable>
-            </DragDropContext>
-
-            {flatNavigations.length === 0 && (
-                <Paper p="xl" ta="center">
-                    <IconFolder size={48} color="gray" />
-                    <Text size="lg" mt="md" c="dimmed">
-                        등록된 네비게이션 메뉴가 없습니다
-                    </Text>
-                    <Text size="sm" c="dimmed">
-                        새 메뉴를 추가해보세요
-                    </Text>
-                </Paper>
+            {/* 드래그 앤 드롭 리스트 */}
+            {flatNavigations.length > 0 ? (
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="navigation-list">
+                        {(provided) => (
+                            <Box {...provided.droppableProps} ref={provided.innerRef}>
+                                {flatNavigations.map((item, index) => (
+                                    <NavigationItem
+                                        key={item.id}
+                                        item={item}
+                                        index={index}
+                                    />
+                                ))}
+                                {provided.placeholder}
+                            </Box>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            ) : (
+                EmptyState
             )}
 
+            {/* velog 스타일 모달 */}
             <Modal
                 opened={opened}
                 onClose={close}
-                title={editingItem ? '메뉴 수정' : '새 메뉴 추가'}
+                title={
+                    <Text
+                        fw={600}
+                        size="lg"
+                        style={{ color: velogColors.text }}
+                    >
+                        {editingItem ? '메뉴 수정' : '새 메뉴 추가'}
+                    </Text>
+                }
                 size="md"
+                radius="md"
+                styles={{
+                    content: {
+                        backgroundColor: velogColors.background,
+                    },
+                    header: {
+                        backgroundColor: velogColors.background,
+                        borderBottom: `1px solid ${velogColors.border}`,
+                    }
+                }}
             >
-                <Stack>
+                <Stack gap="lg">
                     <TextInput
                         label="메뉴 이름"
                         placeholder="메뉴 이름을 입력하세요"
                         required
                         {...form.getInputProps('label')}
+                        styles={{
+                            label: { color: velogColors.text, fontWeight: 500 },
+                            input: {
+                                backgroundColor: velogColors.background,
+                                borderColor: velogColors.border,
+                                color: velogColors.text,
+                                '&:focus': {
+                                    borderColor: velogColors.primary,
+                                }
+                            }
+                        }}
                     />
 
                     <TextInput
                         label="링크 URL"
                         placeholder="/path/to/page"
                         {...form.getInputProps('href')}
+                        styles={{
+                            label: { color: velogColors.text, fontWeight: 500 },
+                            input: {
+                                backgroundColor: velogColors.background,
+                                borderColor: velogColors.border,
+                                color: velogColors.text,
+                                '&:focus': {
+                                    borderColor: velogColors.primary,
+                                }
+                            }
+                        }}
                     />
 
                     <Select
@@ -392,12 +609,34 @@ const NavigationManagement = () => {
                         data={parentOptions}
                         clearable
                         {...form.getInputProps('parentId')}
+                        styles={{
+                            label: { color: velogColors.text, fontWeight: 500 },
+                            input: {
+                                backgroundColor: velogColors.background,
+                                borderColor: velogColors.border,
+                                color: velogColors.text,
+                                '&:focus': {
+                                    borderColor: velogColors.primary,
+                                }
+                            }
+                        }}
                     />
 
                     <TextInput
                         label="아이콘"
                         placeholder="아이콘 클래스 또는 문자"
                         {...form.getInputProps('icon')}
+                        styles={{
+                            label: { color: velogColors.text, fontWeight: 500 },
+                            input: {
+                                backgroundColor: velogColors.background,
+                                borderColor: velogColors.border,
+                                color: velogColors.text,
+                                '&:focus': {
+                                    borderColor: velogColors.primary,
+                                }
+                            }
+                        }}
                     />
 
                     <Textarea
@@ -405,21 +644,68 @@ const NavigationManagement = () => {
                         placeholder="메뉴에 대한 설명을 입력하세요"
                         rows={3}
                         {...form.getInputProps('description')}
+                        styles={{
+                            label: { color: velogColors.text, fontWeight: 500 },
+                            input: {
+                                backgroundColor: velogColors.background,
+                                borderColor: velogColors.border,
+                                color: velogColors.text,
+                                '&:focus': {
+                                    borderColor: velogColors.primary,
+                                }
+                            }
+                        }}
                     />
 
                     <Switch
                         label="활성화"
                         description="메뉴를 사용자에게 표시할지 설정합니다"
                         {...form.getInputProps('isActive', { type: 'checkbox' })}
+                        styles={{
+                            label: { color: velogColors.text, fontWeight: 500 },
+                            description: { color: velogColors.subText },
+                            track: {
+                                backgroundColor: form.values.isActive
+                                    ? velogColors.primary
+                                    : velogColors.border,
+                            }
+                        }}
                     />
 
                     <Group justify="flex-end" mt="md">
-                        <Button variant="subtle" onClick={close}>
+                        <Button
+                            variant="subtle"
+                            onClick={close}
+                            style={{
+                                color: velogColors.subText,
+                                backgroundColor: 'transparent',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = velogColors.hover;
+                                e.currentTarget.style.color = velogColors.text;
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                                e.currentTarget.style.color = velogColors.subText;
+                            }}
+                        >
                             취소
                         </Button>
                         <Button
                             onClick={() => form.onSubmit(handleSubmit)()}
-                            loading={createMutation.isPending || updateMutation.isPending}
+                            loading={isFormLoading}
+                            style={{
+                                backgroundColor: velogColors.primary,
+                                border: 'none',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#0CA678';
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isFormLoading) {
+                                    e.currentTarget.style.backgroundColor = velogColors.primary;
+                                }
+                            }}
                         >
                             {editingItem ? '수정' : '추가'}
                         </Button>
