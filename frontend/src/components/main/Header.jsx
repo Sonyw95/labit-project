@@ -35,6 +35,7 @@ import useAuthStore from "../../stores/authStore.js";
 import UserMenu from "../common/Auth/UserMenu.jsx";
 import UserLogin from "../common/Auth/UserLogin.jsx";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
+import {NavLink, useNavigate} from "react-router-dom";
 
 const Header = memo(({
                          isDark, navOpened, setNavOpened, toggleColorScheme
@@ -113,6 +114,7 @@ const Header = memo(({
         const hasChildren = category.children && category.children.length > 0;
         const isClickable = category.href;
         const isOpen = openCategories.has(category.id);
+        const navigate = useNavigate();
 
         const handleItemClick = (e) => {
             e.stopPropagation();
@@ -121,7 +123,7 @@ const Header = memo(({
                 toggleCategory(category.id);
             } else if (isClickable) {
                 // 링크가 있으면 페이지 이동
-                window.location.href = category.href;
+                navigate(category.href)
                 setCategoryModalOpened(false);
             }
         };
@@ -342,7 +344,8 @@ const Header = memo(({
                             {category.children.slice(0, 5).map((child) => (
                                 <Menu.Item
                                     key={child.id}
-                                    onClick={() => child.href && (window.location.href = child.href)}
+                                    component={NavLink}
+                                    to={ child.href && child.href }
                                     disabled={!child.href}
                                     styles={{
                                         item: {

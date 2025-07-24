@@ -4,10 +4,10 @@ import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
 import UserSettings from "@/components/common/Auth/UserSettings.jsx";
-import PostEdit from "./pages/PostEdit.jsx";
 import PostViewPage from "./pages/PostViewPage.jsx";
 import PostList from "@/components/section/post/PostList.jsx";
 import MainPage from "@/stores/HomePage.jsx";
+import PostEditPage from "./pages/PostEdit.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -24,7 +24,7 @@ const AppRouter = () => {
 
 
                 { path: '/posts/:category', element: <PostList/> },
-                { path: '/post/edit/:postId', element: <PostEdit/> },
+                { path: '/post/edit/:postId', element: <PostEditPage/> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
                 { path: '/posts/:page', element: <></> },
 
