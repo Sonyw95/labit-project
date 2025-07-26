@@ -28,6 +28,7 @@ import AssetManagement from "../components/admin/AssetManagement.jsx";
 import AdminDashboard from "../components/admin/AdminDashboard.jsx";
 
 const AdminManagementPage = () => {
+    console.log("ADMIN MANAGE MENT PAGE")
     const { colorScheme } = useMantineColorScheme();
     const [activeTab, setActiveTab] = useState('dashboard');
 

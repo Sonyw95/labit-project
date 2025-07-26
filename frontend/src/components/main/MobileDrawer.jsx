@@ -13,7 +13,6 @@ import {
     ScrollArea,
     Collapse,
     rem,
-    useMantineColorScheme
 } from '@mantine/core';
 import {
     IconHome,
@@ -282,7 +281,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                             letterSpacing: '-0.01em'
                         }}
                     >
-                        My Blog
+                        LABit
                     </Text>
                 </Group>
             }

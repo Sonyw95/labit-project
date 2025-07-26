@@ -18,6 +18,13 @@ public interface LabNavigationRepository extends JpaRepository<LabNavigation, Lo
     List<LabNavigation> findAllActiveOrderBySortOrder();
 
     /**
+     * 활서화된 네비게이션 중 홈 제외.
+     */
+    @Query("SELECT n FROM LabNavigation n WHERE n.isActive = true AND n.href != :href ORDER BY n.sortOrder, n.id ")
+    List<LabNavigation> findActiveByNonHref();
+
+
+    /**
      * 특정 부모의 자식 메뉴들을 조회
      */
     @Query("SELECT n FROM LabNavigation n WHERE n.parentId = :parentId AND n.isActive = true ORDER BY n.sortOrder, n.id")

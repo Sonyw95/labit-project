@@ -26,10 +26,11 @@ import { useForm } from '@mantine/form';
 import {useCreateComment, useDeleteComment, useToggleCommentLike, useUpdateComment} from "../../hooks/api/useApi.js";
 import useAuthStore from "../../stores/authStore.js";
 import {showToast} from "../advanced/Toast.jsx";
+import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 const CommentItem = memo(({ comment, postId, depth = 0 }) => {
     const { user, isAuthenticated } = useAuthStore();
-    const { colorScheme } = useMantineColorScheme();
+    const { dark } = useTheme();
 
     const [isReplying, setIsReplying] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -38,13 +39,13 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
     // velog 스타일 색상
     const velogColors = {
         primary: '#12B886',
-        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
-        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
-        replyBg: colorScheme === 'dark' ? '#1E1F25' : '#F8F9FA',
-        inputBg: colorScheme === 'dark' ? '#2B2D31' : '#FFFFFF',
+        text: dark ? '#ECECEC' : '#212529',
+        subText: dark ? '#ADB5BD' : '#495057',
+        background: dark ? '#1A1B23' : '#FFFFFF',
+        border: dark ? '#2B2D31' : '#E9ECEF',
+        hover: dark ? '#2B2D31' : '#F8F9FA',
+        replyBg: dark ? '#1E1F25' : '#F8F9FA',
+        inputBg: dark ? '#2B2D31' : '#FFFFFF',
     };
 
     // API 훅

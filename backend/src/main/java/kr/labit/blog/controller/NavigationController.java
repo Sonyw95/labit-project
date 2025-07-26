@@ -33,7 +33,8 @@ public class NavigationController {
 
     @GetMapping("/tree")
     @Operation(summary = "네비게이션 트리 조회", description = "사용자 권한에 따른 네비게이션 메뉴를 트리 형태로 조회합니다.")
-    public ResponseEntity<List<NavigationResponseDto>> getNavigationTree() {
+    public ResponseEntity<List<NavigationResponseDto>> getNavigationTree(
+    ) {
         log.info("네비게이션 트리 조회 요청");
 
         // 현재 사용자 정보 확인

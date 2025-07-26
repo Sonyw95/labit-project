@@ -3,7 +3,7 @@ import {
     AppShell, ScrollArea,
 } from '@mantine/core';
 import {Outlet} from "react-router-dom";
-import Header from "@/components/main/Header.jsx";
+import Header from "@/components/main/header/Header.jsx";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
 import NavigationMenu from "@/components/main/navigation/NavigationMenu.jsx";
 import MobileDrawer from "../main/MobileDrawer.jsx";

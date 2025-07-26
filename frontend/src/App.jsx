@@ -5,7 +5,7 @@ import '@mantine/tiptap/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/spotlight/styles.css';
 
-import 'highlight.js/styles/atom-one-dark.css';
+import 'highlight.js/styles/idea.css';
 import './App.css'
 
 import React, {memo, useEffect} from 'react';

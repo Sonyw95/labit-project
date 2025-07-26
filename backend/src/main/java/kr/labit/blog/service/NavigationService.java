@@ -375,7 +375,7 @@ public class NavigationService {
 
     private Integer calculateDepth(Long parentId) {
         if (parentId == null) {
-            return 0;
+            return 1;
         }
 
         LabNavigation parent = navigationRepository.findById(parentId)

@@ -7,7 +7,7 @@ import {IconHome, IconShieldLock} from "@tabler/icons-react";
 
 const ProtectedRoute = memo(({ children, requiredRole = null })  => {
     const location = useLocation();
-    const { isAuthenticated, isAdmin } = useAuthStore();
+    const { isAuthenticated } = useAuthStore();
     const { data: user, isLoading } = useUserInfo();
 
     // 로딩 중인 경우
@@ -24,7 +24,7 @@ const ProtectedRoute = memo(({ children, requiredRole = null })  => {
         return <Navigate to="/home" state={{ from: location }} replace />;
     }
     // 역할 확인이 필요한 경우
-    if (requiredRole && isAdmin && user) {
+    if (requiredRole && user && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') ) {
         return children
     }
     return (

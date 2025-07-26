@@ -2,12 +2,11 @@ import React, {lazy, Suspense} from "react";
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
-import UserSettings from "@/components/common/Auth/UserSettings.jsx";
 import PostViewPage from "./pages/PostViewPage.jsx";
-import PostList from "@/components/section/post/PostList.jsx";
-import MainPage from "@/stores/HomePage.jsx";
+import MainPage from "@/pages/HomePage.jsx";
 import PostEditPage from "./pages/PostEdit.jsx";
 import AdminManagementPage from "./pages/AdminManagementPage.jsx";
+import PostListPage from "@/pages/PostListPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -23,7 +22,7 @@ const AppRouter = () => {
                 { path: '/home', element: <MainPage/> },
 
 
-                { path: '/posts/:category', element: <PostList/> },
+                { path: '/posts/:category', element: <PostListPage/> },
                 { path: '/post/edit/:postId', element: <PostEditPage/> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
                 { path: '/posts/:page', element: <></> },

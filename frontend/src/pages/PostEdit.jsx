@@ -1,9 +1,7 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Container,
-    Paper,
     Stack,
     TextInput,
     Textarea,
@@ -14,11 +12,13 @@ import {
     FileInput,
     Switch,
     LoadingOverlay,
-    Grid,
-    Card,
     Text,
     Image,
     ActionIcon,
+    Box,
+    Modal,
+    useMantineColorScheme,
+    rem,
 } from '@mantine/core';
 import { RichTextEditor, Link } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
@@ -30,8 +30,9 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { createLowlight } from 'lowlight';
-import { IconUpload, IconX, IconEye, IconDeviceFloppy } from '@tabler/icons-react';
+import { IconUpload, IconX, IconEye, IconSettings, IconArrowLeft } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 
 // 코드 하이라이트를 위한 언어 설정
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -39,8 +40,8 @@ import python from 'highlight.js/lib/languages/python';
 import java from 'highlight.js/lib/languages/java';
 import css from 'highlight.js/lib/languages/css';
 import html from 'highlight.js/lib/languages/xml';
-import {showToast} from "@/components/advanced/Toast.jsx";
-import {useCreatePost, useNavigationTree, usePost, useUpdatePost} from "@/hooks/api/useApi.js";
+import { showToast } from "@/components/advanced/Toast.jsx";
+import { useCreatePost, useNavigationTree, usePost, useUpdatePost } from "@/hooks/api/useApi.js";
 
 const lowlight = createLowlight({})
 // 언어 등록
@@ -51,21 +52,42 @@ lowlight.register('css', css);
 lowlight.register('html', html);
 
 function PostEditPage() {
+    const { colorScheme } = useMantineColorScheme();
     const { postId } = useParams();
     const navigate = useNavigate();
     const isEdit = !!postId;
 
-    // 상태 관리
+    // velog 스타일 색상 팔레트
+    const velogColors = useMemo(() => ({
+        primary: '#12B886',
+        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
+        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        success: '#12B886',
+        error: '#FA5252',
+        cardBg: colorScheme === 'dark' ? '#242529' : '#FFFFFF',
+    }), [colorScheme]);
+
+    // 상태 관리 (기존 유지)
     const [previewMode, setPreviewMode] = useState(false);
     const [thumbnailPreview, setThumbnailPreview] = useState(null);
+    const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
 
-    // API 훅
+    // API 훅 (기존 유지)
     const { data: navigationTree } = useNavigationTree();
     const { data: existingPost, isLoading: isLoadingPost } = usePost(postId, { enabled: isEdit });
     const createPostMutation = useCreatePost();
     const updatePostMutation = useUpdatePost();
 
-    // Rich Text Editor 설정
+    // 로딩 상태 메모이제이션
+    const isFormLoading = useMemo(() =>
+            createPostMutation.isLoading || updatePostMutation.isLoading,
+        [createPostMutation.isLoading, updatePostMutation.isLoading]
+    );
+
+    // Rich Text Editor 설정 (기존 유지)
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -83,12 +105,12 @@ function PostEditPage() {
         content: '',
         editorProps: {
             attributes: {
-                style: 'min-height: 400px; padding: 12px;',
+                style: `min-height: 500px; padding: 0; background-color: transparent; color: ${velogColors.text};`,
             },
         },
     });
 
-    // 폼 관리
+    // 폼 관리 (기존 유지)
     const form = useForm({
         initialValues: {
             title: '',
@@ -106,15 +128,18 @@ function PostEditPage() {
         },
     });
 
-    // 카테고리 옵션 생성
-    const categoryOptions = navigationTree
-        ?.filter(nav => nav.href) // href가 있는 것만 (실제 페이지)
-        ?.map(nav => ({
-            value: nav.id.toString(),
-            label: nav.label,
-        })) || [];
+    // 카테고리 옵션 생성 - 메모이제이션
+    const categoryOptions = useMemo(() =>
+            navigationTree
+                ?.filter(nav => nav.href)
+                ?.map(nav => ({
+                    value: nav.id.toString(),
+                    label: nav.label,
+                })) || [],
+        [navigationTree]
+    );
 
-    // 기존 포스트 데이터 로드
+    // 기존 포스트 데이터 로드 (기존 유지)
     useEffect(() => {
         if (existingPost) {
             form.setValues({
@@ -136,7 +161,7 @@ function PostEditPage() {
         }
     }, [existingPost, editor]);
 
-    // 에디터 내용 변경 시 폼 업데이트
+    // 에디터 내용 변경 시 폼 업데이트 (기존 유지)
     useEffect(() => {
         if (editor) {
             const updateContent = () => {
@@ -149,29 +174,21 @@ function PostEditPage() {
         }
     }, [editor, form]);
 
-    // 썸네일 파일 업로드 처리
-    const handleThumbnailUpload = async (file) => {
+    // 이벤트 핸들러들 - useCallback으로 메모이제이션
+    const handleThumbnailUpload = useCallback(async (file) => {
         if (file) {
-            // 실제 구현시에는 파일을 서버에 업로드하고 URL을 받아와야 함
-            // 여기서는 로컬 미리보기만 구현
             const previewUrl = URL.createObjectURL(file);
             setThumbnailPreview(previewUrl);
-
-            // TODO: 실제 파일 업로드 API 호출
-            // const uploadedUrl = await uploadFile(file);
-            // form.setFieldValue('thumbnailUrl', uploadedUrl);
             showToast.success('썸네일 업로드', '썸네일 이미지가 설정되었습니다.')
         }
-    };
+    }, []);
 
-    // 썸네일 제거
-    const removeThumbnail = () => {
+    const removeThumbnail = useCallback(() => {
         setThumbnailPreview(null);
         form.setFieldValue('thumbnailUrl', '');
-    };
+    }, [form]);
 
-    // 폼 제출 처리
-    const handleSubmit = async (values) => {
+    const handleSubmit = useCallback(async (values) => {
         try {
             const postData = {
                 ...values,
@@ -186,314 +203,652 @@ function PostEditPage() {
                 showToast.success('포스트 생성 완료', '포스트가 성공적으로 생성되었습니다.')
             }
 
-            // 성공 시 포스트 목록 또는 상세 페이지로 이동
             navigate('/posts');
         } catch (error) {
             showToast.error('오류 발생', '포스트 저장 중 오류가 발생했습니다.')
         }
-    };
+    }, [isEdit, updatePostMutation, createPostMutation, postId, navigate]);
 
-    // 임시저장
-    const handleSaveDraft = () => {
+    const handleSaveDraft = useCallback(() => {
         form.setFieldValue('status', 'DRAFT');
         form.onSubmit(handleSubmit)();
-    };
+    }, [form, handleSubmit]);
 
-    // 발행
-    const handlePublish = () => {
+    const handlePublish = useCallback(() => {
         form.setFieldValue('status', 'PUBLISHED');
         form.onSubmit(handleSubmit)();
-    };
+    }, [form, handleSubmit]);
 
-    // 미리보기 토글
-    const togglePreview = () => {
+    const togglePreview = useCallback(() => {
         setPreviewMode(!previewMode);
-    };
+    }, [previewMode]);
+
+    // velog 스타일 버튼 컴포넌트
+    const VelogButton = useCallback(({ children, variant = 'filled', size = 'md', ...props }) => {
+        const isOutline = variant === 'outline';
+        const isLight = variant === 'light';
+        const isSmall = size === 'sm';
+
+        return (
+            <Button
+                {...props}
+                variant="unstyled"
+                style={{
+                    backgroundColor: isOutline || isLight ? 'transparent' : velogColors.primary,
+                    color: isOutline ? velogColors.text : isLight ? velogColors.primary : 'white',
+                    border: isOutline ? `1px solid ${velogColors.border}` : isLight ? `1px solid ${velogColors.primary}` : 'none',
+                    borderRadius: rem(6),
+                    padding: isSmall ? `${rem(6)} ${rem(12)}` : `${rem(8)} ${rem(16)}`,
+                    fontSize: isSmall ? rem(13) : rem(14),
+                    fontWeight: 500,
+                    transition: 'all 0.2s ease',
+                    height: isSmall ? rem(32) : rem(36),
+                    ...props.style,
+                }}
+                onMouseEnter={(e) => {
+                    if (isOutline) {
+                        e.currentTarget.style.backgroundColor = velogColors.hover;
+                    } else if (isLight) {
+                        e.currentTarget.style.backgroundColor = `${velogColors.primary}10`;
+                    } else {
+                        e.currentTarget.style.backgroundColor = '#0CA678';
+                    }
+                }}
+                onMouseLeave={(e) => {
+                    if (isOutline || isLight) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                    } else {
+                        e.currentTarget.style.backgroundColor = velogColors.primary;
+                    }
+                }}
+            >
+                {children}
+            </Button>
+        );
+    }, [velogColors]);
 
     if (isLoadingPost) {
         return (
-            <Container size="lg" pos="relative">
-                <LoadingOverlay visible />
-            </Container>
+            <Box
+                style={{
+                    backgroundColor: velogColors.background,
+                    minHeight: '100vh',
+                    position: 'relative'
+                }}
+            >
+                <LoadingOverlay
+                    visible
+                    loaderProps={{ color: velogColors.primary, size: 'lg' }}
+                />
+            </Box>
         );
     }
 
     return (
-        <Container size="lg">
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack spacing="lg">
-                    {/* 헤더 */}
-                    <Paper shadow="sm" p="md">
-                        <Group justify="space-between">
-                            <Text size="xl" fw={600}>
-                                {isEdit ? '포스트 수정' : '새 포스트 작성'}
-                            </Text>
-
-                            <Group>
-                                <Button
-                                    variant="light"
-                                    leftSection={<IconEye size={16} />}
-                                    onClick={togglePreview}
-                                >
-                                    {previewMode ? '편집 모드' : '미리보기'}
-                                </Button>
-
-                                <Button
-                                    variant="outline"
-                                    leftSection={<IconDeviceFloppy size={16} />}
-                                    onClick={handleSaveDraft}
-                                    loading={createPostMutation.isLoading || updatePostMutation.isLoading}
-                                >
-                                    임시저장
-                                </Button>
-
-                                <Button
-                                    leftSection={<IconDeviceFloppy size={16} />}
-                                    onClick={handlePublish}
-                                    loading={createPostMutation.isLoading || updatePostMutation.isLoading}
-                                >
-                                    발행
-                                </Button>
-                            </Group>
-                        </Group>
-                    </Paper>
-
-                    <Grid>
-                        {/* 메인 편집 영역 */}
-                        <Grid.Col span={8}>
-                            <Stack spacing="md">
-                                {/* 제목 */}
-                                <TextInput
-                                    label="제목"
-                                    placeholder="포스트 제목을 입력하세요"
-                                    required
-                                    size="lg"
-                                    {...form.getInputProps('title')}
-                                />
-
-                                {/* 요약 */}
-                                <Textarea
-                                    label="요약"
-                                    placeholder="포스트 요약을 입력하세요"
-                                    minRows={3}
-                                    maxRows={5}
-                                    {...form.getInputProps('summary')}
-                                />
-
-                                {/* 내용 편집기 */}
-                                <div>
-                                    <Text size="sm" fw={500} mb="xs">
-                                        내용 *
-                                    </Text>
-
-                                    {previewMode ? (
-                                        // 미리보기 모드
-                                        <Paper withBorder p="md" mih={400}>
-                                            <div
-                                                dangerouslySetInnerHTML={{ __html: form.values.content }}
-                                                style={{ minHeight: '400px' }}
-                                            />
-                                        </Paper>
-                                    ) : (
-                                        // 편집 모드
-                                        <RichTextEditor editor={editor}>
-                                            <RichTextEditor.Toolbar sticky stickyOffset={60}>
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Bold />
-                                                    <RichTextEditor.Italic />
-                                                    <RichTextEditor.Underline />
-                                                    <RichTextEditor.Strikethrough />
-                                                    <RichTextEditor.ClearFormatting />
-                                                    <RichTextEditor.Highlight />
-                                                </RichTextEditor.ControlsGroup>
-
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.H1 />
-                                                    <RichTextEditor.H2 />
-                                                    <RichTextEditor.H3 />
-                                                    <RichTextEditor.H4 />
-                                                </RichTextEditor.ControlsGroup>
-
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Blockquote />
-                                                    <RichTextEditor.Hr />
-                                                    <RichTextEditor.BulletList />
-                                                    <RichTextEditor.OrderedList />
-                                                    <RichTextEditor.Subscript />
-                                                    <RichTextEditor.Superscript />
-                                                </RichTextEditor.ControlsGroup>
-
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Link />
-                                                    <RichTextEditor.Unlink />
-                                                </RichTextEditor.ControlsGroup>
-
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.AlignLeft />
-                                                    <RichTextEditor.AlignCenter />
-                                                    <RichTextEditor.AlignJustify />
-                                                    <RichTextEditor.AlignRight />
-                                                </RichTextEditor.ControlsGroup>
-
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Code />
-                                                    <RichTextEditor.CodeBlock />
-                                                </RichTextEditor.ControlsGroup>
-                                            </RichTextEditor.Toolbar>
-
-                                            <RichTextEditor.Content />
-                                        </RichTextEditor>
-                                    )}
-                                </div>
-                            </Stack>
-                        </Grid.Col>
-
-                        {/* 사이드바 */}
-                        <Grid.Col span={4}>
-                            <Stack spacing="md">
-                                {/* 발행 설정 */}
-                                <Card withBorder>
-                                    <Card.Section withBorder inheritPadding py="xs">
-                                        <Text fw={500}>발행 설정</Text>
-                                    </Card.Section>
-
-                                    <Stack mt="md" spacing="sm">
-                                        <Select
-                                            label="상태"
-                                            data={[
-                                                { value: 'DRAFT', label: '임시저장' },
-                                                { value: 'PUBLISHED', label: '발행됨' },
-                                                { value: 'PRIVATE', label: '비공개' },
-                                            ]}
-                                            {...form.getInputProps('status')}
-                                        />
-
-                                        <Switch
-                                            label="추천 포스트"
-                                            description="메인 페이지에 추천 포스트로 표시"
-                                            {...form.getInputProps('isFeatured', { type: 'checkbox' })}
-                                        />
-                                    </Stack>
-                                </Card>
-
-                                {/* 카테고리 */}
-                                <Card withBorder>
-                                    <Card.Section withBorder inheritPadding py="xs">
-                                        <Text fw={500}>카테고리</Text>
-                                    </Card.Section>
-
-                                    <Select
-                                        mt="md"
-                                        placeholder="카테고리를 선택하세요"
-                                        data={categoryOptions}
-                                        searchable
-                                        clearable
-                                        {...form.getInputProps('categoryId')}
-                                    />
-                                </Card>
-
-                                {/* 태그 */}
-                                <Card withBorder>
-                                    <Card.Section withBorder inheritPadding py="xs">
-                                        <Text fw={500}>태그</Text>
-                                    </Card.Section>
-
-                                    <MultiSelect
-                                        mt="md"
-                                        placeholder="태그를 입력하세요"
-                                        data={[]}
-                                        searchable
-                                        creatable
-                                        getCreateLabel={(query) => `+ ${query} 태그 추가`}
-                                        onCreate={(query) => {
-                                            return { value: query, label: query };
-                                        }}
-                                        {...form.getInputProps('tags')}
-                                    />
-                                </Card>
-
-                                {/* 썸네일 */}
-                                <Card withBorder>
-                                    <Card.Section withBorder inheritPadding py="xs">
-                                        <Text fw={500}>썸네일</Text>
-                                    </Card.Section>
-
-                                    <Stack mt="md" spacing="sm">
-                                        {thumbnailPreview ? (
-                                            <div style={{ position: 'relative' }}>
-                                                <Image
-                                                    src={thumbnailPreview}
-                                                    alt="썸네일 미리보기"
-                                                    height={120}
-                                                    fit="cover"
-                                                    radius="sm"
-                                                />
-                                                <ActionIcon
-                                                    variant="filled"
-                                                    color="red"
-                                                    size="sm"
-                                                    style={{
-                                                        position: 'absolute',
-                                                        top: 4,
-                                                        right: 4,
-                                                    }}
-                                                    onClick={removeThumbnail}
-                                                >
-                                                    <IconX size={12} />
-                                                </ActionIcon>
-                                            </div>
-                                        ) : (
-                                            <FileInput
-                                                placeholder="썸네일 이미지 선택"
-                                                leftSection={<IconUpload size={16} />}
-                                                accept="image/*"
-                                                onChange={handleThumbnailUpload}
-                                            />
-                                        )}
-
-                                        <TextInput
-                                            placeholder="또는 이미지 URL 직접 입력"
-                                            {...form.getInputProps('thumbnailUrl')}
-                                            onChange={(event) => {
-                                                form.getInputProps('thumbnailUrl').onChange(event);
-                                                setThumbnailPreview(event.target.value);
-                                            }}
-                                        />
-                                    </Stack>
-                                </Card>
-                            </Stack>
-                        </Grid.Col>
-                    </Grid>
-
-                    {/* 하단 액션 버튼 */}
-                    <Paper shadow="sm" p="md">
-                        <Group justify="flex-end">
-                            <Button
-                                variant="outline"
+        <Box
+            style={{
+                backgroundColor: velogColors.background,
+                minHeight: '100vh',
+                transition: 'background-color 0.2s ease'
+            }}
+        >
+            {/* velog 스타일 상단 헤더 - 플로팅 */}
+            <Box
+                style={{
+                    position: 'fixed',
+                        left: 0,
+                    right: 0,
+                    zIndex: 100,
+                    backdropFilter: 'blur(8px)',
+                    backgroundColor: `${velogColors.background}95`,
+                    borderBottom: `1px solid ${velogColors.border}`,
+                }}
+            >
+                <Container size="lg">
+                    <Group justify="space-between" p="md">
+                        <Group gap="md">
+                            <ActionIcon
+                                variant="subtle"
+                                size="lg"
                                 onClick={() => navigate(-1)}
+                                style={{
+                                    color: velogColors.subText,
+                                    backgroundColor: 'transparent',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = velogColors.hover;
+                                    e.currentTarget.style.color = velogColors.text;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                    e.currentTarget.style.color = velogColors.subText;
+                                }}
                             >
-                                취소
-                            </Button>
+                                <IconArrowLeft size={20} />
+                            </ActionIcon>
 
-                            <Button
+                            <Text
+                                size="lg"
+                                fw={600}
+                                style={{ color: velogColors.text }}
+                            >
+                                {isEdit ? '포스트 수정' : '새 글 작성'}
+                            </Text>
+                        </Group>
+
+                        <Group gap="sm">
+                            <VelogButton
+                                variant="light"
+                                size="sm"
+                                leftSection={<IconEye size={16} />}
+                                onClick={togglePreview}
+                            >
+                                {previewMode ? '편집' : '미리보기'}
+                            </VelogButton>
+
+                            <VelogButton
                                 variant="outline"
+                                size="sm"
+                                leftSection={<IconSettings size={16} />}
+                                onClick={openSettings}
+                            >
+                                설정
+                            </VelogButton>
+
+                            <VelogButton
+                                variant="outline"
+                                size="sm"
                                 onClick={handleSaveDraft}
-                                loading={createPostMutation.isLoading || updatePostMutation.isLoading}
+                                loading={isFormLoading}
                             >
                                 임시저장
-                            </Button>
+                            </VelogButton>
 
-                            <Button
-                                type="submit"
-                                loading={createPostMutation.isLoading || updatePostMutation.isLoading}
+                            <VelogButton
+                                size="sm"
+                                onClick={handlePublish}
+                                loading={isFormLoading}
                             >
-                                {isEdit ? '수정' : '발행'}
-                            </Button>
+                                발행
+                            </VelogButton>
                         </Group>
-                    </Paper>
+                    </Group>
+                </Container>
+            </Box>
+
+            {/* 메인 에디터 영역 */}
+            <Container size="lg" style={{ paddingTop: rem(100) }}>
+                <form onSubmit={form.onSubmit(handleSubmit)}>
+                    <Stack gap="xl" pb="xl">
+                        {/* velog 스타일 제목 - 매우 크고 자연스럽게 */}
+                        <TextInput
+                            placeholder="제목을 입력하세요"
+                            required
+                            size="xl"
+                            {...form.getInputProps('title')}
+                            styles={{
+                                wrapper: {
+                                    marginTop: rem(20),
+                                    marginBottom: rem(20),
+                                },
+                                input: {
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    borderBottom: `2px solid transparent`,
+                                    borderRadius: 0,
+                                    fontSize: rem(48),
+                                    fontWeight: 700,
+                                    color: velogColors.text,
+                                    padding: `${rem(20)} 0`,
+                                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                    lineHeight: 1.2,
+                                    '&:focus': {
+                                        borderBottomColor: velogColors.primary,
+                                    },
+                                    '&::placeholder': {
+                                        color: velogColors.subText,
+                                        opacity: 0.6,
+                                    }
+                                }
+                            }}
+                        />
+
+                        {/* velog 스타일 에디터 */}
+                        <Box>
+                            {previewMode ? (
+                                // 완전히 자연스러운 미리보기
+                                <Box
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        minHeight: rem(600),
+                                        color: velogColors.text,
+                                        lineHeight: 1.8,
+                                        fontSize: rem(18),
+                                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                    }}
+                                >
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: form.values.content || '<p style="color: #ADB5BD; font-style: italic;">내용을 입력해주세요...</p>'
+                                        }}
+                                        style={{
+                                            minHeight: rem(600),
+                                            '& h1': { fontSize: rem(36), fontWeight: 700, marginBottom: rem(24), color: velogColors.text, lineHeight: 1.3 },
+                                            '& h2': { fontSize: rem(28), fontWeight: 600, marginBottom: rem(20), color: velogColors.text, lineHeight: 1.3 },
+                                            '& h3': { fontSize: rem(22), fontWeight: 600, marginBottom: rem(16), color: velogColors.text, lineHeight: 1.3 },
+                                            '& p': { fontSize: rem(18), lineHeight: 1.8, marginBottom: rem(20), color: velogColors.text },
+                                            '& blockquote': {
+                                                borderLeft: `4px solid ${velogColors.primary}`,
+                                                paddingLeft: rem(20),
+                                                marginLeft: 0,
+                                                fontStyle: 'italic',
+                                                color: velogColors.subText,
+                                                fontSize: rem(18),
+                                                lineHeight: 1.8,
+                                            },
+                                            '& code': {
+                                                backgroundColor: velogColors.hover,
+                                                padding: `${rem(3)} ${rem(6)}`,
+                                                borderRadius: rem(4),
+                                                fontSize: rem(15),
+                                                color: velogColors.text,
+                                                fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
+                                            },
+                                            '& pre': {
+                                                backgroundColor: velogColors.hover,
+                                                padding: rem(20),
+                                                borderRadius: rem(8),
+                                                overflow: 'auto',
+                                                fontSize: rem(15),
+                                                lineHeight: 1.6,
+                                                marginBottom: rem(20),
+                                            }
+                                        }}
+                                    />
+                                </Box>
+                            ) : (
+                                // 완전히 자연스러운 에디터
+                                <Box>
+                                    <RichTextEditor
+                                        editor={editor}
+                                        styles={{
+                                            root: {
+                                                backgroundColor: 'transparent',
+                                                border: 'none',
+                                            },
+                                            toolbar: {
+                                                border: 'none',
+                                                borderBottom: `1px solid ${velogColors.border}`,
+                                                padding: `${rem(16)} 0`,
+                                                marginBottom: rem(20),
+                                                position: 'sticky',
+                                                top: rem(80),
+                                                zIndex: 50,
+                                                backdropFilter: 'blur(8px)',
+                                                backgroundColor: `${velogColors.background}95`,
+                                            },
+                                            content: {
+                                                backgroundColor: 'transparent',
+                                                border: 'none',
+                                                '& .ProseMirror': {
+                                                    color: velogColors.text,
+                                                    fontSize: rem(18),
+                                                    lineHeight: 1.8,
+                                                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                                                    minHeight: rem(600),
+                                                    padding: 0,
+                                                    outline: 'none',
+                                                    border: 'none',
+                                                    backgroundColor: 'transparent',
+                                                },
+                                                '& .ProseMirror p': {
+                                                    margin: `${rem(20)} 0`,
+                                                },
+                                                '& .ProseMirror h1': {
+                                                    fontSize: rem(36),
+                                                    fontWeight: 700,
+                                                    margin: `${rem(40)} 0 ${rem(20)} 0`,
+                                                    color: velogColors.text,
+                                                    lineHeight: 1.3,
+                                                },
+                                                '& .ProseMirror h2': {
+                                                    fontSize: rem(28),
+                                                    fontWeight: 600,
+                                                    margin: `${rem(32)} 0 ${rem(16)} 0`,
+                                                    color: velogColors.text,
+                                                    lineHeight: 1.3,
+                                                },
+                                                '& .ProseMirror h3': {
+                                                    fontSize: rem(22),
+                                                    fontWeight: 600,
+                                                    margin: `${rem(24)} 0 ${rem(12)} 0`,
+                                                    color: velogColors.text,
+                                                    lineHeight: 1.3,
+                                                },
+                                                '& .ProseMirror blockquote': {
+                                                    borderLeft: `4px solid ${velogColors.primary}`,
+                                                    paddingLeft: rem(20),
+                                                    marginLeft: 0,
+                                                    fontStyle: 'italic',
+                                                    color: velogColors.subText,
+                                                },
+                                                '& .ProseMirror code': {
+                                                    backgroundColor: velogColors.hover,
+                                                    padding: `${rem(3)} ${rem(6)}`,
+                                                    borderRadius: rem(4),
+                                                    fontSize: rem(15),
+                                                    fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
+                                                },
+                                                '& .ProseMirror pre': {
+                                                    backgroundColor: velogColors.hover,
+                                                    padding: rem(20),
+                                                    borderRadius: rem(8),
+                                                    overflow: 'auto',
+                                                    fontSize: rem(15),
+                                                    lineHeight: 1.6,
+                                                    fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
+                                                },
+                                                '& .ProseMirror ul, & .ProseMirror ol': {
+                                                    paddingLeft: rem(24),
+                                                },
+                                                '& .ProseMirror li': {
+                                                    margin: `${rem(8)} 0`,
+                                                },
+                                                '& .ProseMirror p.is-editor-empty:first-of-type::before': {
+                                                    content: '"내용을 입력하세요..."',
+                                                    float: 'left',
+                                                    color: velogColors.subText,
+                                                    pointerEvents: 'none',
+                                                    height: 0,
+                                                    fontStyle: 'italic',
+                                                    opacity: 0.6,
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        <RichTextEditor.Toolbar>
+                                            <RichTextEditor.ControlsGroup>
+                                                <RichTextEditor.Bold />
+                                                <RichTextEditor.Italic />
+                                                <RichTextEditor.Underline />
+                                                <RichTextEditor.Strikethrough />
+                                                <RichTextEditor.ClearFormatting />
+                                                <RichTextEditor.Highlight />
+                                            </RichTextEditor.ControlsGroup>
+
+                                            <RichTextEditor.ControlsGroup>
+                                                <RichTextEditor.H1 />
+                                                <RichTextEditor.H2 />
+                                                <RichTextEditor.H3 />
+                                            </RichTextEditor.ControlsGroup>
+
+                                            <RichTextEditor.ControlsGroup>
+                                                <RichTextEditor.Blockquote />
+                                                <RichTextEditor.BulletList />
+                                                <RichTextEditor.OrderedList />
+                                            </RichTextEditor.ControlsGroup>
+
+                                            <RichTextEditor.ControlsGroup>
+                                                <RichTextEditor.Link />
+                                                <RichTextEditor.Unlink />
+                                            </RichTextEditor.ControlsGroup>
+
+                                            <RichTextEditor.ControlsGroup>
+                                                <RichTextEditor.Code />
+                                                <RichTextEditor.CodeBlock />
+                                            </RichTextEditor.ControlsGroup>
+                                        </RichTextEditor.Toolbar>
+
+                                        <RichTextEditor.Content />
+                                    </RichTextEditor>
+                                </Box>
+                            )}
+                        </Box>
+                    </Stack>
+                </form>
+            </Container>
+
+            {/* velog 스타일 설정 모달 */}
+            <Modal
+                opened={settingsOpened}
+                onClose={closeSettings}
+                title={
+                    <Text
+                        fw={600}
+                        size="lg"
+                        style={{ color: velogColors.text }}
+                    >
+                        글 설정
+                    </Text>
+                }
+                size="md"
+                radius="md"
+                styles={{
+                    content: {
+                        backgroundColor: velogColors.background,
+                    },
+                    header: {
+                        backgroundColor: velogColors.background,
+                        borderBottom: `1px solid ${velogColors.border}`,
+                    }
+                }}
+            >
+                <Stack gap="xl">
+                    {/* 요약 */}
+                    <Box>
+                        <Text
+                            fw={500}
+                            mb="sm"
+                            style={{ color: velogColors.text }}
+                        >
+                            요약
+                        </Text>
+                        <Textarea
+                            placeholder="포스트 요약을 입력하세요"
+                            minRows={3}
+                            maxRows={5}
+                            {...form.getInputProps('summary')}
+                            styles={{
+                                input: {
+                                    backgroundColor: velogColors.cardBg,
+                                    borderColor: velogColors.border,
+                                    color: velogColors.text,
+                                    '&:focus': {
+                                        borderColor: velogColors.primary,
+                                    },
+                                    '&::placeholder': {
+                                        color: velogColors.subText,
+                                    }
+                                }
+                            }}
+                        />
+                    </Box>
+
+                    {/* 카테고리 */}
+                    <Box>
+                        <Text
+                            fw={500}
+                            mb="sm"
+                            style={{ color: velogColors.text }}
+                        >
+                            카테고리
+                        </Text>
+                        <Select
+                            placeholder="카테고리를 선택하세요"
+                            data={categoryOptions}
+                            searchable
+                            clearable
+                            {...form.getInputProps('categoryId')}
+                            styles={{
+                                input: {
+                                    backgroundColor: velogColors.cardBg,
+                                    borderColor: velogColors.border,
+                                    color: velogColors.text,
+                                    '&:focus': {
+                                        borderColor: velogColors.primary,
+                                    }
+                                }
+                            }}
+                        />
+                    </Box>
+
+                    {/* 태그 */}
+                    <Box>
+                        <Text
+                            fw={500}
+                            mb="sm"
+                            style={{ color: velogColors.text }}
+                        >
+                            태그
+                        </Text>
+                        <MultiSelect
+                            placeholder="태그를 입력하세요"
+                            data={[]}
+                            searchable
+                            creatable
+                            getCreateLabel={(query) => `+ ${query} 태그 추가`}
+                            onCreate={(query) => {
+                                return { value: query, label: query };
+                            }}
+                            {...form.getInputProps('tags')}
+                            styles={{
+                                input: {
+                                    backgroundColor: velogColors.cardBg,
+                                    borderColor: velogColors.border,
+                                    color: velogColors.text,
+                                    '&:focus': {
+                                        borderColor: velogColors.primary,
+                                    }
+                                }
+                            }}
+                        />
+                    </Box>
+
+                    {/* 썸네일 */}
+                    <Box>
+                        <Text
+                            fw={500}
+                            mb="sm"
+                            style={{ color: velogColors.text }}
+                        >
+                            썸네일
+                        </Text>
+                        <Stack gap="sm">
+                            {thumbnailPreview ? (
+                                <Box style={{ position: 'relative' }}>
+                                    <Image
+                                        src={thumbnailPreview}
+                                        alt="썸네일 미리보기"
+                                        height={150}
+                                        style={{
+                                            objectFit: 'cover',
+                                            borderRadius: rem(8),
+                                        }}
+                                    />
+                                    <ActionIcon
+                                        variant="filled"
+                                        color="red"
+                                        size="sm"
+                                        style={{
+                                            position: 'absolute',
+                                            top: rem(8),
+                                            right: rem(8),
+                                        }}
+                                        onClick={removeThumbnail}
+                                    >
+                                        <IconX size={12} />
+                                    </ActionIcon>
+                                </Box>
+                            ) : (
+                                <FileInput
+                                    placeholder="썸네일 이미지 선택"
+                                    leftSection={<IconUpload size={16} />}
+                                    accept="image/*"
+                                    onChange={handleThumbnailUpload}
+                                    styles={{
+                                        input: {
+                                            backgroundColor: velogColors.cardBg,
+                                            borderColor: velogColors.border,
+                                            color: velogColors.text,
+                                            '&:focus': {
+                                                borderColor: velogColors.primary,
+                                            }
+                                        }
+                                    }}
+                                />
+                            )}
+
+                            <TextInput
+                                placeholder="또는 이미지 URL 직접 입력"
+                                {...form.getInputProps('thumbnailUrl')}
+                                onChange={(event) => {
+                                    form.getInputProps('thumbnailUrl').onChange(event);
+                                    setThumbnailPreview(event.target.value);
+                                }}
+                                styles={{
+                                    input: {
+                                        backgroundColor: velogColors.cardBg,
+                                        borderColor: velogColors.border,
+                                        color: velogColors.text,
+                                        '&:focus': {
+                                            borderColor: velogColors.primary,
+                                        }
+                                    }
+                                }}
+                            />
+                        </Stack>
+                    </Box>
+
+                    {/* 발행 설정 */}
+                    <Box>
+                        <Text
+                            fw={500}
+                            mb="sm"
+                            style={{ color: velogColors.text }}
+                        >
+                            발행 설정
+                        </Text>
+                        <Stack gap="md">
+                            <Select
+                                label="상태"
+                                data={[
+                                    { value: 'DRAFT', label: '임시저장' },
+                                    { value: 'PUBLISHED', label: '발행됨' },
+                                    { value: 'PRIVATE', label: '비공개' },
+                                ]}
+                                {...form.getInputProps('status')}
+                                styles={{
+                                    label: { color: velogColors.text, fontWeight: 500 },
+                                    input: {
+                                        backgroundColor: velogColors.cardBg,
+                                        borderColor: velogColors.border,
+                                        color: velogColors.text,
+                                        '&:focus': {
+                                            borderColor: velogColors.primary,
+                                        }
+                                    }
+                                }}
+                            />
+
+                            <Switch
+                                label="추천 포스트"
+                                description="메인 페이지에 추천 포스트로 표시"
+                                {...form.getInputProps('isFeatured', { type: 'checkbox' })}
+                                styles={{
+                                    label: { color: velogColors.text, fontWeight: 500 },
+                                    description: { color: velogColors.subText },
+                                    track: {
+                                        backgroundColor: form.values.isFeatured
+                                            ? velogColors.primary
+                                            : velogColors.border,
+                                    }
+                                }}
+                            />
+                        </Stack>
+                    </Box>
                 </Stack>
-            </form>
-        </Container>
+            </Modal>
+        </Box>
     );
 }
 

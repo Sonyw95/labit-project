@@ -35,12 +35,13 @@ import useAuthStore from "../stores/authStore.js";
 import {useCommentsByPost, useDeletePost, usePost, useTogglePostLike} from "../hooks/api/useApi.js";
 import {showToast} from "../components/advanced/Toast.jsx";
 import CommentSection from "../components/section/CommentSection.jsx";
+import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 const PostViewPage = memo(() => {
     const { postId } = useParams();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuthStore();
-    const { colorScheme } = useMantineColorScheme();
+    const{ dark } = useTheme();
 
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(false);
@@ -54,11 +55,11 @@ const PostViewPage = memo(() => {
     // velog 스타일 색상
     const velogColors = {
         primary: '#12B886', // velog 시그니처 녹색
-        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
-        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+        text: dark ? '#ECECEC' : '#212529',
+        subText: dark ? '#ADB5BD' : '#495057',
+        background: dark ? '#1A1B23' : '#f8f9fa',
+        border: dark ? '#2B2D31' : '#E9ECEF',
+        hover: dark ? '#2B2D31' : '#F8F9FA',
     };
 
     // 포스트 삭제
@@ -147,7 +148,7 @@ const PostViewPage = memo(() => {
 
     return (
         <Box
-            // bg={velogColors.background}
+            bg={velogColors.background}
              style={{ minHeight: '100vh' }}
         >
             <Container size="md" py="xl">

@@ -3,6 +3,7 @@ import {useMantineColorScheme} from "@mantine/core";
 
 const ThemeContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {
@@ -10,6 +11,20 @@ export const useTheme = () => {
     }
     return context;
 };
+
+// velog 스타일 색상 생성 함수
+const getVelogColors = (dark) => ({
+    primary: '#12B886',
+    text: dark ? '#ECECEC' : '#212529',
+    subText: dark ? '#ADB5BD' : '#495057',
+    background: dark ? '#1A1B23' : '#f8f9fa',
+    border: dark ? '#2B2D31' : '#E9ECEF',
+    hover: dark ? '#2B2D31' : '#F8F9FA',
+    section: dark ? '#1E1F25' : '#FAFAFA',
+    success: '#12B886',
+    error: '#FA5252',
+    warning: '#FD7E14',
+});
 
 // 테마 설정 기본값
 const defaultTheme = {
@@ -50,11 +65,18 @@ export const ThemeProvider = ({ children}) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = useMemo(() => colorScheme === 'dark', [colorScheme]);
     const colors = dark ? '#df9f20' : '#ffaa00';
-    const value = {
+
+    // velog 색상을 메모이제이션
+    const velogColors = useMemo(() => getVelogColors(dark), [dark]);
+
+    const value = useMemo(() => ({
         dark,
         colors,
+        velogColors,
         toggleColorScheme,
-    };
+        theme: defaultTheme,
+    }), [dark, colors, velogColors, toggleColorScheme]);
+
     return (
         <ThemeContext.Provider value={value}>
             {children}
