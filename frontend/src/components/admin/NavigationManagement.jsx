@@ -41,6 +41,7 @@ import {
     useUpdateNavigationOrder
 } from "../../hooks/api/useApi.js";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
+import {Icons} from "@/utils/Icons.jsx";
 
 const NavigationManagement = () => {
     const { dark } = useTheme();
@@ -292,12 +293,13 @@ const NavigationManagement = () => {
                                     {/* 메뉴 정보 */}
                                     <Group gap="xs">
                                         {item.icon && (
-                                            <Text
-                                                size="sm"
-                                                style={{ color: velogColors.subText }}
-                                            >
-                                                {item.icon}
-                                            </Text>
+                                            <Icons icon={item.icon} size={16} />
+                                            // <Text
+                                            //     size="sm"
+                                            //     style={{ color: velogColors.subText }}
+                                            // >
+                                            //     {item.icon}
+                                            // </Text>
                                         )}
                                         <Text
                                             fw={500}
