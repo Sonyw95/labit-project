@@ -70,6 +70,7 @@ const PostSection = memo(({
                     rightSection={<IconArrowRight size={16}/>}
                     onClick={handleNavigateToAllPosts}
                     style={styles.viewAllButton}
+                    aria-label="전체 보기 버튼"
                 >
                     전체 보기
                 </Button>

@@ -105,6 +105,7 @@ const UserMenu = memo((() => {
                         onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
                         }}
+                        aria-label="유저 정보"
                     >
                         <LoadingOverlay
                             visible={logoutMutation.isPending}

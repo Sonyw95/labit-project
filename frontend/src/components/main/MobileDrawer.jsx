@@ -155,6 +155,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                     onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
                     }}
+                    aria-label="카테고리 아이템"
                 >
                     <Box style={{ color: level === 0 ? velogColors.primary : velogColors.subText }}>
                         <Icon size={level === 0 ? 20 : 18} />
@@ -233,6 +234,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                     e.currentTarget.style.backgroundColor = 'transparent';
                 }
             }}
+            aria-label="메뉴버튼"
         >
             <Icon size={20} />
             <Text size="md" fw={variant === 'primary' ? 600 : 500}>
@@ -317,6 +319,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                             </Group>
                         ) : (
                             <Button
+                                aria-label="로그인 버튼"
                                 variant="outline"
                                 size="md"
                                 fullWidth
@@ -396,7 +399,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                     <Divider color={velogColors.border} mb="lg" />
 
                     {/* 설정 */}
-                    <Box mb="lg">
+                    <Box mb="lg" onClick={toggleColorScheme}>
                         <Group justify="space-between" p="md">
                             <Group gap="md">
                                 {dark ? <IconMoon size={20} /> : <IconSun size={20} />}
@@ -406,7 +409,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                             </Group>
                             <Switch
                                 checked={dark}
-                                onChange={toggleColorScheme}
+                                // onChange={toggleColorScheme}
                                 size="md"
                                 styles={{
                                     track: {

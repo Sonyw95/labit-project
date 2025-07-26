@@ -67,6 +67,7 @@ const CTASection = memo(({
                         size="lg"
                         onClick={handleNavigateToAllPosts}
                         style={styles.primaryButton}
+                        aria-label="모든 포스트 보기 버튼"
                     >
                         모든 포스트 보기
                     </Button>
@@ -75,6 +76,7 @@ const CTASection = memo(({
                         variant="outline"
                         onClick={handleNavigateToAbout}
                         style={styles.outlineButton}
+                        aria-label="어바웃 버튼"
                     >
                         About
                     </Button>

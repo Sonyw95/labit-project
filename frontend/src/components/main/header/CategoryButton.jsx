@@ -115,6 +115,7 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
             style={baseButtonStyle}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            aria-label="카테고리 버튼"
         >
             <Text size="sm" style={textStyle}>
                 {category.label}
@@ -130,6 +131,7 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
                     style={baseButtonStyle}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
+                    aria-label="카테고리 버튼"
                 >
                     <Text size="sm" style={textStyle}>
                         {category.label}

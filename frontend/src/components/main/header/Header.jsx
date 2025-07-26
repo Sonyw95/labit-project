@@ -39,7 +39,6 @@ const Header = memo(({
                          setNavOpened,
                          toggleColorScheme
                      }) => {
-    console.log('Header')
     const { isAuthenticated } = useAuthStore();
     const [categoryModalOpened, setCategoryModalOpened] = useState(false);
     const [openCategories, setOpenCategories] = useState(new Set([2, 3]));

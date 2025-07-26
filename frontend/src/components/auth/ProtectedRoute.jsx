@@ -44,6 +44,7 @@ const ProtectedRoute = memo(({ children, requiredRole = null })  => {
                         href="/"
                         leftSection={<IconHome size={16} />}
                         variant="subtle"
+                        aria-label="홈으로 가기"
                     >
                         홈으로 돌아가기
                     </Button>

@@ -643,6 +643,7 @@ const AssetManagement = () => {
                                 radius="md"
                                 leftSection={<IconFolderPlus size={16} />}
                                 onClick={() => handleOpenFolderModal()}
+                                aria-label="폴더 새로 만들기"
                                 style={{
                                     backgroundColor: velogColors.primary,
                                     border: 'none',
@@ -744,6 +745,7 @@ const AssetManagement = () => {
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.backgroundColor = velogColors.primary;
                                 }}
+                                aria-label="파일 얿로드 번튼"
                             >
                                 파일 업로드
                             </Button>
@@ -861,6 +863,7 @@ const AssetManagement = () => {
                                 e.currentTarget.style.backgroundColor = 'transparent';
                                 e.currentTarget.style.color = velogColors.subText;
                             }}
+                            aria-label="취소 버튼"
                         >
                             취소
                         </Button>
@@ -879,6 +882,7 @@ const AssetManagement = () => {
                                     e.currentTarget.style.backgroundColor = velogColors.primary;
                                 }
                             }}
+                            aria-label="수동또는 생성 버튼"
                         >
                             {editingFolder ? '수정' : '생성'}
                         </Button>

@@ -116,6 +116,7 @@ const CategorySection = memo(({
                 style={buttonStyle}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                aria-label="카테고리 버튼"
             >
                 <Box style={iconBoxStyle}>
                     <Icon size={level === 0 ? 18 : 16} />

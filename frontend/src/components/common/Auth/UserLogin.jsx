@@ -36,6 +36,7 @@ const UserLogin = memo(() => {
                         transform: 'translateY(-1px)',
                     }
                 }}
+                aria-label="로그인 버튼"
             >
                 로그인
             </Button>

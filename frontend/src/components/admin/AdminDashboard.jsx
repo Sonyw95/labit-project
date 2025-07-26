@@ -505,6 +505,7 @@ const AdminDashboard = () => {
                     </Stack>
                     <Button
                         variant="outline"
+                        aria-label="자세히"
                         size="sm"
                         radius="md"
                         style={{

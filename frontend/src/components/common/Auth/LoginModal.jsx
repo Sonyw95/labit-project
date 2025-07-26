@@ -7,7 +7,7 @@ import {
     TextInput,
     PasswordInput,
     Stack,
-    Box, Center,
+    Box,
 } from '@mantine/core';
 import { IconMail, IconLock } from "@tabler/icons-react";
 import {IconBrandKakao} from "@/utils/helpers.jsx";
@@ -206,6 +206,7 @@ const LoginModal = memo(({ opened, onClose }) => {
                                 backgroundColor: '#0CA678',
                             }
                         }}
+                        aria-label="로그인버튼"
                     >
                         로그인
                     </Button>
@@ -247,6 +248,7 @@ const LoginModal = memo(({ opened, onClose }) => {
                                 },
                             }
                         }}
+                        aria-label="카카로 로그인 버튼"
                     >
                         카카오로 로그인
                     </Button>

@@ -5,10 +5,8 @@ import {
     Textarea,
     Button,
     Group,
-    Alert,
     Divider,
     Box,
-    useMantineColorScheme,
 } from '@mantine/core';
 import { IconMessageCircle, IconSend } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
@@ -141,6 +139,7 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                                                 backgroundColor: velogColors.hover
                                             }
                                         }}
+                                        aria-label="취소 버튼"
                                     >
                                         취소
                                     </Button>
@@ -154,6 +153,7 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                                                 backgroundColor: '#0CA678'
                                             }
                                         }}
+                                        aria-label="댓글 등록 버튼"
                                     >
                                         댓글 등록
                                     </Button>

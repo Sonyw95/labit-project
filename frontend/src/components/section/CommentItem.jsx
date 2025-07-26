@@ -291,6 +291,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                                 backgroundColor: velogColors.hover
                                             }
                                         }}
+                                        aria-label="취소 버튼"
                                     >
                                         취소
                                     </Button>
@@ -304,6 +305,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                                 backgroundColor: '#0CA678'
                                             }
                                         }}
+                                        aria-label="수정 버튼"
                                     >
                                         수정
                                     </Button>
@@ -360,6 +362,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                             color: velogColors.primary
                                         }
                                     }}
+                                    aria-label="답글 버튼"
                                 >
                                     답글
                                 </Button>
@@ -408,6 +411,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                                     backgroundColor: velogColors.hover
                                                 }
                                             }}
+                                            aria-label="취소 버튼"
                                         >
                                             취소
                                         </Button>
@@ -422,6 +426,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                                     backgroundColor: '#0CA678'
                                                 }
                                             }}
+                                            aria-label="답글 등록 버튼"
                                         >
                                             답글 등록
                                         </Button>
@@ -465,13 +470,15 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     borderColor: velogColors.border,
                                     color: velogColors.subText
                                 }}
+                                aria-label="취소 버튼"
                             >
                                 취소
                             </Button>
                             <Button
                                 color="red"
                                 onClick={handleDeleteComment}
-                                loading={deleteCommentMutation.isLoading}
+                                loading={deleteCommentMutation.isPending}
+                                aria-label="삭제 버튼"
                             >
                                 삭제
                             </Button>

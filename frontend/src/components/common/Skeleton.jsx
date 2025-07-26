@@ -13,7 +13,6 @@ const SkeletonLoader = memo(({
                                  animate = true,
                                  ...props
                              }) => {
-    const { isDark } = useTheme();
 
     const getSkeletonConfig = () => {
         switch (type) {

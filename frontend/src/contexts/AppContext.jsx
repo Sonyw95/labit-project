@@ -57,14 +57,25 @@ export const AppProvider = ({ children }) => {
     };
 
     return (
-        <AppContext.Provider value={value}>
-            {children}
-        </AppContext.Provider>
-    );
+        <>
+            <meta charSet="utf-8"/>
+            <meta name="description" content="Java, Spring, AEM, React 기반 실무 개발 지식을 공유하는 개인 블로그입니다."/>
+            <title> LABit </title>
+            <meta property="description" content="LABit"/>
+            <meta property="og:description" content="LABit"/>
+            <meta property="og:type" content="website"/>
+            <meta property="og:site" content="website"/>
+            <AppContext.Provider value={value}>
+                {children}
+            </AppContext.Provider>
+        </>
+
+)
+    ;
 };
 
 // 모든 Provider를 합친 루트 Provider
-export const RootProvider = ({ children }) => {
+export const RootProvider = ({children}) => {
     return (
         <AppProvider>
             <ThemeProvider>

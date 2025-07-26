@@ -186,6 +186,7 @@ const UserSettings = memo(({
                                                 border: 'none',
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }}
+                                            aria-label="사진변경"
                                         >
                                             사진 변경
                                         </Button>
@@ -197,6 +198,7 @@ const UserSettings = memo(({
                                             style={{
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }}
+                                            aria-label="삭제"
                                         >
                                             삭제
                                         </Button>
@@ -221,6 +223,7 @@ const UserSettings = memo(({
                                 style={{
                                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                 }}
+                                aria-label="기본 정보"
                             >
                                 기본 정보
                             </Title>
@@ -344,6 +347,7 @@ const UserSettings = memo(({
                                                 backgroundColor: '#0CA678',
                                             }
                                         }}
+                                        aria-label="정보 변경"
                                     >
                                         정보 변경
                                     </Button>
@@ -451,6 +455,7 @@ const UserSettings = memo(({
                                             backgroundColor: '#0CA678',
                                         }
                                     }}
+                                    aria-label="비밀번호 변경"
                                 >
                                     비밀번호 변경
                                 </Button>
