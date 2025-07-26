@@ -19,20 +19,24 @@ import {
     IconCalendar,
     IconTag,
 } from '@tabler/icons-react';
+import {useTheme} from "@/contexts/ThemeContext.jsx";
+import {useNavigate} from "react-router-dom";
 
 const PostCard = memo(({ post }) => {
-    const { colorScheme } = useMantineColorScheme();
-
-    // velog 스타일 색상
-    const velogColors = {
-        primary: '#12B886',
-        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
-        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
-        cardBg: colorScheme === 'dark' ? '#1E1F25' : '#FFFFFF',
-    };
+    // const { colorScheme } = useMantineColorScheme();
+    //
+    // // velog 스타일 색상
+    // const velogColors = {
+    //     primary: '#12B886',
+    //     text: dark ? '#ECECEC' : '#212529',
+    //     subText: dark ? '#ADB5BD' : '#495057',
+    //     background: dark ? '#1A1B23' : '#FFFFFF',
+    //     border: dark ? '#2B2D31' : '#E9ECEF',
+    //     hover: dark ? '#2B2D31' : '#F8F9FA',
+    //     cardBg: dark ? '#1E1F25' : '#FFFFFF',
+    // };
+    const {dark,  velogColors} = useTheme();
+    const navigate = useNavigate();
 
     // 날짜 포맷팅 (메모이제이션으로 리렌더링 방지)
     const formattedDate = useMemo(() => {
@@ -74,7 +78,8 @@ const PostCard = memo(({ post }) => {
     }, [post.summary, post.thumbnailUrl]);
 
     const handleCardClick = () => {
-        console.log('Navigate to post:', post.id);
+        navigate(`/post/view/${post.id}`)
+        console.log('Navigate to post:', post.id );
     };
 
     const handleAuthorClick = (e) => {
@@ -102,7 +107,7 @@ const PostCard = memo(({ post }) => {
                 overflow: 'hidden',
                 '&:hover': {
                     transform: 'translateY(-2px)',
-                    boxShadow: colorScheme === 'dark'
+                    boxShadow: dark
                         ? '0 8px 25px rgba(0, 0, 0, 0.3)'
                         : '0 8px 25px rgba(0, 0, 0, 0.08)',
                 }
@@ -110,7 +115,7 @@ const PostCard = memo(({ post }) => {
             onClick={handleCardClick}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = colorScheme === 'dark'
+                e.currentTarget.style.boxShadow = dark
                     ? '0 8px 25px rgba(0, 0, 0, 0.3)'
                     : '0 8px 25px rgba(0, 0, 0, 0.08)';
             }}

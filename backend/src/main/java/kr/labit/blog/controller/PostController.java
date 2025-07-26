@@ -58,8 +58,8 @@ public class PostController {
     @GetMapping
     @Operation(summary = "포스트 목록 조회", description = "발행된 포스트 목록을 조회합니다.")
     public ResponseEntity<Page<PostResponseDto>> getPosts(
-            @Parameter(description = "페이지 번호 (0부터 시작)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "페이지 번호 (0부터 시작)") @RequestParam(name = "page", defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기") @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PostResponseDto> posts = postService.getPosts(pageable);
         return ResponseEntity.ok(posts);
