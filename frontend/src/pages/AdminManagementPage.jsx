@@ -24,8 +24,8 @@ import {
 } from '@tabler/icons-react';
 import { useAdminDashboardStats, useAdminSystemStatus } from "../hooks/api/useApi.js";
 import NavigationManagement from "../components/admin/navigation/NavigationManagement.jsx";
-import AssetManagement from "../components/admin/AssetManagement.jsx";
-import AdminDashboard from "../components/admin/AdminDashboard.jsx";
+import AssetManagement from "../components/admin/asset/AssetManagement.jsx";
+import AdminDashboard from "../components/admin/dashboard/AdminDashboard.jsx";
 
 const AdminManagementPage = () => {
     console.log("ADMIN MANAGE MENT PAGE")

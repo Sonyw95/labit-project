@@ -136,7 +136,7 @@ const NavigationManagement = () => {
     //     }
     // }, [deleteMutation]);
 
-    const handleDelete = (id) => modals.openConfirmModal({
+    const handleDelete = useCallback( (id) => modals.openConfirmModal({
         title: '확인 요청',
         children: (
             <Text size="sm">
@@ -146,7 +146,7 @@ const NavigationManagement = () => {
         labels: { confirm: '삭제', cancel: '취소' },
         onCancel: () => console.log('Cancel'),
         onConfirm: () => deleteMutation.mutate(id),
-    });
+    }), [deleteMutation]);
 
     const handleToggleStatus = useCallback((id) => {
         toggleStatusMutation.mutate(id);
