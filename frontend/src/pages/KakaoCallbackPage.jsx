@@ -5,6 +5,7 @@ import {authService} from "../api/service.js";
 import {showToast} from "../components/advanced/Toast.jsx";
 import {Alert, Button, Center, Loader, Stack, Text} from "@mantine/core";
 import {IconAlertTriangle, IconHome} from "@tabler/icons-react";
+import {useUserInfo} from "@/hooks/api/useApi.js";
 
 function KakaoCallbackPage() {
     const navigate = useNavigate();
@@ -31,14 +32,8 @@ function KakaoCallbackPage() {
             const code = searchParams.get('code');
             const errorParam = searchParams.get('error');
             const errorDescription = searchParams.get('error_description');
-            const state = searchParams.get('state');
 
-            console.log('카카오 콜백 처리 시작:', {
-                code: code ? `${code.substring(0, 10)}...` : 'missing',
-                error: errorParam,
-                errorDescription,
-                state: state ? `${state.substring(0, 10)}...` : 'missing'
-            });
+            console.log('카카오 콜백 처리 시작:');
 
             // 에러가 있는 경우
             if (errorParam) {
@@ -75,18 +70,18 @@ function KakaoCallbackPage() {
             // 직접 API 호출 (mutation 객체 의존성 제거)
             const response = await authService.kakaoLogin(code);
 
-            console.log('카카오 로그인 API 성공', response);
+            console.log('카카오 로그인 API 성공');
 
             if (!response?.accessToken) {
                 throw new Error('액세스 토큰을 받지 못했습니다.');
             }
-
             // 로그인 상태 저장
             login(response.accessToken);
             showToast.success('로그인 성공', '카카오 로그인이 완료 되었습니다.');
 
             // 로그인 성공 시 홈으로 이동 (약간의 지연 후)
             console.log('카카오 로그인 성공, 홈으로 이동');
+
             navigate('/home', { replace: true });
 
         } catch (err) {

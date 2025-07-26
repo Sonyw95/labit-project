@@ -116,41 +116,6 @@ export const useKakaoAuthPath = () => {
     })
 }
 
-// 카카오 로그인
-export const useKakaoLogin = () => {
-    const queryClient = useQueryClient();
-    const { login } = useAuthStore();
-
-    return useMutation({
-        mutationFn: authService.kakaoLogin,
-        onSuccess: (response) => {
-            console.log('카카오 로그인 API 성공:', response);
-
-            const { accessToken } = response;
-            if (!accessToken) {
-                throw new Error('액세스 토큰을 받지 못했습니다.');
-            }
-
-            login(accessToken);
-
-            // 사용자 정보 캐시 무효화하여 새로 조회
-            queryClient.invalidateQueries({ queryKey: queryKeys.userInfo });
-
-            // 성공 알림
-            showToast.success('로그인 성공', '카카오 로그인이 완료되었습니다.');
-        },
-        onError: (error) => {
-            console.error('카카오 로그인 실패:', error);
-
-            const errorMessage = error.response?.data?.message ||
-                error.message ||
-                '로그인에 실패했습니다.';
-            showToast.error('로그인 실패', errorMessage);
-            // 에러를 다시 throw하여 콜백 페이지에서 처리할 수 있도록
-            throw error;
-        },
-    });
-};
 
 // 로그아웃
 export const useLogout = () => {

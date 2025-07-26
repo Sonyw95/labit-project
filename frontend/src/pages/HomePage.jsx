@@ -20,7 +20,6 @@ const MainPage = memo(() => {
     console.log('Main');
     const navigate = useNavigate();
     const { velogColors } = useTheme();
-
     // 최신 포스트 조회
     const { data: latestPosts, isLoading: latestLoading } = useInfiniteQuery({
         queryKey: ['posts', 'latest'],

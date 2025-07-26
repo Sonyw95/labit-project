@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     AppShell, ScrollArea,
 } from '@mantine/core';
 import {Outlet} from "react-router-dom";
 import Header from "@/components/main/header/Header.jsx";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
-import NavigationMenu from "@/components/main/navigation/NavigationMenu.jsx";
 import MobileDrawer from "../main/MobileDrawer.jsx";
-// import MobileDrawer from "@/components/main/MobileDrawer.jsx";
+import useAuthStore from "@/stores/authStore.js";
+import {useUserInfo} from "@/hooks/api/useApi.js";
 
 
 const MainLayout = () => {
+    console.log('MainLayout')
     const [navOpened, setNavOpened] = useState(false);
     const { dark, toggleColorScheme } = useTheme();
+    const {setUser, isAuthenticated } = useAuthStore();
+    const { data } = useUserInfo();
 
+    useEffect(() => {
+        if( isAuthenticated ){
+            setUser(data);
+        }
+    }, [data, isAuthenticated, setUser]);
 
     // const { loading } = useLoadingEffect();
     // if (loading) {

@@ -7,10 +7,12 @@ import MainPage from "@/pages/HomePage.jsx";
 import PostEditPage from "./pages/PostEdit.jsx";
 import AdminManagementPage from "./pages/AdminManagementPage.jsx";
 import PostListPage from "@/pages/PostListPage.jsx";
+import DashboardPage from "@/pages/DashboardPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
     const router = createBrowserRouter([
+        { path: '/test', element:<DashboardPage/>},
         { path: '/auth/kakao/callback', element: <KakaoCallbackPage/> },
         {
             path: '/',

@@ -61,6 +61,7 @@ const useAuthStore = create(
                 // 관리자 여부 확인
                 isAdmin: () => {
                     const { user } = get();
+                    console.log(user)
                     return user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
                 },
             }),
