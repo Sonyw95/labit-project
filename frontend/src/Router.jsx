@@ -8,6 +8,7 @@ import PostEditPage from "./pages/PostEdit.jsx";
 import AdminManagementPage from "./pages/AdminManagementPage.jsx";
 import PostListPage from "@/pages/PostListPage.jsx";
 import DashboardPage from "@/pages/DashboardPage.jsx";
+import UserProfilePage from "@/pages/UserEditPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = () => {
@@ -29,6 +30,7 @@ const AppRouter = () => {
                 { path: '/post/view/:postId', element: <PostViewPage/> },
                 { path: '/posts/:page', element: <></> },
 
+                {path:'/user/settings', element: <UserProfilePage/>},
 
                 // { path: '/setting/user', element: <UserSettings/>},
                 { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminManagementPage/></ProtectedRoute>}

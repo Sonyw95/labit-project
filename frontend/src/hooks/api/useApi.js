@@ -62,7 +62,7 @@ export const useNavigationTree = () => {
         queryFn: navigationService.getNavigationTree,
         staleTime: 10 * 60 * 1000, // 10분
         cacheTime: 30 * 60 * 1000, // 30분
-        retry: 1,
+        retry: 3,
         refetchOnWindowFocus: false,
     })
 }

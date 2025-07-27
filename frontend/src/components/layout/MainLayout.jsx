@@ -13,7 +13,7 @@ import {useUserInfo} from "@/hooks/api/useApi.js";
 const MainLayout = () => {
     console.log('MainLayout')
     const [navOpened, setNavOpened] = useState(false);
-    const { dark, toggleColorScheme } = useTheme();
+    const { dark, toggleColorScheme, velogColors } = useTheme();
     const {setUser, isAuthenticated } = useAuthStore();
     const { data } = useUserInfo();
 
@@ -27,7 +27,6 @@ const MainLayout = () => {
     // if (loading) {
     //     return <CustomLoader isDark={isDark} />;
     // }
-
     return (
         <AppShell
             header={{height: 60, offset: true}}
@@ -37,7 +36,7 @@ const MainLayout = () => {
             //     collapsed: {mobile: true},
             // }}
             style={{
-                background: dark ? '#1A1B23' : '#FFFFFF',
+                backgroundColor: velogColors.background,
             }}
         >
             {/* Header */}

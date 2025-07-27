@@ -17,7 +17,6 @@ import CTASection from "@/components/section/home/CTASection.jsx";
 
 // MainPage 메인 컴포넌트
 const MainPage = memo(() => {
-    console.log('Main');
     const navigate = useNavigate();
     const { velogColors } = useTheme();
     // 최신 포스트 조회

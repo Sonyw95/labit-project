@@ -30,8 +30,8 @@ import {
     getModalStyles,
 } from "@/components/main/header/style.js";
 import CategorySection from "@/components/main/header/CategorySelection.jsx";
-import UserMenu from "@/components/common/Auth/UserMenu.jsx";
-import UserLogin from "@/components/common/Auth/UserLogin.jsx";
+import UserMenu from "@/components/common/auth/user/UserMenu.jsx";
+import UserLogin from "@/components/common/auth/login/UserLogin.jsx";
 
 const Header = memo(({
                          isDark,
