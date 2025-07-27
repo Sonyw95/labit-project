@@ -24,6 +24,7 @@ import { useLogout, useUserInfo } from "@/hooks/api/useApi.js";
 import UserSettings from "./UserSettings.jsx";
 import { useDisclosure } from "@mantine/hooks";
 import { useTheme } from "@/contexts/ThemeContext.jsx";
+import {NavLink} from "react-router-dom";
 
 // 역할별 배지 색상 유틸리티 함수 - 메모이제이션 불필요 (순수 함수)
 const getRoleBadgeColor = (role) => {
@@ -164,10 +165,10 @@ const UserMenu = memo(() => {
                 opened={userMenuOpened}
                 withinPortal
                 styles={menuStyles}
-                closeOnItemClick={false}
-                closeOnClickOutside={true}
-                closeOnEscape={true}
-                trapFocus={true}
+                // closeOnItemClick={false}
+                // closeOnClickOutside={true}
+                // closeOnEscape={true}
+                // trapFocus={true}
                 aria-label="사용자 메뉴"
             >
                 <Menu.Target>
@@ -352,6 +353,8 @@ const UserDropdownContent = memo(({
 
             {/* 프로필 설정 메뉴 */}
             <Menu.Item
+                component={NavLink}
+                to="/user/settings"
                 leftSection={
                     <IconUser
                         size={16}
@@ -359,7 +362,7 @@ const UserDropdownContent = memo(({
                         aria-hidden="true"
                     />
                 }
-                onClick={openSettings}
+                // onClick={openSettings}
                 style={menuItemStyles}
                 role="menuitem"
                 aria-label="프로필 설정 열기"
@@ -385,6 +388,7 @@ const UserDropdownContent = memo(({
                         aria-hidden="true"
                     />
                 }
+                closeOnItemClick={false}
                 onClick={toggleColorScheme}
                 style={menuItemStyles}
                 role="menuitem"
