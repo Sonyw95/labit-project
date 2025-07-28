@@ -20,11 +20,12 @@ import {
     IconMoon,
     IconPalette,
 } from '@tabler/icons-react';
-import { useLogout, useUserInfo } from "@/hooks/api/useApi.js";
+import { useLogout } from "@/hooks/api/useApi.js";
 import UserSettings from "./UserSettings.jsx";
 import { useDisclosure } from "@mantine/hooks";
 import { useTheme } from "@/contexts/ThemeContext.jsx";
 import {NavLink} from "react-router-dom";
+import useAuthStore from "../../../../stores/authStore.js";
 
 // 역할별 배지 색상 유틸리티 함수 - 메모이제이션 불필요 (순수 함수)
 const getRoleBadgeColor = (role) => {
@@ -46,7 +47,8 @@ const getRoleLabel = (role) => {
 
 const UserMenu = memo(() => {
     const [userMenuOpened, setUserMenuOpened] = useState(false);
-    const { data: user, isLoading } = useUserInfo();
+    const { user, isAdmin, isAuthenticated, isLoading } = useAuthStore();
+
     const logoutMutation = useLogout();
     const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
     const { dark, velogColors, toggleColorScheme } = useTheme();
@@ -388,7 +390,6 @@ const UserDropdownContent = memo(({
                         aria-hidden="true"
                     />
                 }
-                closeOnItemClick={false}
                 onClick={toggleColorScheme}
                 style={menuItemStyles}
                 role="menuitem"

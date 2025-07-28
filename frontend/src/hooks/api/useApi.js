@@ -49,11 +49,12 @@ export const queryKeys = {
     commentsByPost: (postId) => ['comments', 'post', postId],
     commentsByAuthor: (authorId) => ['comments', 'author', authorId],
     recentComments: ['comments', 'recent'],
-    
-    userInfo: ['auth', 'userInfo'],
-    tokenValidation: ['auth', 'tokenValidation'],
-};
 
+    // 인증 관련 쿼리 키 (더 이상 사용하지 않음)
+    // userInfo: ['auth', 'userInfo'],
+    tokenValidation: ['auth', 'tokenValidation'],
+    activeSessionCount: ['auth', 'activeSessionCount'],
+};
 
 // 네비게이션 트리 조회
 export const useNavigationTree = () => {
@@ -89,7 +90,8 @@ export const useEvictNavigationCache = () => {
     })
 }
 
-// 사용자 정보 조회
+/*
+// 더 이상 사용하지 않음 - Context에서 직접 사용자 정보 관리
 export const useUserInfo = () => {
     const { isAuthenticated } = useAuthStore();
     return useQuery({
@@ -105,55 +107,82 @@ export const useUserInfo = () => {
         }
     })
 }
+*/
 
 // 카카오 인증 주소
 export const useKakaoAuthPath = () => {
     return useQuery({
-        queryKey: queryKeys.userInfo,
+        queryKey: ['auth', 'kakaoPath'],
         queryFn: authService.getKakaoAuthPath,
         staleTime: 5 * 60 * 1000,
         retry: 1,
     })
 }
 
-
 // 로그아웃
 export const useLogout = () => {
     const queryClient = useQueryClient();
-    const { logout, kakaoAccessToken } = useAuthStore();
+    const { logout, user, getAccessToken } = useAuthStore();
 
     return useMutation({
-        mutationFn: () => authService.logout(kakaoAccessToken),
+        mutationFn: async (kakaoAccessToken) => {
+            // 서버에 로그아웃 요청
+            try {
+                await authService.logout(kakaoAccessToken);
+            } catch (error) {
+                // 서버 로그아웃 실패해도 클라이언트 로그아웃은 진행
+                console.warn('서버 로그아웃 실패, 클라이언트 로그아웃 계속 진행:', error);
+            }
+        },
         onSuccess: () => {
-            logout();
-            queryClient.removeQueries({ queryKey: ['auth'] });
-            queryClient.clear();
             showToast.success('로그아웃 완료', '성공적으로 로그아웃되었습니다.');
         },
+        onError: (error) => {
+            console.warn('로그아웃 중 오류:', error);
+            showToast.info('로그아웃 완료', '로그아웃 처리가 완료되었습니다.');
+        },
         onSettled: () => {
-            // 로그아웃은 성공/실패와 관계없이 클라이언트 상태는 초기화
+            // 성공/실패와 관계없이 클라이언트 상태 초기화
             logout();
-            queryClient.clear();
+            queryClient.clear(); // 모든 캐시 초기화
         },
     });
 };
 
- // 토큰 갱신
+// 토큰 갱신 (내부적으로만 사용, client.js에서 자동 처리)
 export const useTokenRefresh = () => {
-    const { setToken } = useAuthStore();
+    const { setTokens, logout } = useAuthStore();
 
     return useMutation({
         mutationFn: authService.refreshToken,
         onSuccess: (response) => {
-            const { accessToken } = response;
-            setToken(accessToken);
-            showToast.success('토큰 갱신', '인증 토큰이 갱신되었습니다.');
+            const { accessToken, refreshToken } = response;
+            const success = setTokens(accessToken, refreshToken);
+
+            if (success) {
+                console.log('토큰 갱신 성공');
+            } else {
+                throw new Error('토큰 저장 실패');
+            }
         },
-        onError: () => {
-            // 토큰 갱신 실패시 로그아웃
-            useAuthStore.getState().logout();
-            showToast.success('세션 만료', '토큰 갱신에 실패했습니다. 다시 로그인해주세요.');
+        onError: (error) => {
+            console.error('토큰 갱신 실패:', error);
+            logout();
+            showToast.error('세션 만료', '다시 로그인해주세요.');
         },
+    });
+};
+
+// 활성 세션 개수 조회
+export const useActiveSessionCount = () => {
+    const { isAuthenticated } = useAuthStore();
+
+    return useQuery({
+        queryKey: queryKeys.activeSessionCount,
+        queryFn: () => authService.getActiveSessionCount(),
+        enabled: isAuthenticated,
+        staleTime: 2 * 60 * 1000, // 2분
+        retry: 1,
     });
 };
 
@@ -370,7 +399,6 @@ export const useTogglePostLike = () => {
     });
 };
 
-
 // 포스트별 댓글 조회
 export const useCommentsByPost = (postId) => {
     return useQuery({
@@ -487,7 +515,6 @@ export const useToggleCommentLike = () => {
     });
 };
 
-
 // 이미지 업로드
 export const useUploadImage = () => {
     return useMutation({
@@ -514,9 +541,6 @@ export const useUploadThumbnail = () => {
     });
 };
 
-
-
-
 // 파일 업로드
 export const useUploadFile = () => {
     return useMutation({
@@ -530,7 +554,6 @@ export const useUploadFile = () => {
     });
 };
 
-
 // Dashboard Hooks
 export const useAdminDashboardStats = () => {
     return useQuery({
@@ -540,6 +563,7 @@ export const useAdminDashboardStats = () => {
         retry: 1,
     });
 };
+
 export const useAdminSystemStatus = () => {
     return useQuery({
         queryKey: queryKeys.dashboard.systemStatus,
@@ -559,6 +583,7 @@ export const useAdminActivityLogs = (limit = 10) => {
     });
 };
 
+// Navigation Management Hooks
 export const useCreateNavigation = () => {
     const queryClient = useQueryClient();
 

@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDisclosure } from "@mantine/hooks";
 import { useTheme } from "@/contexts/ThemeContext.jsx";
-import { useLogout, useUserInfo } from "@/hooks/api/useApi.js";
+import { useLogout } from "@/hooks/api/useApi.js";
+import useAuthStore from "../../stores/authStore.js";
 
 // 사용자 메뉴 상태 관리 훅
 export const useUserMenuState = () => {
@@ -36,7 +37,7 @@ export const useUserMenuState = () => {
 
 // 사용자 데이터 관리 훅
 export const useUserMenuData = () => {
-    const { data: user, isLoading, error } = useUserInfo();
+    const { user, isAdmin, isAuthenticated } = useAuthStore();
     const logoutMutation = useLogout();
 
     // 로그아웃 핸들러

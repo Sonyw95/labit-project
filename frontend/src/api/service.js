@@ -1,9 +1,9 @@
 import {api} from "@/api/client.js";
-
+import useAuthStore from "../stores/authStore.js";
 
 // Navigation API
 export const navigationService = {
-    // 네비게이션 트맂 조회
+    // 네비게이션 트리 조회
     getNavigationTree: () => api.get('/navigation/tree'),
 
     // 특정 경로의 네비게이션 경로 조회 ( breadcrumb 용 )
@@ -13,7 +13,6 @@ export const navigationService = {
 
     // 네비게이션 캐시 무효화
     evictNavigationCache: () => api.post('/navigation/cache/evict'),
-
 
     // 네비게이션 메뉴 생성
     createNavigation: (navigationData) => api.post('/navigation/create', navigationData),
@@ -46,7 +45,6 @@ export const dashBoardService = {
         params: { limit }
     }),
 }
-
 
 export const assetService = {
     // 모든 에셋 조회 (관리자용)
@@ -86,14 +84,12 @@ export const assetService = {
     deleteAssetFile: (id) => api.delete(`/assets/file/${id}`),
 }
 
-
 export const authService = {
+    // 카카오 로그인 인증 주소 (토큰 불필요)
+    getKakaoAuthPath: () => api.publicRequest('get', '/auth/kakao/path'),
 
-    // 카카오 로그인 인증 주소
-    getKakaoAuthPath: () => api.get('/auth/kakao/path'),
-
-    // 카카오 로그인
-    kakaoLogin: (code) => api.post('/auth/kakao/login', null, {
+    // 카카오 로그인 (토큰 불필요)
+    kakaoLogin: (code) => api.publicRequest('post', '/auth/kakao/login', null, {
         params: { code }
     }),
 
@@ -105,39 +101,29 @@ export const authService = {
     // 내 정보 조회
     getUserInfo: () => api.get('/auth/me'),
 
-    // 토큰 갱신
-    refreshToken: () => api.post('/auth/token/refresh'),
+    // 토큰 갱신 (Refresh Token 사용)
+    refreshToken: () => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const refreshToken = useAuthStore().getRefreshToken();
+        if (!refreshToken) {
+            throw new Error('Refresh token이 없습니다.');
+        }
 
-    // 토큰 검증
-    validateToken: () => api.get('/auth/token/validate'),
+        return api.publicRequest('post', '/auth/token/refresh', {
+            refreshToken
+        });
+    },
+
+    // // 토큰 검증 (토큰 불필요 - 클라이언트에서 처리)
+    // validateToken: (token) => {
+    //     try {
+    //         const { isTokenExpired } = getState();
+    //         return !isTokenExpired(token);
+    //     } catch (error) {
+    //         return false;
+    //     }
+    // },
 }
-
-
-// Main Page API (복수 API 동시 요청)
-// export const mainPageService = {
-//     getMainPageData: async () => {
-//         const [userInfo, postList, mainImage, notifications] = await Promise.allSettled([
-//             userService.getProfile(),
-//             postService.getPosts({ page: 1, limit: 10 }),
-//             api.get('/main/featured-image'),
-//             api.get('/notifications/recent')
-//         ]);
-//
-//         return {
-//             userInfo: userInfo.status === 'fulfilled' ? userInfo.value : null,
-//             postList: postList.status === 'fulfilled' ? postList.value : [],
-//             mainImage: mainImage.status === 'fulfilled' ? mainImage.value : null,
-//             notifications: notifications.status === 'fulfilled' ? notifications.value : [],
-//             errors: {
-//                 userInfo: userInfo.status === 'rejected' ? userInfo.reason : null,
-//                 postList: postList.status === 'rejected' ? postList.reason : null,
-//                 mainImage: mainImage.status === 'rejected' ? mainImage.reason : null,
-//                 notifications: notifications.status === 'rejected' ? notifications.reason : null,
-//             }
-//         };
-//     }
-// };
-
 
 export const postService = {
     // 포스트 목록 조회
@@ -246,13 +232,11 @@ export const uploadService = {
         formData.append('file', file);
         formData.append('type', 'image');
 
-        const response = await api.post('/upload/image', formData, {
+        return await api.post('/upload/image', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
-        return response;
     },
 
     // 파일 업로드
@@ -260,13 +244,11 @@ export const uploadService = {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await api.post('/upload/file', formData, {
+        return await api.post('/upload/file', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
-        return response;
     },
 
     // 썸네일 업로드
@@ -275,13 +257,11 @@ export const uploadService = {
         formData.append('file', file);
         formData.append('type', 'thumbnail');
 
-        const response = await api.post('/upload/thumbnail', formData, {
+        return await api.post('/upload/thumbnail', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
-        return response;
     },
 
     // URL로 이미지 검증
@@ -289,5 +269,3 @@ export const uploadService = {
         params: { url }
     }),
 };
-
-

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, memo, useEffect } from 'react';
 import { Button } from '@mantine/core';
 import { IconBrandKakao } from "@/utils/helpers.jsx";
-import { useKakaoAuthPath } from "@/hooks/api/useApi.js";
+import {useKakaoAuthPath} from "../../../../hooks/api/useApi.js";
 
 const KakaoLoginButton = memo(({ loading }) => {
     const { data } = useKakaoAuthPath();
@@ -36,7 +36,7 @@ const KakaoLoginButton = memo(({ loading }) => {
 
         // 상태 파라미터 생성
         const state = Math.random().toString(36).substring(2, 15);
-        const authUrl = `${data}&state=${state}`;
+        const authUrl = `${data.data}&state=${state}`;
 
         try {
             window.location.href = authUrl;
@@ -78,7 +78,7 @@ const KakaoLoginButton = memo(({ loading }) => {
             leftSection={<IconBrandKakao size={20} aria-hidden="true" />}
             onClick={handleKakaoLogin}
             loading={isLoading || loading}
-            disabled={!data || isLoading || loading}
+            // disabled={!data || isLoading || loading}
             fullWidth
             size="lg"
             styles={kakaoButtonStyles}

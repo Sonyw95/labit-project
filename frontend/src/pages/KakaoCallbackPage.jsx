@@ -5,14 +5,13 @@ import {authService} from "../api/service.js";
 import {showToast} from "../components/advanced/Toast.jsx";
 import {Alert, Button, Center, Loader, Stack, Text} from "@mantine/core";
 import {IconAlertTriangle, IconHome} from "@tabler/icons-react";
-import {useUserInfo} from "@/hooks/api/useApi.js";
 
 function KakaoCallbackPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [error, setError] = useState(null);
     const [isProcessing, setIsProcessing] = useState(true);
-    const { login } = useAuthStore();
+    const { login, setLoading } = useAuthStore();
 
     // 처리 완료 여부를 추적하여 중복 실행 방지
     const hasProcessed = useRef(false);
@@ -27,13 +26,14 @@ function KakaoCallbackPage() {
 
         try {
             hasProcessed.current = true;
+            setLoading(true);
 
             // URL에서 파라미터 추출
             const code = searchParams.get('code');
             const errorParam = searchParams.get('error');
             const errorDescription = searchParams.get('error_description');
 
-            console.log('카카오 콜백 처리 시작:');
+            console.log('카카오 콜백 처리 시작');
 
             // 에러가 있는 경우
             if (errorParam) {
@@ -55,6 +55,7 @@ function KakaoCallbackPage() {
 
                 setError(errorMessage);
                 setIsProcessing(false);
+                setLoading(false);
                 return;
             }
 
@@ -62,27 +63,38 @@ function KakaoCallbackPage() {
             if (!code) {
                 setError('인증 코드를 받지 못했습니다.');
                 setIsProcessing(false);
+                setLoading(false);
                 return;
             }
 
             console.log('카카오 로그인 API 호출 시작');
 
-            // 직접 API 호출 (mutation 객체 의존성 제거)
-            const response = await authService.kakaoLogin(code);
+            // 카카오 로그인 API 호출
+            const {data} = await authService.kakaoLogin(code);
 
-            console.log('카카오 로그인 API 성공');
+            console.log('카카오 로그인 API 성공', {data});
 
-            if (!response?.accessToken) {
+            if (!data?.accessToken) {
                 throw new Error('액세스 토큰을 받지 못했습니다.');
             }
-            // 로그인 상태 저장
-            login(response.accessToken);
-            showToast.success('로그인 성공', '카카오 로그인이 완료 되었습니다.');
 
-            // 로그인 성공 시 홈으로 이동 (약간의 지연 후)
+            // 로그인 상태 저장 (refreshToken도 함께 저장)
+            const loginSuccess = login(
+                data.accessToken,
+                data.refreshToken || null
+            );
+
+            if (!loginSuccess) {
+                throw new Error('로그인 정보 저장에 실패했습니다.');
+            }
+
+            showToast.success('로그인 성공', '카카오 로그인이 완료되었습니다.');
+
+            // 로그인 성공 시 홈으로 이동
             console.log('카카오 로그인 성공, 홈으로 이동');
-
-            navigate('/home', { replace: true });
+            setTimeout(() => {
+                navigate('/home', { replace: false });
+            }, 1000);
 
         } catch (err) {
             console.error('카카오 콜백 처리 실패:', err);
@@ -95,9 +107,11 @@ function KakaoCallbackPage() {
             setIsProcessing(false);
 
             // 에러 알림
-            showToast.error('로그인 실패', errorMessage)
+            showToast.error('로그인 실패', errorMessage);
+        } finally {
+            setLoading(false);
         }
-    }, [searchParams, login, navigate]);
+    }, [searchParams, login, navigate, setLoading]);
 
     // 컴포넌트 마운트 시 한 번만 실행
     useEffect(() => {
@@ -110,7 +124,7 @@ function KakaoCallbackPage() {
             <Center h="100vh">
                 <Stack align="center" spacing="md">
                     <Loader size="xl" />
-                    <Text size="lg">카카오 로그인 처리 중...</Text>
+                    <Text size="lg" fw={500}>카카오 로그인 처리 중...</Text>
                     <Text size="sm" c="dimmed">
                         잠시만 기다려주세요.
                     </Text>
