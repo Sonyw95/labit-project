@@ -46,7 +46,7 @@ export default defineConfig({
   },
   define: {
     // // 환경 변수를 빌드 시점에 정의
-    // 'process.env': process.env
+    // 'import.meta.env': import.meta.env
   }
 
 })

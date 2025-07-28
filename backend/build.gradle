@@ -66,8 +66,8 @@ static def getOsName(){
 tasks.register('copyPropertiesForOs') {
     doLast{
         def osName = getOsName()
-        def sourceDir = file("src/main/resources")
-        def targetFile = file("${sourceDir}/application.properties")
+        def sourceDir = file("src/main/resources") as Object
+        def targetFile = file("${sourceDir}/application.properties") as Object
 
         if( targetFile.exists() ){
             copy {
@@ -95,8 +95,8 @@ tasks.register('copyPropertiesForOs') {
 }
 
 bootRun{
-    dependsOn(copyPropertiesForOs)
-    systemProperties( System.properties )
+//    dependsOn(copyPropertiesForOs)
+//    systemProperties( System.properties )
 }
 clean {
     doLast{

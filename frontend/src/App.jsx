@@ -17,34 +17,34 @@ import {
 // 지연 로딩 컴포넌트
 import AppRouter from "./Router.jsx";
 import {Notifications} from "@mantine/notifications";
-
-import {AppProvider} from "@/contexts/AppContext.jsx";
 import {ThemeProvider} from "@/contexts/ThemeContext.jsx";
 import {ToastProvider} from "@/contexts/ToastContext.jsx";
 import {ModalsProvider} from "@mantine/modals";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import useAuthStore from "./stores/authStore.js";
 import {isTokenExpired} from "./utils/authUtils.js";
-// import {NotificationProvider} from "@/contexts/NotificationContext.jsx";
+import AuthProvider from "./contexts/AuthContext.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            refetchOnWindowFocus: false,
-            retry: (failureCount, error) => {
-                // 401 에러는 재시도하지 않음
-                if (error?.response?.status === 401) {
-                    return false;
-                }
-                return failureCount < 1;
-            },
             staleTime: 5 * 60 * 1000, // 5분
             cacheTime: 10 * 60 * 1000, // 10분
+            retry: (failureCount, error) => {
+                // 401, 403 에러는 재시도하지 않음
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    return false;
+                }
+                return failureCount < 3;
+            },
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+            refetchOnReconnect: true
         },
         mutations: {
-            retry: 1,
-        },
-    },
+            retry: 1
+        }
+    }
 });
 
 // 메인 App 컴포넌트
@@ -72,13 +72,13 @@ const App = memo(() => {
                         transitionDuration={150}
                         containerWidth={320}
                     />
-                    <AppProvider>
+                    <AuthProvider>
                         <ThemeProvider>
                             <ToastProvider>
                                 <AppRouter />
                             </ToastProvider>
                         </ThemeProvider>
-                    </AppProvider>
+                    </AuthProvider>
                 </ModalsProvider>
             </MantineProvider>
         </QueryClientProvider>
