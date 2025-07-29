@@ -7,15 +7,14 @@ import {
     Divider,
 } from '@mantine/core';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { postService } from "../api/service.js";
 import { useTheme } from "@/contexts/ThemeContext.jsx";
 import AuthHeroSection from "@/components/section/home/AuthHeroSection.jsx";
 import PostSection from "@/components/section/home/PostSection.jsx";
 import CTASection from "@/components/section/home/CTASection.jsx";
+import {postService} from "@/api/postService.js";
 
 // HomePage 메인 컴포넌트
 const HomePage = memo(() => {
-    console.log('a')
     const navigate = useNavigate();
     const { velogColors } = useTheme();
     // 최신 포스트 조회

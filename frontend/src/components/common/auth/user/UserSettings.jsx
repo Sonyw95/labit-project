@@ -37,19 +37,19 @@ const UserSettings = memo(({
         name: user?.nickname,
         email: user?.email,
     });
-    const { dark } = useTheme();
+    const { velogColors } = useTheme();
 
-    // velog 스타일 색상
-    const velogColors = {
-        primary: '#12B886',
-        text: dark ? '#ECECEC' : '#212529',
-        subText: dark ? '#ADB5BD' : '#495057',
-        background: dark ? '#1A1B23' : '#FFFFFF',
-        border: dark ? '#2B2D31' : '#E9ECEF',
-        hover: dark ? '#2B2D31' : '#F8F9FA',
-        cardBg: dark ? '#1E1F25' : '#FAFAFA',
-        inputBg: dark ? '#2B2D31' : '#FFFFFF',
-    };
+    // // velog 스타일 색상
+    // const velogColors = {
+    //     primary: '#12B886',
+    //     text: dark ? '#ECECEC' : '#212529',
+    //     subText: dark ? '#ADB5BD' : '#495057',
+    //     background: dark ? '#1A1B23' : '#FFFFFF',
+    //     border: dark ? '#2B2D31' : '#E9ECEF',
+    //     hover: dark ? '#2B2D31' : '#F8F9FA',
+    //     cardBg: dark ? '#1E1F25' : '#FAFAFA',
+    //     inputBg: dark ? '#2B2D31' : '#FFFFFF',
+    // };
 
     const handleSave = () => {
     };

@@ -25,8 +25,8 @@ import {ToastProvider} from "@/contexts/ToastContext.jsx";
 import {ModalsProvider} from "@mantine/modals";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import useAuthStore from "./stores/authStore.js";
-import {authService} from "./api/service.js";
 import {showToast} from "./components/advanced/Toast.jsx";
+import {authService} from "@/api/authService.js";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -77,24 +77,26 @@ const App = memo(() => {
                 if (validationResult === 'refresh_needed') {
                     // Refresh token으로 자동 갱신 시도
                     console.log('토큰 자동 갱신 시도');
-                    const refreshToken = useAuthStore.getState().getRefreshToken();
+                    // const refreshToken = useAuthStore.getState().getRefreshToken();
 
-                    try {
-                        const response = await authService.refreshToken();
-                        const { accessToken, refreshToken: newRefreshToken } = response;
-
-                        const success = setTokens(accessToken, newRefreshToken);
-                        if (success) {
-                            console.log('앱 시작시 토큰 자동 갱신 성공');
-                            showToast.success('세션 복원', '이전 로그인 세션이 복원되었습니다.');
-                        } else {
-                            throw new Error('토큰 저장 실패');
-                        }
-                    } catch (error) {
-                        console.error('앱 시작시 토큰 갱신 실패:', error);
-                        logout();
-                        showToast.info('세션 만료', '새로 로그인해주세요.');
-                    }
+                    // try {
+                    //     const response = await authService.refreshToken();
+                    //     const { accessToken, refreshToken: newRefreshToken } = response;
+                    //
+                    //     const success = setTokens(accessToken, newRefreshToken);
+                    //     if (success) {
+                    //         console.log('앱 시작시 토큰 자동 갱신 성공');
+                    //         showToast.success('세션 복원', '이전 로그인 세션이 복원되었습니다.');
+                    //     } else {
+                    //         throw new Error('토큰 저장 실패');
+                    //     }
+                    // } catch (error) {
+                    //     console.error('앱 시작시 토큰 갱신 실패:', error);
+                    //     logout();
+                    //     showToast.info('세션 만료', '새로 로그인해주세요.');
+                    // }
+                    logout();
+                    showToast.info('세션 만료', '새로 로그인해주세요.');
                 } else if (validationResult === true) {
                     console.log('저장된 토큰이 유효함');
                 } else {
@@ -147,11 +149,11 @@ const App = memo(() => {
                     <ThemeProvider>
                         <ToastProvider>
                             {/* 전역 로딩 상태 */}
-                            <LoadingOverlay
-                                visible={isLoading}
-                                overlayProps={{ radius: "sm", blur: 1 }}
-                                loaderProps={{ size: 'md' }}
-                            />
+                            {/*<LoadingOverlay*/}
+                            {/*    visible={isLoading}*/}
+                            {/*    overlayProps={{ radius: "sm", blur: 1 }}*/}
+                            {/*    loaderProps={{ size: 'md' }}*/}
+                            {/*/>*/}
                             <AppRouter />
                         </ToastProvider>
                     </ThemeProvider>

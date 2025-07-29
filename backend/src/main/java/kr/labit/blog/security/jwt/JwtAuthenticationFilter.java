@@ -42,6 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String[] PUBLIC_URLS = {
             "/api/auth/kakao/login",
             "/api/auth/kakao/path",
+            "/api/navigation/",
+            "/api/navigation",
             "/api/auth/token/refresh",
             "/api/auth/token/validate",
             "/api/posts",
@@ -195,6 +197,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
 
+        log.info("URL: {}", requestURI);
         // PUBLIC_URLS에 포함된 경로는 필터 적용 안 함
         for (String publicUrl : PUBLIC_URLS) {
             if (requestURI.startsWith(publicUrl)) {

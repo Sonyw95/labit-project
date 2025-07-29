@@ -24,77 +24,35 @@ import {
     IconMoon,
     IconSun,
     IconChevronDown,
-    IconServer,
-    IconDeviceHeartMonitor,
-    IconCoffee,
-    IconLeaf,
-    IconDatabase,
-    IconCircle,
-    IconComponents,
-    IconBrush,
-    IconLayersIntersect,
     IconUser,
     IconLogin
 } from '@tabler/icons-react';
 import useAuthStore from '../../stores/authStore.js';
 import { showToast } from '@/components/advanced/Toast.jsx';
 import {useTheme} from "../../contexts/ThemeContext.jsx";
+import CategorySkeleton from "@/components/main/header/CategorySkeleton.jsx";
+import {Icons} from "@/utils/Icons.jsx";
+import useNavigationStore from "@/stores/navigationStore.js";
 
 const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/images/logo.png" }) => {
-    const { dark } = useTheme();
+    const { dark, velogColors } = useTheme();
     const { isAuthenticated, user } = useAuthStore();
     const [openCategories, setOpenCategories] = useState(new Set([2, 3])); // Backend, Frontend 기본 열림
 
-    // velog 스타일 색상
-    const velogColors = {
-        primary: '#12B886',
-        text: dark ? '#ECECEC' : '#212529',
-        subText: dark ? '#ADB5BD' : '#495057',
-        background: dark ? '#1A1B23' : '#FFFFFF',
-        border: dark ? '#2B2D31' : '#E9ECEF',
-        hover: dark ? '#2B2D31' : '#F8F9FA',
-    };
+    // Navigation Store에서 데이터 가져오기 (API 호출 없이 store 데이터 사용)
+    const {
+        navigationTree: categories = [],
+        isNavigationLoading: isLoading,
+        navigationError: error
+    } = useNavigationStore();
 
-    // 카테고리 데이터 (실제로는 props나 store에서 가져올 수 있음)
-    const categories = [
-        {
-            id: 2,
-            label: 'Backend',
-            icon: IconServer,
-            children: [
-                { id: 4, label: 'Java', href: '/posts/java', icon: IconCoffee },
-                { id: 5, label: 'Spring Boot', href: '/posts/spring-boot', icon: IconLeaf },
-                {
-                    id: 6,
-                    label: 'Database',
-                    icon: IconDatabase,
-                    children: [
-                        {
-                            id: 10,
-                            label: 'Oracle',
-                            href: '/posts/oracle',
-                            icon: IconCircle,
-                            children: [
-                                { id: 12, label: 'Mantine', href: '/posts/mantine', icon: IconComponents },
-                                { id: 13, label: 'Tailwind CSS', href: '/posts/tailwind', icon: IconBrush }
-                            ]
-                        },
-                        { id: 11, label: 'JPA/Hibernate', href: '/posts/jpa', icon: IconLayersIntersect }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 3,
-            label: 'Frontend',
-            icon: IconDeviceHeartMonitor,
-            children: [
-                { id: 7, label: 'React', href: '/posts/react', icon: IconComponents },
-                { id: 8, label: 'JavaScript', href: '/posts/javascript', icon: IconBrush },
-                { id: 9, label: 'CSS', href: '/posts/css', icon: IconCircle }
-            ]
-        }
-    ];
+    if (isLoading) {
+        return <CategorySkeleton velogColors={velogColors} />;
+    }
+
+    if (error) {
+        return <Text size="sm" c="dimmed">카테고리 로드 실패: {error}</Text>;
+    }
 
     const toggleCategory = (categoryId) => {
         setOpenCategories(prev => {
@@ -158,7 +116,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                     aria-label="카테고리 아이템"
                 >
                     <Box style={{ color: level === 0 ? velogColors.primary : velogColors.subText }}>
-                        <Icon size={level === 0 ? 20 : 18} />
+                        <Icons icon={category.icon} size={level === 0 ? 20 : 18} />
                     </Box>
 
                     <Text

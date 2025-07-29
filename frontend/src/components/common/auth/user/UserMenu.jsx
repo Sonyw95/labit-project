@@ -47,7 +47,7 @@ const getRoleLabel = (role) => {
 
 const UserMenu = memo(() => {
     const [userMenuOpened, setUserMenuOpened] = useState(false);
-    const { user, isAdmin, isAuthenticated, isLoading } = useAuthStore();
+    const { user, isLoading } = useAuthStore();
 
     const logoutMutation = useLogout();
     const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);

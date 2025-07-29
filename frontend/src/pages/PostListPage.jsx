@@ -15,9 +15,9 @@ import {
 import {useDebouncedValue} from "@mantine/hooks";
 import {useNavigationTree} from "@/hooks/api/useApi.js";
 import {useInfiniteQuery} from "@tanstack/react-query";
-import {postService} from "@/api/service.js";
 import {IconAlertCircle, IconRefresh} from "@tabler/icons-react";
 import PostList from "@/components/section/post/PostList.jsx";
+import {postService} from "@/api/postService.js";
 
 const POSTS_PER_PAGE = 12;
 const INFINITE_SCROLL_THRESHOLD = POSTS_PER_PAGE;

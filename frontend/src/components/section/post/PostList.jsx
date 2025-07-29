@@ -12,7 +12,6 @@ const PostList = memo(({posts= [],  span={
         lg: 4,      // 데스크톱: 3개씩
         xl: 3       // 큰 화면: 3개씩
     }}) => {
-    console.log(posts)
         return (
             <>
                 <Grid gutter="md">

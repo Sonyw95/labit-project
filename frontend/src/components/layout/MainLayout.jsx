@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {
     AppShell, ScrollArea,
 } from '@mantine/core';
@@ -7,8 +7,9 @@ import Header from "@/components/main/header/Header.jsx";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
 import MobileDrawer from "../main/MobileDrawer.jsx";
 import useAuthStore from "../../stores/authStore.js";
+import useNavigationStore from "@/stores/navigationStore.js";
 
-const MainLayout = () => {
+const MainLayout = memo(() => {
     console.log('MainLayout');
     const [navOpened, setNavOpened] = useState(false);
     const { dark, toggleColorScheme, velogColors } = useTheme();
@@ -21,8 +22,14 @@ const MainLayout = () => {
         isLoading
     } = useAuthStore();
 
-    // Context에서 사용자 정보를 직접 사용
-    // user 정보는 이미 토큰에서 추출되어 store에 저장되어 있음
+    // Navigation Store 사용
+    const { fetchNavigationTree } = useNavigationStore();
+
+    // 컴포넌트 마운트 시 네비게이션 데이터 로드
+    useEffect(() => {
+        // 네비게이션 트리 초기 로드
+        fetchNavigationTree();
+    }, [fetchNavigationTree]);
 
     return (
         <AppShell
@@ -57,6 +64,6 @@ const MainLayout = () => {
 
         </AppShell>
     );
-};
+});
 
 export default MainLayout;

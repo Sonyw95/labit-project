@@ -6,14 +6,13 @@ import PostViewPage from "./pages/PostViewPage.jsx";
 import PostEditPage from "./pages/PostEdit.jsx";
 import AdminManagementPage from "./pages/AdminManagementPage.jsx";
 import PostListPage from "@/pages/PostListPage.jsx";
-import DashboardPage from "@/pages/DashboardPage.jsx";
 import UserProfilePage from "@/pages/UserEditPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = memo((() => {
     const router = createBrowserRouter([
-        { path: '/test', element:<DashboardPage/>},
+        // { path: '/test', element:<DashboardPage/>},
         { path: '/auth/kakao/callback', element: <KakaoCallbackPage/> },
         {
             path: '/',

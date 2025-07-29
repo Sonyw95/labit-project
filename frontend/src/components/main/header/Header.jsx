@@ -23,7 +23,6 @@ import { NavLink } from "react-router-dom";
 import CategoryButton from "./CategoryButton.jsx";
 import CategorySkeleton from "./CategorySkeleton.jsx";
 import useAuthStore from "@/stores/authStore.js";
-import {useNavigationTree} from "@/hooks/api/useApi.js";
 import {
     getActionButtonStyles,
     getHeaderStyles,
@@ -32,6 +31,7 @@ import {
 import CategorySection from "@/components/main/header/CategorySelection.jsx";
 import UserMenu from "@/components/common/auth/user/UserMenu.jsx";
 import UserLogin from "@/components/common/auth/login/UserLogin.jsx";
+import useNavigationStore from "@/stores/navigationStore.js";
 
 const Header = memo(({
                          isDark,
@@ -39,17 +39,18 @@ const Header = memo(({
                          setNavOpened,
                          toggleColorScheme
                      }) => {
-    const { isAuthenticated } = useAuthStore();
+    const {isAuthenticated} = useAuthStore();
     const [categoryModalOpened, setCategoryModalOpened] = useState(false);
     const [openCategories, setOpenCategories] = useState(new Set([2, 3]));
     const { dark, velogColors } = useTheme();
 
-    // API hooks
+    console.log('Header');
+
     const {
-        data: categories = [],
-        isLoading,
-        error
-    } = useNavigationTree();
+        navigationTree: categories = [],
+        isNavigationLoading: isLoading,
+        navigationError: error
+    } = useNavigationStore();
 
     // 메모이제이션된 스타일들
     const headerStyles = useMemo(() => getHeaderStyles(velogColors), [velogColors]);

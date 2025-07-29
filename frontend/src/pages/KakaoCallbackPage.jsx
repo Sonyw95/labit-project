@@ -1,10 +1,10 @@
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {useCallback, useEffect, useRef, useState} from "react";
 import useAuthStore from "../stores/authStore.js";
-import {authService} from "../api/service.js";
 import {showToast} from "../components/advanced/Toast.jsx";
 import {Alert, Button, Center, Loader, Stack, Text} from "@mantine/core";
 import {IconAlertTriangle, IconHome} from "@tabler/icons-react";
+import {authService} from "@/api/authService.js";
 
 function KakaoCallbackPage() {
     const navigate = useNavigate();

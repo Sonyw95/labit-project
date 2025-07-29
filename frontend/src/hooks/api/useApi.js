@@ -1,8 +1,12 @@
 import {useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {navigationService, postService} from "@/api/service.js";
 import useAuthStore from "../../stores/authStore.js";
-import {assetService, authService, commentService, dashBoardService, uploadService} from "../../api/service.js";
 import {showToast} from "../../components/advanced/Toast.jsx";
+import {dashBoardService, navigationService} from "@/api/navigationService.js";
+import {authService} from "@/api/authService.js";
+import {postService} from "@/api/postService.js";
+import {commentService} from "@/api/commentService.js";
+import {uploadService} from "@/api/uploadService.js";
+import {assetService} from "@/api/assetService.js";
 
 export const queryKeys = {
     users: {
@@ -60,10 +64,10 @@ export const queryKeys = {
 export const useNavigationTree = () => {
     return useQuery({
         queryKey: queryKeys.navigation.tree,
-        queryFn: navigationService.getNavigationTree,
+        queryFn:navigationService.getNavigationTree,
         staleTime: 10 * 60 * 1000, // 10분
         cacheTime: 30 * 60 * 1000, // 30분
-        retry: 3,
+        retry: 0,
         refetchOnWindowFocus: false,
     })
 }
@@ -122,7 +126,7 @@ export const useKakaoAuthPath = () => {
 // 로그아웃
 export const useLogout = () => {
     const queryClient = useQueryClient();
-    const { logout, user, getAccessToken } = useAuthStore();
+    const { logout } = useAuthStore();
 
     return useMutation({
         mutationFn: async (kakaoAccessToken) => {

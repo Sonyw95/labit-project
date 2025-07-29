@@ -2,6 +2,13 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
 
+
+/**
+ * @typedef {Object} AuthStore
+ * @property {Function} getState - Zustand store의 getState 메서드
+ * @property {Function} getAccessToken - 액세스 토큰 반환
+ * @property {Function} logout - 로그아웃 처리
+ */
 const useAuthStore = create(
     persist(
         (set, get) => ({
@@ -230,5 +237,7 @@ const useAuthStore = create(
         }
     )
 );
+
+
 
 export default useAuthStore;

@@ -1,5 +1,6 @@
 import {create} from "zustand";
 import {devtools, persist} from "zustand/middleware";
+import {navigationService} from "@/api/navigationService.js";
 
 
 const useNavigationStore = create(
@@ -8,7 +9,7 @@ const useNavigationStore = create(
             (set, get) => ({
                 // 현재 활성화된 경로
                 activePath: '',
-
+                navigationTree: [],
                 // 펼쳐진 메뉴들의 ID 배열
                 expandedMenus: [],
 
@@ -18,10 +19,73 @@ const useNavigationStore = create(
                 // 네비게이션 로딩 상태
                 isNavigationLoading: false,
 
+                // 네비게이션 에러 상태
+                navigationError: null,
+
                 // 액션들
+                setNavigationTree: (tree) => set({ navigationTree: tree }),
+
                 setActivePath: (path) => set({ activePath: path }),
 
                 setSelectedMenuId: (menuId) => set({ selectedMenuId: menuId }),
+
+                // 네비게이션 트리 API 호출
+                fetchNavigationTree: async () => {
+                    const { navigationTree } = get();
+                    // 이미 데이터가 있으면 스킵 (캐시된 데이터 사용)
+                    if (navigationTree && navigationTree.length > 0) {
+                        return navigationTree;
+                    }
+
+                    set({ isNavigationLoading: true, navigationError: null });
+
+                    try {
+                        const navigationTree = await navigationService.getNavigationTree();
+                        set({
+                            navigationTree,
+                            isNavigationLoading: false,
+                            navigationError: null
+                        });
+
+                        return navigationTree;
+                    } catch (error) {
+                        console.error('Navigation tree fetch failed:', error);
+                        set({
+                            isNavigationLoading: false,
+                            navigationError: error.message || '네비게이션 로드 실패'
+                        });
+                        return [];
+                    }
+                },
+
+                // 네비게이션 캐시 새로고침
+                refreshNavigationTree: async () => {
+                    set({
+                        navigationTree: [],
+                        isNavigationLoading: true,
+                        navigationError: null
+                    });
+
+                    try {
+                        const response = await navigationService.getNavigationTree();
+                        const data = response.data;
+
+                        set({
+                            navigationTree: data,
+                            isNavigationLoading: false,
+                            navigationError: null
+                        });
+
+                        return data;
+                    } catch (error) {
+                        console.error('Navigation tree refresh failed:', error);
+                        set({
+                            isNavigationLoading: false,
+                            navigationError: error.message || '네비게이션 새로고침 실패'
+                        });
+                        return [];
+                    }
+                },
 
                 // 메뉴 펼치기/접기
                 toggleMenuExpansion: (menuId) =>
@@ -69,7 +133,9 @@ const useNavigationStore = create(
 
                             if (menu.children && menu.children.length > 0) {
                                 const foundPath = findMenuPath(menu.children, targetPath, currentMenuPath);
-                                if (foundPath) return foundPath;
+                                if (foundPath) {
+                                    return foundPath;
+                                }
                             }
                         }
                         return null;
@@ -91,7 +157,16 @@ const useNavigationStore = create(
                     }
                 },
             }),
-            { name: 'navigation-store' }
+            {
+                name: 'navigation-store',
+                // persist에서 일부 상태는 제외 (로딩 상태, 에러 상태는 저장하지 않음)
+                partialize: (state) => ({
+                    activePath: state.activePath,
+                    navigationTree: state.navigationTree,
+                    expandedMenus: state.expandedMenus,
+                    selectedMenuId: state.selectedMenuId,
+                })
+            }
         )
     )
 )
