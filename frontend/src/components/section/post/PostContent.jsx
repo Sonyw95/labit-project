@@ -70,6 +70,7 @@ const PostContent = memo(({ post }) => {
                 />
             )}
 
+            {/* Post Detail Section*/}
             <Box py="xl">
                 <div
                     dangerouslySetInnerHTML={{ __html: post.content }}

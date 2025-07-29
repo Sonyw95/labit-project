@@ -102,6 +102,7 @@ public class LabPost {
 
     // 연관 관계 (Comment는 별도 관리)
     @Transient
+    @Builder.Default
     private List<LabComment> comments = new ArrayList<>();
 
     // 편의 메서드
