@@ -125,6 +125,25 @@ class Api {
         return await this.api.delete(url, config);
     }
 
+    #getPublicRequest(){
+        const publicApi = axios.create({
+            baseURL: 'http://localhost:8080/api',
+            timeout: 10000,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        publicApi.interceptors.response.use(
+            (response) => response.data,
+            (error) => {
+                return Promise.reject(error);
+            }
+        );
+
+
+        return publicApi;
+    }
     // 토큰 없이 요청하는 경우 (로그인, 회원가입 등)
     async publicRequest(method, url, data = null, config = {}) {
         const requestConfig = {
@@ -140,13 +159,13 @@ class Api {
 
         switch (method.toLowerCase()) {
             case 'get':
-                return await axios.get(`/api${url}`, requestConfig);
+                return await this.#getPublicRequest().get(`${url}`, requestConfig);
             case 'post':
-                return await axios.post(`/api${url}`, data, requestConfig);
+                return await this.#getPublicRequest().post(`${url}`, data, requestConfig);
             case 'put':
-                return await axios.put(`/api${url}`, data, requestConfig);
+                return await this.#getPublicRequest().put(`${url}`, data, requestConfig);
             case 'delete':
-                return await axios.delete(`/api${url}`, requestConfig);
+                return await this.#getPublicRequest().delete(`${url}`, requestConfig);
             default:
                 throw new Error(`지원하지 않는 HTTP 메서드: ${method}`);
         }

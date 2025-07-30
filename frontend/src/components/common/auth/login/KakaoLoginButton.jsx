@@ -36,7 +36,7 @@ const KakaoLoginButton = memo(({ loading }) => {
 
         // 상태 파라미터 생성
         const state = Math.random().toString(36).substring(2, 15);
-        const authUrl = `${data.data}&state=${state}`;
+        const authUrl = `${data}&state=${state}`;
 
         try {
             window.location.href = authUrl;

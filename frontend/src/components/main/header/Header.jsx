@@ -44,8 +44,6 @@ const Header = memo(({
     const [openCategories, setOpenCategories] = useState(new Set([2, 3]));
     const { dark, velogColors } = useTheme();
 
-    console.log('Header');
-
     const {
         navigationTree: categories = [],
         isNavigationLoading: isLoading,

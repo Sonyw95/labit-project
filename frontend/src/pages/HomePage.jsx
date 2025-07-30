@@ -1,4 +1,5 @@
-import { memo, useMemo, useCallback } from 'react';
+// HomePage.jsx - DB에서 관리자 정보를 조회하는 버전
+import { memo, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Container,
@@ -6,17 +7,53 @@ import {
     Box,
     Divider,
 } from '@mantine/core';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { useTheme } from "@/contexts/ThemeContext.jsx";
 import AuthHeroSection from "@/components/section/home/AuthHeroSection.jsx";
 import PostSection from "@/components/section/home/PostSection.jsx";
 import CTASection from "@/components/section/home/CTASection.jsx";
-import {postService} from "@/api/postService.js";
+import { postService } from "@/api/postService.js";
+import { adminService } from "@/api/adminService.js";
+import useAuthStore from "@/stores/authStore.js";
 
 // HomePage 메인 컴포넌트
 const HomePage = memo(() => {
     const navigate = useNavigate();
     const { velogColors } = useTheme();
+
+    // Zustand store에서 관리자 정보 관련 상태 가져오기
+    const {
+        adminInfo: storedAdminInfo,
+        setAdminInfo,
+        setAdminInfoLoading,
+        setAdminInfoError,
+        shouldRefreshAdminInfo,
+        getAdminInfoLoading,
+        getAdminInfoError
+    } = useAuthStore();
+
+    // 관리자 정보 조회 쿼리
+    const {
+        data: adminInfoFromAPI,
+        isLoading: adminInfoLoading,
+        error: adminInfoError,
+        refetch: refetchAdminInfo
+    } = useQuery({
+        queryKey: ['admin', 'info'],
+        queryFn: adminService.getAdminInfo,
+        staleTime: 10 * 60 * 1000, // 10분간 fresh
+        cacheTime: 30 * 60 * 1000, // 30분간 캐시
+        retry: 2,
+        enabled: !storedAdminInfo || shouldRefreshAdminInfo(), // store에 없거나 오래된 경우에만 호출
+        onSuccess: (data) => {
+            setAdminInfo(data); // API 응답을 store에 저장
+        },
+        onError: (error) => {
+            console.error('관리자 정보 조회 실패:', error);
+            setAdminInfoError(error.message || '관리자 정보를 불러올 수 없습니다.');
+        }
+    });
+
     // 최신 포스트 조회
     const { data: latestPosts, isLoading: latestLoading } = useInfiniteQuery({
         queryKey: ['posts', 'latest'],
@@ -25,22 +62,39 @@ const HomePage = memo(() => {
         staleTime: 5 * 60 * 1000,
     });
 
-    // 포스트 목록을 메모이제이션 (데이터가 변경될 때만 재계산)
+    // store 로딩 상태 동기화
+    useEffect(() => {
+        setAdminInfoLoading(adminInfoLoading);
+    }, [adminInfoLoading, setAdminInfoLoading]);
+
+    // 포스트 목록을 메모이제이션
     const latestPostsList = useMemo(() => {
         return latestPosts?.pages?.[0]?.content || [];
     }, [latestPosts]);
 
-    // 관리자 정보를 메모이제이션 (totalPosts 의존성 제거로 최적화)
-    const adminInfo = useMemo(() => ({
-        name: "김개발자",
-        role: "Full Stack Developer",
-        bio: "안녕하세요! 웹 개발과 새로운 기술에 관심이 많은 개발자입니다. React, Node.js, Spring Boot를 주로 사용하며, 사용자 경험을 중시하는 서비스를 만들고 있습니다.",
-        profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face&auto=format&q=80",
-        location: "Seoul, Korea",
-        email: "developer@example.com",
-        github: "https://github.com/developer",
-        totalViews: "12.5K"
-    }), []); // 상수 데이터이므로 의존성 배열 비움
+    // 실제 사용할 관리자 정보 (store 우선, 없으면 API 데이터)
+    const adminInfo = useMemo(() => {
+        return storedAdminInfo || adminInfoFromAPI;
+    }, [storedAdminInfo, adminInfoFromAPI]);
+
+    // 조회수 증가 함수
+    const incrementViews = useCallback(async () => {
+        try {
+            await adminService.incrementViews();
+            console.log('조회수 증가 완료');
+        } catch (error) {
+            console.error('조회수 증가 실패:', error);
+        }
+    }, []);
+
+    // 컴포넌트 마운트 시 조회수 증가 (한 번만)
+    useEffect(() => {
+        const hasIncrementedViews = sessionStorage.getItem('admin-views-incremented');
+        if (!hasIncrementedViews) {
+            incrementViews();
+            sessionStorage.setItem('admin-views-incremented', 'true');
+        }
+    }, [incrementViews]);
 
     // 스타일 객체를 메모이제이션
     const containerStyle = useMemo(() => ({
@@ -57,12 +111,26 @@ const HomePage = memo(() => {
         navigate('/about');
     }, [navigate]);
 
+    // 관리자 정보 새로고침 핸들러
+    const handleRefreshAdminInfo = useCallback(() => {
+        refetchAdminInfo();
+    }, [refetchAdminInfo]);
+
+    // 로딩 상태 체크
+    const isAdminInfoLoading = adminInfoLoading || getAdminInfoLoading();
+    const adminError = adminInfoError || getAdminInfoError();
+
     return (
         <Box style={containerStyle}>
             <Container size="xl" py="3rem">
                 <Stack gap="4rem">
                     {/* Hero Section - Admin 명함 */}
-                    <AuthHeroSection adminInfo={adminInfo} />
+                    <AuthHeroSection
+                        adminInfo={adminInfo}
+                        isLoading={isAdminInfoLoading}
+                        error={adminError}
+                        onRefresh={handleRefreshAdminInfo}
+                    />
 
                     {/* 최신 포스트 섹션 */}
                     <PostSection

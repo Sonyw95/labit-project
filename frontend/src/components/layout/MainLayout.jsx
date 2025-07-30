@@ -24,12 +24,11 @@ const MainLayout = memo(() => {
 
     // Navigation Store 사용
     const { fetchNavigationTree } = useNavigationStore();
-
     // 컴포넌트 마운트 시 네비게이션 데이터 로드
     useEffect(() => {
         // 네비게이션 트리 초기 로드
         fetchNavigationTree();
-    }, [fetchNavigationTree]);
+    }, [user, fetchNavigationTree]);
 
     return (
         <AppShell

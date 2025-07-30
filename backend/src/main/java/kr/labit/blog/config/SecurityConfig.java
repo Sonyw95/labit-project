@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/api/assets/**",
                                 "/api/dashboard/**",
                                 "/api/comments/**",
+                                "/api/admin/**",
                                 "/api/auth/token/validate",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

@@ -21,6 +21,11 @@ const useAuthStore = create(
             isAdmin: false,
             tokenRefreshPromise: null, // 중복 갱신 방지
 
+            adminInfo: null,
+            adminInfoLoading: false,
+            adminInfoError: null,
+            adminInfoLastUpdated: null,
+
             // 토큰 만료 확인
             isTokenExpired: (token) => {
                 if (!token) {
@@ -211,6 +216,68 @@ const useAuthStore = create(
                 return false;
             },
 
+            setAdminInfo: (adminInfo) => {
+                set({
+                    adminInfo,
+                    adminInfoLoading: false,
+                    adminInfoError: null,
+                    adminInfoLastUpdated: Date.now(),
+                });
+                console.log('관리자 정보 저장 완료:', adminInfo.name);
+            },
+
+            // 관리자 정보 로딩 상태 설정
+            setAdminInfoLoading: (loading) => {
+                set({ adminInfoLoading: loading });
+            },
+
+            // 관리자 정보 에러 설정
+            setAdminInfoError: (error) => {
+                set({
+                    adminInfoError: error,
+                    adminInfoLoading: false,
+                });
+                console.error('관리자 정보 에러:', error);
+            },
+
+            // 관리자 정보 새로고침 필요 여부 확인 (10분마다)
+            shouldRefreshAdminInfo: () => {
+                const { adminInfoLastUpdated } = get();
+                if (!adminInfoLastUpdated) {
+                    return true;
+                }
+
+                const now = Date.now();
+                const tenMinutes = 10 * 60 * 1000;
+                return (now - adminInfoLastUpdated) > tenMinutes;
+            },
+
+            // 관리자 정보 초기화
+            clearAdminInfo: () => {
+                set({
+                    adminInfo: null,
+                    adminInfoLoading: false,
+                    adminInfoError: null,
+                    adminInfoLastUpdated: null,
+                });
+            },
+
+            // 관리자 정보 부분 업데이트
+            updateAdminInfo: (updates) => {
+                const currentState = get();
+                if (!currentState.adminInfo) {
+                    return;
+                }
+
+                const updatedAdminInfo = { ...currentState.adminInfo, ...updates };
+                set({
+                    adminInfo: updatedAdminInfo,
+                    adminInfoLastUpdated: Date.now(),
+                });
+                console.log('관리자 정보 업데이트:', updates);
+            },
+
+
             // Getter 함수들
             getUser: () => get().user,
             getAccessToken: () => get().accessToken,
@@ -218,6 +285,11 @@ const useAuthStore = create(
             getIsAuthenticated: () => get().isAuthenticated,
             getIsAdmin: () => get().isAdmin,
             getIsLoading: () => get().isLoading,
+
+            // 관리자 정보 Getter들
+            getAdminInfo: () => get().adminInfo,
+            getAdminInfoLoading: () => get().adminInfoLoading,
+            getAdminInfoError: () => get().adminInfoError,
 
             // 중복 토큰 갱신 방지를 위한 Promise 관리
             setTokenRefreshPromise: (promise) => {
@@ -233,6 +305,9 @@ const useAuthStore = create(
                 accessToken: state.accessToken,
                 refreshToken: state.refreshToken,
                 // user 정보는 토큰에서 추출하므로 저장하지 않음
+
+                adminInfo: state.adminInfo,
+                adminInfoLastUpdated: state.adminInfoLastUpdated,
             }),
         }
     )

@@ -31,11 +31,11 @@ const useNavigationStore = create(
 
                 // 네비게이션 트리 API 호출
                 fetchNavigationTree: async () => {
-                    const { navigationTree } = get();
-                    // 이미 데이터가 있으면 스킵 (캐시된 데이터 사용)
-                    if (navigationTree && navigationTree.length > 0) {
-                        return navigationTree;
-                    }
+                    // const { navigationTree } = get();
+                    // // 이미 데이터가 있으면 스킵 (캐시된 데이터 사용)
+                    // if (navigationTree && navigationTree.length > 0) {
+                    //     return navigationTree;
+                    // }
 
                     set({ isNavigationLoading: true, navigationError: null });
 

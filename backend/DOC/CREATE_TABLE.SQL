@@ -1218,3 +1218,136 @@ WHERE TAGS IS NOT NULL
   AND (TAGS LIKE '%,,' OR TAGS LIKE '%,' OR TAGS LIKE ',%');
 
 COMMIT;
+
+
+
+
+
+
+-- Oracle DB 초기 테이블 생성 및 데이터 삽입 스크립트
+-- 1. 시퀀스 생성
+CREATE SEQUENCE LAB_ADMIN_SEQ
+    START WITH 1
+    INCREMENT BY 1
+    NOMAXVALUE
+    NOCACHE;
+
+-- 2. LAB_ADMIN 테이블 생성
+CREATE TABLE LAB_ADMIN (
+                           ID NUMBER(19) NOT NULL,
+                           NAME VARCHAR2(100) NOT NULL,
+                           ROLE VARCHAR2(200) NOT NULL,
+                           BIO CLOB,
+                           PROFILE_IMAGE VARCHAR2(500),
+                           LOCATION VARCHAR2(100) NOT NULL,
+                           EMAIL VARCHAR2(100) NOT NULL,
+                           GITHUB_URL VARCHAR2(200),
+                           TOTAL_VIEWS NUMBER(19) DEFAULT 0,
+                           START_YEAR NUMBER(4),
+                           IS_ACTIVE NUMBER(1) DEFAULT 1,
+                           CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           CONSTRAINT PK_LAB_ADMIN PRIMARY KEY (ID),
+                           CONSTRAINT UK_LAB_ADMIN_EMAIL UNIQUE (EMAIL),
+                           CONSTRAINT CK_LAB_ADMIN_IS_ACTIVE CHECK (IS_ACTIVE IN (0, 1))
+);
+
+-- 3. 테이블에 인덱스 추가
+CREATE INDEX IDX_LAB_ADMIN_ACTIVE ON LAB_ADMIN(IS_ACTIVE);
+CREATE INDEX IDX_LAB_ADMIN_EMAIL ON LAB_ADMIN(EMAIL);
+
+-- 4. 업데이트 시간 자동 갱신을 위한 트리거 생성
+CREATE OR REPLACE TRIGGER TRG_LAB_ADMIN_UPDATED_AT
+    BEFORE UPDATE ON LAB_ADMIN
+    FOR EACH ROW
+BEGIN
+    :NEW.UPDATED_AT := CURRENT_TIMESTAMP;
+END;
+/
+
+-- 5. 초기 관리자 데이터 삽입
+INSERT INTO LAB_ADMIN (
+    id,
+    name,
+    role,
+    bio,
+    profile_image,
+    location,
+    email,
+    github_url,
+    total_views,
+    start_year,
+    is_active,
+    created_at,
+    updated_at
+) VALUES (
+             LAB_ADMIN_SEQ.NEXTVAL,
+             '김개발자',
+             'Full Stack Developer',
+             '안녕하세요! 웹 개발과 새로운 기술에 관심이 많은 개발자입니다. React, Spring Boot를 주로 사용하며, 사용자 경험을 중시하는 서비스를 만들고 있습니다. 현재는 모던 웹 기술과 클라우드 아키텍처에 깊은 관심을 가지고 있으며, 개발자 커뮤니티에 기여하고자 합니다.',
+             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face&auto=format&q=80',
+             'Seoul, Korea',
+             'developer@example.com',
+             'https://github.com/developer',
+             12534,
+             2020,
+             1,
+             CURRENT_TIMESTAMP,
+             CURRENT_TIMESTAMP
+         );
+
+-- 6. 데이터 확인
+SELECT * FROM LAB_ADMIN WHERE is_active = 1;
+
+-- 7. 추가 샘플 데이터 (필요시)
+/*
+INSERT INTO admins (
+    id, name, role, bio, profile_image, location, email, github_url,
+    total_views, start_year, is_active
+) VALUES (
+    ADMIN_SEQ.NEXTVAL,
+    '박서버',
+    'Backend Engineer',
+    '백엔드 개발 전문가입니다. Spring Boot, Oracle, Redis를 주로 다루며, 대용량 트래픽 처리와 시스템 아키텍처 설계에 관심이 많습니다.',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face&auto=format&q=80',
+    'Busan, Korea',
+    'backend@example.com',
+    'https://github.com/backend-dev',
+    8420,
+    2018,
+    0  -- 비활성화된 관리자
+);
+*/
+
+-- 8. 권한 부여 (필요시 DBA 권한으로 실행)
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON admins TO your_app_user;
+-- GRANT SELECT ON ADMIN_SEQ TO your_app_user;
+
+COMMIT;
+
+-- 9. 검증 쿼리들
+SELECT
+    id,
+    name,
+    role,
+    SUBSTR(bio, 1, 50) || '...' as bio_preview,
+    location,
+    email,
+    total_views,
+    start_year,
+    is_active,
+    TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
+FROM admins
+ORDER BY created_at DESC;
+
+-- 조회수 포맷팅 테스트
+SELECT
+    name,
+    total_views,
+    CASE
+        WHEN total_views >= 1000000 THEN ROUND(total_views/1000000, 1) || 'M'
+        WHEN total_views >= 1000 THEN ROUND(total_views/1000, 1) || 'K'
+        ELSE TO_CHAR(total_views)
+        END as formatted_views
+FROM admins
+WHERE is_active = 1;

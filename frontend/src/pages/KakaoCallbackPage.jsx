@@ -70,9 +70,9 @@ function KakaoCallbackPage() {
             console.log('카카오 로그인 API 호출 시작');
 
             // 카카오 로그인 API 호출
-            const {data} = await authService.kakaoLogin(code);
+            const data = await authService.kakaoLogin(code);
 
-            console.log('카카오 로그인 API 성공', {data});
+            console.log('카카오 로그인 API 성공');
 
             if (!data?.accessToken) {
                 throw new Error('액세스 토큰을 받지 못했습니다.');
