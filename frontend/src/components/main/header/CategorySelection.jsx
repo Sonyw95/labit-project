@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const CategorySection = memo(({
                                   category,
                                   level = 0,
-                                  velogColors,
+                                  themeColors,
                                   openCategories,
                                   toggleCategory,
                                   setCategoryModalOpened
@@ -41,16 +41,16 @@ const CategorySection = memo(({
     }, [hasChildren, category.id, toggleCategory]);
 
     const handleMouseEnter = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.hover;
-    }, [velogColors.hover]);
+        e.currentTarget.style.backgroundColor = themeColors.hover;
+    }, [themeColors.hover]);
 
     const handleMouseLeave = useCallback((e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
     }, []);
 
     const handleToggleMouseEnter = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.border;
-    }, [velogColors.border]);
+        e.currentTarget.style.backgroundColor = themeColors.border;
+    }, [themeColors.border]);
 
     const handleToggleMouseLeave = useCallback((e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
@@ -74,16 +74,16 @@ const CategorySection = memo(({
     }), [level, hasChildren, isClickable]);
 
     const iconBoxStyle = React.useMemo(() => ({
-        color: level === 0 ? velogColors.primary : velogColors.subText,
+        color: level === 0 ? themeColors.primary : themeColors.subText,
         display: 'flex',
         alignItems: 'center',
         minWidth: rem(18),
-    }), [level, velogColors.primary, velogColors.subText]);
+    }), [level, themeColors.primary, themeColors.subText]);
 
     const textStyle = React.useMemo(() => ({
-        color: velogColors.text,
+        color: themeColors.text,
         flex: 1,
-    }), [velogColors.text]);
+    }), [themeColors.text]);
 
     const toggleBoxStyle = React.useMemo(() => ({
         padding: rem(4),
@@ -96,18 +96,18 @@ const CategorySection = memo(({
     }), []);
 
     const chevronStyle = React.useMemo(() => ({
-        color: velogColors.subText,
+        color: themeColors.subText,
         transform: isOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
         transition: 'transform 0.2s ease'
-    }), [velogColors.subText, isOpen]);
+    }), [themeColors.subText, isOpen]);
 
     const dotStyle = React.useMemo(() => ({
         width: rem(6),
         height: rem(6),
         borderRadius: '50%',
-        backgroundColor: velogColors.primary,
+        backgroundColor: themeColors.primary,
         opacity: 0.6,
-    }), [velogColors.primary]);
+    }), [themeColors.primary]);
 
     return (
         <Box mb="xs">
@@ -157,7 +157,7 @@ const CategorySection = memo(({
                                 key={child.id}
                                 category={child}
                                 level={level + 1}
-                                velogColors={velogColors}
+                                themeColors={themeColors}
                                 openCategories={openCategories}
                                 toggleCategory={toggleCategory}
                                 setCategoryModalOpened={setCategoryModalOpened}

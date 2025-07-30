@@ -12,7 +12,7 @@ const PostActions = memo(({
                               onToggleBookmark,
                               isLikeLoading = false
                           }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const styles = useMemo(() => ({
         container: {
@@ -24,21 +24,21 @@ const PostActions = memo(({
             marginTop: '3rem'
         },
         actionGroup: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: '50px',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
         },
         actionButton: {
             '&:hover': {
-                backgroundColor: velogColors.hover
+                backgroundColor: themeColors.hover
             }
         },
         likeCount: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             fontWeight: 500
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleToggleLike = useCallback(() => {
         if (onToggleLike) {
@@ -85,7 +85,7 @@ const PostActions = memo(({
                     variant="subtle"
                     size="lg"
                     onClick={handleShare}
-                    c={velogColors.subText}
+                    c={themeColors.subText}
                     style={styles.actionButton}
                 >
                     <IconShare size={20} />
@@ -95,7 +95,7 @@ const PostActions = memo(({
                     variant="subtle"
                     size="lg"
                     onClick={handleToggleBookmark}
-                    color={isBookmarked ? velogColors.primary : 'gray'}
+                    color={isBookmarked ? themeColors.primary : 'gray'}
                     style={styles.actionButton}
                 >
                     {isBookmarked ? <IconBookmarkFilled size={20} /> : <IconBookmark size={20} />}

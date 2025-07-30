@@ -10,7 +10,7 @@ const UserMenuButton = memo(({
                                  userMenuOpened,
                                  isLogoutLoading
                              }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 버튼 스타일 메모이제이션
     const buttonStyles = useMemo(() => ({
@@ -20,17 +20,17 @@ const UserMenuButton = memo(({
         backgroundColor: 'transparent',
         border: 'none',
         '&:hover': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
         }
-    }), [velogColors.hover]);
+    }), [themeColors.hover]);
 
     // 로딩 오버레이 props 메모이제이션
     const loadingOverlayProps = useMemo(() => ({
         visible: isLogoutLoading,
         zIndex: 1000,
         overlayProps: { radius: 'sm', blur: 2 },
-        loaderProps: { color: velogColors.primary, type: 'bars' }
-    }), [isLogoutLoading, velogColors.primary]);
+        loaderProps: { color: themeColors.primary, type: 'bars' }
+    }), [isLogoutLoading, themeColors.primary]);
 
     // 알림 배지 스타일 메모이제이션
     const notificationBadgeStyles = useMemo(() => ({
@@ -39,8 +39,8 @@ const UserMenuButton = memo(({
 
     // 호버 이벤트 핸들러 메모이제이션
     const handleMouseEnter = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.hover;
-    }, [velogColors.hover]);
+        e.currentTarget.style.backgroundColor = themeColors.hover;
+    }, [themeColors.hover]);
 
     const handleMouseLeave = useCallback((e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
@@ -91,7 +91,7 @@ const UserMenuButton = memo(({
 
                 <IconChevronDown
                     size={16}
-                    color={velogColors.subText}
+                    color={themeColors.subText}
                     style={chevronStyles}
                     aria-hidden="true"
                 />

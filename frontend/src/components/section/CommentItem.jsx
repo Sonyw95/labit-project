@@ -11,7 +11,6 @@ import {
     Badge,
     Modal,
     Box,
-    useMantineColorScheme,
 } from '@mantine/core';
 import {
     IconHeart,
@@ -30,23 +29,23 @@ import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 const CommentItem = memo(({ comment, postId, depth = 0 }) => {
     const { user, isAuthenticated } = useAuthStore();
-    const { dark } = useTheme();
+    const { themeColors } = useTheme();
 
     const [isReplying, setIsReplying] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
 
     // velog 스타일 색상
-    const velogColors = {
-        primary: '#12B886',
-        text: dark ? '#ECECEC' : '#212529',
-        subText: dark ? '#ADB5BD' : '#495057',
-        background: dark ? '#1A1B23' : '#FFFFFF',
-        border: dark ? '#2B2D31' : '#E9ECEF',
-        hover: dark ? '#2B2D31' : '#F8F9FA',
-        replyBg: dark ? '#1E1F25' : '#F8F9FA',
-        inputBg: dark ? '#2B2D31' : '#FFFFFF',
-    };
+    // const themeColors = {
+    //     primary: '#12B886',
+    //     text: dark ? '#ECECEC' : '#212529',
+    //     subText: dark ? '#ADB5BD' : '#495057',
+    //     background: dark ? '#1A1B23' : '#FFFFFF',
+    //     border: dark ? '#2B2D31' : '#E9ECEF',
+    //     hover: dark ? '#2B2D31' : '#F8F9FA',
+    //     replyBg: dark ? '#1E1F25' : '#F8F9FA',
+    //     inputBg: dark ? '#2B2D31' : '#FFFFFF',
+    // };
 
     // API 훅
     const updateCommentMutation = useUpdateComment();
@@ -161,11 +160,11 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
             <Box
                 style={{
                     marginLeft: depth * 40,
-                    borderLeft: depth > 0 ? `3px solid ${velogColors.primary}` : 'none',
+                    borderLeft: depth > 0 ? `3px solid ${themeColors.primary}` : 'none',
                     paddingLeft: depth > 0 ? '1rem' : 0,
                     paddingTop: '1rem',
                     paddingBottom: '1rem',
-                    backgroundColor: depth > 0 ? velogColors.replyBg : 'transparent',
+                    backgroundColor: depth > 0 ? themeColors.replyBg : 'transparent',
                     borderRadius: depth > 0 ? '0 8px 8px 0' : 0,
                 }}
             >
@@ -178,7 +177,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                 alt={comment.author.nickname}
                                 size="md"
                                 style={{
-                                    border: `2px solid ${velogColors.border}`
+                                    border: `2px solid ${themeColors.border}`
                                 }}
                             />
                             <Box>
@@ -186,7 +185,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     <Text
                                         fw={600}
                                         size="md"
-                                        c={velogColors.text}
+                                        c={themeColors.text}
                                         style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
                                     >
                                         {comment.author.nickname}
@@ -195,17 +194,17 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                         <Badge
                                             size="xs"
                                             variant="light"
-                                            color={velogColors.primary}
+                                            color={themeColors.primary}
                                             style={{
-                                                backgroundColor: `${velogColors.primary}15`,
-                                                color: velogColors.primary,
+                                                backgroundColor: `${themeColors.primary}15`,
+                                                color: themeColors.primary,
                                             }}
                                         >
                                             답글
                                         </Badge>
                                     )}
                                 </Group>
-                                <Text size="sm" c={velogColors.subText} mt={2}>
+                                <Text size="sm" c={themeColors.subText} mt={2}>
                                     {formatDate(comment.createdDate)}
                                     {comment.modifiedDate !== comment.createdDate && ' (수정됨)'}
                                 </Text>
@@ -219,10 +218,10 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     <ActionIcon
                                         variant="subtle"
                                         size="sm"
-                                        c={velogColors.subText}
+                                        c={themeColors.subText}
                                         style={{
                                             '&:hover': {
-                                                backgroundColor: velogColors.hover
+                                                backgroundColor: themeColors.hover
                                             }
                                         }}
                                     >
@@ -232,14 +231,14 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
 
                                 <Menu.Dropdown
                                     style={{
-                                        backgroundColor: velogColors.background,
-                                        border: `1px solid ${velogColors.border}`,
+                                        backgroundColor: themeColors.background,
+                                        border: `1px solid ${themeColors.border}`,
                                     }}
                                 >
                                     <Menu.Item
                                         leftSection={<IconEdit size={14} />}
                                         onClick={() => setIsEditing(true)}
-                                        style={{ color: velogColors.text }}
+                                        style={{ color: themeColors.text }}
                                     >
                                         수정
                                     </Menu.Item>
@@ -265,13 +264,13 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     autosize
                                     styles={{
                                         input: {
-                                            backgroundColor: velogColors.inputBg,
-                                            border: `2px solid ${velogColors.border}`,
+                                            backgroundColor: themeColors.inputBg,
+                                            border: `2px solid ${themeColors.border}`,
                                             borderRadius: '8px',
                                             fontSize: '15px',
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             '&:focus': {
-                                                borderColor: velogColors.primary,
+                                                borderColor: themeColors.primary,
                                             }
                                         }
                                     }}
@@ -286,9 +285,9 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                             editForm.setValues({ content: comment.content });
                                         }}
                                         style={{
-                                            color: velogColors.subText,
+                                            color: themeColors.subText,
                                             '&:hover': {
-                                                backgroundColor: velogColors.hover
+                                                backgroundColor: themeColors.hover
                                             }
                                         }}
                                         aria-label="취소 버튼"
@@ -300,7 +299,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                         size="sm"
                                         loading={updateCommentMutation.isLoading}
                                         style={{
-                                            backgroundColor: velogColors.primary,
+                                            backgroundColor: themeColors.primary,
                                             '&:hover': {
                                                 backgroundColor: '#0CA678'
                                             }
@@ -318,7 +317,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                 whiteSpace: 'pre-wrap',
                                 lineHeight: 1.6,
                                 fontSize: '15px',
-                                color: velogColors.text,
+                                color: themeColors.text,
                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
                             }}
                         >
@@ -338,13 +337,13 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     color={isLiked ? 'red' : 'gray'}
                                     style={{
                                         '&:hover': {
-                                            backgroundColor: velogColors.hover
+                                            backgroundColor: themeColors.hover
                                         }
                                     }}
                                 >
                                     {isLiked ? <IconHeartFilled size={16} /> : <IconHeart size={16} />}
                                 </ActionIcon>
-                                <Text size="sm" c={velogColors.subText} fw={500}>
+                                <Text size="sm" c={themeColors.subText} fw={500}>
                                     {comment.likeCount}
                                 </Text>
                             </Group>
@@ -356,10 +355,10 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     leftSection={<IconMessageCircle size={14} />}
                                     onClick={() => setIsReplying(!isReplying)}
                                     style={{
-                                        color: velogColors.subText,
+                                        color: themeColors.subText,
                                         '&:hover': {
-                                            backgroundColor: velogColors.hover,
-                                            color: velogColors.primary
+                                            backgroundColor: themeColors.hover,
+                                            color: themeColors.primary
                                         }
                                     }}
                                     aria-label="답글 버튼"
@@ -382,16 +381,16 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                         autosize
                                         styles={{
                                             input: {
-                                                backgroundColor: velogColors.inputBg,
-                                                border: `2px solid ${velogColors.border}`,
+                                                backgroundColor: themeColors.inputBg,
+                                                border: `2px solid ${themeColors.border}`,
                                                 borderRadius: '8px',
                                                 fontSize: '15px',
-                                                color: velogColors.text,
+                                                color: themeColors.text,
                                                 '&:focus': {
-                                                    borderColor: velogColors.primary,
+                                                    borderColor: themeColors.primary,
                                                 },
                                                 '&::placeholder': {
-                                                    color: velogColors.subText,
+                                                    color: themeColors.subText,
                                                 }
                                             }
                                         }}
@@ -406,9 +405,9 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                                 replyForm.reset();
                                             }}
                                             style={{
-                                                color: velogColors.subText,
+                                                color: themeColors.subText,
                                                 '&:hover': {
-                                                    backgroundColor: velogColors.hover
+                                                    backgroundColor: themeColors.hover
                                                 }
                                             }}
                                             aria-label="취소 버튼"
@@ -421,7 +420,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                             leftSection={<IconSend size={14} />}
                                             loading={createReplyMutation.isLoading}
                                             style={{
-                                                backgroundColor: velogColors.primary,
+                                                backgroundColor: themeColors.primary,
                                                 '&:hover': {
                                                     backgroundColor: '#0CA678'
                                                 }
@@ -442,7 +441,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                     opened={deleteModalOpened}
                     onClose={() => setDeleteModalOpened(false)}
                     title={
-                        <Text fw={600} size="lg" c={velogColors.text}>
+                        <Text fw={600} size="lg" c={themeColors.text}>
                             댓글 삭제
                         </Text>
                     }
@@ -450,16 +449,16 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                     size="sm"
                     styles={{
                         content: {
-                            backgroundColor: velogColors.background,
+                            backgroundColor: themeColors.background,
                         },
                         header: {
-                            backgroundColor: velogColors.background,
-                            borderBottom: `1px solid ${velogColors.border}`,
+                            backgroundColor: themeColors.background,
+                            borderBottom: `1px solid ${themeColors.border}`,
                         }
                     }}
                 >
                     <Stack gap="lg">
-                        <Text c={velogColors.text}>
+                        <Text c={themeColors.text}>
                             정말로 이 댓글을 삭제하시겠습니까?
                         </Text>
                         <Group justify="flex-end" gap="md">
@@ -467,8 +466,8 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                 variant="outline"
                                 onClick={() => setDeleteModalOpened(false)}
                                 style={{
-                                    borderColor: velogColors.border,
-                                    color: velogColors.subText
+                                    borderColor: themeColors.border,
+                                    color: themeColors.subText
                                 }}
                                 aria-label="취소 버튼"
                             >

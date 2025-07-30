@@ -13,15 +13,15 @@ const FolderTree = memo(({
                              onEdit,
                              onDelete,
                          }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const rootFolderStyle = useMemo(() => ({
         cursor: 'pointer',
-        backgroundColor: !selectedFolder ? velogColors.selectedBg : velogColors.background,
-        border: `1px solid ${velogColors.border}`,
+        backgroundColor: !selectedFolder ? themeColors.selectedBg : themeColors.background,
+        border: `1px solid ${themeColors.border}`,
         borderRadius: rem(8),
         transition: 'all 0.2s ease',
-    }), [selectedFolder, velogColors]);
+    }), [selectedFolder, themeColors]);
 
     const handleRootSelect = useCallback(() => {
         if (onFolderSelect) {
@@ -31,15 +31,15 @@ const FolderTree = memo(({
 
     const handleRootMouseEnter = useCallback((e) => {
         if (selectedFolder) {
-            e.currentTarget.style.backgroundColor = velogColors.hover;
+            e.currentTarget.style.backgroundColor = themeColors.hover;
         }
-    }, [selectedFolder, velogColors.hover]);
+    }, [selectedFolder, themeColors.hover]);
 
     const handleRootMouseLeave = useCallback((e) => {
         if (selectedFolder) {
-            e.currentTarget.style.backgroundColor = velogColors.background;
+            e.currentTarget.style.backgroundColor = themeColors.background;
         }
-    }, [selectedFolder, velogColors.background]);
+    }, [selectedFolder, themeColors.background]);
 
     return (
         <Box role="tree" aria-label="폴더 트리">
@@ -56,8 +56,8 @@ const FolderTree = memo(({
                 tabIndex={0}
             >
                 <Group gap="sm">
-                    <IconFolder size={18} style={{ color: velogColors.warning }} aria-hidden="true" />
-                    <Text fw={500} style={{ color: velogColors.text }}>
+                    <IconFolder size={18} style={{ color: themeColors.warning }} aria-hidden="true" />
+                    <Text fw={500} style={{ color: themeColors.text }}>
                         루트 폴더
                     </Text>
                 </Group>

@@ -1,11 +1,15 @@
 package kr.labit.blog.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Value("${app.upload.dir:./uploads}")
+    private String uploadDir;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -14,6 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
-                .maxAge(3600);
+                .maxAge(86400);
     }
+
+
 }

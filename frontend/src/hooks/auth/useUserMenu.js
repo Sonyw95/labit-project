@@ -56,20 +56,20 @@ export const useUserMenuData = () => {
 
 // 사용자 메뉴 스타일 관리 훅
 export const useUserMenuStyles = () => {
-    const { dark, velogColors } = useTheme();
+    const { dark, themeColors } = useTheme();
 
     // 메뉴 드롭다운 스타일
     const dropdownStyles = useMemo(() => ({
         dropdown: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: '12px',
             boxShadow: dark
                 ? '0 10px 40px rgba(0, 0, 0, 0.3)'
                 : '0 10px 40px rgba(0, 0, 0, 0.1)',
             padding: '0.5rem',
         }
-    }), [velogColors, dark]);
+    }), [themeColors, dark]);
 
     // 사용자 버튼 스타일
     const buttonStyles = useMemo(() => ({
@@ -79,26 +79,26 @@ export const useUserMenuStyles = () => {
         backgroundColor: 'transparent',
         border: 'none',
         '&:hover': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
         }
-    }), [velogColors.hover]);
+    }), [themeColors.hover]);
 
     // 사용자 정보 헤더 스타일
     const headerStyles = useMemo(() => ({
-        backgroundColor: velogColors.hover,
+        backgroundColor: themeColors.hover,
         borderRadius: '8px',
         marginBottom: '0.5rem'
-    }), [velogColors.hover]);
+    }), [themeColors.hover]);
 
     // 메뉴 아이템 스타일
     const menuItemStyles = useMemo(() => ({
         borderRadius: '8px',
-        color: velogColors.text,
+        color: themeColors.text,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         '&:hover': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 로그아웃 메뉴 아이템 스타일
     const logoutMenuItemStyles = useMemo(() => ({
@@ -112,8 +112,8 @@ export const useUserMenuStyles = () => {
 
     // 구분선 스타일
     const dividerStyles = useMemo(() => ({
-        borderColor: velogColors.border
-    }), [velogColors.border]);
+        borderColor: themeColors.border
+    }), [themeColors.border]);
 
     return {
         dropdownStyles,
@@ -122,7 +122,7 @@ export const useUserMenuStyles = () => {
         menuItemStyles,
         logoutMenuItemStyles,
         dividerStyles,
-        velogColors,
+        themeColors,
     };
 };
 
@@ -216,7 +216,7 @@ export const useUserNotifications = (user) => {
 
 // 온라인 상태 관리 훅
 export const useOnlineStatus = (user) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 온라인 상태 확인
     const isOnline = useMemo(() => {
@@ -230,8 +230,8 @@ export const useOnlineStatus = (user) => {
 
     // 상태 색상
     const statusColor = useMemo(() => {
-        return isOnline ? velogColors.primary : 'gray';
-    }, [isOnline, velogColors.primary]);
+        return isOnline ? themeColors.primary : 'gray';
+    }, [isOnline, themeColors.primary]);
 
     return {
         isOnline,

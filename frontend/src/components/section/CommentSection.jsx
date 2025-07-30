@@ -19,20 +19,20 @@ import {useTheme} from "@/contexts/ThemeContext.jsx";
 const CommentSection = memo(({ postId, comments = [] }) => {
     const { isAuthenticated } = useAuthStore();
     const createCommentMutation = useCreateComment();
-    const { dark } = useTheme();
+    const { themeColors } = useTheme();
 
     const [isWriting, setIsWriting] = useState(false);
 
     // velog 스타일 색상
-    const velogColors = {
-        primary: '#12B886',
-        text: dark ? '#ECECEC' : '#212529',
-        subText: dark ? '#ADB5BD' : '#495057',
-        background: dark ? '#1A1B23' : '#FFFFFF',
-        border: dark ? '#2B2D31' : '#E9ECEF',
-        hover: dark ? '#2B2D31' : '#F8F9FA',
-        inputBg: dark ? '#2B2D31' : '#FFFFFF',
-    };
+    // const themeColors = {
+    //     primary: '#12B886',
+    //     text: dark ? '#ECECEC' : '#212529',
+    //     subText: dark ? '#ADB5BD' : '#495057',
+    //     background: dark ? '#1A1B23' : '#FFFFFF',
+    //     border: dark ? '#2B2D31' : '#E9ECEF',
+    //     hover: dark ? '#2B2D31' : '#F8F9FA',
+    //     inputBg: dark ? '#2B2D31' : '#FFFFFF',
+    // };
 
     // 댓글 작성 폼
     const form = useForm({
@@ -71,11 +71,11 @@ const CommentSection = memo(({ postId, comments = [] }) => {
         <Stack gap="xl">
             {/* 댓글 헤더 */}
             <Group gap="sm">
-                <IconMessageCircle size={24} color={velogColors.primary} />
+                <IconMessageCircle size={24} color={themeColors.primary} />
                 <Text
                     fw={700}
                     size="xl"
-                    c={velogColors.text}
+                    c={themeColors.text}
                     style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
                 >
                     댓글 {comments.length}개
@@ -88,13 +88,13 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                     <Box
                         p="xl"
                         style={{
-                            backgroundColor: velogColors.hover,
-                            border: `1px solid ${velogColors.border}`,
+                            backgroundColor: themeColors.hover,
+                            border: `1px solid ${themeColors.border}`,
                             borderRadius: '12px',
                             textAlign: 'center'
                         }}
                     >
-                        <Text c={velogColors.subText} size="lg">
+                        <Text c={themeColors.subText} size="lg">
                             댓글을 작성하려면 로그인해주세요.
                         </Text>
                     </Box>
@@ -109,16 +109,16 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                                 onFocus={() => setIsWriting(true)}
                                 styles={{
                                     input: {
-                                        backgroundColor: velogColors.inputBg,
-                                        border: `2px solid ${velogColors.border}`,
+                                        backgroundColor: themeColors.inputBg,
+                                        border: `2px solid ${themeColors.border}`,
                                         borderRadius: '8px',
                                         fontSize: '16px',
-                                        color: velogColors.text,
+                                        color: themeColors.text,
                                         '&:focus': {
-                                            borderColor: velogColors.primary,
+                                            borderColor: themeColors.primary,
                                         },
                                         '&::placeholder': {
-                                            color: velogColors.subText,
+                                            color: themeColors.subText,
                                         }
                                     }
                                 }}
@@ -134,9 +134,9 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                                             form.reset();
                                         }}
                                         style={{
-                                            color: velogColors.subText,
+                                            color: themeColors.subText,
                                             '&:hover': {
-                                                backgroundColor: velogColors.hover
+                                                backgroundColor: themeColors.hover
                                             }
                                         }}
                                         aria-label="취소 버튼"
@@ -148,7 +148,7 @@ const CommentSection = memo(({ postId, comments = [] }) => {
                                         leftSection={<IconSend size={16} />}
                                         loading={createCommentMutation.isLoading}
                                         style={{
-                                            backgroundColor: velogColors.primary,
+                                            backgroundColor: themeColors.primary,
                                             '&:hover': {
                                                 backgroundColor: '#0CA678'
                                             }
@@ -165,16 +165,16 @@ const CommentSection = memo(({ postId, comments = [] }) => {
             </Box>
 
             {/* 구분선 */}
-            <Divider color={velogColors.border} />
+            <Divider color={themeColors.border} />
 
             {/* 댓글 목록 */}
             <Stack gap="lg">
                 {comments.length === 0 ? (
                     <Box py="3rem" style={{ textAlign: 'center' }}>
-                        <Text c={velogColors.subText} size="lg">
+                        <Text c={themeColors.subText} size="lg">
                             아직 댓글이 없어요.
                         </Text>
-                        <Text c={velogColors.subText} size="md" mt="xs">
+                        <Text c={themeColors.subText} size="md" mt="xs">
                             첫 번째 댓글을 작성해보세요! 💬
                         </Text>
                     </Box>

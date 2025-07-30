@@ -3,22 +3,22 @@ import {Box, Image} from "@mantine/core";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 const PostContent = memo(({ post }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const thumbnailStyle = useMemo(() => ({
-        border: `1px solid ${velogColors.border}`,
+        border: `1px solid ${themeColors.border}`,
         marginTop: '2rem'
-    }), [velogColors.border]);
+    }), [themeColors.border]);
 
     const contentStyle = useMemo(() => ({
         lineHeight: 1.8,
         fontSize: '18px',
-        color: velogColors.text,
+        color: themeColors.text,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         maxWidth: '100%',
         wordBreak: 'break-word',
         '& h1, & h2, & h3, & h4, & h5, & h6': {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: '700',
             marginTop: '2.5rem',
             marginBottom: '1rem',
@@ -28,34 +28,34 @@ const PostContent = memo(({ post }) => {
             lineHeight: '1.8',
         },
         '& code': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
             padding: '0.2rem 0.4rem',
             borderRadius: '4px',
             fontSize: '0.9em',
-            color: velogColors.primary,
+            color: themeColors.primary,
         },
         '& pre': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
             padding: '1.5rem',
             borderRadius: '8px',
             overflow: 'auto',
             marginBottom: '1.5rem',
         },
         '& blockquote': {
-            borderLeft: `4px solid ${velogColors.primary}`,
+            borderLeft: `4px solid ${themeColors.primary}`,
             paddingLeft: '1rem',
             marginLeft: 0,
             fontStyle: 'italic',
-            color: velogColors.subText,
+            color: themeColors.subText,
         },
         '& a': {
-            color: velogColors.primary,
+            color: themeColors.primary,
             textDecoration: 'none',
         },
         '& a:hover': {
             textDecoration: 'underline',
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     return (
         <>

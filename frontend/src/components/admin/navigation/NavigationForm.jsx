@@ -11,7 +11,7 @@ const AdminNavigationForm = memo(({
                                  parentOptions,
                                  isLoading = false
                              }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const form = useForm({
         initialValues: {
@@ -29,54 +29,54 @@ const AdminNavigationForm = memo(({
 
     const modalStyles = useMemo(() => ({
         content: {
-            backgroundColor: velogColors.background,
+            backgroundColor: themeColors.background,
         },
         header: {
-            backgroundColor: velogColors.background,
-            borderBottom: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            borderBottom: `1px solid ${themeColors.border}`,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const inputStyles = useMemo(() => ({
         label: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 500
         },
         input: {
-            backgroundColor: velogColors.background,
-            borderColor: velogColors.border,
-            color: velogColors.text,
+            backgroundColor: themeColors.background,
+            borderColor: themeColors.border,
+            color: themeColors.text,
             '&:focus': {
-                borderColor: velogColors.primary,
+                borderColor: themeColors.primary,
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const switchStyles = useMemo(() => ({
         label: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 500
         },
         description: {
-            color: velogColors.subText
+            color: themeColors.subText
         },
         track: {
             backgroundColor: form.values.isActive
-                ? velogColors.primary
-                : velogColors.border,
+                ? themeColors.primary
+                : themeColors.border,
         }
-    }), [velogColors, form.values.isActive]);
+    }), [themeColors, form.values.isActive]);
 
     const buttonStyles = useMemo(() => ({
         cancel: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             backgroundColor: 'transparent',
         },
         submit: {
-            backgroundColor: velogColors.primary,
+            backgroundColor: themeColors.primary,
             border: 'none',
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     useEffect(() => {
         if (editingItem) {
@@ -116,31 +116,31 @@ const AdminNavigationForm = memo(({
 
     const handleCancelButtonHover = useCallback((e, isEntering) => {
         if (isEntering) {
-            e.currentTarget.style.backgroundColor = velogColors.hover;
-            e.currentTarget.style.color = velogColors.text;
+            e.currentTarget.style.backgroundColor = themeColors.hover;
+            e.currentTarget.style.color = themeColors.text;
         } else {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = velogColors.subText;
+            e.currentTarget.style.color = themeColors.subText;
         }
-    }, [velogColors]);
+    }, [themeColors]);
 
     const handleSubmitButtonHover = useCallback((e, isEntering) => {
         if (!isLoading) {
             e.currentTarget.style.backgroundColor = isEntering
                 ? '#0CA678'
-                : velogColors.primary;
+                : themeColors.primary;
         }
-    }, [isLoading, velogColors.primary]);
+    }, [isLoading, themeColors.primary]);
 
     const modalTitle = useMemo(() => (
         <Text
             fw={600}
             size="lg"
-            style={{ color: velogColors.text }}
+            style={{ color: themeColors.text }}
         >
             {editingItem ? '메뉴 수정' : '새 메뉴 추가'}
         </Text>
-    ), [editingItem, velogColors.text]);
+    ), [editingItem, themeColors.text]);
 
     return (
         <Modal

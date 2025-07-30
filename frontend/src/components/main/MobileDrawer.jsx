@@ -35,7 +35,7 @@ import {Icons} from "@/utils/Icons.jsx";
 import useNavigationStore from "@/stores/navigationStore.js";
 
 const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/images/logo.png" }) => {
-    const { dark, velogColors } = useTheme();
+    const { dark, themeColors } = useTheme();
     const { isAuthenticated, user } = useAuthStore();
     const [openCategories, setOpenCategories] = useState(new Set([2, 3])); // Backend, Frontend 기본 열림
 
@@ -47,7 +47,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
     } = useNavigationStore();
 
     if (isLoading) {
-        return <CategorySkeleton velogColors={velogColors} />;
+        return <CategorySkeleton themeColors={themeColors} />;
     }
 
     if (error) {
@@ -108,14 +108,14 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                         backgroundColor: 'transparent',
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = velogColors.hover;
+                        e.currentTarget.style.backgroundColor = themeColors.hover;
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
                     }}
                     aria-label="카테고리 아이템"
                 >
-                    <Box style={{ color: level === 0 ? velogColors.primary : velogColors.subText }}>
+                    <Box style={{ color: level === 0 ? themeColors.primary : themeColors.subText }}>
                         <Icons icon={category.icon} size={level === 0 ? 20 : 18} />
                     </Box>
 
@@ -123,7 +123,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                         size={level === 0 ? "md" : "sm"}
                         fw={level === 0 ? 600 : 400}
                         style={{
-                            color: velogColors.text,
+                            color: themeColors.text,
                             flex: 1
                         }}
                     >
@@ -131,7 +131,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                     </Text>
 
                     {hasChildren && (
-                        <Box style={{ color: velogColors.subText }}>
+                        <Box style={{ color: themeColors.subText }}>
                             <IconChevronDown
                                 size={16}
                                 style={{
@@ -148,7 +148,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                                 width: rem(6),
                                 height: rem(6),
                                 borderRadius: '50%',
-                                backgroundColor: velogColors.primary,
+                                backgroundColor: themeColors.primary,
                                 opacity: 0.7,
                             }}
                         />
@@ -178,13 +178,13 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                 alignItems: 'center',
                 gap: rem(14),
                 borderRadius: rem(8),
-                backgroundColor: variant === 'primary' ? velogColors.primary : 'transparent',
-                color: variant === 'primary' ? 'white' : velogColors.text,
+                backgroundColor: variant === 'primary' ? themeColors.primary : 'transparent',
+                color: variant === 'primary' ? 'white' : themeColors.text,
                 transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
                 if (variant !== 'primary') {
-                    e.currentTarget.style.backgroundColor = velogColors.hover;
+                    e.currentTarget.style.backgroundColor = themeColors.hover;
                 }
             }}
             onMouseLeave={(e) => {
@@ -209,11 +209,11 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
             size="lg"
             styles={{
                 content: {
-                    backgroundColor: velogColors.background,
+                    backgroundColor: themeColors.background,
                 },
                 header: {
-                    backgroundColor: velogColors.background,
-                    borderBottom: `1px solid ${velogColors.border}`,
+                    backgroundColor: themeColors.background,
+                    borderBottom: `1px solid ${themeColors.border}`,
                     padding: rem(20),
                 },
                 body: {
@@ -227,8 +227,8 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                         size="md"
                         radius="lg"
                         style={{
-                            backgroundColor: velogColors.primary,
-                            border: `1px solid ${velogColors.border}`,
+                            backgroundColor: themeColors.primary,
+                            border: `1px solid ${themeColors.border}`,
                             transition: 'all 0.2s ease',
                         }}
                     />
@@ -236,7 +236,7 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                         size="lg"
                         fw={600}
                         style={{
-                            color: velogColors.text,
+                            color: themeColors.text,
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                             letterSpacing: '-0.01em'
                         }}
@@ -254,23 +254,23 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                             <Group
                                 p="md"
                                 style={{
-                                    backgroundColor: velogColors.hover,
+                                    backgroundColor: themeColors.hover,
                                     borderRadius: rem(12),
-                                    border: `1px solid ${velogColors.border}`
+                                    border: `1px solid ${themeColors.border}`
                                 }}
                             >
                                 <Avatar
                                     size="md"
                                     radius="xl"
-                                    style={{ backgroundColor: velogColors.primary }}
+                                    style={{ backgroundColor: themeColors.primary }}
                                 >
                                     <IconUser size={20} />
                                 </Avatar>
                                 <Box style={{ flex: 1 }}>
-                                    <Text size="md" fw={600} c={velogColors.text}>
+                                    <Text size="md" fw={600} c={themeColors.text}>
                                         {user?.username || '사용자'}
                                     </Text>
-                                    <Text size="sm" c={velogColors.subText}>
+                                    <Text size="sm" c={themeColors.subText}>
                                         개발자
                                     </Text>
                                 </Box>
@@ -288,11 +288,11 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                                 }}
                                 styles={{
                                     root: {
-                                        backgroundColor: velogColors.primary,
-                                        borderColor: velogColors.border,
-                                        color: velogColors.background,
+                                        backgroundColor: themeColors.primary,
+                                        borderColor: themeColors.border,
+                                        color: themeColors.background,
                                         '&:hover': {
-                                            backgroundColor: velogColors.hover,
+                                            backgroundColor: themeColors.hover,
                                         }
                                     }
                                 }}
@@ -334,14 +334,14 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                         />
                     </Stack>
 
-                    <Divider color={velogColors.border} mb="lg" />
+                    <Divider color={themeColors.border} mb="lg" />
 
                     {/* 카테고리 */}
                     <Box mb="lg">
                         <Text
                             size="sm"
                             fw={600}
-                            c={velogColors.subText}
+                            c={themeColors.subText}
                             mb="md"
                             px="md"
                         >
@@ -354,14 +354,14 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                         </Stack>
                     </Box>
 
-                    <Divider color={velogColors.border} mb="lg" />
+                    <Divider color={themeColors.border} mb="lg" />
 
                     {/* 설정 */}
                     <Box mb="lg" onClick={toggleColorScheme}>
                         <Group justify="space-between" p="md">
                             <Group gap="md">
                                 {dark ? <IconMoon size={20} /> : <IconSun size={20} />}
-                                <Text size="md" fw={500} c={velogColors.text}>
+                                <Text size="md" fw={500} c={themeColors.text}>
                                     다크 모드
                                 </Text>
                             </Group>
@@ -372,8 +372,8 @@ const MobileDrawer = ({ opened, onClose, toggleColorScheme, logo = "/upload/imag
                                 styles={{
                                     track: {
                                         backgroundColor: dark
-                                            ? velogColors.primary
-                                            : velogColors.border,
+                                            ? themeColors.primary
+                                            : themeColors.border,
                                     }
                                 }}
                             />

@@ -11,29 +11,29 @@ const UserDropdownContent = memo(({
                                       openSettings,
                                       handleLogout
                                   }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 사용자 정보 헤더 스타일 메모이제이션
     const headerStyles = useMemo(() => ({
-        backgroundColor: velogColors.hover,
+        backgroundColor: themeColors.hover,
         borderRadius: '8px',
         marginBottom: '0.5rem'
-    }), [velogColors.hover]);
+    }), [themeColors.hover]);
 
     // 메뉴 구분선 스타일 메모이제이션
     const dividerStyles = useMemo(() => ({
-        borderColor: velogColors.border
-    }), [velogColors.border]);
+        borderColor: themeColors.border
+    }), [themeColors.border]);
 
     // 일반 메뉴 아이템 스타일 메모이제이션
     const menuItemStyles = useMemo(() => ({
         borderRadius: '8px',
-        color: velogColors.text,
+        color: themeColors.text,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         '&:hover': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 로그아웃 메뉴 아이템 스타일 메모이제이션
     const logoutMenuItemStyles = useMemo(() => ({
@@ -90,7 +90,7 @@ const UserDropdownContent = memo(({
                 leftSection={
                     <IconUser
                         size={16}
-                        color={velogColors.subText}
+                        color={themeColors.subText}
                         aria-hidden="true"
                     />
                 }
@@ -103,14 +103,14 @@ const UserDropdownContent = memo(({
                     <Text
                         size="sm"
                         fw={500}
-                        c={velogColors.text}
+                        c={themeColors.text}
                         style={textStyles}
                     >
                         프로필 설정
                     </Text>
                     <Text
                         size="xs"
-                        c={velogColors.subText}
+                        c={themeColors.subText}
                         style={textStyles}
                     >
                         계정 정보 및 개인정보 관리

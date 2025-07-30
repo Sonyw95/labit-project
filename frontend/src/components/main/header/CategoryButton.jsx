@@ -8,7 +8,7 @@ import {
 import { IconChevronDown } from "@tabler/icons-react";
 import { NavLink } from "react-router-dom";
 
-const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal }) => {
+const CategoryButton = memo(({ category, themeColors, dark, openCategoryModal }) => {
     const hasChildren = category.children && category.children.length > 0;
 
     const handleOpenModal = useCallback(() => {
@@ -16,8 +16,8 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
     }, [category.label, openCategoryModal]);
 
     const handleMouseEnter = useCallback((e) => {
-        e.target.style.backgroundColor = velogColors.hover;
-    }, [velogColors.hover]);
+        e.target.style.backgroundColor = themeColors.hover;
+    }, [themeColors.hover]);
 
     const handleMouseLeave = useCallback((e) => {
         e.target.style.backgroundColor = 'transparent';
@@ -27,7 +27,7 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
     const baseButtonStyle = React.useMemo(() => ({
         padding: `${rem(6)} ${rem(10)}`,
         borderRadius: rem(4),
-        color: velogColors.text,
+        color: themeColors.text,
         fontSize: rem(14),
         fontWeight: 400,
         display: 'flex',
@@ -35,22 +35,22 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
         gap: rem(4),
         transition: 'all 0.15s ease',
         backgroundColor: 'transparent',
-    }), [velogColors.text]);
+    }), [themeColors.text]);
 
     const textStyle = React.useMemo(() => ({
-        color: velogColors.text,
+        color: themeColors.text,
         fontWeight: 400
-    }), [velogColors.text]);
+    }), [themeColors.text]);
 
     const chevronStyle = React.useMemo(() => ({
-        color: velogColors.subText,
+        color: themeColors.subText,
         marginTop: rem(1)
-    }), [velogColors.subText]);
+    }), [themeColors.subText]);
 
     const menuStyles = React.useMemo(() => ({
         dropdown: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(8),
             padding: rem(8),
             minWidth: rem(200),
@@ -58,7 +58,7 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
                 ? '0 4px 16px rgba(0, 0, 0, 0.4)'
                 : '0 4px 16px rgba(0, 0, 0, 0.1)',
         }
-    }), [velogColors.background, velogColors.border, dark]);
+    }), [themeColors.background, themeColors.border, dark]);
 
     const viewAllItemStyle = React.useMemo(() => ({
         item: {
@@ -66,46 +66,46 @@ const CategoryButton = memo(({ category, velogColors, dark, openCategoryModal })
             borderRadius: rem(4),
             fontSize: rem(13),
             fontWeight: 500,
-            color: velogColors.primary,
+            color: themeColors.primary,
             '&:hover': {
-                backgroundColor: `${velogColors.primary}10`,
-                color: velogColors.primary,
+                backgroundColor: `${themeColors.primary}10`,
+                color: themeColors.primary,
             }
         }
-    }), [velogColors.primary]);
+    }), [themeColors.primary]);
 
     const dividerStyle = React.useMemo(() => ({
-        borderColor: velogColors.border,
+        borderColor: themeColors.border,
         margin: `${rem(6)} 0`
-    }), [velogColors.border]);
+    }), [themeColors.border]);
 
     const getChildItemStyle = useCallback((child) => ({
         item: {
             padding: `${rem(6)} ${rem(12)}`,
             borderRadius: rem(4),
             fontSize: rem(13),
-            color: velogColors.text,
+            color: themeColors.text,
             cursor: child.href ? 'pointer' : 'default',
             opacity: child.href ? 1 : 0.6,
             '&:hover': {
-                backgroundColor: child.href ? velogColors.hover : 'transparent',
+                backgroundColor: child.href ? themeColors.hover : 'transparent',
             }
         }
-    }), [velogColors.text, velogColors.hover]);
+    }), [themeColors.text, themeColors.hover]);
 
     const moreItemStyle = React.useMemo(() => ({
         item: {
             padding: `${rem(6)} ${rem(12)}`,
             borderRadius: rem(4),
             fontSize: rem(12),
-            color: velogColors.subText,
+            color: themeColors.subText,
             fontStyle: 'italic',
             '&:hover': {
-                backgroundColor: velogColors.hover,
-                color: velogColors.text,
+                backgroundColor: themeColors.hover,
+                color: themeColors.text,
             }
         }
-    }), [velogColors.subText, velogColors.hover, velogColors.text]);
+    }), [themeColors.subText, themeColors.hover, themeColors.text]);
 
     // 자식이 없는 카테고리 버튼
     const NonChildrenCategoryButton = memo(() => (

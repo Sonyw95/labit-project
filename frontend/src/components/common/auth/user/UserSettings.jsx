@@ -37,10 +37,10 @@ const UserSettings = memo(({
         name: user?.nickname,
         email: user?.email,
     });
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // // velog 스타일 색상
-    // const velogColors = {
+    // const themeColors = {
     //     primary: '#12B886',
     //     text: dark ? '#ECECEC' : '#212529',
     //     subText: dark ? '#ADB5BD' : '#495057',
@@ -63,7 +63,7 @@ const UserSettings = memo(({
                 <Text
                     size="1.5rem"
                     fw={700}
-                    c={velogColors.text}
+                    c={themeColors.text}
                     style={{
                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                     }}
@@ -73,21 +73,21 @@ const UserSettings = memo(({
             }
             styles={{
                 content: {
-                    backgroundColor: velogColors.background,
-                    border: `1px solid ${velogColors.border}`,
+                    backgroundColor: themeColors.background,
+                    border: `1px solid ${themeColors.border}`,
                     borderRadius: '16px',
                 },
                 header: {
                     backgroundColor: 'transparent',
-                    borderBottom: `1px solid ${velogColors.border}`,
+                    borderBottom: `1px solid ${themeColors.border}`,
                 },
                 body: {
                     padding: '0',
                 },
                 close: {
-                    color: velogColors.subText,
+                    color: themeColors.subText,
                     '&:hover': {
-                        backgroundColor: velogColors.hover,
+                        backgroundColor: themeColors.hover,
                     }
                 }
             }}
@@ -97,24 +97,24 @@ const UserSettings = memo(({
                 onChange={setActiveTab}
                 styles={{
                     root: {
-                        backgroundColor: velogColors.background,
+                        backgroundColor: themeColors.background,
                     },
                     list: {
-                        borderBottom: `1px solid ${velogColors.border}`,
-                        backgroundColor: velogColors.cardBg,
+                        borderBottom: `1px solid ${themeColors.border}`,
+                        backgroundColor: themeColors.cardBg,
                         padding: '0 1.5rem',
                     },
                     tab: {
-                        color: velogColors.subText,
+                        color: themeColors.subText,
                         fontWeight: 600,
                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                         '&:hover': {
-                            backgroundColor: velogColors.hover,
-                            color: velogColors.text,
+                            backgroundColor: themeColors.hover,
+                            color: themeColors.text,
                         },
                         '&[data-active]': {
-                            color: velogColors.primary,
-                            borderBottomColor: velogColors.primary,
+                            color: themeColors.primary,
+                            borderBottomColor: themeColors.primary,
                         }
                     },
                     panel: {
@@ -138,8 +138,8 @@ const UserSettings = memo(({
                         <Box
                             p="xl"
                             style={{
-                                backgroundColor: velogColors.cardBg,
-                                border: `1px solid ${velogColors.border}`,
+                                backgroundColor: themeColors.cardBg,
+                                border: `1px solid ${themeColors.border}`,
                                 borderRadius: '12px',
                             }}
                         >
@@ -149,7 +149,7 @@ const UserSettings = memo(({
                                     size="xl"
                                     radius="md"
                                     style={{
-                                        border: `2px solid ${velogColors.border}`
+                                        border: `2px solid ${themeColors.border}`
                                     }}
                                 />
                                 <Stack gap="md" style={{flex: 1}}>
@@ -157,7 +157,7 @@ const UserSettings = memo(({
                                         <Text
                                             fw={600}
                                             size="lg"
-                                            c={velogColors.text}
+                                            c={themeColors.text}
                                             style={{
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }}
@@ -166,7 +166,7 @@ const UserSettings = memo(({
                                         </Text>
                                         <Text
                                             size="sm"
-                                            c={velogColors.subText}
+                                            c={themeColors.subText}
                                             mt="xs"
                                             style={{
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -181,8 +181,8 @@ const UserSettings = memo(({
                                             size="sm"
                                             leftSection={<IconCamera size={14}/>}
                                             style={{
-                                                backgroundColor: `${velogColors.primary}15`,
-                                                color: velogColors.primary,
+                                                backgroundColor: `${themeColors.primary}15`,
+                                                color: themeColors.primary,
                                                 border: 'none',
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }}
@@ -211,15 +211,15 @@ const UserSettings = memo(({
                         <Box
                             p="xl"
                             style={{
-                                backgroundColor: velogColors.cardBg,
-                                border: `1px solid ${velogColors.border}`,
+                                backgroundColor: themeColors.cardBg,
+                                border: `1px solid ${themeColors.border}`,
                                 borderRadius: '12px',
                             }}
                         >
                             <Title
                                 order={4}
                                 mb="lg"
-                                c={velogColors.text}
+                                c={themeColors.text}
                                 style={{
                                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                 }}
@@ -236,17 +236,17 @@ const UserSettings = memo(({
                                         leftSection={<IconUser size={16}/>}
                                         styles={{
                                             input: {
-                                                backgroundColor: velogColors.inputBg,
-                                                border: `1px solid ${velogColors.border}`,
+                                                backgroundColor: themeColors.inputBg,
+                                                border: `1px solid ${themeColors.border}`,
                                                 borderRadius: '8px',
-                                                color: velogColors.text,
+                                                color: themeColors.text,
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                                 '&:focus': {
-                                                    borderColor: velogColors.primary,
+                                                    borderColor: themeColors.primary,
                                                 }
                                             },
                                             label: {
-                                                color: velogColors.text,
+                                                color: themeColors.text,
                                                 fontWeight: 600,
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }
@@ -261,17 +261,17 @@ const UserSettings = memo(({
                                         leftSection={<IconMail size={16}/>}
                                         styles={{
                                             input: {
-                                                backgroundColor: velogColors.inputBg,
-                                                border: `1px solid ${velogColors.border}`,
+                                                backgroundColor: themeColors.inputBg,
+                                                border: `1px solid ${themeColors.border}`,
                                                 borderRadius: '8px',
-                                                color: velogColors.text,
+                                                color: themeColors.text,
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                                 '&:focus': {
-                                                    borderColor: velogColors.primary,
+                                                    borderColor: themeColors.primary,
                                                 }
                                             },
                                             label: {
-                                                color: velogColors.text,
+                                                color: themeColors.text,
                                                 fontWeight: 600,
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }
@@ -287,17 +287,17 @@ const UserSettings = memo(({
                                                 placeholder="개발 시작일"
                                                 styles={{
                                                     input: {
-                                                        backgroundColor: velogColors.inputBg,
-                                                        border: `1px solid ${velogColors.border}`,
+                                                        backgroundColor: themeColors.inputBg,
+                                                        border: `1px solid ${themeColors.border}`,
                                                         borderRadius: '8px',
-                                                        color: velogColors.text,
+                                                        color: themeColors.text,
                                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                                         '&:focus': {
-                                                            borderColor: velogColors.primary,
+                                                            borderColor: themeColors.primary,
                                                         }
                                                     },
                                                     label: {
-                                                        color: velogColors.text,
+                                                        color: themeColors.text,
                                                         fontWeight: 600,
                                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                                     }
@@ -313,17 +313,17 @@ const UserSettings = memo(({
                                                 maxLength={200}
                                                 styles={{
                                                     input: {
-                                                        backgroundColor: velogColors.inputBg,
-                                                        border: `1px solid ${velogColors.border}`,
+                                                        backgroundColor: themeColors.inputBg,
+                                                        border: `1px solid ${themeColors.border}`,
                                                         borderRadius: '8px',
-                                                        color: velogColors.text,
+                                                        color: themeColors.text,
                                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                                         '&:focus': {
-                                                            borderColor: velogColors.primary,
+                                                            borderColor: themeColors.primary,
                                                         }
                                                     },
                                                     label: {
-                                                        color: velogColors.text,
+                                                        color: themeColors.text,
                                                         fontWeight: 600,
                                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                                     }
@@ -338,7 +338,7 @@ const UserSettings = memo(({
                                         leftSection={<IconCheck size={16}/>}
                                         size="md"
                                         style={{
-                                            backgroundColor: velogColors.primary,
+                                            backgroundColor: themeColors.primary,
                                             border: 'none',
                                             borderRadius: '8px',
                                             fontWeight: 600,
@@ -363,15 +363,15 @@ const UserSettings = memo(({
                         <Box
                             p="xl"
                             style={{
-                                backgroundColor: velogColors.cardBg,
-                                border: `1px solid ${velogColors.border}`,
+                                backgroundColor: themeColors.cardBg,
+                                border: `1px solid ${themeColors.border}`,
                                 borderRadius: '12px',
                             }}
                         >
                             <Title
                                 order={4}
                                 mb="lg"
-                                c={velogColors.text}
+                                c={themeColors.text}
                                 style={{
                                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                 }}
@@ -384,17 +384,17 @@ const UserSettings = memo(({
                                     placeholder="현재 비밀번호를 입력하세요"
                                     styles={{
                                         input: {
-                                            backgroundColor: velogColors.inputBg,
-                                            border: `1px solid ${velogColors.border}`,
+                                            backgroundColor: themeColors.inputBg,
+                                            border: `1px solid ${themeColors.border}`,
                                             borderRadius: '8px',
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             '&:focus': {
-                                                borderColor: velogColors.primary,
+                                                borderColor: themeColors.primary,
                                             }
                                         },
                                         label: {
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             fontWeight: 600,
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                         }
@@ -405,17 +405,17 @@ const UserSettings = memo(({
                                     placeholder="새 비밀번호를 입력하세요"
                                     styles={{
                                         input: {
-                                            backgroundColor: velogColors.inputBg,
-                                            border: `1px solid ${velogColors.border}`,
+                                            backgroundColor: themeColors.inputBg,
+                                            border: `1px solid ${themeColors.border}`,
                                             borderRadius: '8px',
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             '&:focus': {
-                                                borderColor: velogColors.primary,
+                                                borderColor: themeColors.primary,
                                             }
                                         },
                                         label: {
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             fontWeight: 600,
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                         }
@@ -426,17 +426,17 @@ const UserSettings = memo(({
                                     placeholder="새 비밀번호를 다시 입력하세요"
                                     styles={{
                                         input: {
-                                            backgroundColor: velogColors.inputBg,
-                                            border: `1px solid ${velogColors.border}`,
+                                            backgroundColor: themeColors.inputBg,
+                                            border: `1px solid ${themeColors.border}`,
                                             borderRadius: '8px',
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             '&:focus': {
-                                                borderColor: velogColors.primary,
+                                                borderColor: themeColors.primary,
                                             }
                                         },
                                         label: {
-                                            color: velogColors.text,
+                                            color: themeColors.text,
                                             fontWeight: 600,
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                         }
@@ -446,7 +446,7 @@ const UserSettings = memo(({
                                     leftSection={<IconKey size={16}/>}
                                     size="md"
                                     style={{
-                                        backgroundColor: velogColors.primary,
+                                        backgroundColor: themeColors.primary,
                                         border: 'none',
                                         borderRadius: '8px',
                                         fontWeight: 600,

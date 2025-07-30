@@ -19,7 +19,7 @@ import useAuthStore from "@/stores/authStore.js";
 // HomePage 메인 컴포넌트
 const HomePage = memo(() => {
     const navigate = useNavigate();
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // Zustand store에서 관리자 정보 관련 상태 가져오기
     const {
@@ -98,9 +98,9 @@ const HomePage = memo(() => {
 
     // 스타일 객체를 메모이제이션
     const containerStyle = useMemo(() => ({
-        backgroundColor: velogColors.background,
+        backgroundColor: themeColors.background,
         minHeight: '100vh'
-    }), [velogColors.background]);
+    }), [themeColors.background]);
 
     // 네비게이션 핸들러들을 useCallback으로 메모이제이션
     const handleNavigateToAllPosts = useCallback(() => {
@@ -139,7 +139,7 @@ const HomePage = memo(() => {
                         onNavigateToAllPosts={handleNavigateToAllPosts}
                     />
 
-                    <Divider color={velogColors.border} />
+                    <Divider color={themeColors.border} />
 
                     {/* CTA 섹션 */}
                     <CTASection

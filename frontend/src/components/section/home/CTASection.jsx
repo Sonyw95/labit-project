@@ -7,38 +7,38 @@ const CTASection = memo(({
                              onNavigateToAllPosts,
                              onNavigateToAbout
                          }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 스타일 객체들을 메모이제이션
     const styles = useMemo(() => ({
         container: {
-            backgroundColor: velogColors.section,
+            backgroundColor: themeColors.section,
             borderRadius: '16px',
-            border: `1px solid ${velogColors.border}`,
+            border: `1px solid ${themeColors.border}`,
             textAlign: 'center'
         },
         title: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         },
         subtitle: {
-            color: velogColors.subText,
+            color: themeColors.subText,
         },
         primaryButton: {
-            backgroundColor: velogColors.primary,
+            backgroundColor: themeColors.primary,
             '&:hover': {
                 backgroundColor: '#0CA678'
             }
         },
         outlineButton: {
-            borderColor: velogColors.border,
-            color: velogColors.text,
+            borderColor: themeColors.border,
+            color: themeColors.text,
             '&:hover': {
-                backgroundColor: velogColors.hover,
-                borderColor: velogColors.primary,
+                backgroundColor: themeColors.hover,
+                borderColor: themeColors.primary,
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 이벤트 핸들러들을 useCallback으로 메모이제이션
     const handleNavigateToAllPosts = useCallback(() => {

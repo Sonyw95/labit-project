@@ -23,7 +23,7 @@ const PostViewPage = memo(() => {
     const { postId } = useParams();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuthStore();
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(false);
@@ -36,9 +36,9 @@ const PostViewPage = memo(() => {
 
     // 컨테이너 스타일을 메모이제이션
     const containerStyle = useMemo(() => ({
-        backgroundColor: velogColors.background,
+        backgroundColor: themeColors.background,
         minHeight: '100vh'
-    }), [velogColors.background]);
+    }), [themeColors.background]);
 
     // 계산된 값들을 메모이제이션
     const computedValues = useMemo(() => ({
@@ -120,9 +120,9 @@ const PostViewPage = memo(() => {
     // 로딩 컴포넌트를 메모이제이션
     const LoadingComponent = useMemo(() => (
         <Center h="50vh">
-            <Loader size="lg" color={velogColors.primary} />
+            <Loader size="lg" color={themeColors.primary} />
         </Center>
-    ), [velogColors.primary]);
+    ), [themeColors.primary]);
 
     // 에러 컴포넌트를 메모이제이션
     const ErrorComponent = useMemo(() => (
@@ -173,7 +173,7 @@ const PostViewPage = memo(() => {
                     {/* 구분선 */}
                     <Divider
                         my="xl"
-                        color={velogColors.border}
+                        color={themeColors.border}
                         style={{ marginTop: '4rem' }}
                     />
 

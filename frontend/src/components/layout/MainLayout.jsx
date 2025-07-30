@@ -12,7 +12,7 @@ import useNavigationStore from "@/stores/navigationStore.js";
 const MainLayout = memo(() => {
     console.log('MainLayout');
     const [navOpened, setNavOpened] = useState(false);
-    const { dark, toggleColorScheme, velogColors } = useTheme();
+    const { dark, toggleColorScheme, themeColors } = useTheme();
 
     // 새로운 auth store 사용 - 더 이상 별도의 user info 요청 불필요
     const {
@@ -34,7 +34,7 @@ const MainLayout = memo(() => {
         <AppShell
             header={{height: 60, offset: true}}
             style={{
-                backgroundColor: velogColors.background,
+                backgroundColor: themeColors.background,
             }}
         >
             {/* Header - user 정보를 prop으로 전달 */}

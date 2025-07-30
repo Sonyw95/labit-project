@@ -26,7 +26,7 @@ const PostCard = memo(({ post }) => {
     // const { colorScheme } = useMantineColorScheme();
     //
     // // velog 스타일 색상
-    // const velogColors = {
+    // const themeColors = {
     //     primary: '#12B886',
     //     text: dark ? '#ECECEC' : '#212529',
     //     subText: dark ? '#ADB5BD' : '#495057',
@@ -35,7 +35,7 @@ const PostCard = memo(({ post }) => {
     //     hover: dark ? '#2B2D31' : '#F8F9FA',
     //     cardBg: dark ? '#1E1F25' : '#FFFFFF',
     // };
-    const {dark,  velogColors} = useTheme();
+    const {dark,  themeColors} = useTheme();
     const navigate = useNavigate();
 
     // 날짜 포맷팅 (메모이제이션으로 리렌더링 방지)
@@ -101,8 +101,8 @@ const PostCard = memo(({ post }) => {
                 width:'100%',
                 cursor: 'pointer',
                 minHeight: post.thumbnailUrl ? '450px' : '380px', // 최소 높이로 변경
-                backgroundColor: velogColors.cardBg,
-                border: `1px solid ${velogColors.border}`,
+                backgroundColor: themeColors.cardBg,
+                border: `1px solid ${themeColors.border}`,
                 transition: 'all 0.2s ease',
                 overflow: 'hidden',
                 '&:hover': {
@@ -157,7 +157,7 @@ const PostCard = memo(({ post }) => {
                         lineClamp={2}
                         mb="xs"
                         style={{
-                            color: velogColors.text,
+                            color: themeColors.text,
                             lineHeight: 1.4,
                             letterSpacing: '-0.01em',
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -170,7 +170,7 @@ const PostCard = memo(({ post }) => {
                     {/* 요약 - flex 속성 제거하고 고정 높이 설정 */}
                     <Text
                         size="md"
-                        c={velogColors.subText}
+                        c={themeColors.subText}
                         lineClamp={post.thumbnailUrl ? 2 : 4}
                         mb="md"
                         style={{
@@ -193,8 +193,8 @@ const PostCard = memo(({ post }) => {
                                         variant="light"
                                         size="sm"
                                         style={{
-                                            backgroundColor: `${velogColors.primary}15`,
-                                            color: velogColors.primary,
+                                            backgroundColor: `${themeColors.primary}15`,
+                                            color: themeColors.primary,
                                             border: 'none',
                                             textTransform: 'none',
                                             fontWeight: 500,
@@ -234,11 +234,11 @@ const PostCard = memo(({ post }) => {
                                 flex: '1 1 auto',
                                 minWidth: '120px',
                                 '&:hover': {
-                                    backgroundColor: velogColors.hover,
+                                    backgroundColor: themeColors.hover,
                                 }
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = velogColors.hover;
+                                e.currentTarget.style.backgroundColor = themeColors.hover;
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor = 'transparent';
@@ -249,7 +249,7 @@ const PostCard = memo(({ post }) => {
                                 size="sm"
                                 alt={post.author.nickname}
                                 style={{
-                                    border: `2px solid ${velogColors.border}`,
+                                    border: `2px solid ${themeColors.border}`,
                                     flexShrink: 0
                                 }}
                             />
@@ -257,7 +257,7 @@ const PostCard = memo(({ post }) => {
                                 <Text
                                     size="sm"
                                     fw={600}
-                                    c={velogColors.text}
+                                    c={themeColors.text}
                                     truncate
                                     style={{
                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -265,7 +265,7 @@ const PostCard = memo(({ post }) => {
                                 >
                                     {post.author.nickname}
                                 </Text>
-                                <Group gap="xs" c={velogColors.subText}>
+                                <Group gap="xs" c={themeColors.subText}>
                                     <IconCalendar size={12} style={{ flexShrink: 0 }} />
                                     <Text
                                         size="xs"
@@ -290,7 +290,7 @@ const PostCard = memo(({ post }) => {
                                         borderRadius: '6px',
                                         transition: 'all 0.2s ease',
                                         '&:hover': {
-                                            backgroundColor: post.isLiked ? '#FFE8E8' : velogColors.hover,
+                                            backgroundColor: post.isLiked ? '#FFE8E8' : themeColors.hover,
                                         }
                                     }}
                                 >
@@ -303,14 +303,14 @@ const PostCard = memo(({ post }) => {
                                 <Text
                                     size="xs"
                                     fw={500}
-                                    c={velogColors.subText}
+                                    c={themeColors.subText}
                                     style={{ whiteSpace: 'nowrap' }}
                                 >
                                     {post.likeCount}
                                 </Text>
                             </Group>
 
-                            <Group gap="xs" c={velogColors.subText} style={{ flexShrink: 0 }}>
+                            <Group gap="xs" c={themeColors.subText} style={{ flexShrink: 0 }}>
                                 <IconEye size={12} />
                                 <Text
                                     size="xs"
@@ -321,7 +321,7 @@ const PostCard = memo(({ post }) => {
                                 </Text>
                             </Group>
 
-                            <Group gap="xs" c={velogColors.subText} style={{ flexShrink: 0 }}>
+                            <Group gap="xs" c={themeColors.subText} style={{ flexShrink: 0 }}>
                                 <IconMessageCircle size={12} />
                                 <Text
                                     size="xs"

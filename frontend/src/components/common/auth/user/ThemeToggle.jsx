@@ -4,16 +4,16 @@ import { IconPalette, IconSun, IconMoon } from '@tabler/icons-react';
 import { useTheme } from "@/contexts/ThemeContext.jsx";
 
 const ThemeToggle = memo(({ onToggle }) => {
-    const { dark, velogColors, toggleColorScheme } = useTheme();
+    const { dark, themeColors, toggleColorScheme } = useTheme();
 
     // 메뉴 아이템 스타일 메모이제이션
     const menuItemStyles = useMemo(() => ({
         borderRadius: '8px',
-        color: velogColors.text,
+        color: themeColors.text,
         '&:hover': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 텍스트 스타일 메모이제이션
     const textStyles = useMemo(() => ({
@@ -23,9 +23,9 @@ const ThemeToggle = memo(({ onToggle }) => {
     // 스위치 스타일 메모이제이션
     const switchStyles = useMemo(() => ({
         track: {
-            backgroundColor: dark ? velogColors.primary : velogColors.border,
+            backgroundColor: dark ? themeColors.primary : themeColors.border,
         }
-    }), [dark, velogColors]);
+    }), [dark, themeColors]);
 
     // 토글 핸들러 메모이제이션
     const handleToggle = useCallback((e) => {
@@ -41,7 +41,7 @@ const ThemeToggle = memo(({ onToggle }) => {
             leftSection={
                 <IconPalette
                     size={16}
-                    color={velogColors.subText}
+                    color={themeColors.subText}
                     aria-hidden="true"
                 />
             }
@@ -54,14 +54,14 @@ const ThemeToggle = memo(({ onToggle }) => {
                     <Text
                         size="sm"
                         fw={500}
-                        c={velogColors.text}
+                        c={themeColors.text}
                         style={textStyles}
                     >
                         다크 모드
                     </Text>
                     <Text
                         size="xs"
-                        c={velogColors.subText}
+                        c={themeColors.subText}
                         style={textStyles}
                     >
                         테마 설정

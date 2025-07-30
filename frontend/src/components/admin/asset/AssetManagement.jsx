@@ -29,7 +29,7 @@ import {
 import {modals} from "@mantine/modals";
 
 const AssetManagement = () => {
-    const { velogColors, dark } = useTheme();
+    const { themeColors, dark } = useTheme();
     const [folderModalOpened, { open: openFolderModal, close: closeFolderModal }] = useDisclosure(false);
     const [uploadModalOpened, { open: openUploadModal }] = useDisclosure(false);
     const [editingFolder, setEditingFolder] = useState(null);
@@ -75,11 +75,11 @@ const AssetManagement = () => {
 
     const styles = useMemo(() => ({
         container: {
-            backgroundColor: velogColors.background
+            backgroundColor: themeColors.background
         },
         sidePanel: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(12),
             height: rem(600),
             overflowY: 'auto',
@@ -88,8 +88,8 @@ const AssetManagement = () => {
                 : '0 2px 8px rgba(0, 0, 0, 0.06)',
         },
         mainPanel: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(12),
             height: rem(600),
             overflowY: 'auto',
@@ -98,40 +98,40 @@ const AssetManagement = () => {
                 : '0 2px 8px rgba(0, 0, 0, 0.06)',
         },
         sectionTitle: {
-            color: velogColors.text
+            color: themeColors.text
         },
         fileCount: {
-            color: velogColors.subText
+            color: themeColors.subText
         },
         primaryButton: {
-            backgroundColor: velogColors.primary,
+            backgroundColor: themeColors.primary,
             border: 'none',
         },
         emptyState: {
             textAlign: 'center',
             padding: rem(48),
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(12),
         },
         emptyIcon: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             opacity: 0.5
         },
         emptyTitle: {
-            color: velogColors.text
+            color: themeColors.text
         },
         emptyDescription: {
-            color: velogColors.subText
+            color: themeColors.subText
         },
         alertRoot: {
-            backgroundColor: `${velogColors.error}10`,
-            border: `1px solid ${velogColors.error}30`,
+            backgroundColor: `${themeColors.error}10`,
+            border: `1px solid ${themeColors.error}30`,
         },
         alertMessage: {
-            color: velogColors.text,
+            color: themeColors.text,
         }
-    }), [velogColors, dark]);
+    }), [themeColors, dark]);
 
     const getFileSize = useCallback((bytes) => {
         if (bytes === 0) {
@@ -201,14 +201,14 @@ const AssetManagement = () => {
     const handleNewFolderButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
             ? '#0CA678'
-            : velogColors.primary;
-    }, [velogColors.primary]);
+            : themeColors.primary;
+    }, [themeColors.primary]);
 
     const handleUploadButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
             ? '#0CA678'
-            : velogColors.primary;
-    }, [velogColors.primary]);
+            : themeColors.primary;
+    }, [themeColors.primary]);
 
     const EmptyFilesState = useMemo(() => (
         <Box style={styles.emptyState}>
@@ -237,8 +237,8 @@ const AssetManagement = () => {
 
     if (isLoading) {
         return (
-            <Center style={{ color: velogColors.text }} role="status" aria-live="polite">
-                <Loader size="lg" color={velogColors.primary} />
+            <Center style={{ color: themeColors.text }} role="status" aria-live="polite">
+                <Loader size="lg" color={themeColors.primary} />
             </Center>
         );
     }

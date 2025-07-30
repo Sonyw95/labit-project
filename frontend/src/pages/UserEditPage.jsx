@@ -40,7 +40,7 @@ import { showToast } from "@/components/advanced/Toast.jsx";
 import {Navigate, useNavigate} from "react-router-dom";
 
 // Modal configurations for dark mode and reusability
-const createModalConfig = (velogColors) => ({
+const createModalConfig = (themeColors) => ({
     centered: true,
     overlayProps: {
         backgroundOpacity: 0.55,
@@ -48,21 +48,21 @@ const createModalConfig = (velogColors) => ({
     },
     styles: {
         header: {
-            backgroundColor: velogColors.section,
-            color: velogColors.text,
+            backgroundColor: themeColors.section,
+            color: themeColors.text,
         },
         body: {
-            backgroundColor: velogColors.section,
-            color: velogColors.text,
+            backgroundColor: themeColors.section,
+            color: themeColors.text,
         },
         title: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 600,
         },
         close: {
-            color: velogColors.text,
+            color: themeColors.text,
             '&:hover': {
-                backgroundColor: velogColors.hover,
+                backgroundColor: themeColors.hover,
             }
         }
     },
@@ -70,9 +70,9 @@ const createModalConfig = (velogColors) => ({
 
 // Custom hook for confirm modals with dark mode support
 const useConfirmModals = () => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
-    const modalConfig = useMemo(() => createModalConfig(velogColors), [velogColors]);
+    const modalConfig = useMemo(() => createModalConfig(themeColors), [themeColors]);
 
     const confirmProps = useMemo(() => ({
         variant: 'filled',
@@ -91,16 +91,16 @@ const useConfirmModals = () => {
         variant: 'subtle',
         styles: {
             root: {
-                color: velogColors.text,
+                color: themeColors.text,
                 backgroundColor: 'transparent',
-                border: `1px solid ${velogColors.border}`,
+                border: `1px solid ${themeColors.border}`,
                 fontWeight: 500,
                 '&:hover': {
-                    backgroundColor: velogColors.hover,
+                    backgroundColor: themeColors.hover,
                 }
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const openUnsavedChangesModal = useCallback((onConfirm, type = 'cancel') => {
         const isGoBack = type === 'goback';
@@ -110,10 +110,10 @@ const useConfirmModals = () => {
             title: isGoBack ? '페이지 나가기' : '변경사항 취소',
             children: (
                 <Box>
-                    <Text size="sm" c={velogColors.text}>
+                    <Text size="sm" c={themeColors.text}>
                         {isGoBack ? '뒤로가시겠습니까?' : '변경사항이 있습니다. 정말 취소하시겠습니까?'}
                     </Text>
-                    <Text size="xs" c={velogColors.subText} mt="xs">
+                    <Text size="xs" c={themeColors.subText} mt="xs">
                         작성중인 내용은 저장되지 않습니다.
                     </Text>
                 </Box>
@@ -125,7 +125,7 @@ const useConfirmModals = () => {
                     </Text>
                 ),
                 cancel: (
-                    <Text fw={500} c={velogColors.text}>
+                    <Text fw={500} c={themeColors.text}>
                         닫기
                     </Text>
                 )
@@ -137,14 +137,14 @@ const useConfirmModals = () => {
                     ...confirmProps.styles,
                     root: {
                         ...confirmProps.styles.root,
-                        backgroundColor: isGoBack ? velogColors.primary : velogColors.error,
+                        backgroundColor: isGoBack ? themeColors.primary : themeColors.error,
                     }
                 }
             },
             cancelProps,
             onConfirm,
         });
-    }, [modalConfig, confirmProps, cancelProps, velogColors]);
+    }, [modalConfig, confirmProps, cancelProps, themeColors]);
 
     const openDeleteAccountModal = useCallback((onConfirm) => {
         modals.openConfirmModal({
@@ -157,16 +157,16 @@ const useConfirmModals = () => {
                         icon={<IconAlertTriangle size={16} />}
                         styles={{
                             root: {
-                                backgroundColor: `${velogColors.error}15`,
-                                border: `1px solid ${velogColors.error}40`,
-                                color: velogColors.text,
+                                backgroundColor: `${themeColors.error}15`,
+                                border: `1px solid ${themeColors.error}40`,
+                                color: themeColors.text,
                             },
-                            message: { color: velogColors.text }
+                            message: { color: themeColors.text }
                         }}
                     >
                         정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
                     </Alert>
-                    <Text size="sm" c={velogColors.subText}>
+                    <Text size="sm" c={themeColors.subText}>
                         • 작성한 모든 포스트 삭제<br/>
                         • 댓글 및 좋아요 기록 삭제<br/>
                         • 팔로워/팔로잉 관계 삭제
@@ -180,7 +180,7 @@ const useConfirmModals = () => {
                     </Text>
                 ),
                 cancel: (
-                    <Text fw={500} c={velogColors.text}>
+                    <Text fw={500} c={themeColors.text}>
                         취소
                     </Text>
                 )
@@ -192,54 +192,54 @@ const useConfirmModals = () => {
                     ...confirmProps.styles,
                     root: {
                         ...confirmProps.styles.root,
-                        backgroundColor: velogColors.error,
+                        backgroundColor: themeColors.error,
                     }
                 }
             },
             cancelProps,
             onConfirm,
         });
-    }, [modalConfig, confirmProps, cancelProps, velogColors]);
+    }, [modalConfig, confirmProps, cancelProps, themeColors]);
 
     return { openUnsavedChangesModal, openDeleteAccountModal };
 };
 
 // Profile Image Upload Component with optimization
 const ProfileImageUpload = React.memo(({ currentImage, onImageChange, onImageRemove }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(currentImage);
     const [isUploading, setIsUploading] = useState(false);
 
     const cardStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        borderColor: velogColors.border,
-    }), [velogColors]);
+        backgroundColor: themeColors.section,
+        borderColor: themeColors.border,
+    }), [themeColors]);
 
     const avatarStyles = useMemo(() => ({
-        border: `2px solid ${velogColors.border}`,
-    }), [velogColors.border]);
+        border: `2px solid ${themeColors.border}`,
+    }), [themeColors.border]);
 
     const uploadButtonStyles = useMemo(() => ({
         root: {
-            backgroundColor: velogColors.primary,
+            backgroundColor: themeColors.primary,
             color: 'white',
             '&:hover': {
-                backgroundColor: velogColors.primary,
+                backgroundColor: themeColors.primary,
                 opacity: 0.9
             }
         }
-    }), [velogColors.primary]);
+    }), [themeColors.primary]);
 
     const removeButtonStyles = useMemo(() => ({
         root: {
-            backgroundColor: velogColors.error,
+            backgroundColor: themeColors.error,
             color: 'white',
             '&:hover': {
                 backgroundColor: '#e03131'
             }
         }
-    }), [velogColors.error]);
+    }), [themeColors.error]);
 
     const handleFileSelect = useCallback(async (file) => {
         if (!file) return;
@@ -286,7 +286,7 @@ const ProfileImageUpload = React.memo(({ currentImage, onImageChange, onImageRem
     return (
         <Card p="lg" radius="md" withBorder style={cardStyles}>
             <Stack align="center" gap="md">
-                <Text fw={600} size="sm" c={velogColors.text}>
+                <Text fw={600} size="sm" c={themeColors.text}>
                     프로필 이미지
                 </Text>
 
@@ -298,7 +298,7 @@ const ProfileImageUpload = React.memo(({ currentImage, onImageChange, onImageRem
                         style={avatarStyles}
                         aria-label="프로필 이미지"
                     >
-                        <IconUser size={48} color={velogColors.subText} />
+                        <IconUser size={48} color={themeColors.subText} />
                     </Avatar>
 
                     <ActionIcon
@@ -352,7 +352,7 @@ const ProfileImageUpload = React.memo(({ currentImage, onImageChange, onImageRem
                     )}
                 </Group>
 
-                <Text size="xs" c={velogColors.subText} ta="center">
+                <Text size="xs" c={themeColors.subText} ta="center">
                     JPG, PNG 파일 (최대 5MB)
                 </Text>
             </Stack>
@@ -364,40 +364,40 @@ ProfileImageUpload.displayName = 'ProfileImageUpload';
 
 // User Info Form Component with optimization
 const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const cardStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        borderColor: velogColors.border,
-    }), [velogColors]);
+        backgroundColor: themeColors.section,
+        borderColor: themeColors.border,
+    }), [themeColors]);
 
     const inputStyles = useMemo(() => ({
         input: {
-            backgroundColor: velogColors.background,
-            borderColor: velogColors.border,
-            color: velogColors.text,
+            backgroundColor: themeColors.background,
+            borderColor: themeColors.border,
+            color: themeColors.text,
             '&:focus': {
-                borderColor: velogColors.primary,
+                borderColor: themeColors.primary,
             },
             '&::placeholder': {
-                color: velogColors.subText,
+                color: themeColors.subText,
             }
         },
         label: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 500,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const readOnlyInputStyles = useMemo(() => ({
         input: {
-            backgroundColor: velogColors.hover,
-            borderColor: velogColors.border,
-            color: velogColors.subText,
+            backgroundColor: themeColors.hover,
+            borderColor: themeColors.border,
+            color: themeColors.subText,
             cursor: 'not-allowed'
         },
-        label: { color: velogColors.text }
-    }), [velogColors]);
+        label: { color: themeColors.text }
+    }), [themeColors]);
 
     const handleInputChange = useCallback((field) => (value) => {
         onChange({ ...userInfo, [field]: value });
@@ -421,8 +421,8 @@ const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
             <Card p="lg" radius="md" withBorder style={cardStyles}>
                 <Stack gap="md">
                     <Group gap="xs" mb="sm">
-                        <IconUser size={16} color={velogColors.primary} />
-                        <Text fw={600} size="sm" c={velogColors.text}>
+                        <IconUser size={16} color={themeColors.primary} />
+                        <Text fw={600} size="sm" c={themeColors.text}>
                             기본 정보
                         </Text>
                     </Group>
@@ -433,7 +433,7 @@ const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
                         value={userInfo.nickname || ''}
                         onChange={handleNicknameChange}
                         error={errors.nickname}
-                        leftSection={<IconEdit size={14} color={velogColors.subText} />}
+                        leftSection={<IconEdit size={14} color={themeColors.subText} />}
                         styles={inputStyles}
                         aria-describedby={errors.nickname ? 'nickname-error' : undefined}
                     />
@@ -442,14 +442,14 @@ const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
                         label="이메일"
                         value={userInfo.email || ''}
                         readOnly
-                        leftSection={<IconMail size={14} color={velogColors.subText} />}
+                        leftSection={<IconMail size={14} color={themeColors.subText} />}
                         rightSection={
                             <Badge
                                 size="xs"
                                 styles={{
                                     root: {
-                                        backgroundColor: velogColors.hover,
-                                        color: velogColors.subText
+                                        backgroundColor: themeColors.hover,
+                                        color: themeColors.subText
                                     }
                                 }}
                             >
@@ -466,8 +466,8 @@ const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
             <Card p="lg" radius="md" withBorder style={cardStyles}>
                 <Stack gap="md">
                     <Group gap="xs" mb="sm">
-                        <IconPencil size={16} color={velogColors.primary} />
-                        <Text fw={600} size="sm" c={velogColors.text}>
+                        <IconPencil size={16} color={themeColors.primary} />
+                        <Text fw={600} size="sm" c={themeColors.text}>
                             자기소개
                         </Text>
                     </Group>
@@ -487,7 +487,7 @@ const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
                     <Text
                         id="bio-counter"
                         size="xs"
-                        c={velogColors.subText}
+                        c={themeColors.subText}
                         aria-live="polite"
                     >
                         {userInfo.bio?.length || 0}/500
@@ -499,8 +499,8 @@ const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
             <Card p="lg" radius="md" withBorder style={cardStyles}>
                 <Stack gap="md">
                     <Group gap="xs" mb="sm">
-                        <IconCalendar size={16} color={velogColors.primary} />
-                        <Text fw={600} size="sm" c={velogColors.text}>
+                        <IconCalendar size={16} color={themeColors.primary} />
+                        <Text fw={600} size="sm" c={themeColors.text}>
                             개발 시작일
                         </Text>
                     </Group>
@@ -525,37 +525,37 @@ UserInfoForm.displayName = 'UserInfoForm';
 
 // Action Buttons Component with optimization
 const ActionButtons = React.memo(({ onSave, onCancel, isSaving, hasChanges }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const cardStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        borderColor: velogColors.border,
-    }), [velogColors]);
+        backgroundColor: themeColors.section,
+        borderColor: themeColors.border,
+    }), [themeColors]);
 
     const saveButtonStyles = useMemo(() => ({
         root: {
-            backgroundColor: hasChanges ? velogColors.primary : velogColors.hover,
-            color: hasChanges ? 'white' : velogColors.subText,
+            backgroundColor: hasChanges ? themeColors.primary : themeColors.hover,
+            color: hasChanges ? 'white' : themeColors.subText,
             fontWeight: 600,
             '&:hover': {
-                backgroundColor: hasChanges ? velogColors.primary : velogColors.hover,
+                backgroundColor: hasChanges ? themeColors.primary : themeColors.hover,
                 opacity: hasChanges ? 0.9 : 1,
             },
             '&:disabled': {
-                backgroundColor: velogColors.hover,
-                color: velogColors.subText,
+                backgroundColor: themeColors.hover,
+                color: themeColors.subText,
             }
         }
-    }), [hasChanges, velogColors]);
+    }), [hasChanges, themeColors]);
 
     const cancelButtonStyles = useMemo(() => ({
         root: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             '&:hover': {
-                backgroundColor: velogColors.hover,
+                backgroundColor: themeColors.hover,
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     return (
         <Card p="lg" radius="md" withBorder style={cardStyles}>
@@ -590,48 +590,48 @@ ActionButtons.displayName = 'ActionButtons';
 
 // Danger Zone Component with optimization
 const DangerZone = React.memo(({ onDeleteAccount }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
     const { openDeleteAccountModal } = useConfirmModals();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [confirmText, setConfirmText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
 
     const cardStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        borderColor: velogColors.error,
-    }), [velogColors]);
+        backgroundColor: themeColors.section,
+        borderColor: themeColors.error,
+    }), [themeColors]);
 
     const alertStyles = useMemo(() => ({
         root: {
-            backgroundColor: `${velogColors.error}15`,
-            border: `1px solid ${velogColors.error}40`,
-            color: velogColors.text,
+            backgroundColor: `${themeColors.error}15`,
+            border: `1px solid ${themeColors.error}40`,
+            color: themeColors.text,
         },
-        message: { color: velogColors.text }
-    }), [velogColors]);
+        message: { color: themeColors.text }
+    }), [themeColors]);
 
     const buttonStyles = useMemo(() => ({
         root: {
-            borderColor: velogColors.error,
-            color: velogColors.error,
+            borderColor: themeColors.error,
+            color: themeColors.error,
             '&:hover': {
-                backgroundColor: `${velogColors.error}10`,
+                backgroundColor: `${themeColors.error}10`,
             }
         }
-    }), [velogColors.error]);
+    }), [themeColors.error]);
 
     const modalStyles = useMemo(() => ({
         header: {
-            backgroundColor: velogColors.section,
-            borderBottom: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.section,
+            borderBottom: `1px solid ${themeColors.border}`,
         },
         body: {
-            backgroundColor: velogColors.section,
+            backgroundColor: themeColors.section,
         },
         title: {
-            color: velogColors.text,
+            color: themeColors.text,
         },
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleDeleteClick = useCallback(() => {
         setShowConfirmModal(true);
@@ -668,17 +668,17 @@ const DangerZone = React.memo(({ onDeleteAccount }) => {
             <Card p="lg" radius="md" withBorder style={cardStyles}>
                 <Stack gap="md">
                     <Group gap="xs">
-                        <IconAlertTriangle size={16} color={velogColors.error} />
-                        <Text fw={600} size="sm" c={velogColors.error}>
+                        <IconAlertTriangle size={16} color={themeColors.error} />
+                        <Text fw={600} size="sm" c={themeColors.error}>
                             위험 영역
                         </Text>
                     </Group>
 
                     <Alert icon={<IconAlertTriangle size={16} />} styles={alertStyles}>
-                        <Text size="sm" mb="xs" c={velogColors.text}>
+                        <Text size="sm" mb="xs" c={themeColors.text}>
                             계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.
                         </Text>
-                        <Text size="xs" c={velogColors.subText}>
+                        <Text size="xs" c={themeColors.subText}>
                             • 작성한 모든 포스트 삭제<br/>
                             • 댓글 및 좋아요 기록 삭제<br/>
                             • 팔로워/팔로잉 관계 삭제<br/>
@@ -718,12 +718,12 @@ const DangerZone = React.memo(({ onDeleteAccount }) => {
                         icon={<IconAlertTriangle size={16} />}
                         styles={alertStyles}
                     >
-                        <Text c={velogColors.text}>
+                        <Text c={themeColors.text}>
                             정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
                         </Text>
                     </Alert>
 
-                    <Text size="sm" c={velogColors.text}>
+                    <Text size="sm" c={themeColors.text}>
                         계속하려면 아래에 <strong>DELETE</strong>를 입력하세요:
                     </Text>
 
@@ -734,11 +734,11 @@ const DangerZone = React.memo(({ onDeleteAccount }) => {
                         disabled={isDeleting}
                         styles={{
                             input: {
-                                backgroundColor: velogColors.background,
-                                borderColor: velogColors.border,
-                                color: velogColors.text,
+                                backgroundColor: themeColors.background,
+                                borderColor: themeColors.border,
+                                color: themeColors.text,
                                 '&:focus': {
-                                    borderColor: velogColors.primary,
+                                    borderColor: themeColors.primary,
                                 }
                             }
                         }}
@@ -751,9 +751,9 @@ const DangerZone = React.memo(({ onDeleteAccount }) => {
                             disabled={isDeleting}
                             styles={{
                                 root: {
-                                    color: velogColors.text,
+                                    color: themeColors.text,
                                     '&:hover': {
-                                        backgroundColor: velogColors.hover,
+                                        backgroundColor: themeColors.hover,
                                     }
                                 }
                             }}
@@ -766,7 +766,7 @@ const DangerZone = React.memo(({ onDeleteAccount }) => {
                             loading={isDeleting}
                             styles={{
                                 root: {
-                                    backgroundColor: velogColors.error,
+                                    backgroundColor: themeColors.error,
                                     color: 'white',
                                     '&:hover': {
                                         backgroundColor: '#e03131',
@@ -787,7 +787,7 @@ DangerZone.displayName = 'DangerZone';
 
 // Main Profile Settings Page Component
 const UserProfilePage = () => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
     const { openUnsavedChangesModal } = useConfirmModals();
     const navigate = useNavigate();
 
@@ -808,23 +808,23 @@ const UserProfilePage = () => {
 
     // Memoized styles
     const containerStyles = useMemo(() => ({
-        backgroundColor: velogColors.background,
+        backgroundColor: themeColors.background,
         minHeight: '100vh',
-    }), [velogColors.background]);
+    }), [themeColors.background]);
 
     const headerStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        borderColor: velogColors.border,
-    }), [velogColors]);
+        backgroundColor: themeColors.section,
+        borderColor: themeColors.border,
+    }), [themeColors]);
 
     const backButtonStyles = useMemo(() => ({
         root: {
-            color: velogColors.text,
+            color: themeColors.text,
             '&:hover': {
-                backgroundColor: velogColors.hover
+                backgroundColor: themeColors.hover
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // Check if there are changes
     const hasChanges = useMemo(() => {
@@ -936,10 +936,10 @@ const UserProfilePage = () => {
                                     <IconArrowLeft size={18} />
                                 </ActionIcon>
                                 <Box>
-                                    <Title order={2} c={velogColors.text}>
+                                    <Title order={2} c={themeColors.text}>
                                         프로필 설정
                                     </Title>
-                                    <Text size="sm" c={velogColors.subText}>
+                                    <Text size="sm" c={themeColors.subText}>
                                         프로필 정보를 수정할 수 있습니다
                                     </Text>
                                 </Box>
@@ -949,9 +949,9 @@ const UserProfilePage = () => {
                                 <Badge
                                     styles={{
                                         root: {
-                                            backgroundColor: `${velogColors.warning}20`,
-                                            color: velogColors.warning,
-                                            border: `1px solid ${velogColors.warning}40`
+                                            backgroundColor: `${themeColors.warning}20`,
+                                            color: themeColors.warning,
+                                            border: `1px solid ${themeColors.warning}40`
                                         }
                                     }}
                                 >

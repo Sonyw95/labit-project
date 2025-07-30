@@ -8,28 +8,28 @@ const StatisticsCard = memo(({
                                  growth,
                                  icon: Icon,
                                  color,
-                                 velogColors,
+                                 themeColors,
                                  dark
                              }) => {
     const cardStyles = {
-        backgroundColor: velogColors.section,
-        border: `1px solid ${velogColors.border}`,
+        backgroundColor: themeColors.section,
+        border: `1px solid ${themeColors.border}`,
         borderRadius: rem(12),
         boxShadow: dark
             ? '0 2px 8px rgba(0, 0, 0, 0.3)'
             : '0 2px 8px rgba(0, 0, 0, 0.06)',
     };
 
-    const titleStyles = { color: velogColors.subText };
+    const titleStyles = { color: themeColors.subText };
     const valueStyles = {
-        color: velogColors.text,
+        color: themeColors.text,
         lineHeight: 1.2,
         marginBottom: rem(12)
     };
     const growthStyles = {
-        color: growth > 0 ? velogColors.success : velogColors.error
+        color: growth > 0 ? themeColors.success : themeColors.error
     };
-    const subTextStyles = { color: velogColors.subText };
+    const subTextStyles = { color: themeColors.subText };
 
     return (
         <Box
@@ -67,13 +67,13 @@ const StatisticsCard = memo(({
                 {growth > 0 ? (
                     <IconTrendingUp
                         size={16}
-                        style={{ color: velogColors.success }}
+                        style={{ color: themeColors.success }}
                         aria-hidden="true"
                     />
                 ) : (
                     <IconTrendingDown
                         size={16}
-                        style={{ color: velogColors.error }}
+                        style={{ color: themeColors.error }}
                         aria-hidden="true"
                     />
                 )}

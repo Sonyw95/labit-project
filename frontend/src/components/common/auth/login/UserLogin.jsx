@@ -6,16 +6,16 @@ import { useTheme } from "@/contexts/ThemeContext.jsx";
 
 const UserLogin = memo(() => {
     const [settingsOpened, setSettingsOpened] = useState(false);
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 버튼 스타일 메모이제이션으로 리렌더링 최적화
     const buttonStyles = useMemo(() => ({
-        backgroundColor: velogColors.primary,
+        backgroundColor: themeColors.primary,
         border: 'none',
         fontWeight: 600,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         transition: 'all 0.2s ease',
-    }), [velogColors.primary]);
+    }), [themeColors.primary]);
 
     // 호버 스타일을 별도로 관리 (CSS-in-JS 한계로 인한 대안)
     const hoverColor = useMemo(() => '#0CA678', []);
@@ -36,9 +36,9 @@ const UserLogin = memo(() => {
     }, [hoverColor]);
 
     const handleMouseLeave = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.primary;
+        e.currentTarget.style.backgroundColor = themeColors.primary;
         e.currentTarget.style.transform = 'translateY(0)';
-    }, [velogColors.primary]);
+    }, [themeColors.primary]);
 
     return (
         <>

@@ -8,38 +8,38 @@ const DeleteModal = memo(({
                               onConfirm,
                               isLoading = false
                           }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const modalStyles = useMemo(() => ({
         content: {
-            backgroundColor: velogColors.background,
+            backgroundColor: themeColors.background,
         },
         header: {
-            backgroundColor: velogColors.background,
-            borderBottom: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            borderBottom: `1px solid ${themeColors.border}`,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const textStyles = useMemo(() => ({
         title: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 600,
             fontSize: '1.125rem'
         },
         description: {
-            color: velogColors.text
+            color: themeColors.text
         },
         warning: {
-            color: velogColors.subText
+            color: themeColors.subText
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const buttonStyles = useMemo(() => ({
         cancel: {
-            borderColor: velogColors.border,
-            color: velogColors.subText
+            borderColor: themeColors.border,
+            color: themeColors.subText
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleClose = useCallback(() => {
         if (onClose) {

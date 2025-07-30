@@ -4,31 +4,31 @@ import { IconAlertCircle } from '@tabler/icons-react';
 
 const SystemAlert = memo(({
                               systemStatus,
-                              velogColors
+                              themeColors
                           }) => {
     const alertStyles = useMemo(() => ({
         root: {
-            backgroundColor: `${velogColors.error}10`,
-            border: `1px solid ${velogColors.error}30`,
+            backgroundColor: `${themeColors.error}10`,
+            border: `1px solid ${themeColors.error}30`,
         },
         message: {
-            color: velogColors.text,
+            color: themeColors.text,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const buttonStyles = useMemo(() => ({
-        borderColor: velogColors.error,
-        color: velogColors.error,
+        borderColor: themeColors.error,
+        color: themeColors.error,
         backgroundColor: 'transparent',
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleButtonMouseEnter = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = `${velogColors.error}15`;
-    }, [velogColors]);
+        e.currentTarget.style.backgroundColor = `${themeColors.error}15`;
+    }, [themeColors]);
 
     const handleButtonMouseLeave = useCallback((e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
-    }, [velogColors]);
+    }, [themeColors]);
 
     const handleDetailsClick = useCallback(() => {
         // 시스템 상세 정보 모달 열기 등의 로직
@@ -53,14 +53,14 @@ const SystemAlert = memo(({
                 <Stack gap="xs">
                     <Text
                         fw={600}
-                        style={{ color: velogColors.text }}
+                        style={{ color: themeColors.text }}
                         id="alert-title"
                     >
                         시스템 문제 감지
                     </Text>
                     <Text
                         size="sm"
-                        style={{ color: velogColors.text }}
+                        style={{ color: themeColors.text }}
                         id="alert-description"
                     >
                         일부 서비스에 문제가 발생했습니다. 시스템 관리자에게 문의하세요.

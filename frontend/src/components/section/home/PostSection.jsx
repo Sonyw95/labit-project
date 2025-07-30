@@ -10,28 +10,28 @@ const PostSection = memo(({
                               isLoading = false,
                               onNavigateToAllPosts
                           }) => {
-    const {velogColors} = useTheme();
+    const {themeColors} = useTheme();
 
     // 스타일 객체들을 메모이제이션
     const styles = useMemo(() => ({
         sectionTitle: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         },
         viewAllButton: {
-            color: velogColors.primary,
+            color: themeColors.primary,
             '&:hover': {
-                backgroundColor: `${velogColors.primary}15`,
+                backgroundColor: `${themeColors.primary}15`,
             }
         },
         loadingContainer: {
-            backgroundColor: velogColors.background,
+            backgroundColor: themeColors.background,
             minHeight: '400px'
         },
         loadingText: {
-            color: velogColors.subText
+            color: themeColors.subText
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 네비게이션 핸들러를 useCallback으로 메모이제이션
     const handleNavigateToAllPosts = useCallback(() => {
@@ -46,7 +46,7 @@ const PostSection = memo(({
             <Container size="xl" py="xl">
                 <Center h={400}>
                     <Stack align="center" gap="lg">
-                        <Loader size="lg" color={velogColors.primary}/>
+                        <Loader size="lg" color={themeColors.primary}/>
                         <Text size="lg" style={styles.loadingText}>
                             포스트를 불러오는 중...
                         </Text>
@@ -54,13 +54,13 @@ const PostSection = memo(({
                 </Center>
             </Container>
         </Box>
-    ), [styles.loadingContainer, styles.loadingText, velogColors.primary]);
+    ), [styles.loadingContainer, styles.loadingText, themeColors.primary]);
 
     return (
         <Stack gap="xl">
             <Group justify="space-between" align="center">
                 <Group gap="sm">
-                    <IconClock size={24} color={velogColors.primary}/>
+                    <IconClock size={24} color={themeColors.primary}/>
                     <Text size="2rem" fw={700} style={styles.sectionTitle}>
                         최신 포스트
                     </Text>

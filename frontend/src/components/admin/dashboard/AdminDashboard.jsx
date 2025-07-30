@@ -21,7 +21,7 @@ import ActivityLogsCard from "@/components/admin/dashboard/ActivityLogsCard.jsx"
 // 분리된 컴포넌트들 import
 
 const AdminDashboard = () => {
-    const { dark, velogColors } = useTheme();
+    const { dark, themeColors } = useTheme();
 
     // API hooks
     const {
@@ -86,31 +86,31 @@ const AdminDashboard = () => {
             value: dashboardStats.posts.total,
             growth: dashboardStats.posts.growth,
             icon: IconFileText,
-            color: velogColors.success,
+            color: themeColors.success,
         },
         {
             title: '총 에셋',
             value: dashboardStats.assets.total,
             growth: dashboardStats.assets.growth,
             icon: IconFolder,
-            color: velogColors.warning,
+            color: themeColors.warning,
         },
         {
             title: '총 조회수',
             value: dashboardStats.views.total,
             growth: dashboardStats.views.growth,
             icon: IconEye,
-            color: velogColors.primary,
+            color: themeColors.primary,
         },
-    ], [dashboardStats, velogColors]);
+    ], [dashboardStats, themeColors]);
 
     // 로딩 상태 처리
     if (statsLoading || statusLoading) {
         return (
             <Box
                 style={{
-                    color: velogColors.text,
-                    backgroundColor: velogColors.background,
+                    color: themeColors.text,
+                    backgroundColor: themeColors.background,
                     padding: '2rem'
                 }}
                 role="status"
@@ -121,8 +121,8 @@ const AdminDashboard = () => {
                         style={{
                             width: '40px',
                             height: '40px',
-                            border: `3px solid ${velogColors.border}`,
-                            borderTop: `3px solid ${velogColors.primary}`,
+                            border: `3px solid ${themeColors.border}`,
+                            borderTop: `3px solid ${themeColors.primary}`,
                             borderRadius: '50%',
                             animation: 'spin 1s linear infinite'
                         }}
@@ -136,7 +136,7 @@ const AdminDashboard = () => {
 
     return (
         <Box
-            style={{ backgroundColor: velogColors.background }}
+            style={{ backgroundColor: themeColors.background }}
             role="main"
             aria-labelledby="dashboard-title"
         >
@@ -159,7 +159,7 @@ const AdminDashboard = () => {
                 {/* 시스템 경고 - 최상단에 배치 */}
                 <SystemAlert
                     systemStatus={systemStatusData.status}
-                    velogColors={velogColors}
+                    themeColors={themeColors}
                 />
 
                 {/* 통계 카드들 */}
@@ -185,7 +185,7 @@ const AdminDashboard = () => {
                             <StatisticsCard
                                 key={`stat-${index}-${card.title}`}
                                 {...card}
-                                velogColors={velogColors}
+                                themeColors={themeColors}
                                 dark={dark}
                             />
                         ))}
@@ -211,14 +211,14 @@ const AdminDashboard = () => {
                         <Grid.Col span={{ base: 12, lg: 6 }}>
                             <SystemStatusCard
                                 systemStatusData={systemStatusData}
-                                velogColors={velogColors}
+                                themeColors={themeColors}
                                 dark={dark}
                             />
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, lg: 6 }}>
                             <ActivityLogsCard
                                 activityLogsData={activityLogsData}
-                                velogColors={velogColors}
+                                themeColors={themeColors}
                                 dark={dark}
                                 refetchStats={refetchStats}
                                 logsLoading={logsLoading}

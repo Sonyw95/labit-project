@@ -28,44 +28,44 @@ const PostHeader = memo(({
                              formatDate
                          }) => {
     const navigate = useNavigate();
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const styles = useMemo(() => ({
         categoryBadge: {
-            backgroundColor: `${velogColors.primary}15`,
-            color: velogColors.primary,
-            border: `1px solid ${velogColors.primary}30`
+            backgroundColor: `${themeColors.primary}15`,
+            color: themeColors.primary,
+            border: `1px solid ${themeColors.primary}30`
         },
         title: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             letterSpacing: '-0.5px'
         },
         summary: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             marginTop: '1rem'
         },
         avatar: {
-            border: `2px solid ${velogColors.border}`
+            border: `2px solid ${themeColors.border}`
         },
         authorName: {
-            color: velogColors.text
+            color: themeColors.text
         },
         metaText: {
-            color: velogColors.subText
+            color: themeColors.subText
         },
         actionButton: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             '&:hover': {
-                backgroundColor: velogColors.hover
+                backgroundColor: themeColors.hover
             }
         },
         tagBadge: {
-            color: velogColors.subText,
-            borderColor: velogColors.border,
+            color: themeColors.subText,
+            borderColor: themeColors.border,
             backgroundColor: 'transparent'
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleEditClick = useCallback(() => {
         navigate(`/posts/${post.id}/edit`);
@@ -84,7 +84,7 @@ const PostHeader = memo(({
                     <Badge
                         variant="light"
                         size="md"
-                        color={velogColors.primary}
+                        color={themeColors.primary}
                         style={styles.categoryBadge}
                     >
                         {post.category.label}
@@ -170,7 +170,7 @@ const PostHeader = memo(({
 
                 {post.tags && post.tags.length > 0 && (
                     <Group gap="xs" mt="md">
-                        <IconTag size={16} color={velogColors.subText} />
+                        <IconTag size={16} color={themeColors.subText} />
                         {post.tags.map((tag, index) => (
                             <Badge
                                 key={index}

@@ -16,7 +16,7 @@ import EmptyState from "@/components/admin/navigation/EmptyState.jsx";
 import NavigationForm from "@/components/admin/navigation/NavigationForm.jsx";
 
 const NavigationManagement = () => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
     const [opened, { open, close }] = useDisclosure(false);
     const [editingItem, setEditingItem] = useState(null);
     const [expandedItems, setExpandedItems] = useState(new Set([2, 3]));
@@ -83,26 +83,26 @@ const NavigationManagement = () => {
 
     const styles = useMemo(() => ({
         headerTitle: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             letterSpacing: '-0.02em'
         },
         headerDescription: {
-            color: velogColors.subText
+            color: themeColors.subText
         },
         addButton: {
-            backgroundColor: velogColors.primary,
+            backgroundColor: themeColors.primary,
             border: 'none',
             fontWeight: 500,
         },
         alertRoot: {
-            backgroundColor: `${velogColors.error}10`,
-            border: `1px solid ${velogColors.error}30`,
+            backgroundColor: `${themeColors.error}10`,
+            border: `1px solid ${themeColors.error}30`,
         },
         alertMessage: {
-            color: velogColors.text,
+            color: themeColors.text,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleOpenModal = useCallback((item = null) => {
         setEditingItem(item);
@@ -205,12 +205,12 @@ const NavigationManagement = () => {
     const handleAddButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
             ? '#0CA678'
-            : velogColors.primary;
-    }, [velogColors.primary]);
+            : themeColors.primary;
+    }, [themeColors.primary]);
 
     if (isLoading) {
         return (
-            <Box style={{ color: velogColors.text }} role="status" aria-live="polite">
+            <Box style={{ color: themeColors.text }} role="status" aria-live="polite">
                 <Text>네비게이션 데이터를 불러오는 중...</Text>
             </Box>
         );

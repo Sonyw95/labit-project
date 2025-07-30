@@ -25,14 +25,13 @@ const AppRouter = memo((() => {
 
 
                 { path: '/posts/:category', element: <PostListPage/> },
-                { path: '/post/edit/:postId', element: <PostEditPage/> },
+                { path: '/post/edit/:postId', element: <ProtectedRoute><PostEditPage/></ProtectedRoute> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
-                { path: '/posts/:page', element: <></> },
 
                 {path:'/user/settings', element: <UserProfilePage/>},
 
                 // { path: '/setting/user', element: <UserSettings/>},
-                { path: '/admin', element: <ProtectedRoute requiredRole="ADMIN"><AdminManagementPage/></ProtectedRoute>}
+                { path: '/admin', element: <ProtectedRoute requiredRole="SUPER_ADMIN"><AdminManagementPage/></ProtectedRoute>}
             ]
         },
     ]);

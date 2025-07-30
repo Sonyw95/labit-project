@@ -4,7 +4,7 @@ import { showToast } from "@/components/advanced/Toast.jsx";
 
 // 로그인 모달 관련 로직을 관리하는 커스텀 훅
 export const useLoginModal = () => {
-    const { dark, velogColors } = useTheme();
+    const { dark, themeColors } = useTheme();
     const [loading, setLoading] = useState(false);
 
     // 폼 검증 함수
@@ -58,7 +58,7 @@ export const useLoginModal = () => {
         loading,
         handleEmailLogin,
         resetModal,
-        velogColors,
+        themeColors,
         dark,
     };
 };
@@ -102,13 +102,13 @@ export const useLoginForm = () => {
 
 // 모달 스타일 관련 커스텀 훅
 export const useLoginModalStyles = () => {
-    const { dark, velogColors } = useTheme();
+    const { dark, themeColors } = useTheme();
 
     // 모달 스타일
     const modalStyles = useMemo(() => ({
         content: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: '16px',
             boxShadow: dark
                 ? '0 25px 50px rgba(0, 0, 0, 0.5)'
@@ -123,43 +123,43 @@ export const useLoginModalStyles = () => {
             padding: '2rem',
         },
         close: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             '&:hover': {
-                backgroundColor: velogColors.hover,
+                backgroundColor: themeColors.hover,
             }
         }
-    }), [velogColors, dark]);
+    }), [themeColors, dark]);
 
     // 입력 필드 스타일
     const inputStyles = useMemo(() => ({
         input: {
-            backgroundColor: velogColors.background,
-            border: `2px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `2px solid ${themeColors.border}`,
             borderRadius: '8px',
-            color: velogColors.text,
+            color: themeColors.text,
             fontSize: '16px',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             transition: 'all 0.2s ease',
             '&:focus': {
-                borderColor: velogColors.primary,
+                borderColor: themeColors.primary,
                 outline: 'none',
             },
             '&::placeholder': {
-                color: velogColors.subText,
+                color: themeColors.subText,
             }
         },
         label: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 600,
             marginBottom: '8px',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 버튼 스타일
     const buttonStyles = useMemo(() => ({
         login: {
-            backgroundColor: velogColors.primary,
+            backgroundColor: themeColors.primary,
             borderRadius: '8px',
             fontSize: '16px',
             fontWeight: 600,
@@ -179,25 +179,25 @@ export const useLoginModalStyles = () => {
                 transition: 'all 0.2s ease',
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 구분선 스타일
     const dividerStyles = useMemo(() => ({
         label: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             fontWeight: 500,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         },
         line: {
-            borderColor: velogColors.border,
+            borderColor: themeColors.border,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 제목 스타일
     const titleStyles = useMemo(() => ({
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        color: velogColors.text,
-    }), [velogColors.text]);
+        color: themeColors.text,
+    }), [themeColors.text]);
 
     return {
         modalStyles,

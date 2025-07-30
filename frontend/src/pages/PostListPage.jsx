@@ -10,7 +10,6 @@ import {
     Stack,
     Text,
     UnstyledButton,
-    useMantineColorScheme
 } from "@mantine/core";
 import {useDebouncedValue} from "@mantine/hooks";
 import {useNavigationTree} from "@/hooks/api/useApi.js";
@@ -18,6 +17,7 @@ import {useInfiniteQuery} from "@tanstack/react-query";
 import {IconAlertCircle, IconRefresh} from "@tabler/icons-react";
 import PostList from "@/components/section/post/PostList.jsx";
 import {postService} from "@/api/postService.js";
+import {useTheme} from "../contexts/ThemeContext.jsx";
 
 const POSTS_PER_PAGE = 12;
 const INFINITE_SCROLL_THRESHOLD = POSTS_PER_PAGE;
@@ -25,17 +25,17 @@ const INFINITE_SCROLL_THRESHOLD = POSTS_PER_PAGE;
 
 const PostListPage = memo( () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const { colorScheme } = useMantineColorScheme();
+    const { themeColors } = useTheme();
 
     // velog 스타일 색상
-    const velogColors = {
-        primary: '#12B886',
-        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#f8f9fa',
-        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
-    };
+    // const themeColors = {
+    //     primary: '#12B886',
+    //     text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
+    //     subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
+    //     background: colorScheme === 'dark' ? '#1A1B23' : '#f8f9fa',
+    //     border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
+    //     hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
+    // };
 
     // 상태 관리
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -170,12 +170,12 @@ const PostListPage = memo( () => {
     // 로딩 상태
     if (isLoading) {
         return (
-            <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+            <Box bg={themeColors.background} style={{ minHeight: '100vh' }}>
                 <Container size="xl" py="xl">
                     <Center h={400}>
                         <Stack align="center" gap="lg">
-                            <Loader size="lg" color={velogColors.primary} />
-                            <Text size="lg" c={velogColors.subText}>
+                            <Loader size="lg" color={themeColors.primary} />
+                            <Text size="lg" c={themeColors.subText}>
                                 포스트를 불러오는 중...
                             </Text>
                         </Stack>
@@ -188,14 +188,14 @@ const PostListPage = memo( () => {
     // 에러 상태
     if (isError) {
         return (
-            <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+            <Box bg={themeColors.background} style={{ minHeight: '100vh' }}>
                 <Container size="xl" py="xl">
                     <Center>
                         <Box
                             p="xl"
                             style={{
-                                backgroundColor: velogColors.hover,
-                                border: `1px solid ${velogColors.border}`,
+                                backgroundColor: themeColors.hover,
+                                border: `1px solid ${themeColors.border}`,
                                 borderRadius: '12px',
                                 textAlign: 'center',
                                 maxWidth: '400px'
@@ -203,17 +203,17 @@ const PostListPage = memo( () => {
                         >
                             <Stack align="center" gap="lg">
                                 <IconAlertCircle size={48} color="red" />
-                                <Text size="lg" fw={600} c={velogColors.text}>
+                                <Text size="lg" fw={600} c={themeColors.text}>
                                     포스트 로드 실패
                                 </Text>
-                                <Text size="md" c={velogColors.subText}>
+                                <Text size="md" c={themeColors.subText}>
                                     {error?.message || '포스트를 불러오는 중 오류가 발생했습니다.'}
                                 </Text>
                                 <ActionIcon
                                     variant="filled"
                                     size="lg"
                                     onClick={() => refetch()}
-                                    style={{ backgroundColor: velogColors.primary }}
+                                    style={{ backgroundColor: themeColors.primary }}
                                 >
                                     <IconRefresh size={20} />
                                 </ActionIcon>
@@ -226,7 +226,7 @@ const PostListPage = memo( () => {
     }
 
     return (
-        <Box bg={velogColors.background} style={{ minHeight: '100vh' }}>
+        <Box bg={themeColors.background} style={{ minHeight: '100vh' }}>
             <Container size="xl" py="xl">
                 <Stack gap="2rem">
                     {/* velog 스타일 네비게이션 */}
@@ -249,20 +249,20 @@ const PostListPage = memo( () => {
                                         style={{
                                             fontSize: rem(20),
                                             fontWeight: 600,
-                                            color: isActive ? velogColors.text : velogColors.subText,
+                                            color: isActive ? themeColors.text : themeColors.subText,
                                             padding: `${rem(8)} 0`,
-                                            borderBottom: isActive ? `2px solid ${velogColors.primary}` : '2px solid transparent',
+                                            borderBottom: isActive ? `2px solid ${themeColors.primary}` : '2px solid transparent',
                                             transition: 'all 0.2s ease',
                                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                         }}
                                         onMouseEnter={(e) => {
                                             if (!isActive) {
-                                                e.currentTarget.style.color = velogColors.text;
+                                                e.currentTarget.style.color = themeColors.text;
                                             }
                                         }}
                                         onMouseLeave={(e) => {
                                             if (!isActive) {
-                                                e.currentTarget.style.color = velogColors.subText;
+                                                e.currentTarget.style.color = themeColors.subText;
                                             }
                                         }}
                                     >
@@ -285,24 +285,24 @@ const PostListPage = memo( () => {
                                             style={{
                                                 fontSize: rem(14),
                                                 fontWeight: 500,
-                                                color: isActive ? 'white' : velogColors.subText,
-                                                backgroundColor: isActive ? velogColors.primary : 'transparent',
+                                                color: isActive ? 'white' : themeColors.subText,
+                                                backgroundColor: isActive ? themeColors.primary : 'transparent',
                                                 padding: `${rem(6)} ${rem(12)}`,
                                                 borderRadius: rem(12),
-                                                border: isActive ? 'none' : `1px solid ${velogColors.border}`,
+                                                border: isActive ? 'none' : `1px solid ${themeColors.border}`,
                                                 transition: 'all 0.2s ease',
                                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                             }}
                                             onMouseEnter={(e) => {
                                                 if (!isActive) {
-                                                    e.currentTarget.style.backgroundColor = velogColors.hover;
-                                                    e.currentTarget.style.color = velogColors.text;
+                                                    e.currentTarget.style.backgroundColor = themeColors.hover;
+                                                    e.currentTarget.style.color = themeColors.text;
                                                 }
                                             }}
                                             onMouseLeave={(e) => {
                                                 if (!isActive) {
                                                     e.currentTarget.style.backgroundColor = 'transparent';
-                                                    e.currentTarget.style.color = velogColors.subText;
+                                                    e.currentTarget.style.color = themeColors.subText;
                                                 }
                                             }}
                                         >
@@ -318,7 +318,7 @@ const PostListPage = memo( () => {
                     <Box
                         style={{
                             height: '1px',
-                            backgroundColor: velogColors.border,
+                            backgroundColor: themeColors.border,
                             margin: `${rem(8)} 0`
                         }}
                     />
@@ -327,13 +327,13 @@ const PostListPage = memo( () => {
                     {visiblePosts.length === 0 ? (
                             <Center py="6rem">
                                 <Stack align="center" gap="lg">
-                                    <Text size="xl" c={velogColors.subText} fw={500}>
+                                    <Text size="xl" c={themeColors.subText} fw={500}>
                                         {selectedCategory === 'all'
                                             ? '아직 작성된 포스트가 없어요'
                                             : '해당 카테고리에 포스트가 없어요'
                                         }
                                     </Text>
-                                    <Text size="md" c={velogColors.subText}>
+                                    <Text size="md" c={themeColors.subText}>
                                         첫 번째 포스트를 작성해보세요! ✍️
                                     </Text>
                                 </Stack>
@@ -346,8 +346,8 @@ const PostListPage = memo( () => {
                         <Center py="xl">
                             {isFetchingNextPage ? (
                                 <Group gap="md">
-                                    <Loader size="md" color={velogColors.primary} />
-                                    <Text size="md" c={velogColors.subText}>
+                                    <Loader size="md" color={themeColors.primary} />
+                                    <Text size="md" c={themeColors.subText}>
                                         더 많은 포스트 로딩중...
                                     </Text>
                                 </Group>
@@ -357,21 +357,21 @@ const PostListPage = memo( () => {
                                     variant="outline"
                                     onClick={handleLoadMore}
                                     style={{
-                                        borderColor: velogColors.border,
-                                        color: velogColors.primary,
-                                        backgroundColor: velogColors.background,
+                                        borderColor: themeColors.border,
+                                        color: themeColors.primary,
+                                        backgroundColor: themeColors.background,
                                         '&:hover': {
-                                            backgroundColor: velogColors.hover,
-                                            borderColor: velogColors.primary,
+                                            backgroundColor: themeColors.hover,
+                                            borderColor: themeColors.primary,
                                         }
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = velogColors.hover;
-                                        e.currentTarget.style.borderColor = velogColors.primary;
+                                        e.currentTarget.style.backgroundColor = themeColors.hover;
+                                        e.currentTarget.style.borderColor = themeColors.primary;
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = velogColors.background;
-                                        e.currentTarget.style.borderColor = velogColors.border;
+                                        e.currentTarget.style.backgroundColor = themeColors.background;
+                                        e.currentTarget.style.borderColor = themeColors.border;
                                     }}
                                 >
                                     <IconRefresh size={24} />
@@ -392,15 +392,15 @@ const PostListPage = memo( () => {
                                 siblings={2}
                                 styles={{
                                     control: {
-                                        backgroundColor: velogColors.background,
-                                        color: velogColors.text,
-                                        border: `1px solid ${velogColors.border}`,
+                                        backgroundColor: themeColors.background,
+                                        color: themeColors.text,
+                                        border: `1px solid ${themeColors.border}`,
                                         '&:hover': {
-                                            backgroundColor: velogColors.hover,
+                                            backgroundColor: themeColors.hover,
                                         },
                                         '&[data-active]': {
-                                            backgroundColor: velogColors.primary,
-                                            borderColor: velogColors.primary,
+                                            backgroundColor: themeColors.primary,
+                                            borderColor: themeColors.primary,
                                             color: 'white',
                                         }
                                     }

@@ -24,7 +24,7 @@ import {
 } from "@tabler/icons-react";
 
 const AuthHeroSection = memo(({ adminInfo, isLoading, error, onRefresh }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
     const avatarRef = useRef(null);
     const fallbackIndexRef = useRef(0);
     console.log()
@@ -32,29 +32,29 @@ const AuthHeroSection = memo(({ adminInfo, isLoading, error, onRefresh }) => {
     // 스타일 객체들을 메모이제이션
     const styles = useMemo(() => ({
         avatar: {
-            border: `3px solid ${velogColors.primary}`,
+            border: `3px solid ${themeColors.primary}`,
         },
         nameText: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             lineHeight: 1.2,
         },
         roleText: {
-            color: velogColors.primary,
+            color: themeColors.primary,
         },
         bioText: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         },
         actionIcon: {
-            borderColor: velogColors.border,
-            color: velogColors.text,
+            borderColor: themeColors.border,
+            color: themeColors.text,
             '&:hover': {
-                backgroundColor: velogColors.hover,
-                borderColor: velogColors.primary,
+                backgroundColor: themeColors.hover,
+                borderColor: themeColors.primary,
             }
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 이벤트 핸들러를 useCallback으로 메모이제이션
     const handleAvatarError = useCallback((event) => {
@@ -158,7 +158,7 @@ const AuthHeroSection = memo(({ adminInfo, isLoading, error, onRefresh }) => {
                                 <Text size="xl" fw={600} mt="xs" style={styles.roleText}>
                                     {adminInfo.role}
                                 </Text>
-                                <Group gap="md" mt="sm" c={velogColors.subText}>
+                                <Group gap="md" mt="sm" c={themeColors.subText}>
                                     <Group gap="xs">
                                         <IconMapPin size={16} />
                                         <Text size="sm">{adminInfo.location}</Text>

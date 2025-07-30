@@ -18,26 +18,26 @@ const FileCard = memo(({
                            onDelete,
                            getFileSize
                        }) => {
-    const { velogColors, dark } = useTheme();
+    const { themeColors, dark } = useTheme();
     const isImage = file.mimeType?.startsWith('image/');
 
     const getFileIcon = useMemo(() => {
         const extension = file.name.split('.').pop()?.toLowerCase();
 
         if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension)) {
-            return <IconPhoto size={18} style={{ color: velogColors.info }} />;
+            return <IconPhoto size={18} style={{ color: themeColors.info }} />;
         } else if (['mp4', 'webm', 'avi', 'mov'].includes(extension)) {
-            return <IconVideo size={18} style={{ color: velogColors.error }} />;
+            return <IconVideo size={18} style={{ color: themeColors.error }} />;
         } else if (['txt', 'md', 'doc', 'docx', 'pdf'].includes(extension)) {
-            return <IconFileText size={18} style={{ color: velogColors.warning }} />;
+            return <IconFileText size={18} style={{ color: themeColors.warning }} />;
         }
-        return <IconFile size={18} style={{ color: velogColors.subText }} />;
-    }, [file.name, velogColors]);
+        return <IconFile size={18} style={{ color: themeColors.subText }} />;
+    }, [file.name, themeColors]);
 
     const styles = useMemo(() => ({
         container: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(12),
             overflow: 'hidden',
             transition: 'all 0.2s ease',
@@ -47,7 +47,7 @@ const FileCard = memo(({
         },
         preview: {
             height: rem(140),
-            backgroundColor: isImage ? 'transparent' : velogColors.hover,
+            backgroundColor: isImage ? 'transparent' : themeColors.hover,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -59,27 +59,27 @@ const FileCard = memo(({
             objectFit: 'cover',
         },
         fileName: {
-            color: velogColors.text,
+            color: themeColors.text,
             flex: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
         },
         fileSize: {
-            color: velogColors.subText
+            color: themeColors.subText
         },
         menuButton: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             backgroundColor: 'transparent',
         },
         dropdown: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
         },
         menuItem: {
-            color: velogColors.text
+            color: themeColors.text
         }
-    }), [velogColors, dark, isImage]);
+    }), [themeColors, dark, isImage]);
 
     const handleCopyUrl = useCallback(() => {
         if (onCopyUrl) {
@@ -109,13 +109,13 @@ const FileCard = memo(({
 
     const handleMenuButtonHover = useCallback((e, isEntering) => {
         if (isEntering) {
-            e.currentTarget.style.backgroundColor = velogColors.hover;
-            e.currentTarget.style.color = velogColors.text;
+            e.currentTarget.style.backgroundColor = themeColors.hover;
+            e.currentTarget.style.color = themeColors.text;
         } else {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = velogColors.subText;
+            e.currentTarget.style.color = themeColors.subText;
         }
-    }, [velogColors.hover, velogColors.text, velogColors.subText]);
+    }, [themeColors.hover, themeColors.text, themeColors.subText]);
 
     return (
         <Box

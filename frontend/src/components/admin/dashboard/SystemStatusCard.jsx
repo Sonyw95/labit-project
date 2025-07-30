@@ -4,17 +4,17 @@ import { IconCheck, IconAlertCircle, IconX, IconClock } from '@tabler/icons-reac
 
 const SystemStatusCard = memo(({
                                    systemStatusData,
-                                   velogColors,
+                                   themeColors,
                                    dark
                                }) => {
     const getStatusColor = useCallback((status) => {
         switch (status) {
-            case 'healthy': return velogColors.success;
-            case 'warning': return velogColors.warning;
-            case 'error': return velogColors.error;
-            default: return velogColors.subText;
+            case 'healthy': return themeColors.success;
+            case 'warning': return themeColors.warning;
+            case 'error': return themeColors.error;
+            default: return themeColors.subText;
         }
-    }, [velogColors]);
+    }, [themeColors]);
 
     const getStatusIcon = useCallback((status) => {
         const iconProps = { size: 16, 'aria-hidden': true };
@@ -31,14 +31,14 @@ const SystemStatusCard = memo(({
     }, []);
 
     const cardStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        border: `1px solid ${velogColors.border}`,
+        backgroundColor: themeColors.section,
+        border: `1px solid ${themeColors.border}`,
         borderRadius: rem(12),
         boxShadow: dark
             ? '0 2px 8px rgba(0, 0, 0, 0.3)'
             : '0 2px 8px rgba(0, 0, 0, 0.06)',
         height: rem(450),
-    }), [velogColors, dark]);
+    }), [themeColors, dark]);
 
     const scrollContainerStyles = useMemo(() => ({
         maxHeight: rem(320),
@@ -53,9 +53,9 @@ const SystemStatusCard = memo(({
 
     const resourceConfigs = useMemo(() => [
         { name: 'CPU', value: systemStatusData.resources.cpu, color: '#339AF0' }, // info 색상 직접 정의
-        { name: '메모리', value: systemStatusData.resources.memory, color: velogColors.success },
-        { name: '디스크', value: systemStatusData.resources.disk, color: velogColors.warning },
-    ], [systemStatusData.resources, velogColors]);
+        { name: '메모리', value: systemStatusData.resources.memory, color: themeColors.success },
+        { name: '디스크', value: systemStatusData.resources.disk, color: themeColors.warning },
+    ], [systemStatusData.resources, themeColors]);
 
     return (
         <Box
@@ -69,7 +69,7 @@ const SystemStatusCard = memo(({
                     id="system-status-title"
                     fw={700}
                     size="lg"
-                    style={{ color: velogColors.text }}
+                    style={{ color: themeColors.text }}
                 >
                     시스템 상태
                 </Text>
@@ -89,7 +89,7 @@ const SystemStatusCard = memo(({
                 <Stack gap="lg" mb="xl">
                     <Text
                         fw={600}
-                        style={{ color: velogColors.text }}
+                        style={{ color: themeColors.text }}
                         id="services-list-title"
                     >
                         서비스 목록
@@ -112,14 +112,14 @@ const SystemStatusCard = memo(({
                                 />
                                 <Text
                                     fw={500}
-                                    style={{ color: velogColors.text }}
+                                    style={{ color: themeColors.text }}
                                 >
                                     {service.name}
                                 </Text>
                             </Group>
                             <Text
                                 size="sm"
-                                style={{ color: velogColors.subText }}
+                                style={{ color: themeColors.subText }}
                                 aria-label={`가동률: ${service.uptime}`}
                             >
                                 {service.uptime}
@@ -131,7 +131,7 @@ const SystemStatusCard = memo(({
                 <Text
                     fw={600}
                     mb="lg"
-                    style={{ color: velogColors.text }}
+                    style={{ color: themeColors.text }}
                     id="resources-title"
                 >
                     리소스 사용량
@@ -142,14 +142,14 @@ const SystemStatusCard = memo(({
                             <Group justify="space-between" mb="xs">
                                 <Text
                                     size="sm"
-                                    style={{ color: velogColors.text }}
+                                    style={{ color: themeColors.text }}
                                 >
                                     {resource.name}
                                 </Text>
                                 <Text
                                     size="sm"
                                     fw={500}
-                                    style={{ color: velogColors.text }}
+                                    style={{ color: themeColors.text }}
                                     aria-label={`${resource.name} 사용률: ${resource.value}퍼센트`}
                                 >
                                     {resource.value}%
@@ -160,7 +160,7 @@ const SystemStatusCard = memo(({
                                 size="md"
                                 radius="md"
                                 style={{
-                                    backgroundColor: velogColors.border,
+                                    backgroundColor: themeColors.border,
                                 }}
                                 styles={{
                                     bar: {

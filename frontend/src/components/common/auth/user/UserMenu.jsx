@@ -51,20 +51,20 @@ const UserMenu = memo(() => {
 
     const logoutMutation = useLogout();
     const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
-    const { dark, velogColors, toggleColorScheme } = useTheme();
+    const { dark, themeColors, toggleColorScheme } = useTheme();
 
     // 메뉴 드롭다운 스타일 메모이제이션
     const menuStyles = useMemo(() => ({
         dropdown: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: '12px',
             boxShadow: dark
                 ? '0 10px 40px rgba(0, 0, 0, 0.3)'
                 : '0 10px 40px rgba(0, 0, 0, 0.1)',
             padding: '0.5rem',
         }
-    }), [velogColors, dark]);
+    }), [themeColors, dark]);
 
     // 사용자 버튼 스타일 메모이제이션
     const userButtonStyles = useMemo(() => ({
@@ -82,20 +82,20 @@ const UserMenu = memo(() => {
 
     // 사용자 정보 헤더 스타일 메모이제이션
     const headerStyles = useMemo(() => ({
-        backgroundColor: velogColors.hover,
+        backgroundColor: themeColors.hover,
         borderRadius: '8px',
         marginBottom: '0.5rem'
-    }), [velogColors.hover]);
+    }), [themeColors.hover]);
 
     // 메뉴 아이템 스타일 메모이제이션
     const menuItemStyles = useMemo(() => ({
         borderRadius: '8px',
-        color: velogColors.text,
+        color: themeColors.text,
         ...textStyles,
         '&:hover': {
-            backgroundColor: velogColors.hover,
+            backgroundColor: themeColors.hover,
         }
-    }), [velogColors, textStyles]);
+    }), [themeColors, textStyles]);
 
     // 로그아웃 버튼 스타일 메모이제이션
     const logoutStyles = useMemo(() => ({
@@ -110,9 +110,9 @@ const UserMenu = memo(() => {
     // 스위치 스타일 메모이제이션
     const switchStyles = useMemo(() => ({
         track: {
-            backgroundColor: dark ? velogColors.primary : velogColors.border,
+            backgroundColor: dark ? themeColors.primary : themeColors.border,
         }
-    }), [dark, velogColors]);
+    }), [dark, themeColors]);
 
     // 이벤트 핸들러들 메모이제이션
     const handleLogout = useCallback(() => {
@@ -133,8 +133,8 @@ const UserMenu = memo(() => {
 
     // 호버 이벤트 핸들러 메모이제이션
     const handleButtonMouseEnter = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.hover;
-    }, [velogColors.hover]);
+        e.currentTarget.style.backgroundColor = themeColors.hover;
+    }, [themeColors.hover]);
 
     const handleButtonMouseLeave = useCallback((e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
@@ -186,7 +186,7 @@ const UserMenu = memo(() => {
                             visible={logoutMutation.isPending}
                             zIndex={1000}
                             overlayProps={{ radius: 'sm', blur: 2 }}
-                            loaderProps={{ color: velogColors.primary, type: 'bars' }}
+                            loaderProps={{ color: themeColors.primary, type: 'bars' }}
                         />
 
                         <Group gap="sm">
@@ -195,7 +195,7 @@ const UserMenu = memo(() => {
                                 size={12}
                                 offset={7}
                                 position="bottom-end"
-                                color={user.isOnline ? velogColors.primary : "gray"}
+                                color={user.isOnline ? themeColors.primary : "gray"}
                                 withBorder
                                 aria-label={user.isOnline ? "온라인" : "오프라인"}
                             >
@@ -205,7 +205,7 @@ const UserMenu = memo(() => {
                                     radius="xl"
                                     size="md"
                                     style={{
-                                        border: `2px solid ${velogColors.border}`
+                                        border: `2px solid ${themeColors.border}`
                                     }}
                                 />
                             </Indicator>
@@ -215,7 +215,7 @@ const UserMenu = memo(() => {
                                     size="sm"
                                     fw={600}
                                     truncate
-                                    c={velogColors.text}
+                                    c={themeColors.text}
                                     style={textStyles}
                                     aria-label={`사용자: ${user.nickname}`}
                                 >
@@ -223,7 +223,7 @@ const UserMenu = memo(() => {
                                 </Text>
                                 <Text
                                     size="xs"
-                                    c={velogColors.subText}
+                                    c={themeColors.subText}
                                     truncate
                                     style={textStyles}
                                     aria-label={`역할: ${getRoleLabel(user.role)}`}
@@ -249,7 +249,7 @@ const UserMenu = memo(() => {
 
                             <IconChevronDown
                                 size={16}
-                                color={velogColors.subText}
+                                color={themeColors.subText}
                                 style={chevronStyles}
                                 aria-hidden="true"
                             />
@@ -264,7 +264,7 @@ const UserMenu = memo(() => {
                         handleLogout={handleLogout}
                         toggleColorScheme={toggleColorScheme}
                         dark={dark}
-                        velogColors={velogColors}
+                        themeColors={themeColors}
                         headerStyles={headerStyles}
                         menuItemStyles={menuItemStyles}
                         logoutStyles={logoutStyles}
@@ -290,7 +290,7 @@ const UserDropdownContent = memo(({
                                       handleLogout,
                                       toggleColorScheme,
                                       dark,
-                                      velogColors,
+                                      themeColors,
                                       headerStyles,
                                       menuItemStyles,
                                       logoutStyles,
@@ -299,8 +299,8 @@ const UserDropdownContent = memo(({
                                   }) => {
     // 구분선 스타일 메모이제이션
     const dividerStyles = useMemo(() => ({
-        borderColor: velogColors.border
-    }), [velogColors.border]);
+        borderColor: themeColors.border
+    }), [themeColors.border]);
 
     return (
         <Stack gap="xs" role="menu" aria-label="사용자 메뉴">
@@ -316,7 +316,7 @@ const UserDropdownContent = memo(({
                     size="lg"
                     radius="md"
                     style={{
-                        border: `2px solid ${velogColors.border}`
+                        border: `2px solid ${themeColors.border}`
                     }}
                     alt={`${user.nickname}의 프로필 이미지`}
                 />
@@ -324,7 +324,7 @@ const UserDropdownContent = memo(({
                     <Text
                         fw={600}
                         size="md"
-                        c={velogColors.text}
+                        c={themeColors.text}
                         style={textStyles}
                         aria-label={`사용자: ${user.nickname}`}
                     >
@@ -332,7 +332,7 @@ const UserDropdownContent = memo(({
                     </Text>
                     <Text
                         size="sm"
-                        c={velogColors.subText}
+                        c={themeColors.subText}
                         style={textStyles}
                         aria-label={`이메일: ${user.email}`}
                     >
@@ -360,7 +360,7 @@ const UserDropdownContent = memo(({
                 leftSection={
                     <IconUser
                         size={16}
-                        color={velogColors.subText}
+                        color={themeColors.subText}
                         aria-hidden="true"
                     />
                 }
@@ -370,10 +370,10 @@ const UserDropdownContent = memo(({
                 aria-label="프로필 설정 열기"
             >
                 <Box>
-                    <Text size="sm" fw={500} c={velogColors.text} style={textStyles}>
+                    <Text size="sm" fw={500} c={themeColors.text} style={textStyles}>
                         프로필 설정
                     </Text>
-                    <Text size="xs" c={velogColors.subText} style={textStyles}>
+                    <Text size="xs" c={themeColors.subText} style={textStyles}>
                         계정 정보 및 개인정보 관리
                     </Text>
                 </Box>
@@ -386,7 +386,7 @@ const UserDropdownContent = memo(({
                 leftSection={
                     <IconPalette
                         size={16}
-                        color={velogColors.subText}
+                        color={themeColors.subText}
                         aria-hidden="true"
                     />
                 }
@@ -400,14 +400,14 @@ const UserDropdownContent = memo(({
                         <Text
                             size="sm"
                             fw={500}
-                            c={velogColors.text}
+                            c={themeColors.text}
                             style={textStyles}
                         >
                             다크 모드
                         </Text>
                         <Text
                             size="xs"
-                            c={velogColors.subText}
+                            c={themeColors.subText}
                             style={textStyles}
                         >
                             테마 설정

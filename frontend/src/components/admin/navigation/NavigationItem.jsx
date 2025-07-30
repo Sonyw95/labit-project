@@ -31,7 +31,7 @@ const AdminNavigationItem = memo(({
                                  onEdit,
                                  onDelete
                              }) => {
-    const { velogColors, dark } = useTheme();
+    const { themeColors, dark } = useTheme();
     const hasChildren = item.children && item.children.length > 0;
 
     const styles = useMemo(() => ({
@@ -40,53 +40,53 @@ const AdminNavigationItem = memo(({
         }),
         itemBox: (isDragging) => ({
             backgroundColor: isDragging
-                ? `${velogColors.primary}15`
-                : velogColors.background,
+                ? `${themeColors.primary}15`
+                : themeColors.background,
             border: `1px solid ${isDragging
-                ? velogColors.primary
-                : velogColors.border}`,
+                ? themeColors.primary
+                : themeColors.border}`,
             borderRadius: rem(8),
             opacity: item.isActive ? 1 : 0.6,
             transition: 'all 0.2s ease',
             boxShadow: isDragging
-                ? `0 4px 12px ${velogColors.primary}30`
+                ? `0 4px 12px ${themeColors.primary}30`
                 : dark
                     ? '0 2px 4px rgba(0, 0, 0, 0.3)'
                     : '0 2px 4px rgba(0, 0, 0, 0.1)',
         }),
         dragHandle: {
             cursor: 'grab',
-            color: velogColors.subText
+            color: themeColors.subText
         },
         expandButton: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             backgroundColor: 'transparent',
         },
         menuLabel: {
-            color: velogColors.text
+            color: themeColors.text
         },
         linkBadge: {
-            backgroundColor: `${velogColors.primary}15`,
-            color: velogColors.primary,
-            border: `1px solid ${velogColors.primary}30`,
+            backgroundColor: `${themeColors.primary}15`,
+            color: themeColors.primary,
+            border: `1px solid ${themeColors.primary}30`,
         },
         statusButton: (isActive) => ({
-            color: isActive ? velogColors.success : velogColors.error,
+            color: isActive ? themeColors.success : themeColors.error,
             backgroundColor: 'transparent',
         }),
         actionButton: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             backgroundColor: 'transparent',
         },
         deleteButton: {
-            color: velogColors.error,
+            color: themeColors.error,
             backgroundColor: 'transparent',
         },
         description: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             paddingLeft: rem(42)
         }
-    }), [item.depth, item.isActive, velogColors, dark]);
+    }), [item.depth, item.isActive, themeColors, dark]);
 
     const handleToggleExpand = useCallback(() => {
         if (onToggleExpand) {
@@ -114,31 +114,31 @@ const AdminNavigationItem = memo(({
 
     const handleExpandButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
-            ? velogColors.hover
+            ? themeColors.hover
             : 'transparent';
-    }, [velogColors.hover]);
+    }, [themeColors.hover]);
 
     const handleActionButtonHover = useCallback((e, isEntering) => {
         if (isEntering) {
-            e.currentTarget.style.backgroundColor = velogColors.hover;
-            e.currentTarget.style.color = velogColors.text;
+            e.currentTarget.style.backgroundColor = themeColors.hover;
+            e.currentTarget.style.color = themeColors.text;
         } else {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = velogColors.subText;
+            e.currentTarget.style.color = themeColors.subText;
         }
-    }, [velogColors.hover, velogColors.text, velogColors.subText]);
+    }, [themeColors.hover, themeColors.text, themeColors.subText]);
 
     const handleDeleteButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
-            ? `${velogColors.error}15`
+            ? `${themeColors.error}15`
             : 'transparent';
-    }, [velogColors.error]);
+    }, [themeColors.error]);
 
     const handleStatusButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
-            ? velogColors.hover
+            ? themeColors.hover
             : 'transparent';
-    }, [velogColors.hover]);
+    }, [themeColors.hover]);
 
     return (
         <Draggable

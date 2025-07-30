@@ -3,26 +3,26 @@ import {Box, rem, Text} from "@mantine/core";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
 
 const AdminEmptyState = memo(() => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const styles = useMemo(() => ({
         container: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(12),
             textAlign: 'center',
         },
         icon: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             opacity: 0.5
         },
         title: {
-            color: velogColors.text
+            color: themeColors.text
         },
         description: {
-            color: velogColors.subText
+            color: themeColors.subText
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     return (
         <Box

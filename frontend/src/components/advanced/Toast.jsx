@@ -8,24 +8,24 @@ import {
 } from '@tabler/icons-react';
 
 export const showToast = {
-    success: (title, message, options = {}) => {
+    success: (title, message, icon = <IconCheck size={16} />, options = {}) => {
         return notifications.show({
             title,
             message,
             color: 'green',
-            icon: <IconCheck size={16} />,
+            icon,
             autoClose: 4000,
             withCloseButton: true,
             ...options,
         });
     },
 
-    error: (title, message, options = {}) => {
+    error: (title, message, icon = <IconX size={16} />, options = {}) => {
         return notifications.show({
             title,
             message,
             color: 'red',
-            icon: <IconX size={16} />,
+            icon,
             autoClose: 6000,
             withCloseButton: true,
             // position: 'top-right',
@@ -33,24 +33,24 @@ export const showToast = {
         });
     },
 
-    warning: (title, message, options = {}) => {
+    warning: (title, message, icon = <IconAlertTriangle size={16} />, options = {}) => {
         return notifications.show({
             title,
             message,
             color: 'yellow',
-            icon: <IconAlertTriangle size={16} />,
+            icon,
             autoClose: 5000,
             withCloseButton: true,
             ...options,
         });
     },
 
-    info: (title, message, options = {}) => {
+    info: (title, message, icon = <IconInfoCircle size={16} />, options = {}) => {
         return notifications.show({
             title,
             message,
             color: 'blue',
-            icon: <IconInfoCircle size={16} />,
+            icon,
             autoClose: 4000,
             withCloseButton: true,
             ...options,

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, {useState, useMemo, useCallback, memo} from 'react';
 import {
     Container,
     Tabs,
@@ -20,20 +20,21 @@ import {
     IconNavigation,
     IconFolder,
     IconRefresh,
-    IconAlertCircle,
+    IconAlertCircle, IconUser,
 } from '@tabler/icons-react';
 import { useAdminDashboardStats, useAdminSystemStatus } from "../hooks/api/useApi.js";
 import NavigationManagement from "../components/admin/navigation/NavigationManagement.jsx";
 import AssetManagement from "../components/admin/asset/AssetManagement.jsx";
-import AdminDashboard from "../components/admin/dashboard/AdminDashboard.jsx";
+// import AdminDashboard from "../components/admin/dashboard/AdminDashboard.jsx";
+import AdminEdit from "../components/admin/AdminEdit.jsx";
 
-const AdminManagementPage = () => {
+const AdminManagementPage = memo(() => {
     console.log("ADMIN MANAGE MENT PAGE")
     const { colorScheme } = useMantineColorScheme();
-    const [activeTab, setActiveTab] = useState('dashboard');
+    const [activeTab, setActiveTab] = useState('info');
 
     // velog 스타일 색상
-    const velogColors = useMemo(() => ({
+    const themeColors = useMemo(() => ({
         primary: '#12B886',
         text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
         subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
@@ -46,25 +47,31 @@ const AdminManagementPage = () => {
     }), [colorScheme]);
 
     // API hooks (기존 유지)
-    const {
-        data: dashboardStats,
-        isLoading: statsLoading,
-        refetch: refetchStats
-    } = useAdminDashboardStats();
+    // const {
+    //     data: dashboardStats,
+    //     isLoading: statsLoading,
+    //     refetch: refetchStats
+    // } = useAdminDashboardStats();
 
-    const {
-        data: systemStatus,
-        isLoading: statusLoading
-    } = useAdminSystemStatus();
+    // const {
+    //     data: systemStatus,
+    //     isLoading: statusLoading
+    // } = useAdminSystemStatus();
 
     // 탭 설정 (메모이제이션으로 리렌더링 방지)
     const adminTabs = useMemo(() => [
         {
-            value: 'dashboard',
-            label: '대시보드',
-            icon: IconDashboard,
-            component: AdminDashboard,
+            value: 'info',
+            label: '관리자 정보 수정',
+            icon: IconUser,
+            component: AdminEdit
         },
+        // {
+        //     value: 'dashboard',
+        //     label: '대시보드',
+        //     icon: IconDashboard,
+        //     component: AdminDashboard,
+        // },
         {
             value: 'navigation',
             label: '네비게이션 관리',
@@ -80,74 +87,78 @@ const AdminManagementPage = () => {
     ], []);
 
     // 데이터 새로고침 핸들러 (useCallback으로 리렌더링 방지)
-    const handleRefreshData = useCallback(() => {
-        refetchStats();
-    }, [refetchStats]);
+    // const handleRefreshData = useCallback(() => {
+    //     refetchStats();
+    // }, [refetchStats]);
 
     // 시스템 상태 확인 (메모이제이션)
-    const isSystemHealthy = useMemo(() =>
-        systemStatus?.status === 'healthy', [systemStatus?.status]
-    );
+    // const isSystemHealthy = useMemo(() =>
+    //     systemStatus?.status === 'healthy', [systemStatus?.status]
+    // );
 
-    const isDataLoading = useMemo(() =>
-        statsLoading || statusLoading, [statsLoading, statusLoading]
-    );
+    // const isDataLoading = useMemo(() =>
+    //     statsLoading || statusLoading, [statsLoading, statusLoading]
+    // );
+    // const isDataLoading = useMemo(() =>
+    //      statusLoading, [statusLoading]
+    // );
 
     // 시스템 상태 뱃지 컴포넌트
-    const SystemStatusBadge = useMemo(() => {
-        if (!systemStatus) return null;
-
-        return (
-            <Badge
-                size="md"
-                radius="md"
-                variant="filled"
-                style={{
-                    backgroundColor: isSystemHealthy ? velogColors.success : velogColors.error,
-                    color: 'white',
-                    fontWeight: 500,
-                }}
-                leftSection={
-                    !isSystemHealthy && <IconAlertCircle size={14} />
-                }
-            >
-                시스템 {isSystemHealthy ? '정상' : '오류'}
-            </Badge>
-        );
-    }, [systemStatus, isSystemHealthy, velogColors.success, velogColors.error]);
+    // const SystemStatusBadge = useMemo(() => {
+    //     if (!systemStatus) {
+    //         return null;
+    //     }
+    //     return (
+    //         <Badge
+    //             size="md"
+    //             radius="md"
+    //             variant="filled"
+    //             style={{
+    //                 backgroundColor: isSystemHealthy ? themeColors.success : themeColors.error,
+    //                 color: 'white',
+    //                 fontWeight: 500,
+    //             }}
+    //             leftSection={
+    //                 !isSystemHealthy && <IconAlertCircle size={14} />
+    //             }
+    //         >
+    //             시스템 {isSystemHealthy ? '정상' : '오류'}
+    //         </Badge>
+    //     );
+    // }, [systemStatus, isSystemHealthy, themeColors.success, themeColors.error]);
 
     // 새로고침 버튼 컴포넌트
-    const RefreshButton = useMemo(() => (
-        <Tooltip label="데이터 새로고침" position="bottom">
-            <ActionIcon
-                variant="subtle"
-                size="lg"
-                radius="md"
-                onClick={handleRefreshData}
-                loading={isDataLoading}
-                style={{
-                    color: velogColors.subText,
-                    backgroundColor: 'transparent',
-                    transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = velogColors.hover;
-                    e.currentTarget.style.color = velogColors.text;
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = velogColors.subText;
-                }}
-            >
-                <IconRefresh size={20} />
-            </ActionIcon>
-        </Tooltip>
-    ), [handleRefreshData, isDataLoading, velogColors]);
+    // const RefreshButton = useMemo(() => (
+    //     <Tooltip label="데이터 새로고침" position="bottom">
+    //         <ActionIcon
+    //             variant="subtle"
+    //             size="lg"
+    //             radius="md"
+    //             onClick={handleRefreshData}
+    //             loading={isDataLoading}
+    //             style={{
+    //                 color: themeColors.subText,
+    //                 backgroundColor: 'transparent',
+    //                 transition: 'all 0.2s ease',
+    //             }}
+    //             onMouseEnter={(e) => {
+    //                 e.currentTarget.style.backgroundColor = themeColors.hover;
+    //                 e.currentTarget.style.color = themeColors.text;
+    //             }}
+    //             onMouseLeave={(e) => {
+    //                 e.currentTarget.style.backgroundColor = 'transparent';
+    //                 e.currentTarget.style.color = themeColors.subText;
+    //             }}
+    //         >
+    //             <IconRefresh size={20} />
+    //         </ActionIcon>
+    //     </Tooltip>
+    // ), [handleRefreshData, isDataLoading, themeColors]);
 
     return (
         <Box
             style={{
-                backgroundColor: velogColors.background,
+                backgroundColor: themeColors.background,
                 minHeight: '100vh',
                 transition: 'background-color 0.2s ease'
             }}
@@ -158,8 +169,8 @@ const AdminManagementPage = () => {
                     <Box
                         p="xl"
                         style={{
-                            backgroundColor: velogColors.background,
-                            borderBottom: `1px solid ${velogColors.border}`,
+                            backgroundColor: themeColors.background,
+                            borderBottom: `1px solid ${themeColors.border}`,
                             borderRadius: rem(12),
                             boxShadow: colorScheme === 'dark'
                                 ? '0 2px 8px rgba(0, 0, 0, 0.3)'
@@ -172,7 +183,7 @@ const AdminManagementPage = () => {
                                     order={1}
                                     size="2rem"
                                     style={{
-                                        color: velogColors.text,
+                                        color: themeColors.text,
                                         fontWeight: 700,
                                         letterSpacing: '-0.02em',
                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -184,7 +195,7 @@ const AdminManagementPage = () => {
                                 <Text
                                     size="md"
                                     style={{
-                                        color: velogColors.subText,
+                                        color: themeColors.subText,
                                         fontWeight: 400,
                                         lineHeight: 1.5,
                                     }}
@@ -194,40 +205,40 @@ const AdminManagementPage = () => {
                             </Stack>
 
                             <Group gap="md" align="flex-start">
-                                {SystemStatusBadge}
-                                {RefreshButton}
+                                {/*{SystemStatusBadge}*/}
+                                {/*{RefreshButton}*/}
                             </Group>
                         </Group>
 
                         {/* 시스템 오류 알림 */}
-                        {!isSystemHealthy && (
-                            <Alert
-                                icon={<IconAlertCircle size={18} />}
-                                color="red"
-                                variant="light"
-                                mt="lg"
-                                radius="md"
-                                styles={{
-                                    root: {
-                                        backgroundColor: `${velogColors.error}10`,
-                                        border: `1px solid ${velogColors.error}30`,
-                                    },
-                                    message: {
-                                        color: velogColors.text,
-                                    }
-                                }}
-                            >
-                                시스템에 문제가 발생했습니다. 시스템 관리자에게 문의하세요.
-                            </Alert>
-                        )}
+                        {/*{!isSystemHealthy && (*/}
+                        {/*    <Alert*/}
+                        {/*        icon={<IconAlertCircle size={18} />}*/}
+                        {/*        color="red"*/}
+                        {/*        variant="light"*/}
+                        {/*        mt="lg"*/}
+                        {/*        radius="md"*/}
+                        {/*        styles={{*/}
+                        {/*            root: {*/}
+                        {/*                backgroundColor: `${themeColors.error}10`,*/}
+                        {/*                border: `1px solid ${themeColors.error}30`,*/}
+                        {/*            },*/}
+                        {/*            message: {*/}
+                        {/*                color: themeColors.text,*/}
+                        {/*            }*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        시스템에 문제가 발생했습니다. 시스템 관리자에게 문의하세요.*/}
+                        {/*    </Alert>*/}
+                        {/*)}*/}
                     </Box>
 
                     {/* velog 스타일 탭 컨테이너 */}
                     <Box
                         style={{
-                            backgroundColor: velogColors.background,
+                            backgroundColor: themeColors.background,
                             borderRadius: rem(12),
-                            border: `1px solid ${velogColors.border}`,
+                            border: `1px solid ${themeColors.border}`,
                             boxShadow: colorScheme === 'dark'
                                 ? '0 2px 8px rgba(0, 0, 0, 0.3)'
                                 : '0 2px 8px rgba(0, 0, 0, 0.06)',
@@ -243,8 +254,8 @@ const AdminManagementPage = () => {
                             {/* velog 스타일 탭 리스트 */}
                             <Tabs.List
                                 style={{
-                                    backgroundColor: velogColors.hover,
-                                    borderBottom: `1px solid ${velogColors.border}`,
+                                    backgroundColor: themeColors.hover,
+                                    borderBottom: `1px solid ${themeColors.border}`,
                                     padding: rem(4),
                                     gap: rem(4),
                                 }}
@@ -260,9 +271,9 @@ const AdminManagementPage = () => {
                                             borderRadius: rem(8),
                                             fontSize: rem(14),
                                             fontWeight: 500,
-                                            color: activeTab === tab.value ? 'white' : velogColors.subText,
+                                            color: activeTab === tab.value ? 'white' : themeColors.subText,
                                             backgroundColor: activeTab === tab.value
-                                                ? velogColors.primary
+                                                ? themeColors.primary
                                                 : 'transparent',
                                             border: 'none',
                                             transition: 'all 0.2s ease',
@@ -270,14 +281,14 @@ const AdminManagementPage = () => {
                                         }}
                                         onMouseEnter={(e) => {
                                             if (activeTab !== tab.value) {
-                                                e.currentTarget.style.backgroundColor = velogColors.background;
-                                                e.currentTarget.style.color = velogColors.text;
+                                                e.currentTarget.style.backgroundColor = themeColors.background;
+                                                e.currentTarget.style.color = themeColors.text;
                                             }
                                         }}
                                         onMouseLeave={(e) => {
                                             if (activeTab !== tab.value) {
                                                 e.currentTarget.style.backgroundColor = 'transparent';
-                                                e.currentTarget.style.color = velogColors.subText;
+                                                e.currentTarget.style.color = themeColors.subText;
                                             }
                                         }}
                                     >
@@ -293,19 +304,19 @@ const AdminManagementPage = () => {
                                         p="xl"
                                         pos="relative"
                                         style={{
-                                            backgroundColor: velogColors.background,
+                                            backgroundColor: themeColors.background,
                                             minHeight: '500px',
                                         }}
                                     >
                                         <LoadingOverlay
-                                            visible={isDataLoading}
+                                            // visible={isDataLoading}
                                             overlayProps={{
                                                 blur: 2,
                                                 backgroundOpacity: 0.3,
-                                                color: velogColors.background,
+                                                color: themeColors.background,
                                             }}
                                             loaderProps={{
-                                                color: velogColors.primary,
+                                                color: themeColors.primary,
                                                 size: 'lg'
                                             }}
                                         />
@@ -319,6 +330,6 @@ const AdminManagementPage = () => {
             </Container>
         </Box>
     );
-};
+});
 
 export default AdminManagementPage;

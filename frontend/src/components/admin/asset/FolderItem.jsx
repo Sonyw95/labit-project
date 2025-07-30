@@ -28,7 +28,7 @@ const FolderItem = memo(({
                              onEdit,
                              onDelete
                          }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
     const isExpanded = expandedFolders.has(folder.id);
     const hasChildren = folder.children && folder.children.length > 0;
     const isSelected = selectedFolder?.id === folder.id;
@@ -37,42 +37,42 @@ const FolderItem = memo(({
         container: {
             marginLeft: depth * 20,
             cursor: 'pointer',
-            backgroundColor: isSelected ? velogColors.selectedBg : velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: isSelected ? themeColors.selectedBg : themeColors.background,
+            border: `1px solid ${themeColors.border}`,
             borderRadius: rem(8),
             transition: 'all 0.2s ease',
         },
         expandButton: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             backgroundColor: 'transparent',
         },
         folderIcon: {
-            color: velogColors.warning
+            color: themeColors.warning
         },
         folderName: {
-            color: velogColors.text
+            color: themeColors.text
         },
         badge: {
-            backgroundColor: `${velogColors.primary}15`,
-            color: velogColors.primary,
-            border: `1px solid ${velogColors.primary}30`,
+            backgroundColor: `${themeColors.primary}15`,
+            color: themeColors.primary,
+            border: `1px solid ${themeColors.primary}30`,
         },
         menuButton: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             backgroundColor: 'transparent',
         },
         dropdown: {
-            backgroundColor: velogColors.background,
-            border: `1px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `1px solid ${themeColors.border}`,
         },
         menuItem: {
-            color: velogColors.text
+            color: themeColors.text
         },
         description: {
-            color: velogColors.subText,
+            color: themeColors.subText,
             paddingLeft: rem(hasChildren ? 28 : 22)
         }
-    }), [depth, isSelected, velogColors, hasChildren]);
+    }), [depth, isSelected, themeColors, hasChildren]);
 
     const handleFolderClick = useCallback(() => {
         if (onFolderSelect) {
@@ -103,31 +103,31 @@ const FolderItem = memo(({
 
     const handleMouseEnter = useCallback((e) => {
         if (!isSelected) {
-            e.currentTarget.style.backgroundColor = velogColors.hover;
+            e.currentTarget.style.backgroundColor = themeColors.hover;
         }
-    }, [isSelected, velogColors.hover]);
+    }, [isSelected, themeColors.hover]);
 
     const handleMouseLeave = useCallback((e) => {
         if (!isSelected) {
-            e.currentTarget.style.backgroundColor = velogColors.background;
+            e.currentTarget.style.backgroundColor = themeColors.background;
         }
-    }, [isSelected, velogColors.background]);
+    }, [isSelected, themeColors.background]);
 
     const handleExpandButtonHover = useCallback((e, isEntering) => {
         e.currentTarget.style.backgroundColor = isEntering
-            ? velogColors.border
+            ? themeColors.border
             : 'transparent';
-    }, [velogColors.border]);
+    }, [themeColors.border]);
 
     const handleMenuButtonHover = useCallback((e, isEntering) => {
         if (isEntering) {
-            e.currentTarget.style.backgroundColor = velogColors.hover;
-            e.currentTarget.style.color = velogColors.text;
+            e.currentTarget.style.backgroundColor = themeColors.hover;
+            e.currentTarget.style.color = themeColors.text;
         } else {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = velogColors.subText;
+            e.currentTarget.style.color = themeColors.subText;
         }
-    }, [velogColors.hover, velogColors.text, velogColors.subText]);
+    }, [themeColors.hover, themeColors.text, themeColors.subText]);
 
     return (
         <Box mb="xs">

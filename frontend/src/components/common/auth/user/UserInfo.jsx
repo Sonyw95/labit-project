@@ -26,7 +26,7 @@ const UserInfo = memo(({
                            showRole = true,
                            layout = "vertical" // "vertical" | "horizontal"
                        }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 텍스트 스타일 메모이제이션
     const textStyles = useMemo(() => ({
@@ -36,14 +36,14 @@ const UserInfo = memo(({
     // 닉네임 스타일
     const nicknameStyles = useMemo(() => ({
         ...textStyles,
-        color: velogColors.text,
-    }), [textStyles, velogColors.text]);
+        color: themeColors.text,
+    }), [textStyles, themeColors.text]);
 
     // 서브 텍스트 스타일
     const subTextStyles = useMemo(() => ({
         ...textStyles,
-        color: velogColors.subText,
-    }), [textStyles, velogColors.subText]);
+        color: themeColors.subText,
+    }), [textStyles, themeColors.subText]);
 
     // 배지 스타일
     const badgeStyles = useMemo(() => ({

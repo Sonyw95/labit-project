@@ -4,7 +4,7 @@ import { IconCheck, IconX, IconRefresh } from '@tabler/icons-react';
 
 const ActivityLogsCard = memo(({
                                    activityLogsData,
-                                   velogColors,
+                                   themeColors,
                                    dark,
                                    refetchStats,
                                    logsLoading
@@ -14,14 +14,14 @@ const ActivityLogsCard = memo(({
     }, []);
 
     const cardStyles = useMemo(() => ({
-        backgroundColor: velogColors.section,
-        border: `1px solid ${velogColors.border}`,
+        backgroundColor: themeColors.section,
+        border: `1px solid ${themeColors.border}`,
         borderRadius: rem(12),
         boxShadow: dark
             ? '0 2px 8px rgba(0, 0, 0, 0.3)'
             : '0 2px 8px rgba(0, 0, 0, 0.06)',
         height: rem(450),
-    }), [velogColors, dark]);
+    }), [themeColors, dark]);
 
     const scrollContainerStyles = useMemo(() => ({
         maxHeight: rem(320),
@@ -34,20 +34,20 @@ const ActivityLogsCard = memo(({
             paddingBottom: rem(16),
         },
         itemBullet: {
-            backgroundColor: velogColors.section,
-            border: `2px solid ${velogColors.border}`,
+            backgroundColor: themeColors.section,
+            border: `2px solid ${themeColors.border}`,
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     const handleRefreshMouseEnter = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.hover;
-        e.currentTarget.style.color = velogColors.text;
-    }, [velogColors]);
+        e.currentTarget.style.backgroundColor = themeColors.hover;
+        e.currentTarget.style.color = themeColors.text;
+    }, [themeColors]);
 
     const handleRefreshMouseLeave = useCallback((e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
-        e.currentTarget.style.color = velogColors.subText;
-    }, [velogColors]);
+        e.currentTarget.style.color = themeColors.subText;
+    }, [themeColors]);
 
     const renderTimelineItem = useCallback((log) => {
         const bulletIcon = log.status === 'success' ? (
@@ -57,8 +57,8 @@ const ActivityLogsCard = memo(({
         );
 
         const bulletColor = log.status === 'success'
-            ? velogColors.success
-            : velogColors.error;
+            ? themeColors.success
+            : themeColors.error;
 
         const badgeStyles = {
             backgroundColor: bulletColor,
@@ -79,7 +79,7 @@ const ActivityLogsCard = memo(({
                             fw={500}
                             size="sm"
                             style={{
-                                color: velogColors.text,
+                                color: themeColors.text,
                                 flex: 1,
                             }}
                         >
@@ -99,13 +99,13 @@ const ActivityLogsCard = memo(({
             >
                 <Text
                     size="xs"
-                    style={{ color: velogColors.subText }}
+                    style={{ color: themeColors.subText }}
                 >
                     {log.user} • {formatDate(log.timestamp)}
                 </Text>
             </Timeline.Item>
         );
-    }, [velogColors, formatDate]);
+    }, [themeColors, formatDate]);
 
     const displayedLogs = useMemo(() =>
             activityLogsData.slice(0, 5)
@@ -123,7 +123,7 @@ const ActivityLogsCard = memo(({
                     id="activity-logs-title"
                     fw={700}
                     size="lg"
-                    style={{ color: velogColors.text }}
+                    style={{ color: themeColors.text }}
                 >
                     최근 활동
                 </Text>
@@ -134,7 +134,7 @@ const ActivityLogsCard = memo(({
                         onClick={refetchStats}
                         loading={logsLoading}
                         style={{
-                            color: velogColors.subText,
+                            color: themeColors.subText,
                             backgroundColor: 'transparent',
                         }}
                         onMouseEnter={handleRefreshMouseEnter}

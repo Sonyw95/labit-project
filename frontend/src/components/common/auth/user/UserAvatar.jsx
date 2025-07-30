@@ -8,12 +8,12 @@ const UserAvatar = memo(({
                              showOnlineStatus = false,
                              borderStyle = true
                          }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     // 아바타 스타일 메모이제이션
     const avatarStyles = useMemo(() => ({
-        border: borderStyle ? `2px solid ${velogColors.border}` : 'none'
-    }), [velogColors.border, borderStyle]);
+        border: borderStyle ? `2px solid ${themeColors.border}` : 'none'
+    }), [themeColors.border, borderStyle]);
 
     // 온라인 상태 표시가 필요한 경우
     if (showOnlineStatus) {
@@ -23,7 +23,7 @@ const UserAvatar = memo(({
                 size={12}
                 offset={7}
                 position="bottom-end"
-                color={user.isOnline ? velogColors.primary : "gray"}
+                color={user.isOnline ? themeColors.primary : "gray"}
                 withBorder
                 aria-label={user.isOnline ? "온라인" : "오프라인"}
             >

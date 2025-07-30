@@ -58,7 +58,7 @@ function PostEditPage() {
     const isEdit = !!postId;
 
     // velog 스타일 색상 팔레트
-    const velogColors = useMemo(() => ({
+    const themeColors = useMemo(() => ({
         primary: '#12B886',
         text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
         subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
@@ -105,7 +105,7 @@ function PostEditPage() {
         content: '',
         editorProps: {
             attributes: {
-                style: `min-height: 500px; padding: 0; background-color: transparent; color: ${velogColors.text};`,
+                style: `min-height: 500px; padding: 0; background-color: transparent; color: ${themeColors.text};`,
             },
         },
     });
@@ -234,9 +234,9 @@ function PostEditPage() {
                 {...props}
                 variant="unstyled"
                 style={{
-                    backgroundColor: isOutline || isLight ? 'transparent' : velogColors.primary,
-                    color: isOutline ? velogColors.text : isLight ? velogColors.primary : 'white',
-                    border: isOutline ? `1px solid ${velogColors.border}` : isLight ? `1px solid ${velogColors.primary}` : 'none',
+                    backgroundColor: isOutline || isLight ? 'transparent' : themeColors.primary,
+                    color: isOutline ? themeColors.text : isLight ? themeColors.primary : 'white',
+                    border: isOutline ? `1px solid ${themeColors.border}` : isLight ? `1px solid ${themeColors.primary}` : 'none',
                     borderRadius: rem(6),
                     padding: isSmall ? `${rem(6)} ${rem(12)}` : `${rem(8)} ${rem(16)}`,
                     fontSize: isSmall ? rem(13) : rem(14),
@@ -247,9 +247,9 @@ function PostEditPage() {
                 }}
                 onMouseEnter={(e) => {
                     if (isOutline) {
-                        e.currentTarget.style.backgroundColor = velogColors.hover;
+                        e.currentTarget.style.backgroundColor = themeColors.hover;
                     } else if (isLight) {
-                        e.currentTarget.style.backgroundColor = `${velogColors.primary}10`;
+                        e.currentTarget.style.backgroundColor = `${themeColors.primary}10`;
                     } else {
                         e.currentTarget.style.backgroundColor = '#0CA678';
                     }
@@ -258,27 +258,27 @@ function PostEditPage() {
                     if (isOutline || isLight) {
                         e.currentTarget.style.backgroundColor = 'transparent';
                     } else {
-                        e.currentTarget.style.backgroundColor = velogColors.primary;
+                        e.currentTarget.style.backgroundColor = themeColors.primary;
                     }
                 }}
             >
                 {children}
             </Button>
         );
-    }, [velogColors]);
+    }, [themeColors]);
 
     if (isLoadingPost) {
         return (
             <Box
                 style={{
-                    backgroundColor: velogColors.background,
+                    backgroundColor: themeColors.background,
                     minHeight: '100vh',
                     position: 'relative'
                 }}
             >
                 <LoadingOverlay
                     visible
-                    loaderProps={{ color: velogColors.primary, size: 'lg' }}
+                    loaderProps={{ color: themeColors.primary, size: 'lg' }}
                 />
             </Box>
         );
@@ -287,7 +287,7 @@ function PostEditPage() {
     return (
         <Box
             style={{
-                backgroundColor: velogColors.background,
+                backgroundColor: themeColors.background,
                 minHeight: '100vh',
                 transition: 'background-color 0.2s ease'
             }}
@@ -300,8 +300,8 @@ function PostEditPage() {
                     right: 0,
                     zIndex: 100,
                     backdropFilter: 'blur(8px)',
-                    backgroundColor: `${velogColors.background}95`,
-                    borderBottom: `1px solid ${velogColors.border}`,
+                    backgroundColor: `${themeColors.background}95`,
+                    borderBottom: `1px solid ${themeColors.border}`,
                 }}
             >
                 <Container size="lg">
@@ -312,16 +312,16 @@ function PostEditPage() {
                                 size="lg"
                                 onClick={() => navigate(-1)}
                                 style={{
-                                    color: velogColors.subText,
+                                    color: themeColors.subText,
                                     backgroundColor: 'transparent',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = velogColors.hover;
-                                    e.currentTarget.style.color = velogColors.text;
+                                    e.currentTarget.style.backgroundColor = themeColors.hover;
+                                    e.currentTarget.style.color = themeColors.text;
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = velogColors.subText;
+                                    e.currentTarget.style.color = themeColors.subText;
                                 }}
                             >
                                 <IconArrowLeft size={20} />
@@ -330,7 +330,7 @@ function PostEditPage() {
                             <Text
                                 size="lg"
                                 fw={600}
-                                style={{ color: velogColors.text }}
+                                style={{ color: themeColors.text }}
                             >
                                 {isEdit ? '포스트 수정' : '새 글 작성'}
                             </Text>
@@ -398,15 +398,15 @@ function PostEditPage() {
                                     borderRadius: 0,
                                     fontSize: rem(48),
                                     fontWeight: 700,
-                                    color: velogColors.text,
+                                    color: themeColors.text,
                                     padding: `${rem(20)} 0`,
                                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                                     lineHeight: 1.2,
                                     '&:focus': {
-                                        borderBottomColor: velogColors.primary,
+                                        borderBottomColor: themeColors.primary,
                                     },
                                     '&::placeholder': {
-                                        color: velogColors.subText,
+                                        color: themeColors.subText,
                                         opacity: 0.6,
                                     }
                                 }
@@ -421,7 +421,7 @@ function PostEditPage() {
                                     style={{
                                         backgroundColor: 'transparent',
                                         minHeight: rem(600),
-                                        color: velogColors.text,
+                                        color: themeColors.text,
                                         lineHeight: 1.8,
                                         fontSize: rem(18),
                                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -433,29 +433,29 @@ function PostEditPage() {
                                         }}
                                         style={{
                                             minHeight: rem(600),
-                                            '& h1': { fontSize: rem(36), fontWeight: 700, marginBottom: rem(24), color: velogColors.text, lineHeight: 1.3 },
-                                            '& h2': { fontSize: rem(28), fontWeight: 600, marginBottom: rem(20), color: velogColors.text, lineHeight: 1.3 },
-                                            '& h3': { fontSize: rem(22), fontWeight: 600, marginBottom: rem(16), color: velogColors.text, lineHeight: 1.3 },
-                                            '& p': { fontSize: rem(18), lineHeight: 1.8, marginBottom: rem(20), color: velogColors.text },
+                                            '& h1': { fontSize: rem(36), fontWeight: 700, marginBottom: rem(24), color: themeColors.text, lineHeight: 1.3 },
+                                            '& h2': { fontSize: rem(28), fontWeight: 600, marginBottom: rem(20), color: themeColors.text, lineHeight: 1.3 },
+                                            '& h3': { fontSize: rem(22), fontWeight: 600, marginBottom: rem(16), color: themeColors.text, lineHeight: 1.3 },
+                                            '& p': { fontSize: rem(18), lineHeight: 1.8, marginBottom: rem(20), color: themeColors.text },
                                             '& blockquote': {
-                                                borderLeft: `4px solid ${velogColors.primary}`,
+                                                borderLeft: `4px solid ${themeColors.primary}`,
                                                 paddingLeft: rem(20),
                                                 marginLeft: 0,
                                                 fontStyle: 'italic',
-                                                color: velogColors.subText,
+                                                color: themeColors.subText,
                                                 fontSize: rem(18),
                                                 lineHeight: 1.8,
                                             },
                                             '& code': {
-                                                backgroundColor: velogColors.hover,
+                                                backgroundColor: themeColors.hover,
                                                 padding: `${rem(3)} ${rem(6)}`,
                                                 borderRadius: rem(4),
                                                 fontSize: rem(15),
-                                                color: velogColors.text,
+                                                color: themeColors.text,
                                                 fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
                                             },
                                             '& pre': {
-                                                backgroundColor: velogColors.hover,
+                                                backgroundColor: themeColors.hover,
                                                 padding: rem(20),
                                                 borderRadius: rem(8),
                                                 overflow: 'auto',
@@ -478,20 +478,20 @@ function PostEditPage() {
                                             },
                                             toolbar: {
                                                 border: 'none',
-                                                borderBottom: `1px solid ${velogColors.border}`,
+                                                borderBottom: `1px solid ${themeColors.border}`,
                                                 padding: `${rem(16)} 0`,
                                                 marginBottom: rem(20),
                                                 position: 'sticky',
                                                 top: rem(80),
                                                 zIndex: 50,
                                                 backdropFilter: 'blur(8px)',
-                                                backgroundColor: `${velogColors.background}95`,
+                                                backgroundColor: `${themeColors.background}95`,
                                             },
                                             content: {
                                                 backgroundColor: 'transparent',
                                                 border: 'none',
                                                 '& .ProseMirror': {
-                                                    color: velogColors.text,
+                                                    color: themeColors.text,
                                                     fontSize: rem(18),
                                                     lineHeight: 1.8,
                                                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -508,39 +508,39 @@ function PostEditPage() {
                                                     fontSize: rem(36),
                                                     fontWeight: 700,
                                                     margin: `${rem(40)} 0 ${rem(20)} 0`,
-                                                    color: velogColors.text,
+                                                    color: themeColors.text,
                                                     lineHeight: 1.3,
                                                 },
                                                 '& .ProseMirror h2': {
                                                     fontSize: rem(28),
                                                     fontWeight: 600,
                                                     margin: `${rem(32)} 0 ${rem(16)} 0`,
-                                                    color: velogColors.text,
+                                                    color: themeColors.text,
                                                     lineHeight: 1.3,
                                                 },
                                                 '& .ProseMirror h3': {
                                                     fontSize: rem(22),
                                                     fontWeight: 600,
                                                     margin: `${rem(24)} 0 ${rem(12)} 0`,
-                                                    color: velogColors.text,
+                                                    color: themeColors.text,
                                                     lineHeight: 1.3,
                                                 },
                                                 '& .ProseMirror blockquote': {
-                                                    borderLeft: `4px solid ${velogColors.primary}`,
+                                                    borderLeft: `4px solid ${themeColors.primary}`,
                                                     paddingLeft: rem(20),
                                                     marginLeft: 0,
                                                     fontStyle: 'italic',
-                                                    color: velogColors.subText,
+                                                    color: themeColors.subText,
                                                 },
                                                 '& .ProseMirror code': {
-                                                    backgroundColor: velogColors.hover,
+                                                    backgroundColor: themeColors.hover,
                                                     padding: `${rem(3)} ${rem(6)}`,
                                                     borderRadius: rem(4),
                                                     fontSize: rem(15),
                                                     fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
                                                 },
                                                 '& .ProseMirror pre': {
-                                                    backgroundColor: velogColors.hover,
+                                                    backgroundColor: themeColors.hover,
                                                     padding: rem(20),
                                                     borderRadius: rem(8),
                                                     overflow: 'auto',
@@ -557,7 +557,7 @@ function PostEditPage() {
                                                 '& .ProseMirror p.is-editor-empty:first-of-type::before': {
                                                     content: '"내용을 입력하세요..."',
                                                     float: 'left',
-                                                    color: velogColors.subText,
+                                                    color: themeColors.subText,
                                                     pointerEvents: 'none',
                                                     height: 0,
                                                     fontStyle: 'italic',
@@ -616,7 +616,7 @@ function PostEditPage() {
                     <Text
                         fw={600}
                         size="lg"
-                        style={{ color: velogColors.text }}
+                        style={{ color: themeColors.text }}
                     >
                         글 설정
                     </Text>
@@ -625,11 +625,11 @@ function PostEditPage() {
                 radius="md"
                 styles={{
                     content: {
-                        backgroundColor: velogColors.background,
+                        backgroundColor: themeColors.background,
                     },
                     header: {
-                        backgroundColor: velogColors.background,
-                        borderBottom: `1px solid ${velogColors.border}`,
+                        backgroundColor: themeColors.background,
+                        borderBottom: `1px solid ${themeColors.border}`,
                     }
                 }}
             >
@@ -639,7 +639,7 @@ function PostEditPage() {
                         <Text
                             fw={500}
                             mb="sm"
-                            style={{ color: velogColors.text }}
+                            style={{ color: themeColors.text }}
                         >
                             요약
                         </Text>
@@ -650,14 +650,14 @@ function PostEditPage() {
                             {...form.getInputProps('summary')}
                             styles={{
                                 input: {
-                                    backgroundColor: velogColors.cardBg,
-                                    borderColor: velogColors.border,
-                                    color: velogColors.text,
+                                    backgroundColor: themeColors.cardBg,
+                                    borderColor: themeColors.border,
+                                    color: themeColors.text,
                                     '&:focus': {
-                                        borderColor: velogColors.primary,
+                                        borderColor: themeColors.primary,
                                     },
                                     '&::placeholder': {
-                                        color: velogColors.subText,
+                                        color: themeColors.subText,
                                     }
                                 }
                             }}
@@ -669,7 +669,7 @@ function PostEditPage() {
                         <Text
                             fw={500}
                             mb="sm"
-                            style={{ color: velogColors.text }}
+                            style={{ color: themeColors.text }}
                         >
                             카테고리
                         </Text>
@@ -681,11 +681,11 @@ function PostEditPage() {
                             {...form.getInputProps('categoryId')}
                             styles={{
                                 input: {
-                                    backgroundColor: velogColors.cardBg,
-                                    borderColor: velogColors.border,
-                                    color: velogColors.text,
+                                    backgroundColor: themeColors.cardBg,
+                                    borderColor: themeColors.border,
+                                    color: themeColors.text,
                                     '&:focus': {
-                                        borderColor: velogColors.primary,
+                                        borderColor: themeColors.primary,
                                     }
                                 }
                             }}
@@ -697,7 +697,7 @@ function PostEditPage() {
                         <Text
                             fw={500}
                             mb="sm"
-                            style={{ color: velogColors.text }}
+                            style={{ color: themeColors.text }}
                         >
                             태그
                         </Text>
@@ -713,11 +713,11 @@ function PostEditPage() {
                             {...form.getInputProps('tags')}
                             styles={{
                                 input: {
-                                    backgroundColor: velogColors.cardBg,
-                                    borderColor: velogColors.border,
-                                    color: velogColors.text,
+                                    backgroundColor: themeColors.cardBg,
+                                    borderColor: themeColors.border,
+                                    color: themeColors.text,
                                     '&:focus': {
-                                        borderColor: velogColors.primary,
+                                        borderColor: themeColors.primary,
                                     }
                                 }
                             }}
@@ -729,7 +729,7 @@ function PostEditPage() {
                         <Text
                             fw={500}
                             mb="sm"
-                            style={{ color: velogColors.text }}
+                            style={{ color: themeColors.text }}
                         >
                             썸네일
                         </Text>
@@ -767,11 +767,11 @@ function PostEditPage() {
                                     onChange={handleThumbnailUpload}
                                     styles={{
                                         input: {
-                                            backgroundColor: velogColors.cardBg,
-                                            borderColor: velogColors.border,
-                                            color: velogColors.text,
+                                            backgroundColor: themeColors.cardBg,
+                                            borderColor: themeColors.border,
+                                            color: themeColors.text,
                                             '&:focus': {
-                                                borderColor: velogColors.primary,
+                                                borderColor: themeColors.primary,
                                             }
                                         }
                                     }}
@@ -787,11 +787,11 @@ function PostEditPage() {
                                 }}
                                 styles={{
                                     input: {
-                                        backgroundColor: velogColors.cardBg,
-                                        borderColor: velogColors.border,
-                                        color: velogColors.text,
+                                        backgroundColor: themeColors.cardBg,
+                                        borderColor: themeColors.border,
+                                        color: themeColors.text,
                                         '&:focus': {
-                                            borderColor: velogColors.primary,
+                                            borderColor: themeColors.primary,
                                         }
                                     }
                                 }}
@@ -804,7 +804,7 @@ function PostEditPage() {
                         <Text
                             fw={500}
                             mb="sm"
-                            style={{ color: velogColors.text }}
+                            style={{ color: themeColors.text }}
                         >
                             발행 설정
                         </Text>
@@ -818,13 +818,13 @@ function PostEditPage() {
                                 ]}
                                 {...form.getInputProps('status')}
                                 styles={{
-                                    label: { color: velogColors.text, fontWeight: 500 },
+                                    label: { color: themeColors.text, fontWeight: 500 },
                                     input: {
-                                        backgroundColor: velogColors.cardBg,
-                                        borderColor: velogColors.border,
-                                        color: velogColors.text,
+                                        backgroundColor: themeColors.cardBg,
+                                        borderColor: themeColors.border,
+                                        color: themeColors.text,
                                         '&:focus': {
-                                            borderColor: velogColors.primary,
+                                            borderColor: themeColors.primary,
                                         }
                                     }
                                 }}
@@ -835,12 +835,12 @@ function PostEditPage() {
                                 description="메인 페이지에 추천 포스트로 표시"
                                 {...form.getInputProps('isFeatured', { type: 'checkbox' })}
                                 styles={{
-                                    label: { color: velogColors.text, fontWeight: 500 },
-                                    description: { color: velogColors.subText },
+                                    label: { color: themeColors.text, fontWeight: 500 },
+                                    description: { color: themeColors.subText },
                                     track: {
                                         backgroundColor: form.values.isFeatured
-                                            ? velogColors.primary
-                                            : velogColors.border,
+                                            ? themeColors.primary
+                                            : themeColors.border,
                                     }
                                 }}
                             />

@@ -5,7 +5,7 @@ import { useTheme } from "@/contexts/ThemeContext.jsx";
 import { showToast } from "@/components/advanced/Toast.jsx";
 
 const LoginForm = memo(({ loading, onSubmit }) => {
-    const { velogColors } = useTheme();
+    const { themeColors } = useTheme();
 
     const [formData, setFormData] = useState({
         email: '',
@@ -16,39 +16,39 @@ const LoginForm = memo(({ loading, onSubmit }) => {
     // 입력 필드 스타일 메모이제이션
     const inputStyles = useMemo(() => ({
         input: {
-            backgroundColor: velogColors.background,
-            border: `2px solid ${velogColors.border}`,
+            backgroundColor: themeColors.background,
+            border: `2px solid ${themeColors.border}`,
             borderRadius: '8px',
-            color: velogColors.text,
+            color: themeColors.text,
             fontSize: '16px',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             transition: 'all 0.2s ease',
             '&:focus': {
-                borderColor: velogColors.primary,
+                borderColor: themeColors.primary,
                 outline: 'none',
             },
             '&::placeholder': {
-                color: velogColors.subText,
+                color: themeColors.subText,
             }
         },
         label: {
-            color: velogColors.text,
+            color: themeColors.text,
             fontWeight: 600,
             marginBottom: '8px',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }
-    }), [velogColors]);
+    }), [themeColors]);
 
     // 로그인 버튼 스타일 메모이제이션
     const loginButtonStyle = useMemo(() => ({
-        backgroundColor: velogColors.primary,
+        backgroundColor: themeColors.primary,
         borderRadius: '8px',
         fontSize: '16px',
         fontWeight: 600,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         border: 'none',
         transition: 'all 0.2s ease',
-    }), [velogColors.primary]);
+    }), [themeColors.primary]);
 
     // 입력 변경 핸들러 메모이제이션
     const handleInputChange = useCallback((field) => (e) => {
@@ -70,8 +70,8 @@ const LoginForm = memo(({ loading, onSubmit }) => {
     }, []);
 
     const handleMouseLeave = useCallback((e) => {
-        e.currentTarget.style.backgroundColor = velogColors.primary;
-    }, [velogColors.primary]);
+        e.currentTarget.style.backgroundColor = themeColors.primary;
+    }, [themeColors.primary]);
 
     return (
         <Stack gap="xl" component="form" onSubmit={handleSubmit} role="form" aria-labelledby="login-form-title">

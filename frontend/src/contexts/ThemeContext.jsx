@@ -13,7 +13,7 @@ export const useTheme = () => {
 };
 
 // velog 스타일 색상 생성 함수
-const getVelogColors = (dark) => ({
+const getthemeColors = (dark) => ({
     primary: '#12B886',
     text: dark ? '#ECECEC' : '#212529',
     subText: dark ? '#ADB5BD' : '#495057',
@@ -67,15 +67,15 @@ export const ThemeProvider = ({ children}) => {
     const colors = dark ? '#df9f20' : '#ffaa00';
 
     // velog 색상을 메모이제이션
-    const velogColors = useMemo(() => getVelogColors(dark), [dark]);
+    const themeColors = useMemo(() => getthemeColors(dark), [dark]);
 
     const value = useMemo(() => ({
         dark,
         colors,
-        velogColors,
+        themeColors,
         toggleColorScheme,
         theme: defaultTheme,
-    }), [dark, colors, velogColors, toggleColorScheme]);
+    }), [dark, colors, themeColors, toggleColorScheme]);
 
     return (
         <ThemeContext.Provider value={value}>

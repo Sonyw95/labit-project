@@ -42,7 +42,7 @@ const Header = memo(({
     const {isAuthenticated} = useAuthStore();
     const [categoryModalOpened, setCategoryModalOpened] = useState(false);
     const [openCategories, setOpenCategories] = useState(new Set([2, 3]));
-    const { dark, velogColors } = useTheme();
+    const { dark, themeColors } = useTheme();
 
     const {
         navigationTree: categories = [],
@@ -51,18 +51,18 @@ const Header = memo(({
     } = useNavigationStore();
 
     // 메모이제이션된 스타일들
-    const headerStyles = useMemo(() => getHeaderStyles(velogColors), [velogColors]);
-    const actionButtonStyles = useMemo(() => getActionButtonStyles(velogColors), [velogColors]);
-    const modalStyles = useMemo(() => getModalStyles(velogColors), [velogColors]);
+    const headerStyles = useMemo(() => getHeaderStyles(themeColors), [themeColors]);
+    const actionButtonStyles = useMemo(() => getActionButtonStyles(themeColors), [themeColors]);
+    const modalStyles = useMemo(() => getModalStyles(themeColors), [themeColors]);
 
     // 헤더 스타일 계산
     const headerStyle = useMemo(() => ({
         ...headerStyles.header,
         ...backgroundBlur({
-            color: velogColors.background,
+            color: themeColors.background,
             alpha: 1
         }),
-    }), [headerStyles.header, velogColors.background]);
+    }), [headerStyles.header, themeColors.background]);
 
     // 이벤트 핸들러들을 useCallback으로 메모이제이션
     const handleBurgerClick = useCallback(() => {
@@ -109,16 +109,16 @@ const Header = memo(({
         <Text
             fw={600}
             size="lg"
-            style={{ color: velogColors.text }}
+            style={{ color: themeColors.text }}
         >
             카테고리
         </Text>
-    ), [velogColors.text]);
+    ), [themeColors.text]);
 
     // 카테고리 렌더링 컴포넌트
     const CategoryList = memo(() => {
         if (isLoading) {
-            return <CategorySkeleton velogColors={velogColors} />;
+            return <CategorySkeleton themeColors={themeColors} />;
         }
 
         if (error) {
@@ -131,7 +131,7 @@ const Header = memo(({
                     <CategoryButton
                         key={category.id}
                         category={category}
-                        velogColors={velogColors}
+                        themeColors={themeColors}
                         dark={dark}
                         openCategoryModal={openCategoryModal}
                     />
@@ -164,7 +164,7 @@ const Header = memo(({
                     <CategorySection
                         key={category.id}
                         category={category}
-                        velogColors={velogColors}
+                        themeColors={themeColors}
                         openCategories={openCategories}
                         toggleCategory={toggleCategory}
                         setCategoryModalOpened={setCategoryModalOpened}
@@ -185,7 +185,7 @@ const Header = memo(({
                             onClick={handleBurgerClick}
                             hiddenFrom="lg"
                             size="sm"
-                            color={velogColors.text}
+                            color={themeColors.text}
                         />
 
                         {/* velog 스타일 로고 */}
