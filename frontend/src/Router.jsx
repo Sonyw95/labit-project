@@ -8,36 +8,45 @@ import AdminManagementPage from "./pages/AdminManagementPage.jsx";
 import PostListPage from "@/pages/PostListPage.jsx";
 import UserProfilePage from "@/pages/UserEditPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import ErrorPage from "@/pages/ErrorPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
 const AppRouter = memo((() => {
     const router = createBrowserRouter([
         // { path: '/test', element:<DashboardPage/>},
-        { path: '/auth/kakao/callback', element: <KakaoCallbackPage/> },
         {
             path: '/',
-            element: (
-                <MainLayout/>
-            ),
+            element:  <MainLayout/>,
+            errorElement: <ErrorPage />,
             children: [
                 { index: true, element: <Navigate to="/home"/> },
                 { path: '/home', element: <HomePage/> },
 
 
                 { path: '/posts/:category', element: <PostListPage/> },
-                { path: '/post/edit/:postId', element: <ProtectedRoute><PostEditPage/></ProtectedRoute> },
+                { path: '/post/edit/:postId', element: <ProtectedRoute requiredRole><PostEditPage/></ProtectedRoute> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
 
-                {path:'/user/settings', element: <UserProfilePage/>},
+                {path:'/user/settings', element: <ProtectedRoute><UserProfilePage /></ProtectedRoute>},
 
                 // { path: '/setting/user', element: <UserSettings/>},
-                { path: '/admin', element: <ProtectedRoute requiredRole="SUPER_ADMIN"><AdminManagementPage/></ProtectedRoute>}
+                { path: '/admin', element: <ProtectedRoute requiredRole><AdminManagementPage/></ProtectedRoute>}
             ]
         },
+        { path: '/auth/kakao/callback', element: <KakaoCallbackPage/> },
+        { path: '/error/:code', element: <ErrorPage/> },
+        { path: '*' , element:<ErrorPage/> }
     ]);
     return (
         <RouterProvider router={router} />
     );
 }))
+
+/*
+  <Route path="/" element={<Home />} />
+          <Route path="/protected" element={<ProtectedPage />} />
+          <Route path="/error/:code" element={<ErrorPage />} />
+          <Route path="*" element={<ErrorPage />} />
+ */
 
 export default AppRouter;

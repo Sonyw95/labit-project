@@ -118,7 +118,14 @@ const HomePage = memo(() => {
 
     // 로딩 상태 체크
     const isAdminInfoLoading = adminInfoLoading || getAdminInfoLoading();
-    const adminError = adminInfoError || getAdminInfoError();
+    const rawAdminError = adminInfoError || getAdminInfoError();
+    const adminError =
+        rawAdminError != null && (
+                typeof rawAdminError === 'string'
+                    ? rawAdminError
+                    : rawAdminError?.message || '관리자 정보를 불러오는 중 오류가 발생했습니다.'
+        )
+        ;
 
     return (
         <Box style={containerStyle}>

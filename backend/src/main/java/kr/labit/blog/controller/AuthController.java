@@ -115,6 +115,34 @@ public class AuthController {
 
         return ResponseEntity.ok(userInfo);
     }
+    @GetMapping("/withdrawal")
+    @Operation( summary = "카카오 회원 탈퇴", description = "회원 탈퇴를 진행합닌다.")
+    public ResponseEntity<String> withdrawal(
+            HttpServletRequest request,
+            @Parameter(description = "카카오 액세스 토큰 (선택사항)")
+            @RequestParam(required = false) String kakaoAccessToken) {
+
+        log.info("회원탈퇴 요청");
+
+        try {
+            Long userId = null;
+
+            // 현재 인증된 사용자 정보 가져오기
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof LabUsers) {
+                LabUsers user = (LabUsers) authentication.getPrincipal();
+                userId = user.getId();
+            }
+
+            authService.withdrawal( kakaoAccessToken, userId);
+
+            return ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
+
+        } catch (Exception e) {
+            log.error("회원탈퇴 실패", e);
+            return ResponseEntity.ok("로그아웃이 완료되었습니다."); // 로그아웃은 항상 성공으로 처리
+        }
+    }
 
 //    @PostMapping("/token/refresh")
 //    @Operation(summary = "토큰 갱신", description = "Refresh Token으로 새로운 Access Token을 발급받습니다.")

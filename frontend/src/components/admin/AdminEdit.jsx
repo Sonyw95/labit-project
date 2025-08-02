@@ -11,14 +11,10 @@ import {
     NumberInput,
     Button,
     Group,
-    Avatar,
     Text,
     Alert,
     LoadingOverlay,
     Divider,
-    ActionIcon,
-    FileInput,
-    Image,
     Box
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -26,9 +22,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import {
     IconDeviceFloppy,
-    IconArrowLeft,
-    IconUser,
-    IconPhoto,
     IconAlertCircle,
     IconCheck,
     IconX
@@ -36,7 +29,6 @@ import {
 import { useTheme } from "@/contexts/ThemeContext.jsx";
 import { adminService } from "@/api/adminService.js";
 import useAuthStore from "@/stores/authStore.js";
-import {fileService} from "../../api/fileService.js";
 import ImageUploadComponent from "./ImageUploadComponent.jsx";
 
 const AdminEdit = memo(() => {
@@ -46,7 +38,6 @@ const AdminEdit = memo(() => {
     const { getIsAdmin, getIsAuthenticated } = useAuthStore();
 
     const [profileImagePreview, setProfileImagePreview] = useState(null);
-    const [profileImageFile, setProfileImageFile] = useState(null);
 
     // 권한 체크
     const isAuthenticated = getIsAuthenticated();

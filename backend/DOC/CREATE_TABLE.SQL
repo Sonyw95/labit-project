@@ -115,64 +115,64 @@ VALUES (LAB_NAVIGATION_SEQ.NEXTVAL, 'Tailwind CSS', '/posts/tailwind', 10, 2, 3,
 -- ============================================================================
 
 -- 1. 전체 네비게이션 트리 조회 (계층 구조)
-SELECT LEVEL,
-       LPAD(' ', (LEVEL - 1) * 4) || LABEL AS TREE_LABEL,
-       ID,
-       LABEL,
-       HREF,
-       PARENT_ID,
-       SORT_ORDER,
-       DEPTH,
-       ICON,
-       IS_ACTIVE
-FROM LAB_NAVIGATION
-WHERE IS_ACTIVE = 1
-START WITH PARENT_ID IS NULL
-CONNECT BY PRIOR ID = PARENT_ID
-ORDER SIBLINGS BY SORT_ORDER;
-
--- 2. 특정 메뉴의 모든 하위 메뉴 조회
-SELECT LEVEL,
-       LPAD(' ', (LEVEL - 1) * 2) || LABEL AS TREE_LABEL,
-       ID,
-       LABEL,
-       HREF
-FROM LAB_NAVIGATION
-WHERE IS_ACTIVE = 1
-START WITH ID = 2 -- Backend 메뉴
-CONNECT BY PRIOR ID = PARENT_ID
-ORDER SIBLINGS BY SORT_ORDER;
-
--- 3. 특정 메뉴까지의 경로 조회 (Breadcrumb)
-SELECT ID,
-       LABEL,
-       HREF,
-       LEVEL
-FROM LAB_NAVIGATION
-WHERE IS_ACTIVE = 1
-START WITH ID = (SELECT ID FROM LAB_NAVIGATION WHERE HREF = '/posts/java')
-CONNECT BY ID = PRIOR PARENT_ID
-ORDER BY LEVEL;
-
--- 4. 깊이별 메뉴 개수 통계
-SELECT DEPTH,
-       COUNT(*)                                     AS MENU_COUNT,
-       COUNT(CASE WHEN HREF IS NOT NULL THEN 1 END) AS LINK_COUNT,
-       COUNT(CASE WHEN HREF IS NULL THEN 1 END)     AS FOLDER_COUNT
-FROM LAB_NAVIGATION
-WHERE IS_ACTIVE = 1
-GROUP BY DEPTH
-ORDER BY DEPTH;
-
--- 5. 부모 메뉴별 하위 메뉴 개수
-SELECT p.ID        AS PARENT_ID,
-       p.LABEL     AS PARENT_LABEL,
-       COUNT(c.ID) AS CHILD_COUNT
-FROM LAB_NAVIGATION p
-         LEFT JOIN LAB_NAVIGATION c ON p.ID = c.PARENT_ID AND c.IS_ACTIVE = 1
-WHERE p.IS_ACTIVE = 1
-GROUP BY p.ID, p.LABEL
-ORDER BY p.SORT_ORDER;
+-- SELECT LEVEL,
+--        LPAD(' ', (LEVEL - 1) * 4) || LABEL AS TREE_LABEL,
+--        ID,
+--        LABEL,
+--        HREF,
+--        PARENT_ID,
+--        SORT_ORDER,
+--        DEPTH,
+--        ICON,
+--        IS_ACTIVE
+-- FROM LAB_NAVIGATION
+-- WHERE IS_ACTIVE = 1
+-- START WITH PARENT_ID IS NULL
+-- CONNECT BY PRIOR ID = PARENT_ID
+-- ORDER SIBLINGS BY SORT_ORDER;
+--
+-- -- 2. 특정 메뉴의 모든 하위 메뉴 조회
+-- SELECT LEVEL,
+--        LPAD(' ', (LEVEL - 1) * 2) || LABEL AS TREE_LABEL,
+--        ID,
+--        LABEL,
+--        HREF
+-- FROM LAB_NAVIGATION
+-- WHERE IS_ACTIVE = 1
+-- START WITH ID = 2 -- Backend 메뉴
+-- CONNECT BY PRIOR ID = PARENT_ID
+-- ORDER SIBLINGS BY SORT_ORDER;
+--
+-- -- 3. 특정 메뉴까지의 경로 조회 (Breadcrumb)
+-- SELECT ID,
+--        LABEL,
+--        HREF,
+--        LEVEL
+-- FROM LAB_NAVIGATION
+-- WHERE IS_ACTIVE = 1
+-- START WITH ID = (SELECT ID FROM LAB_NAVIGATION WHERE HREF = '/posts/java')
+-- CONNECT BY ID = PRIOR PARENT_ID
+-- ORDER BY LEVEL;
+--
+-- -- 4. 깊이별 메뉴 개수 통계
+-- SELECT DEPTH,
+--        COUNT(*)                                     AS MENU_COUNT,
+--        COUNT(CASE WHEN HREF IS NOT NULL THEN 1 END) AS LINK_COUNT,
+--        COUNT(CASE WHEN HREF IS NULL THEN 1 END)     AS FOLDER_COUNT
+-- FROM LAB_NAVIGATION
+-- WHERE IS_ACTIVE = 1
+-- GROUP BY DEPTH
+-- ORDER BY DEPTH;
+--
+-- -- 5. 부모 메뉴별 하위 메뉴 개수
+-- SELECT p.ID        AS PARENT_ID,
+--        p.LABEL     AS PARENT_LABEL,
+--        COUNT(c.ID) AS CHILD_COUNT
+-- FROM LAB_NAVIGATION p
+--          LEFT JOIN LAB_NAVIGATION c ON p.ID = c.PARENT_ID AND c.IS_ACTIVE = 1
+-- WHERE p.IS_ACTIVE = 1
+-- GROUP BY p.ID, p.LABEL
+-- ORDER BY p.SORT_ORDER;
 
 -- ============================================================================
 -- 관리용 프로시저
@@ -261,50 +261,29 @@ ORDER SIBLINGS BY SORT_ORDER;
 -- ============================================================================
 
 -- 1. 고아 메뉴 검사 (존재하지 않는 부모를 참조하는 메뉴)
-SELECT *
-FROM LAB_NAVIGATION n1
-WHERE n1.PARENT_ID IS NOT NULL
-  AND NOT EXISTS (SELECT 1
-                  FROM LAB_NAVIGATION n2
-                  WHERE n2.ID = n1.PARENT_ID);
-
--- 2. 순환 참조 검사
-SELECT *
-FROM LAB_NAVIGATION
-WHERE ID = PARENT_ID;
-
--- 3. 깊이 불일치 검사
-SELECT *
-FROM (SELECT n.*,
-             LEVEL AS ACTUAL_LEVEL
-      FROM LAB_NAVIGATION n
-      WHERE IS_ACTIVE = 1
-      START WITH PARENT_ID IS NULL
-      CONNECT BY PRIOR ID = PARENT_ID)
-WHERE DEPTH != ACTUAL_LEVEL;
-
-COMMIT;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- SELECT *
+-- FROM LAB_NAVIGATION n1
+-- WHERE n1.PARENT_ID IS NOT NULL
+--   AND NOT EXISTS (SELECT 1
+--                   FROM LAB_NAVIGATION n2
+--                   WHERE n2.ID = n1.PARENT_ID);
+--
+-- -- 2. 순환 참조 검사
+-- SELECT *
+-- FROM LAB_NAVIGATION
+-- WHERE ID = PARENT_ID;
+--
+-- -- 3. 깊이 불일치 검사
+-- SELECT *
+-- FROM (SELECT n.*,
+--              LEVEL AS ACTUAL_LEVEL
+--       FROM LAB_NAVIGATION n
+--       WHERE IS_ACTIVE = 1
+--       START WITH PARENT_ID IS NULL
+--       CONNECT BY PRIOR ID = PARENT_ID)
+-- WHERE DEPTH != ACTUAL_LEVEL;
+--
+-- COMMIT;
 
 
 
@@ -375,46 +354,46 @@ END;
 -- ============================================================================
 
 -- 슈퍼 관리자 계정 (실제 카카오 ID로 교체 필요)
-INSERT INTO LAB_USERS (
-    ID,
-    KAKAO_ID,
-    EMAIL,
-    NICKNAME,
-    PROFILE_IMAGE,
-    ROLE,
-    IS_ACTIVE,
-    LAST_LOGIN_DATE
-) VALUES (
-             LAB_USERS_SEQ.NEXTVAL,
-             1234567890, -- 실제 카카오 ID로 교체
-             'admin@example.com',
-             '시스템관리자',
-             NULL,
-             'SUPER_ADMIN',
-             1,
-             CURRENT_TIMESTAMP
-         );
-
--- 일반 관리자 계정 (테스트용)
-INSERT INTO LAB_USERS (
-    ID,
-    KAKAO_ID,
-    EMAIL,
-    NICKNAME,
-    PROFILE_IMAGE,
-    ROLE,
-    IS_ACTIVE,
-    LAST_LOGIN_DATE
-) VALUES (
-             LAB_USERS_SEQ.NEXTVAL,
-             9876543210, -- 실제 카카오 ID로 교체
-             'manager@example.com',
-             '일반관리자',
-             NULL,
-             'ADMIN',
-             1,
-             CURRENT_TIMESTAMP
-         );
+-- INSERT INTO LAB_USERS (
+--     ID,
+--     KAKAO_ID,
+--     EMAIL,
+--     NICKNAME,
+--     PROFILE_IMAGE,
+--     ROLE,
+--     IS_ACTIVE,
+--     LAST_LOGIN_DATE
+-- ) VALUES (
+--              LAB_USERS_SEQ.NEXTVAL,
+--              1234567890, -- 실제 카카오 ID로 교체
+--              'admin@example.com',
+--              '시스템관리자',
+--              NULL,
+--              'SUPER_ADMIN',
+--              1,
+--              CURRENT_TIMESTAMP
+--          );
+--
+-- -- 일반 관리자 계정 (테스트용)
+-- INSERT INTO LAB_USERS (
+--     ID,
+--     KAKAO_ID,
+--     EMAIL,
+--     NICKNAME,
+--     PROFILE_IMAGE,
+--     ROLE,
+--     IS_ACTIVE,
+--     LAST_LOGIN_DATE
+-- ) VALUES (
+--              LAB_USERS_SEQ.NEXTVAL,
+--              9876543210, -- 실제 카카오 ID로 교체
+--              'manager@example.com',
+--              '일반관리자',
+--              NULL,
+--              'ADMIN',
+--              1,
+--              CURRENT_TIMESTAMP
+--          );
 
 -- ============================================================================
 -- 네비게이션과 사용자 권한 연결 테이블 (선택사항)
@@ -466,80 +445,80 @@ VALUES (LAB_NAVIGATION_ROLES_SEQ.NEXTVAL,
 -- ============================================================================
 
 -- 1. 전체 사용자 목록 (활성 사용자만)
-SELECT
-    ID,
-    KAKAO_ID,
-    EMAIL,
-    NICKNAME,
-    ROLE,
-    LAST_LOGIN_DATE,
-    CREATED_DATE
-FROM LAB_USERS
-WHERE IS_ACTIVE = 1
-ORDER BY CREATED_DATE DESC;
-
--- 2. 역할별 사용자 수 통계
-SELECT
-    ROLE,
-    COUNT(*) AS USER_COUNT,
-    COUNT(CASE WHEN IS_ACTIVE = 1 THEN 1 END) AS ACTIVE_COUNT,
-    COUNT(CASE WHEN IS_ACTIVE = 0 THEN 1 END) AS INACTIVE_COUNT
-FROM LAB_USERS
-GROUP BY ROLE
-ORDER BY
-    CASE ROLE
-        WHEN 'SUPER_ADMIN' THEN 1
-        WHEN 'ADMIN' THEN 2
-        WHEN 'USER' THEN 3
-        END;
-
--- 3. 최근 로그인한 사용자들 (최근 7일)
-SELECT
-    NICKNAME,
-    EMAIL,
-    ROLE,
-    LAST_LOGIN_DATE
-FROM LAB_USERS
-WHERE LAST_LOGIN_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
-  AND IS_ACTIVE = 1
-ORDER BY LAST_LOGIN_DATE DESC;
-
--- 4. 특정 사용자의 접근 가능한 네비게이션 메뉴 조회
-WITH USER_ROLE AS (
-    SELECT ROLE FROM LAB_USERS WHERE KAKAO_ID = :kakao_id
-)
-SELECT DISTINCT
-    n.ID,
-    n.LABEL,
-    n.HREF,
-    n.PARENT_ID,
-    n.SORT_ORDER,
-    n.DEPTH,
-    n.ICON
-FROM LAB_NAVIGATION n
-         LEFT JOIN LAB_NAVIGATION_ROLES nr ON n.ID = nr.NAVIGATION_ID
-WHERE n.IS_ACTIVE = 1
-  AND (
-    nr.ROLE IS NULL  -- 권한 제한이 없는 메뉴
-        OR nr.ROLE = (SELECT ROLE FROM USER_ROLE)  -- 사용자 역할에 맞는 메뉴
-        OR (SELECT ROLE FROM USER_ROLE) IN ('ADMIN', 'SUPER_ADMIN')  -- 관리자는 모든 메뉴 접근
-    )
-ORDER BY n.SORT_ORDER, n.ID;
-
--- 5. 비활성 사용자 정리 (30일 이상 미로그인)
-SELECT
-    ID,
-    NICKNAME,
-    EMAIL,
-    LAST_LOGIN_DATE,
-    CREATED_DATE
-FROM LAB_USERS
-WHERE IS_ACTIVE = 1
-  AND (
-    LAST_LOGIN_DATE < CURRENT_TIMESTAMP - INTERVAL '30' DAY
-        OR LAST_LOGIN_DATE IS NULL
-    )
-  AND CREATED_DATE < CURRENT_TIMESTAMP - INTERVAL '30' DAY;
+-- SELECT
+--     ID,
+--     KAKAO_ID,
+--     EMAIL,
+--     NICKNAME,
+--     ROLE,
+--     LAST_LOGIN_DATE,
+--     CREATED_DATE
+-- FROM LAB_USERS
+-- WHERE IS_ACTIVE = 1
+-- ORDER BY CREATED_DATE DESC;
+--
+-- -- 2. 역할별 사용자 수 통계
+-- SELECT
+--     ROLE,
+--     COUNT(*) AS USER_COUNT,
+--     COUNT(CASE WHEN IS_ACTIVE = 1 THEN 1 END) AS ACTIVE_COUNT,
+--     COUNT(CASE WHEN IS_ACTIVE = 0 THEN 1 END) AS INACTIVE_COUNT
+-- FROM LAB_USERS
+-- GROUP BY ROLE
+-- ORDER BY
+--     CASE ROLE
+--         WHEN 'SUPER_ADMIN' THEN 1
+--         WHEN 'ADMIN' THEN 2
+--         WHEN 'USER' THEN 3
+--         END;
+--
+-- -- 3. 최근 로그인한 사용자들 (최근 7일)
+-- SELECT
+--     NICKNAME,
+--     EMAIL,
+--     ROLE,
+--     LAST_LOGIN_DATE
+-- FROM LAB_USERS
+-- WHERE LAST_LOGIN_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
+--   AND IS_ACTIVE = 1
+-- ORDER BY LAST_LOGIN_DATE DESC;
+--
+-- -- 4. 특정 사용자의 접근 가능한 네비게이션 메뉴 조회
+-- WITH USER_ROLE AS (
+--     SELECT ROLE FROM LAB_USERS WHERE KAKAO_ID = :kakao_id
+-- )
+-- SELECT DISTINCT
+--     n.ID,
+--     n.LABEL,
+--     n.HREF,
+--     n.PARENT_ID,
+--     n.SORT_ORDER,
+--     n.DEPTH,
+--     n.ICON
+-- FROM LAB_NAVIGATION n
+--          LEFT JOIN LAB_NAVIGATION_ROLES nr ON n.ID = nr.NAVIGATION_ID
+-- WHERE n.IS_ACTIVE = 1
+--   AND (
+--     nr.ROLE IS NULL  -- 권한 제한이 없는 메뉴
+--         OR nr.ROLE = (SELECT ROLE FROM USER_ROLE)  -- 사용자 역할에 맞는 메뉴
+--         OR (SELECT ROLE FROM USER_ROLE) IN ('ADMIN', 'SUPER_ADMIN')  -- 관리자는 모든 메뉴 접근
+--     )
+-- ORDER BY n.SORT_ORDER, n.ID;
+--
+-- -- 5. 비활성 사용자 정리 (30일 이상 미로그인)
+-- SELECT
+--     ID,
+--     NICKNAME,
+--     EMAIL,
+--     LAST_LOGIN_DATE,
+--     CREATED_DATE
+-- FROM LAB_USERS
+-- WHERE IS_ACTIVE = 1
+--   AND (
+--     LAST_LOGIN_DATE < CURRENT_TIMESTAMP - INTERVAL '30' DAY
+--         OR LAST_LOGIN_DATE IS NULL
+--     )
+--   AND CREATED_DATE < CURRENT_TIMESTAMP - INTERVAL '30' DAY;
 
 -- ============================================================================
 -- 관리용 프로시저
@@ -632,41 +611,35 @@ GROUP BY ROLE;
 -- ============================================================================
 
 -- 1. 중복 카카오 ID 검사
-SELECT KAKAO_ID, COUNT(*)
-FROM LAB_USERS
-GROUP BY KAKAO_ID
-HAVING COUNT(*) > 1;
-
--- 2. 빈 닉네임 검사
-SELECT * FROM LAB_USERS
-WHERE NICKNAME IS NULL OR TRIM(NICKNAME) = '';
-
--- 3. 유효하지 않은 역할 검사
-SELECT * FROM LAB_USERS
-WHERE ROLE NOT IN ('USER', 'ADMIN', 'SUPER_ADMIN');
-
--- 4. 관리자 계정 존재 확인
-SELECT COUNT(*) AS ADMIN_COUNT
-FROM LAB_USERS
-WHERE ROLE IN ('ADMIN', 'SUPER_ADMIN')
-  AND IS_ACTIVE = 1;
-
--- 관리자가 없는 경우 경고
-SELECT
-    CASE
-        WHEN (SELECT COUNT(*) FROM LAB_USERS WHERE ROLE IN ('ADMIN', 'SUPER_ADMIN') AND IS_ACTIVE = 1) = 0
-            THEN '경고: 활성 관리자 계정이 없습니다!'
-        ELSE '정상: 관리자 계정이 존재합니다.'
-        END AS ADMIN_STATUS
-FROM DUAL;
-
-COMMIT;
-
-
-
-
-
-
+-- SELECT KAKAO_ID, COUNT(*)
+-- FROM LAB_USERS
+-- GROUP BY KAKAO_ID
+-- HAVING COUNT(*) > 1;
+--
+-- -- 2. 빈 닉네임 검사
+-- SELECT * FROM LAB_USERS
+-- WHERE NICKNAME IS NULL OR TRIM(NICKNAME) = '';
+--
+-- -- 3. 유효하지 않은 역할 검사
+-- SELECT * FROM LAB_USERS
+-- WHERE ROLE NOT IN ('USER', 'ADMIN', 'SUPER_ADMIN');
+--
+-- -- 4. 관리자 계정 존재 확인
+-- SELECT COUNT(*) AS ADMIN_COUNT
+-- FROM LAB_USERS
+-- WHERE ROLE IN ('ADMIN', 'SUPER_ADMIN')
+--   AND IS_ACTIVE = 1;
+--
+-- -- 관리자가 없는 경우 경고
+-- SELECT
+--     CASE
+--         WHEN (SELECT COUNT(*) FROM LAB_USERS WHERE ROLE IN ('ADMIN', 'SUPER_ADMIN') AND IS_ACTIVE = 1) = 0
+--             THEN '경고: 활성 관리자 계정이 없습니다!'
+--         ELSE '정상: 관리자 계정이 존재합니다.'
+--         END AS ADMIN_STATUS
+-- FROM DUAL;
+--
+-- COMMIT;
 
 
 
@@ -814,237 +787,237 @@ END;
 -- ============================================================================
 
 -- 샘플 포스트 1 (Java 카테고리)
-INSERT INTO LAB_POST (
-    ID, TITLE, CONTENT, SUMMARY, CATEGORY_ID, AUTHOR_ID, STATUS,
-    VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
-) VALUES (
-             LAB_POST_SEQ.NEXTVAL,
-             'Java 기초 문법 완벽 가이드',
-             '<h2>Java 기초 문법</h2><p>Java는 객체지향 프로그래밍 언어입니다...</p><pre><code class="language-java">public class HelloWorld {
-             public static void main(String[] args) {
-                 System.out.println("Hello, World!");
-             }
-         }</code></pre>',
-             'Java 프로그래밍의 기초 문법을 상세히 설명하는 가이드입니다.',
-             3, -- Java 카테고리 ID
-             1, -- 작성자 ID (관리자)
-             'PUBLISHED',
-             150,
-             25,
-             1,
-             CURRENT_TIMESTAMP
-         );
-
--- 샘플 포스트 2 (Spring Boot 카테고리)
-INSERT INTO LAB_POST (
-    ID, TITLE, CONTENT, SUMMARY, TAGS, CATEGORY_ID, AUTHOR_ID, STATUS,
-    VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
-) VALUES (
-             LAB_POST_SEQ.NEXTVAL,
-             'Spring Boot 프로젝트 시작하기',
-             '<h2>Spring Boot란?</h2><p>Spring Boot는 Spring 기반 애플리케이션을 쉽게 만들 수 있게 해주는 프레임워크입니다...</p>',
-             'Spring Boot 프로젝트를 처음 시작하는 방법을 알아봅시다.',
-             'spring,spring-boot,java,framework',
-             4, -- Spring Boot 카테고리 ID
-             1, -- 작성자 ID
-             'PUBLISHED',
-             89,
-             12,
-             1,
-             CURRENT_TIMESTAMP
-         );
-
--- 샘플 포스트 3 (React 카테고리)
-INSERT INTO LAB_POST (
-    ID, TITLE, CONTENT, SUMMARY, TAGS, CATEGORY_ID, AUTHOR_ID, STATUS,
-    VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
-) VALUES (
-             LAB_POST_SEQ.NEXTVAL,
-             'React Hooks 완벽 정리',
-             '<h2>React Hooks</h2><p>React Hooks는 함수형 컴포넌트에서 상태와 생명주기를 관리할 수 있게 해주는 기능입니다...</p><pre><code class="language-javascript">import { useState, useEffect } from "react";
-
-         function Counter() {
-             const [count, setCount] = useState(0);
-
-             useEffect(() => {
-                 document.title = `Count: ${count}`;
-             }, [count]);
-
-             return (
-                 <div>
-                     <p>Count: {count}</p>
-                     <button onClick={() => setCount(count + 1)}>
-                         Increment
-                     </button>
-                 </div>
-             );
-         }</code></pre>',
-             'React Hooks의 종류와 사용법을 자세히 알아봅시다.',
-             'react,hooks,javascript,frontend',
-             6, -- React 카테고리 ID
-             1, -- 작성자 ID
-             'PUBLISHED',
-             203,
-             45,
-             1,
-             CURRENT_TIMESTAMP
-         );
-
--- 샘플 댓글들
-INSERT INTO LAB_COMMENT (
-    ID, POST_ID, AUTHOR_ID, CONTENT, DEPTH
-) VALUES (
-             LAB_COMMENT_SEQ.NEXTVAL,
-             1, -- Java 포스트
-             2, -- 일반 사용자
-             '정말 유용한 자료네요! Java 공부하는데 많은 도움이 되었습니다.',
-             0
-         );
-
-INSERT INTO LAB_COMMENT (
-    ID, POST_ID, AUTHOR_ID, PARENT_ID, CONTENT, DEPTH
-) VALUES (
-             LAB_COMMENT_SEQ.NEXTVAL,
-             1, -- Java 포스트
-             1, -- 관리자
-             1, -- 위 댓글의 대댓글
-             '도움이 되셨다니 기쁩니다! 더 좋은 내용으로 찾아뵙겠습니다.',
-             1
-         );
-
-INSERT INTO LAB_COMMENT (
-    ID, POST_ID, AUTHOR_ID, CONTENT, DEPTH, LIKE_COUNT
-) VALUES (
-             LAB_COMMENT_SEQ.NEXTVAL,
-             3, -- React 포스트
-             2, -- 일반 사용자
-             'React Hooks 정리가 정말 깔끔하네요. useEffect 부분이 특히 이해하기 쉬웠습니다.',
-             0,
-             3
-         );
+-- INSERT INTO LAB_POST (
+--     ID, TITLE, CONTENT, SUMMARY, CATEGORY_ID, AUTHOR_ID, STATUS,
+--     VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
+-- ) VALUES (
+--              LAB_POST_SEQ.NEXTVAL,
+--              'Java 기초 문법 완벽 가이드',
+--              '<h2>Java 기초 문법</h2><p>Java는 객체지향 프로그래밍 언어입니다...</p><pre><code class="language-java">public class HelloWorld {
+--              public static void main(String[] args) {
+--                  System.out.println("Hello, World!");
+--              }
+--          }</code></pre>',
+--              'Java 프로그래밍의 기초 문법을 상세히 설명하는 가이드입니다.',
+--              3, -- Java 카테고리 ID
+--              1, -- 작성자 ID (관리자)
+--              'PUBLISHED',
+--              150,
+--              25,
+--              1,
+--              CURRENT_TIMESTAMP
+--          );
+--
+-- -- 샘플 포스트 2 (Spring Boot 카테고리)
+-- INSERT INTO LAB_POST (
+--     ID, TITLE, CONTENT, SUMMARY, TAGS, CATEGORY_ID, AUTHOR_ID, STATUS,
+--     VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
+-- ) VALUES (
+--              LAB_POST_SEQ.NEXTVAL,
+--              'Spring Boot 프로젝트 시작하기',
+--              '<h2>Spring Boot란?</h2><p>Spring Boot는 Spring 기반 애플리케이션을 쉽게 만들 수 있게 해주는 프레임워크입니다...</p>',
+--              'Spring Boot 프로젝트를 처음 시작하는 방법을 알아봅시다.',
+--              'spring,spring-boot,java,framework',
+--              4, -- Spring Boot 카테고리 ID
+--              1, -- 작성자 ID
+--              'PUBLISHED',
+--              89,
+--              12,
+--              1,
+--              CURRENT_TIMESTAMP
+--          );
+--
+-- -- 샘플 포스트 3 (React 카테고리)
+-- INSERT INTO LAB_POST (
+--     ID, TITLE, CONTENT, SUMMARY, TAGS, CATEGORY_ID, AUTHOR_ID, STATUS,
+--     VIEW_COUNT, LIKE_COUNT, IS_FEATURED, PUBLISHED_DATE
+-- ) VALUES (
+--              LAB_POST_SEQ.NEXTVAL,
+--              'React Hooks 완벽 정리',
+--              '<h2>React Hooks</h2><p>React Hooks는 함수형 컴포넌트에서 상태와 생명주기를 관리할 수 있게 해주는 기능입니다...</p><pre><code class="language-javascript">import { useState, useEffect } from "react";
+--
+--          function Counter() {
+--              const [count, setCount] = useState(0);
+--
+--              useEffect(() => {
+--                  document.title = `Count: ${count}`;
+--              }, [count]);
+--
+--              return (
+--                  <div>
+--                      <p>Count: {count}</p>
+--                      <button onClick={() => setCount(count + 1)}>
+--                          Increment
+--                      </button>
+--                  </div>
+--              );
+--          }</code></pre>',
+--              'React Hooks의 종류와 사용법을 자세히 알아봅시다.',
+--              'react,hooks,javascript,frontend',
+--              6, -- React 카테고리 ID
+--              1, -- 작성자 ID
+--              'PUBLISHED',
+--              203,
+--              45,
+--              1,
+--              CURRENT_TIMESTAMP
+--          );
+--
+-- -- 샘플 댓글들
+-- INSERT INTO LAB_COMMENT (
+--     ID, POST_ID, AUTHOR_ID, CONTENT, DEPTH
+-- ) VALUES (
+--              LAB_COMMENT_SEQ.NEXTVAL,
+--              1, -- Java 포스트
+--              2, -- 일반 사용자
+--              '정말 유용한 자료네요! Java 공부하는데 많은 도움이 되었습니다.',
+--              0
+--          );
+--
+-- INSERT INTO LAB_COMMENT (
+--     ID, POST_ID, AUTHOR_ID, PARENT_ID, CONTENT, DEPTH
+-- ) VALUES (
+--              LAB_COMMENT_SEQ.NEXTVAL,
+--              1, -- Java 포스트
+--              1, -- 관리자
+--              1, -- 위 댓글의 대댓글
+--              '도움이 되셨다니 기쁩니다! 더 좋은 내용으로 찾아뵙겠습니다.',
+--              1
+--          );
+--
+-- INSERT INTO LAB_COMMENT (
+--     ID, POST_ID, AUTHOR_ID, CONTENT, DEPTH, LIKE_COUNT
+-- ) VALUES (
+--              LAB_COMMENT_SEQ.NEXTVAL,
+--              3, -- React 포스트
+--              2, -- 일반 사용자
+--              'React Hooks 정리가 정말 깔끔하네요. useEffect 부분이 특히 이해하기 쉬웠습니다.',
+--              0,
+--              3
+--          );
 
 -- ============================================================================
 -- 유용한 쿼리들
 -- ============================================================================
 
 -- 1. 발행된 포스트 목록 (최신순)
-SELECT
-    p.ID,
-    p.TITLE,
-    p.SUMMARY,
-    p.VIEW_COUNT,
-    p.LIKE_COUNT,
-    p.COMMENT_COUNT,
-    p.PUBLISHED_DATE,
-    u.NICKNAME AS AUTHOR_NAME,
-    n.LABEL AS CATEGORY_NAME
-FROM LAB_POST p
-         JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
-         LEFT JOIN LAB_NAVIGATION n ON p.CATEGORY_ID = n.ID
-WHERE p.STATUS = 'PUBLISHED'
-ORDER BY p.PUBLISHED_DATE DESC;
-
--- 2. 카테고리별 포스트 수 통계
-SELECT
-    n.LABEL AS CATEGORY_NAME,
-    COUNT(p.ID) AS POST_COUNT,
-    SUM(p.VIEW_COUNT) AS TOTAL_VIEWS,
-    SUM(p.LIKE_COUNT) AS TOTAL_LIKES
-FROM LAB_NAVIGATION n
-         LEFT JOIN LAB_POST p ON n.ID = p.CATEGORY_ID AND p.STATUS = 'PUBLISHED'
-WHERE n.HREF IS NOT NULL
-GROUP BY n.ID, n.LABEL
-ORDER BY POST_COUNT DESC;
-
--- 3. 포스트별 댓글 트리 구조 조회
-WITH COMMENT_TREE AS (
-    -- 최상위 댓글
-    SELECT
-        c.ID,
-        c.POST_ID,
-        c.CONTENT,
-        c.DEPTH,
-        c.CREATED_DATE,
-        u.NICKNAME AS AUTHOR_NAME,
-        CAST(c.ID AS VARCHAR2(1000)) AS PATH
-    FROM LAB_COMMENT c
-             JOIN LAB_USERS u ON c.AUTHOR_ID = u.ID
-    WHERE c.PARENT_ID IS NULL
-      AND c.IS_DELETED = 0
-      AND c.POST_ID = 1  -- 특정 포스트 ID
-
-    UNION ALL
-
-    -- 대댓글
-    SELECT
-        c.ID,
-        c.POST_ID,
-        c.CONTENT,
-        c.DEPTH,
-        c.CREATED_DATE,
-        u.NICKNAME AS AUTHOR_NAME,
-        ct.PATH || '/' || c.ID
-    FROM LAB_COMMENT c
-             JOIN LAB_USERS u ON c.AUTHOR_ID = u.ID
-             JOIN COMMENT_TREE ct ON c.PARENT_ID = ct.ID
-    WHERE c.IS_DELETED = 0
-)
-SELECT * FROM COMMENT_TREE
-ORDER BY PATH;
-
--- 4. 인기 포스트 조회 (조회수 + 좋아요 기준)
-SELECT
-    p.ID,
-    p.TITLE,
-    p.VIEW_COUNT,
-    p.LIKE_COUNT,
-    p.COMMENT_COUNT,
-    (p.VIEW_COUNT + p.LIKE_COUNT * 2 + p.COMMENT_COUNT * 3) AS POPULARITY_SCORE,
-    u.NICKNAME AS AUTHOR_NAME
-FROM LAB_POST p
-         JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
-WHERE p.STATUS = 'PUBLISHED'
-  AND p.PUBLISHED_DATE >= CURRENT_TIMESTAMP - INTERVAL '30' DAY
-ORDER BY POPULARITY_SCORE DESC
-    FETCH FIRST 10 ROWS ONLY;
-
--- 5. 태그별 포스트 검색
-SELECT
-    p.ID,
-    p.TITLE,
-    p.TAGS,
-    p.VIEW_COUNT,
-    p.PUBLISHED_DATE
-FROM LAB_POST p
-WHERE p.STATUS = 'PUBLISHED'
-  AND (p.TAGS LIKE '%react%' OR p.TAGS LIKE '%javascript%')
-ORDER BY p.PUBLISHED_DATE DESC;
-
--- 6. 사용자별 포스트 통계
-SELECT
-    u.NICKNAME,
-    COUNT(p.ID) AS POST_COUNT,
-    SUM(p.VIEW_COUNT) AS TOTAL_VIEWS,
-    SUM(p.LIKE_COUNT) AS TOTAL_LIKES,
-    SUM(p.COMMENT_COUNT) AS TOTAL_COMMENTS,
-    AVG(p.VIEW_COUNT) AS AVG_VIEWS
-FROM LAB_USERS u
-         LEFT JOIN LAB_POST p ON u.ID = p.AUTHOR_ID AND p.STATUS = 'PUBLISHED'
-GROUP BY u.ID, u.NICKNAME
-HAVING COUNT(p.ID) > 0
-ORDER BY POST_COUNT DESC;
-
--- 7. 최근 7일간 활동 통계
-SELECT
-    TO_CHAR(TRUNC(p.PUBLISHED_DATE), 'YYYY-MM-DD') AS DATE_STR,
-    COUNT(p.ID) AS POSTS_PUBLISHED,
-    COUNT(c.ID) AS COMMENTS_POSTED
-FROM LAB_POST p
-         FULL OUTER JOIN LAB_COMMENT c ON TO_CHAR(TRUNC(p.PUBLISHED_DATE), 'YYYY-MM-DD') = TO_CHAR(TRUNC(c.CREATED_DATE), 'YYYY-MM-DD')
-WHERE p.PUBLISHED_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
-   OR c.CREATED_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
-GROUP BY TRUNC(p.PUBLISHED_DATE), TRUNC(c.CREATED_DATE)
-ORDER BY DATE_STR DESC;
+-- SELECT
+--     p.ID,
+--     p.TITLE,
+--     p.SUMMARY,
+--     p.VIEW_COUNT,
+--     p.LIKE_COUNT,
+--     p.COMMENT_COUNT,
+--     p.PUBLISHED_DATE,
+--     u.NICKNAME AS AUTHOR_NAME,
+--     n.LABEL AS CATEGORY_NAME
+-- FROM LAB_POST p
+--          JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
+--          LEFT JOIN LAB_NAVIGATION n ON p.CATEGORY_ID = n.ID
+-- WHERE p.STATUS = 'PUBLISHED'
+-- ORDER BY p.PUBLISHED_DATE DESC;
+--
+-- -- 2. 카테고리별 포스트 수 통계
+-- SELECT
+--     n.LABEL AS CATEGORY_NAME,
+--     COUNT(p.ID) AS POST_COUNT,
+--     SUM(p.VIEW_COUNT) AS TOTAL_VIEWS,
+--     SUM(p.LIKE_COUNT) AS TOTAL_LIKES
+-- FROM LAB_NAVIGATION n
+--          LEFT JOIN LAB_POST p ON n.ID = p.CATEGORY_ID AND p.STATUS = 'PUBLISHED'
+-- WHERE n.HREF IS NOT NULL
+-- GROUP BY n.ID, n.LABEL
+-- ORDER BY POST_COUNT DESC;
+--
+-- -- 3. 포스트별 댓글 트리 구조 조회
+-- WITH COMMENT_TREE AS (
+--     -- 최상위 댓글
+--     SELECT
+--         c.ID,
+--         c.POST_ID,
+--         c.CONTENT,
+--         c.DEPTH,
+--         c.CREATED_DATE,
+--         u.NICKNAME AS AUTHOR_NAME,
+--         CAST(c.ID AS VARCHAR2(1000)) AS PATH
+--     FROM LAB_COMMENT c
+--              JOIN LAB_USERS u ON c.AUTHOR_ID = u.ID
+--     WHERE c.PARENT_ID IS NULL
+--       AND c.IS_DELETED = 0
+--       AND c.POST_ID = 1  -- 특정 포스트 ID
+--
+--     UNION ALL
+--
+--     -- 대댓글
+--     SELECT
+--         c.ID,
+--         c.POST_ID,
+--         c.CONTENT,
+--         c.DEPTH,
+--         c.CREATED_DATE,
+--         u.NICKNAME AS AUTHOR_NAME,
+--         ct.PATH || '/' || c.ID
+--     FROM LAB_COMMENT c
+--              JOIN LAB_USERS u ON c.AUTHOR_ID = u.ID
+--              JOIN COMMENT_TREE ct ON c.PARENT_ID = ct.ID
+--     WHERE c.IS_DELETED = 0
+-- )
+-- SELECT * FROM COMMENT_TREE
+-- ORDER BY PATH;
+--
+-- -- 4. 인기 포스트 조회 (조회수 + 좋아요 기준)
+-- SELECT
+--     p.ID,
+--     p.TITLE,
+--     p.VIEW_COUNT,
+--     p.LIKE_COUNT,
+--     p.COMMENT_COUNT,
+--     (p.VIEW_COUNT + p.LIKE_COUNT * 2 + p.COMMENT_COUNT * 3) AS POPULARITY_SCORE,
+--     u.NICKNAME AS AUTHOR_NAME
+-- FROM LAB_POST p
+--          JOIN LAB_USERS u ON p.AUTHOR_ID = u.ID
+-- WHERE p.STATUS = 'PUBLISHED'
+--   AND p.PUBLISHED_DATE >= CURRENT_TIMESTAMP - INTERVAL '30' DAY
+-- ORDER BY POPULARITY_SCORE DESC
+--     FETCH FIRST 10 ROWS ONLY;
+--
+-- -- 5. 태그별 포스트 검색
+-- SELECT
+--     p.ID,
+--     p.TITLE,
+--     p.TAGS,
+--     p.VIEW_COUNT,
+--     p.PUBLISHED_DATE
+-- FROM LAB_POST p
+-- WHERE p.STATUS = 'PUBLISHED'
+--   AND (p.TAGS LIKE '%react%' OR p.TAGS LIKE '%javascript%')
+-- ORDER BY p.PUBLISHED_DATE DESC;
+--
+-- -- 6. 사용자별 포스트 통계
+-- SELECT
+--     u.NICKNAME,
+--     COUNT(p.ID) AS POST_COUNT,
+--     SUM(p.VIEW_COUNT) AS TOTAL_VIEWS,
+--     SUM(p.LIKE_COUNT) AS TOTAL_LIKES,
+--     SUM(p.COMMENT_COUNT) AS TOTAL_COMMENTS,
+--     AVG(p.VIEW_COUNT) AS AVG_VIEWS
+-- FROM LAB_USERS u
+--          LEFT JOIN LAB_POST p ON u.ID = p.AUTHOR_ID AND p.STATUS = 'PUBLISHED'
+-- GROUP BY u.ID, u.NICKNAME
+-- HAVING COUNT(p.ID) > 0
+-- ORDER BY POST_COUNT DESC;
+--
+-- -- 7. 최근 7일간 활동 통계
+-- SELECT
+--     TO_CHAR(TRUNC(p.PUBLISHED_DATE), 'YYYY-MM-DD') AS DATE_STR,
+--     COUNT(p.ID) AS POSTS_PUBLISHED,
+--     COUNT(c.ID) AS COMMENTS_POSTED
+-- FROM LAB_POST p
+--          FULL OUTER JOIN LAB_COMMENT c ON TO_CHAR(TRUNC(p.PUBLISHED_DATE), 'YYYY-MM-DD') = TO_CHAR(TRUNC(c.CREATED_DATE), 'YYYY-MM-DD')
+-- WHERE p.PUBLISHED_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
+--    OR c.CREATED_DATE >= CURRENT_TIMESTAMP - INTERVAL '7' DAY
+-- GROUP BY TRUNC(p.PUBLISHED_DATE), TRUNC(c.CREATED_DATE)
+-- ORDER BY DATE_STR DESC;
 
 -- ============================================================================
 -- 관리용 프로시저
@@ -1175,49 +1148,49 @@ WHERE p.STATUS = 'PUBLISHED';
 -- ============================================================================
 
 -- 1. 고아 댓글 검사 (존재하지 않는 포스트나 부모 댓글 참조)
-SELECT 'Orphaned comments (invalid post)' AS issue_type, COUNT(*) AS count
-FROM LAB_COMMENT c
-WHERE NOT EXISTS (SELECT 1 FROM LAB_POST p WHERE p.ID = c.POST_ID)
-
-UNION ALL
-
-SELECT 'Orphaned comments (invalid parent)' AS issue_type, COUNT(*) AS count
-FROM LAB_COMMENT c
-WHERE c.PARENT_ID IS NOT NULL
-  AND NOT EXISTS (SELECT 1 FROM LAB_COMMENT p WHERE p.ID = c.PARENT_ID);
-
--- 2. 댓글 수 불일치 검사
-SELECT
-    p.ID AS POST_ID,
-    p.TITLE,
-    p.COMMENT_COUNT AS STORED_COUNT,
-    COUNT(c.ID) AS ACTUAL_COUNT,
-    ABS(p.COMMENT_COUNT - COUNT(c.ID)) AS DIFFERENCE
-FROM LAB_POST p
-         LEFT JOIN LAB_COMMENT c ON p.ID = c.POST_ID AND c.IS_DELETED = 0
-GROUP BY p.ID, p.TITLE, p.COMMENT_COUNT
-HAVING p.COMMENT_COUNT != COUNT(c.ID);
-
--- 3. 잘못된 댓글 깊이 검사
-SELECT c.*
-FROM LAB_COMMENT c
-         LEFT JOIN LAB_COMMENT parent ON c.PARENT_ID = parent.ID
-WHERE (c.PARENT_ID IS NULL AND c.DEPTH != 0)
-   OR (c.PARENT_ID IS NOT NULL AND c.DEPTH != parent.DEPTH + 1);
-
--- 4. 발행일시가 없는 발행된 포스트 검사
-SELECT ID, TITLE, STATUS, PUBLISHED_DATE
-FROM LAB_POST
-WHERE STATUS = 'PUBLISHED'
-  AND PUBLISHED_DATE IS NULL;
-
--- 5. 태그 형식 검사 (쉼표로 끝나거나 연속 쉼표 있는 경우)
-SELECT ID, TITLE, TAGS
-FROM LAB_POST
-WHERE TAGS IS NOT NULL
-  AND (TAGS LIKE '%,,' OR TAGS LIKE '%,' OR TAGS LIKE ',%');
-
-COMMIT;
+-- SELECT 'Orphaned comments (invalid post)' AS issue_type, COUNT(*) AS count
+-- FROM LAB_COMMENT c
+-- WHERE NOT EXISTS (SELECT 1 FROM LAB_POST p WHERE p.ID = c.POST_ID)
+--
+-- UNION ALL
+--
+-- SELECT 'Orphaned comments (invalid parent)' AS issue_type, COUNT(*) AS count
+-- FROM LAB_COMMENT c
+-- WHERE c.PARENT_ID IS NOT NULL
+--   AND NOT EXISTS (SELECT 1 FROM LAB_COMMENT p WHERE p.ID = c.PARENT_ID);
+--
+-- -- 2. 댓글 수 불일치 검사
+-- SELECT
+--     p.ID AS POST_ID,
+--     p.TITLE,
+--     p.COMMENT_COUNT AS STORED_COUNT,
+--     COUNT(c.ID) AS ACTUAL_COUNT,
+--     ABS(p.COMMENT_COUNT - COUNT(c.ID)) AS DIFFERENCE
+-- FROM LAB_POST p
+--          LEFT JOIN LAB_COMMENT c ON p.ID = c.POST_ID AND c.IS_DELETED = 0
+-- GROUP BY p.ID, p.TITLE, p.COMMENT_COUNT
+-- HAVING p.COMMENT_COUNT != COUNT(c.ID);
+--
+-- -- 3. 잘못된 댓글 깊이 검사
+-- SELECT c.*
+-- FROM LAB_COMMENT c
+--          LEFT JOIN LAB_COMMENT parent ON c.PARENT_ID = parent.ID
+-- WHERE (c.PARENT_ID IS NULL AND c.DEPTH != 0)
+--    OR (c.PARENT_ID IS NOT NULL AND c.DEPTH != parent.DEPTH + 1);
+--
+-- -- 4. 발행일시가 없는 발행된 포스트 검사
+-- SELECT ID, TITLE, STATUS, PUBLISHED_DATE
+-- FROM LAB_POST
+-- WHERE STATUS = 'PUBLISHED'
+--   AND PUBLISHED_DATE IS NULL;
+--
+-- -- 5. 태그 형식 검사 (쉼표로 끝나거나 연속 쉼표 있는 경우)
+-- SELECT ID, TITLE, TAGS
+-- FROM LAB_POST
+-- WHERE TAGS IS NOT NULL
+--   AND (TAGS LIKE '%,,' OR TAGS LIKE '%,' OR TAGS LIKE ',%');
+--
+-- COMMIT;
 
 
 
@@ -1326,28 +1299,28 @@ INSERT INTO admins (
 COMMIT;
 
 -- 9. 검증 쿼리들
-SELECT
-    id,
-    name,
-    role,
-    SUBSTR(bio, 1, 50) || '...' as bio_preview,
-    location,
-    email,
-    total_views,
-    start_year,
-    is_active,
-    TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
-FROM admins
-ORDER BY created_at DESC;
-
--- 조회수 포맷팅 테스트
-SELECT
-    name,
-    total_views,
-    CASE
-        WHEN total_views >= 1000000 THEN ROUND(total_views/1000000, 1) || 'M'
-        WHEN total_views >= 1000 THEN ROUND(total_views/1000, 1) || 'K'
-        ELSE TO_CHAR(total_views)
-        END as formatted_views
-FROM admins
-WHERE is_active = 1;
+-- SELECT
+--     id,
+--     name,
+--     role,
+--     SUBSTR(bio, 1, 50) || '...' as bio_preview,
+--     location,
+--     email,
+--     total_views,
+--     start_year,
+--     is_active,
+--     TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
+-- FROM admins
+-- ORDER BY created_at DESC;
+--
+-- -- 조회수 포맷팅 테스트
+-- SELECT
+--     name,
+--     total_views,
+--     CASE
+--         WHEN total_views >= 1000000 THEN ROUND(total_views/1000000, 1) || 'M'
+--         WHEN total_views >= 1000 THEN ROUND(total_views/1000, 1) || 'K'
+--         ELSE TO_CHAR(total_views)
+--         END as formatted_views
+-- FROM admins
+-- WHERE is_active = 1;

@@ -13,11 +13,28 @@ export const useTheme = () => {
 };
 
 // velog 스타일 색상 생성 함수
+// const getthemeColors = (dark) => ({
+//     primary: '#12B886',
+//     text: dark ? '#ECECEC' : '#212529',
+//     subText: dark ? '#ADB5BD' : '#495057',
+//     background: dark ? '#1A1B23' : '#f8f9fa',
+//     border: dark ? '#2B2D31' : '#E9ECEF',
+//     hover: dark ? '#2B2D31' : '#F8F9FA',
+//     section: dark ? '#1E1F25' : '#FAFAFA',
+//     success: '#12B886',
+//     error: '#FA5252',
+//     warning: '#FD7E14',
+// });
+
 const getthemeColors = (dark) => ({
-    primary: '#12B886',
-    text: dark ? '#ECECEC' : '#212529',
-    subText: dark ? '#ADB5BD' : '#495057',
+    primary: '#20C997',
+    secondary: dark ? '#51CF66' : '#51CF66',
+    accent: '#74E39A',
     background: dark ? '#1A1B23' : '#f8f9fa',
+    surface: dark ? '#1E1E1E' : '#F8F9FA',
+    text: dark ? '#ECECEC' : '#212529',
+    textSecondary: dark ? '#B3B3B3' : '#868E96' ,
+    subText: dark ? '#ADB5BD' : '#495057',
     border: dark ? '#2B2D31' : '#E9ECEF',
     hover: dark ? '#2B2D31' : '#F8F9FA',
     section: dark ? '#1E1F25' : '#FAFAFA',
@@ -25,6 +42,8 @@ const getthemeColors = (dark) => ({
     error: '#FA5252',
     warning: '#FD7E14',
 });
+
+
 
 // 테마 설정 기본값
 const defaultTheme = {

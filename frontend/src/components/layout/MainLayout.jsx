@@ -37,7 +37,7 @@ const MainLayout = memo(() => {
                 backgroundColor: themeColors.background,
             }}
         >
-            {/* Header - user 정보를 prop으로 전달 */}
+             {/*Header - user 정보를 prop으로 전달*/}
             <Header
                 isDark={dark}
                 navOpened={navOpened}

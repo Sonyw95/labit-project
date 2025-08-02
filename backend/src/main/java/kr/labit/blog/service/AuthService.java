@@ -29,6 +29,7 @@ public class AuthService {
 
     /**
      * 카카오 로그인 인증 주소
+     * @return Kakak Login Page Path
      */
     public String kakaoAuthPath(){
         try{
@@ -40,7 +41,10 @@ public class AuthService {
     }
 
     /**
-     * 카카오 로그인 처리 (Access Token + Refresh Token 발급)
+     *  카카오 로그인 처리 (Access Token + Refresh Token 발급 ) Refresh Token 현재 발급 중지.
+     * @param authorizationCode Kakao Login 인증 코드
+     * @param request Refresh Token 발급용 = 현자 발급 중지
+     * @return LoginResponseDto
      */
     public LoginResponseDto kakaoLogin(String authorizationCode, HttpServletRequest request) {
         try {
@@ -74,6 +78,37 @@ public class AuthService {
             log.error("카카오 로그인 실패", e);
             throw new RuntimeException("카카오 로그인에 실패했습니다.", e);
         }
+    }
+
+    /**
+     * 카카오 인증 유저 탈퇴
+     * @param kakaoAccessToken
+     * @param userId
+     */
+    public void withdrawal(String kakaoAccessToken, Long userId) {
+
+        log.info("회원탈퇴 실시 ID={}", userId);
+        Optional<LabUsers> existingUser = userRepository.findByKakaoId(userId);
+        log.info("USER INFO={}", existingUser);
+
+//
+//        try {
+//            if (kakaoAccessToken != null) {
+//                try {
+//                    kakaoService.accountDelete(kakaoAccessToken);
+//
+//
+//                } catch (Exception e) {
+//                    log.warn("카카오 회원 탈퇴 실패", e);
+//                }
+//            }
+//
+//            log.info("회원 탈퇴 완료: userId={}", userId);
+//
+//        } catch (Exception e) {
+//            log.warn("회원탈퇴 중 오류 발생: userId={}", userId, e);
+//            throw new RuntimeException("카카오 회원 탈퇴에 실패했습니다.", e);
+//        }
     }
 
     /**

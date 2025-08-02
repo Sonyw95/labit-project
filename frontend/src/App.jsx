@@ -26,7 +26,6 @@ import {ModalsProvider} from "@mantine/modals";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import useAuthStore from "./stores/authStore.js";
 import {showToast} from "./components/advanced/Toast.jsx";
-import {authService} from "@/api/authService.js";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -158,6 +157,7 @@ const App = memo(() => {
                         </ToastProvider>
                     </ThemeProvider>
                 </ModalsProvider>
+
             </MantineProvider>
         </QueryClientProvider>
     );

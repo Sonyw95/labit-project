@@ -1,1005 +1,362 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import {
     Container,
     Grid,
-    Card,
     Group,
     Text,
-    TextInput,
-    Textarea,
-    Button,
-    Avatar,
     ActionIcon,
-    Stack,
-    Alert,
-    Modal,
     Paper,
     Title,
     Box,
     Badge,
 } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
-import { modals } from '@mantine/modals';
-// Navigation would be handled by parent component or routing library
 import {
     IconArrowLeft,
-    IconCamera,
-    IconTrash,
-    IconEdit,
-    IconCheck,
-    IconX,
-    IconAlertTriangle,
-    IconUpload,
-    IconUser,
-    IconMail,
-    IconCalendar,
-    IconPencil
 } from '@tabler/icons-react';
-import { useTheme } from "@/contexts/ThemeContext.jsx";
-import { showToast } from "@/components/advanced/Toast.jsx";
-import {Navigate, useNavigate} from "react-router-dom";
+import {
+    createBackButtonStyles,
+    createBadgeStyles,
+    createContainerStyles,
+    createHeaderStyles,
+    createTextStyles
+} from "@/utils/useEditStyle.js";
+import ProfileImageUpload from "@/components/section/profile/ProfileImageUpload.jsx";
+import UserInfoForm from "@/components/section/profile/UserInfoForm.jsx";
+import ActionButtons from "@/components/section/profile/ActionButtons.jsx";
+import DangerZone from "@/components/section/profile/DangerZone.jsx";
+import {useUserEdit} from "@/hooks/auth/useUserEdit.jsx";
+import useAuthStore from "@/stores/authStore.js";
 
-// Modal configurations for dark mode and reusability
-const createModalConfig = (themeColors) => ({
-    centered: true,
-    overlayProps: {
-        backgroundOpacity: 0.55,
-        blur: 3,
-    },
-    styles: {
-        header: {
-            backgroundColor: themeColors.section,
-            color: themeColors.text,
-        },
-        body: {
-            backgroundColor: themeColors.section,
-            color: themeColors.text,
-        },
-        title: {
-            color: themeColors.text,
-            fontWeight: 600,
-        },
-        close: {
-            color: themeColors.text,
-            '&:hover': {
-                backgroundColor: themeColors.hover,
-            }
-        }
-    },
-});
 
-// Custom hook for confirm modals with dark mode support
-const useConfirmModals = () => {
-    const { themeColors } = useTheme();
-
-    const modalConfig = useMemo(() => createModalConfig(themeColors), [themeColors]);
-
-    const confirmProps = useMemo(() => ({
-        variant: 'filled',
-        styles: {
-            root: {
-                fontWeight: 600,
-                color: 'white',
-                '&:hover': {
-                    opacity: 0.9,
-                }
-            }
-        }
-    }), []);
-
-    const cancelProps = useMemo(() => ({
-        variant: 'subtle',
-        styles: {
-            root: {
-                color: themeColors.text,
-                backgroundColor: 'transparent',
-                border: `1px solid ${themeColors.border}`,
-                fontWeight: 500,
-                '&:hover': {
-                    backgroundColor: themeColors.hover,
-                }
-            }
-        }
-    }), [themeColors]);
-
-    const openUnsavedChangesModal = useCallback((onConfirm, type = 'cancel') => {
-        const isGoBack = type === 'goback';
-
-        modals.openConfirmModal({
-            ...modalConfig,
-            title: isGoBack ? '페이지 나가기' : '변경사항 취소',
-            children: (
-                <Box>
-                    <Text size="sm" c={themeColors.text}>
-                        {isGoBack ? '뒤로가시겠습니까?' : '변경사항이 있습니다. 정말 취소하시겠습니까?'}
-                    </Text>
-                    <Text size="xs" c={themeColors.subText} mt="xs">
-                        작성중인 내용은 저장되지 않습니다.
-                    </Text>
-                </Box>
-            ),
-            labels: {
-                confirm: (
-                    <Text fw={600} c="white">
-                        {isGoBack ? '뒤로가기' : '취소'}
-                    </Text>
-                ),
-                cancel: (
-                    <Text fw={500} c={themeColors.text}>
-                        닫기
-                    </Text>
-                )
-            },
-            confirmProps: {
-                ...confirmProps,
-                color: isGoBack ? 'blue' : 'red',
-                styles: {
-                    ...confirmProps.styles,
-                    root: {
-                        ...confirmProps.styles.root,
-                        backgroundColor: isGoBack ? themeColors.primary : themeColors.error,
-                    }
-                }
-            },
-            cancelProps,
-            onConfirm,
-        });
-    }, [modalConfig, confirmProps, cancelProps, themeColors]);
-
-    const openDeleteAccountModal = useCallback((onConfirm) => {
-        modals.openConfirmModal({
-            ...modalConfig,
-            title: '계정 삭제 확인',
-            children: (
-                <Stack gap="md">
-                    <Alert
-                        color="red"
-                        icon={<IconAlertTriangle size={16} />}
-                        styles={{
-                            root: {
-                                backgroundColor: `${themeColors.error}15`,
-                                border: `1px solid ${themeColors.error}40`,
-                                color: themeColors.text,
-                            },
-                            message: { color: themeColors.text }
-                        }}
-                    >
-                        정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-                    </Alert>
-                    <Text size="sm" c={themeColors.subText}>
-                        • 작성한 모든 포스트 삭제<br/>
-                        • 댓글 및 좋아요 기록 삭제<br/>
-                        • 팔로워/팔로잉 관계 삭제
-                    </Text>
-                </Stack>
-            ),
-            labels: {
-                confirm: (
-                    <Text fw={600} c="white">
-                        삭제하기
-                    </Text>
-                ),
-                cancel: (
-                    <Text fw={500} c={themeColors.text}>
-                        취소
-                    </Text>
-                )
-            },
-            confirmProps: {
-                ...confirmProps,
-                color: 'red',
-                styles: {
-                    ...confirmProps.styles,
-                    root: {
-                        ...confirmProps.styles.root,
-                        backgroundColor: themeColors.error,
-                    }
-                }
-            },
-            cancelProps,
-            onConfirm,
-        });
-    }, [modalConfig, confirmProps, cancelProps, themeColors]);
-
-    return { openUnsavedChangesModal, openDeleteAccountModal };
-};
-
-// Profile Image Upload Component with optimization
-const ProfileImageUpload = React.memo(({ currentImage, onImageChange, onImageRemove }) => {
-    const { themeColors } = useTheme();
-    const fileInputRef = useRef(null);
-    const [preview, setPreview] = useState(currentImage);
-    const [isUploading, setIsUploading] = useState(false);
-
-    const cardStyles = useMemo(() => ({
-        backgroundColor: themeColors.section,
-        borderColor: themeColors.border,
-    }), [themeColors]);
-
-    const avatarStyles = useMemo(() => ({
-        border: `2px solid ${themeColors.border}`,
-    }), [themeColors.border]);
-
-    const uploadButtonStyles = useMemo(() => ({
-        root: {
-            backgroundColor: themeColors.primary,
-            color: 'white',
-            '&:hover': {
-                backgroundColor: themeColors.primary,
-                opacity: 0.9
-            }
-        }
-    }), [themeColors.primary]);
-
-    const removeButtonStyles = useMemo(() => ({
-        root: {
-            backgroundColor: themeColors.error,
-            color: 'white',
-            '&:hover': {
-                backgroundColor: '#e03131'
-            }
-        }
-    }), [themeColors.error]);
-
-    const handleFileSelect = useCallback(async (file) => {
-        if (!file) return;
-
-        if (!file.type.startsWith('image/')) {
-            showToast.error("업로드 불가", '이미지 파일만 업로드 가능합니다.');
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            showToast.info("", '파일 크기는 5MB 이하여야 합니다.');
-            return;
-        }
-
-        setIsUploading(true);
-
-        try {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const result = reader.result;
-                setPreview(result);
-                onImageChange(file, result);
-                setIsUploading(false);
-            };
-            reader.readAsDataURL(file);
-        } catch (error) {
-            console.error('Image upload error:', error);
-            setIsUploading(false);
-        }
-    }, [onImageChange]);
-
-    const handleRemoveImage = useCallback(() => {
-        setPreview(null);
-        onImageRemove();
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    }, [onImageRemove]);
-
-    const handleUploadClick = useCallback(() => {
-        fileInputRef.current?.click();
-    }, []);
+// 페이지 헤더 컴포넌트
+const PageHeader = React.memo(({
+                                   onGoBack,
+                                   hasChanges,
+                                   isSaving,
+                                   themeColors
+                               }) => {
+    const headerStyles = useMemo(() => createHeaderStyles(themeColors), [themeColors]);
+    const backButtonStyles = useMemo(() => createBackButtonStyles(themeColors), [themeColors]);
+    const badgeStyles = useMemo(() => createBadgeStyles(themeColors, 'warning'), [themeColors]);
+    const textStyles = useMemo(() => createTextStyles(themeColors), [themeColors]);
+    const subtitleStyles = useMemo(() => createTextStyles(themeColors, 'subtitle'), [themeColors]);
 
     return (
-        <Card p="lg" radius="md" withBorder style={cardStyles}>
-            <Stack align="center" gap="md">
-                <Text fw={600} size="sm" c={themeColors.text}>
-                    프로필 이미지
-                </Text>
-
-                <Box pos="relative">
-                    <Avatar
-                        size={120}
-                        radius="50%"
-                        src={preview}
-                        style={avatarStyles}
-                        aria-label="프로필 이미지"
-                    >
-                        <IconUser size={48} color={themeColors.subText} />
-                    </Avatar>
-
+        <Paper
+            p="md"
+            radius="md"
+            withBorder
+            style={headerStyles}
+            component="header"
+            role="banner"
+        >
+            <Group justify="space-between" align="center">
+                <Group gap="md">
                     <ActionIcon
-                        size="sm"
-                        radius="50%"
-                        variant="filled"
-                        color="blue"
-                        pos="absolute"
-                        bottom={8}
-                        right={8}
-                        onClick={handleUploadClick}
-                        loading={isUploading}
-                        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                        aria-label="프로필 이미지 변경"
+                        variant="subtle"
+                        onClick={onGoBack}
+                        disabled={isSaving}
+                        styles={backButtonStyles}
+                        aria-label="이전 페이지로 돌아가기"
+                        size="lg"
                     >
-                        <IconCamera size={14} />
+                        <IconArrowLeft size={18} aria-hidden="true" />
                     </ActionIcon>
-                </Box>
-
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileSelect(e.target.files?.[0])}
-                    style={{ display: 'none' }}
-                    aria-label="프로필 이미지 파일 선택"
-                />
-
-                <Group gap="xs">
-                    <Button
-                        variant="light"
-                        size="xs"
-                        leftSection={<IconUpload size={14} />}
-                        onClick={handleUploadClick}
-                        disabled={isUploading}
-                        styles={uploadButtonStyles}
-                    >
-                        업로드
-                    </Button>
-
-                    {preview && (
-                        <Button
-                            variant="light"
-                            size="xs"
-                            leftSection={<IconTrash size={14} />}
-                            onClick={handleRemoveImage}
-                            styles={removeButtonStyles}
+                    <Box>
+                        <Title
+                            order={1}
+                            style={textStyles}
+                            size="h2"
                         >
-                            제거
-                        </Button>
-                    )}
+                            프로필 설정
+                        </Title>
+                        <Text
+                            size="sm"
+                            style={subtitleStyles}
+                            role="doc-subtitle"
+                        >
+                            프로필 정보를 수정할 수 있습니다
+                        </Text>
+                    </Box>
                 </Group>
 
-                <Text size="xs" c={themeColors.subText} ta="center">
-                    JPG, PNG 파일 (최대 5MB)
-                </Text>
-            </Stack>
-        </Card>
-    );
-});
-
-ProfileImageUpload.displayName = 'ProfileImageUpload';
-
-// User Info Form Component with optimization
-const UserInfoForm = React.memo(({ userInfo, onChange, errors = {} }) => {
-    const { themeColors } = useTheme();
-
-    const cardStyles = useMemo(() => ({
-        backgroundColor: themeColors.section,
-        borderColor: themeColors.border,
-    }), [themeColors]);
-
-    const inputStyles = useMemo(() => ({
-        input: {
-            backgroundColor: themeColors.background,
-            borderColor: themeColors.border,
-            color: themeColors.text,
-            '&:focus': {
-                borderColor: themeColors.primary,
-            },
-            '&::placeholder': {
-                color: themeColors.subText,
-            }
-        },
-        label: {
-            color: themeColors.text,
-            fontWeight: 500,
-        }
-    }), [themeColors]);
-
-    const readOnlyInputStyles = useMemo(() => ({
-        input: {
-            backgroundColor: themeColors.hover,
-            borderColor: themeColors.border,
-            color: themeColors.subText,
-            cursor: 'not-allowed'
-        },
-        label: { color: themeColors.text }
-    }), [themeColors]);
-
-    const handleInputChange = useCallback((field) => (value) => {
-        onChange({ ...userInfo, [field]: value });
-    }, [userInfo, onChange]);
-
-    const handleNicknameChange = useCallback((e) => {
-        handleInputChange('nickname')(e.target.value);
-    }, [handleInputChange]);
-
-    const handleBioChange = useCallback((e) => {
-        handleInputChange('bio')(e.target.value);
-    }, [handleInputChange]);
-
-    const handleDateChange = useCallback((value) => {
-        handleInputChange('devStartDate')(value);
-    }, [handleInputChange]);
-
-    return (
-        <Stack gap="md">
-            {/* Basic Info Card */}
-            <Card p="lg" radius="md" withBorder style={cardStyles}>
-                <Stack gap="md">
-                    <Group gap="xs" mb="sm">
-                        <IconUser size={16} color={themeColors.primary} />
-                        <Text fw={600} size="sm" c={themeColors.text}>
-                            기본 정보
-                        </Text>
-                    </Group>
-
-                    <TextInput
-                        label="닉네임"
-                        placeholder="닉네임을 입력하세요"
-                        value={userInfo.nickname || ''}
-                        onChange={handleNicknameChange}
-                        error={errors.nickname}
-                        leftSection={<IconEdit size={14} color={themeColors.subText} />}
-                        styles={inputStyles}
-                        aria-describedby={errors.nickname ? 'nickname-error' : undefined}
-                    />
-
-                    <TextInput
-                        label="이메일"
-                        value={userInfo.email || ''}
-                        readOnly
-                        leftSection={<IconMail size={14} color={themeColors.subText} />}
-                        rightSection={
-                            <Badge
-                                size="xs"
-                                styles={{
-                                    root: {
-                                        backgroundColor: themeColors.hover,
-                                        color: themeColors.subText
-                                    }
-                                }}
-                            >
-                                수정불가
-                            </Badge>
-                        }
-                        styles={readOnlyInputStyles}
-                        aria-label="이메일 주소 (수정 불가)"
-                    />
-                </Stack>
-            </Card>
-
-            {/* About Me Card */}
-            <Card p="lg" radius="md" withBorder style={cardStyles}>
-                <Stack gap="md">
-                    <Group gap="xs" mb="sm">
-                        <IconPencil size={16} color={themeColors.primary} />
-                        <Text fw={600} size="sm" c={themeColors.text}>
-                            자기소개
-                        </Text>
-                    </Group>
-
-                    <Textarea
-                        placeholder="자신을 소개해주세요..."
-                        value={userInfo.bio || ''}
-                        onChange={handleBioChange}
-                        error={errors.bio}
-                        minRows={4}
-                        maxRows={8}
-                        autosize
-                        styles={inputStyles}
-                        aria-describedby="bio-counter"
-                    />
-
-                    <Text
-                        id="bio-counter"
-                        size="xs"
-                        c={themeColors.subText}
+                {hasChanges && (
+                    <Badge
+                        styles={badgeStyles}
+                        aria-label="저장되지 않은 변경사항이 있습니다"
+                        role="status"
                         aria-live="polite"
                     >
-                        {userInfo.bio?.length || 0}/500
-                    </Text>
-                </Stack>
-            </Card>
-
-            {/* Development Start Date Card */}
-            <Card p="lg" radius="md" withBorder style={cardStyles}>
-                <Stack gap="md">
-                    <Group gap="xs" mb="sm">
-                        <IconCalendar size={16} color={themeColors.primary} />
-                        <Text fw={600} size="sm" c={themeColors.text}>
-                            개발 시작일
-                        </Text>
-                    </Group>
-
-                    <DateInput
-                        label="언제부터 개발을 시작하셨나요?"
-                        placeholder="날짜를 선택하세요"
-                        value={userInfo.devStartDate}
-                        onChange={handleDateChange}
-                        error={errors.devStartDate}
-                        maxDate={new Date()}
-                        styles={inputStyles}
-                        aria-label="개발 시작 날짜 선택"
-                    />
-                </Stack>
-            </Card>
-        </Stack>
-    );
-});
-
-UserInfoForm.displayName = 'UserInfoForm';
-
-// Action Buttons Component with optimization
-const ActionButtons = React.memo(({ onSave, onCancel, isSaving, hasChanges }) => {
-    const { themeColors } = useTheme();
-
-    const cardStyles = useMemo(() => ({
-        backgroundColor: themeColors.section,
-        borderColor: themeColors.border,
-    }), [themeColors]);
-
-    const saveButtonStyles = useMemo(() => ({
-        root: {
-            backgroundColor: hasChanges ? themeColors.primary : themeColors.hover,
-            color: hasChanges ? 'white' : themeColors.subText,
-            fontWeight: 600,
-            '&:hover': {
-                backgroundColor: hasChanges ? themeColors.primary : themeColors.hover,
-                opacity: hasChanges ? 0.9 : 1,
-            },
-            '&:disabled': {
-                backgroundColor: themeColors.hover,
-                color: themeColors.subText,
-            }
-        }
-    }), [hasChanges, themeColors]);
-
-    const cancelButtonStyles = useMemo(() => ({
-        root: {
-            color: themeColors.subText,
-            '&:hover': {
-                backgroundColor: themeColors.hover,
-            }
-        }
-    }), [themeColors]);
-
-    return (
-        <Card p="lg" radius="md" withBorder style={cardStyles}>
-            <Group justify="space-between">
-                <Button
-                    variant="subtle"
-                    leftSection={<IconX size={16} />}
-                    onClick={onCancel}
-                    disabled={isSaving}
-                    styles={cancelButtonStyles}
-                    aria-label="변경사항 취소"
-                >
-                    취소
-                </Button>
-
-                <Button
-                    leftSection={<IconCheck size={16} />}
-                    onClick={onSave}
-                    loading={isSaving}
-                    disabled={!hasChanges}
-                    styles={saveButtonStyles}
-                    aria-label={hasChanges ? "변경사항 저장" : "저장할 변경사항 없음"}
-                >
-                    저장하기
-                </Button>
+                        변경사항 있음
+                    </Badge>
+                )}
             </Group>
-        </Card>
+        </Paper>
     );
 });
 
-ActionButtons.displayName = 'ActionButtons';
-
-// Danger Zone Component with optimization
-const DangerZone = React.memo(({ onDeleteAccount }) => {
-    const { themeColors } = useTheme();
-    const { openDeleteAccountModal } = useConfirmModals();
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [confirmText, setConfirmText] = useState('');
-    const [isDeleting, setIsDeleting] = useState(false);
-
-    const cardStyles = useMemo(() => ({
-        backgroundColor: themeColors.section,
-        borderColor: themeColors.error,
-    }), [themeColors]);
-
-    const alertStyles = useMemo(() => ({
-        root: {
-            backgroundColor: `${themeColors.error}15`,
-            border: `1px solid ${themeColors.error}40`,
-            color: themeColors.text,
-        },
-        message: { color: themeColors.text }
-    }), [themeColors]);
-
-    const buttonStyles = useMemo(() => ({
-        root: {
-            borderColor: themeColors.error,
-            color: themeColors.error,
-            '&:hover': {
-                backgroundColor: `${themeColors.error}10`,
-            }
-        }
-    }), [themeColors.error]);
-
-    const modalStyles = useMemo(() => ({
-        header: {
-            backgroundColor: themeColors.section,
-            borderBottom: `1px solid ${themeColors.border}`,
-        },
-        body: {
-            backgroundColor: themeColors.section,
-        },
-        title: {
-            color: themeColors.text,
-        },
-    }), [themeColors]);
-
-    const handleDeleteClick = useCallback(() => {
-        setShowConfirmModal(true);
-    }, []);
-
-    const handleConfirmDelete = useCallback(async () => {
-        if (confirmText !== 'DELETE') return;
-
-        setIsDeleting(true);
-        try {
-            await onDeleteAccount();
-        } catch (error) {
-            console.error('Delete account error:', error);
-        } finally {
-            setIsDeleting(false);
-            setShowConfirmModal(false);
-            setConfirmText('');
-        }
-    }, [confirmText, onDeleteAccount]);
-
-    const handleModalClose = useCallback(() => {
-        if (!isDeleting) {
-            setShowConfirmModal(false);
-            setConfirmText('');
-        }
-    }, [isDeleting]);
-
-    const handleConfirmTextChange = useCallback((e) => {
-        setConfirmText(e.target.value);
-    }, []);
-
+// 그리드 레이아웃 컴포넌트
+const ProfileGrid = React.memo(({
+                                    userInfo,
+                                    errors,
+                                    isSaving,
+                                    hasChanges,
+                                    onUserInfoChange,
+                                    onImageChange,
+                                    onImageRemove,
+                                    onSave,
+                                    onCancel,
+                                    onDeleteAccount
+                                }) => {
     return (
-        <>
-            <Card p="lg" radius="md" withBorder style={cardStyles}>
-                <Stack gap="md">
-                    <Group gap="xs">
-                        <IconAlertTriangle size={16} color={themeColors.error} />
-                        <Text fw={600} size="sm" c={themeColors.error}>
-                            위험 영역
-                        </Text>
-                    </Group>
-
-                    <Alert icon={<IconAlertTriangle size={16} />} styles={alertStyles}>
-                        <Text size="sm" mb="xs" c={themeColors.text}>
-                            계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.
-                        </Text>
-                        <Text size="xs" c={themeColors.subText}>
-                            • 작성한 모든 포스트 삭제<br/>
-                            • 댓글 및 좋아요 기록 삭제<br/>
-                            • 팔로워/팔로잉 관계 삭제<br/>
-                            • 이 작업은 되돌릴 수 없습니다
-                        </Text>
-                    </Alert>
-
-                    <Button
-                        color="red"
-                        variant="outline"
-                        leftSection={<IconTrash size={16} />}
-                        onClick={handleDeleteClick}
-                        styles={buttonStyles}
-                        style={{ alignSelf: 'flex-start' }}
-                        aria-label="계정 삭제"
-                    >
-                        회원탈퇴
-                    </Button>
-                </Stack>
-            </Card>
-
-            <Modal
-                opened={showConfirmModal}
-                onClose={handleModalClose}
-                title="계정 삭제 확인"
-                centered
-                closeOnClickOutside={!isDeleting}
-                closeOnEscape={!isDeleting}
-                styles={modalStyles}
-                overlayProps={{
-                    backgroundOpacity: 0.55,
-                    blur: 3,
-                }}
+        <Grid
+            gutter="md"
+            role="main"
+            aria-label="프로필 편집 영역"
+        >
+            {/* 프로필 이미지 - 왼쪽 컬럼 */}
+            <Grid.Col
+                span={{ base: 12, sm: 12, md: 4 }}
+                aria-label="프로필 이미지 섹션"
             >
-                <Stack gap="md">
-                    <Alert
-                        icon={<IconAlertTriangle size={16} />}
-                        styles={alertStyles}
-                    >
-                        <Text c={themeColors.text}>
-                            정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-                        </Text>
-                    </Alert>
+                <ProfileImageUpload
+                    currentImage={userInfo.profileImage}
+                    onImageChange={onImageChange}
+                    onImageRemove={onImageRemove}
+                    disabled={isSaving}
+                />
+            </Grid.Col>
 
-                    <Text size="sm" c={themeColors.text}>
-                        계속하려면 아래에 <strong>DELETE</strong>를 입력하세요:
-                    </Text>
+            {/* 사용자 정보 폼 - 오른쪽 컬럼 */}
+            <Grid.Col
+                span={{ base: 12, sm: 12, md: 8 }}
+                aria-label="사용자 정보 입력 섹션"
+            >
+                <UserInfoForm
+                    userInfo={userInfo}
+                    onChange={onUserInfoChange}
+                    errors={errors}
+                    disabled={isSaving}
+                />
+            </Grid.Col>
 
-                    <TextInput
-                        value={confirmText}
-                        onChange={handleConfirmTextChange}
-                        placeholder="DELETE"
-                        disabled={isDeleting}
-                        styles={{
-                            input: {
-                                backgroundColor: themeColors.background,
-                                borderColor: themeColors.border,
-                                color: themeColors.text,
-                                '&:focus': {
-                                    borderColor: themeColors.primary,
-                                }
-                            }
-                        }}
-                    />
+            {/* 액션 버튼 - 전체 너비 */}
+            <Grid.Col span={12}>
+                <ActionButtons
+                    onSave={onSave}
+                    onCancel={onCancel}
+                    isSaving={isSaving}
+                    hasChanges={hasChanges}
+                    disabled={isSaving}
+                />
+            </Grid.Col>
 
-                    <Group justify="flex-end" gap="xs">
-                        <Button
-                            variant="subtle"
-                            onClick={handleModalClose}
-                            disabled={isDeleting}
-                            styles={{
-                                root: {
-                                    color: themeColors.text,
-                                    '&:hover': {
-                                        backgroundColor: themeColors.hover,
-                                    }
-                                }
-                            }}
-                        >
-                            취소
-                        </Button>
-                        <Button
-                            onClick={handleConfirmDelete}
-                            disabled={confirmText !== 'DELETE'}
-                            loading={isDeleting}
-                            styles={{
-                                root: {
-                                    backgroundColor: themeColors.error,
-                                    color: 'white',
-                                    '&:hover': {
-                                        backgroundColor: '#e03131',
-                                    }
-                                }
-                            }}
-                        >
-                            삭제하기
-                        </Button>
-                    </Group>
-                </Stack>
-            </Modal>
-        </>
+            {/* 위험 영역 - 전체 너비 */}
+            <Grid.Col span={12}>
+                <DangerZone
+                    onDeleteAccount={onDeleteAccount}
+                    disabled={isSaving}
+                />
+            </Grid.Col>
+        </Grid>
     );
 });
 
-DangerZone.displayName = 'DangerZone';
-
-// Main Profile Settings Page Component
+// 메인 사용자 프로필 페이지 컴포넌트
 const UserProfilePage = () => {
-    const { themeColors } = useTheme();
-    const { openUnsavedChangesModal } = useConfirmModals();
-    const navigate = useNavigate();
+    // 초기 데이터 생성 (한 번만)
+    // const initialUserData = useMemo(() => createInitialUserData(), []);
 
-    // Initial user data (would come from API)
-    const initialUserData = useMemo(() => ({
-        id: 1,
-        nickname: '개발자 김벨로그',
-        email: 'velogger@example.com',
-        bio: '프론트엔드 개발을 사랑하는 개발자입니다. React와 TypeScript를 주로 사용하며, 새로운 기술에 대한 학습을 즐깁니다.',
-        profileImage: null,
-        devStartDate: new Date('2020-03-15'),
-    }), []);
+    const { user: initialUserData } = useAuthStore();
 
-    const [userInfo, setUserInfo] = useState(initialUserData);
-    const [originalUserInfo] = useState(initialUserData);
-    const [isSaving, setIsSaving] = useState(false);
-    const [errors, setErrors] = useState({});
+    // 커스텀 훅으로 상태 및 핸들러 관리
+    const {
+        userInfo,
+        errors,
+        isSaving,
+        hasChanges,
+        themeColors,
+        handleUserInfoChange,
+        handleImageChange,
+        handleImageRemove,
+        handleSave,
+        handleCancel,
+        handleDeleteAccount,
+        handleGoBack
+    } = useUserEdit(initialUserData);
 
-    // Memoized styles
-    const containerStyles = useMemo(() => ({
-        backgroundColor: themeColors.background,
-        minHeight: '100vh',
-    }), [themeColors.background]);
+    // 컨테이너 스타일 메모이제이션
+    const containerStyles = useMemo(() =>
+            createContainerStyles(themeColors),
+        [themeColors]
+    );
 
-    const headerStyles = useMemo(() => ({
-        backgroundColor: themeColors.section,
-        borderColor: themeColors.border,
-    }), [themeColors]);
+    // 페이지 제목 설정 (SEO 및 접근성)
+    useEffect(() => {
+        const originalTitle = document.title;
+        document.title = '프로필 설정 - 사용자 편집';
 
-    const backButtonStyles = useMemo(() => ({
-        root: {
-            color: themeColors.text,
-            '&:hover': {
-                backgroundColor: themeColors.hover
+        return () => {
+            document.title = originalTitle;
+        };
+    }, []);
+
+    // 페이지 나가기 전 확인 (브라우저 레벨)
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (hasChanges && !isSaving) {
+                event.preventDefault();
+                event.returnValue = ''; // 표준 방식
+                return ''; // 일부 브라우저 호환성
             }
-        }
-    }), [themeColors]);
+        };
 
-    // Check if there are changes
-    const hasChanges = useMemo(() => {
-        return JSON.stringify(userInfo) !== JSON.stringify(originalUserInfo);
-    }, [userInfo, originalUserInfo]);
-
-    // Validation
-    const validateForm = useCallback(() => {
-        const newErrors = {};
-
-        if (!userInfo.nickname?.trim()) {
-            newErrors.nickname = '닉네임을 입력해주세요';
-        } else if (userInfo.nickname.length < 2) {
-            newErrors.nickname = '닉네임은 2자 이상이어야 합니다';
-        } else if (userInfo.nickname.length > 20) {
-            newErrors.nickname = '닉네임은 20자 이하여야 합니다';
-        }
-
-        if (userInfo.bio && userInfo.bio.length > 500) {
-            newErrors.bio = '자기소개는 500자 이하여야 합니다';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }, [userInfo]);
-
-    // Handlers
-    const handleUserInfoChange = useCallback((newUserInfo) => {
-        setUserInfo(newUserInfo);
-        // Clear related errors when user types
-        if (errors.nickname && newUserInfo.nickname !== userInfo.nickname) {
-            setErrors(prev => ({ ...prev, nickname: undefined }));
-        }
-        if (errors.bio && newUserInfo.bio !== userInfo.bio) {
-            setErrors(prev => ({ ...prev, bio: undefined }));
-        }
-    }, [userInfo, errors]);
-
-    const handleImageChange = useCallback((file, preview) => {
-        setUserInfo(prev => ({ ...prev, profileImage: preview, profileImageFile: file }));
-    }, []);
-
-    const handleImageRemove = useCallback(() => {
-        setUserInfo(prev => ({ ...prev, profileImage: null, profileImageFile: null }));
-    }, []);
-
-    const handleSave = useCallback(async () => {
-        if (!validateForm()) return;
-
-        setIsSaving(true);
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            console.log('Saving user info:', userInfo);
-            showToast.success('프로필 수정 성공', '프로필이 성공적으로 업데이트되었습니다!');
-
-        } catch (error) {
-            console.error('Save error:', error);
-            showToast.error('오류 발생', '저장 중 오류가 발생했습니다.');
-        } finally {
-            setIsSaving(false);
-        }
-    }, [userInfo, validateForm]);
-
-    const handleCancel = useCallback(() => {
         if (hasChanges) {
-            openUnsavedChangesModal(() => {
-                setUserInfo(originalUserInfo);
-                setErrors({});
-            }, 'cancel');
-        } else {
-            setUserInfo(originalUserInfo);
-            setErrors({});
+            window.addEventListener('beforeunload', handleBeforeUnload);
         }
-    }, [hasChanges, originalUserInfo, openUnsavedChangesModal]);
 
-    const handleDeleteAccount = useCallback(async () => {
-        console.log('Deleting account...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        showToast.success('삭제 완료', '계정이 삭제되었습니다.');
-    }, []);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [hasChanges, isSaving]);
 
-    const handleGoBack = useCallback(() => {
-        if (hasChanges) {
-            openUnsavedChangesModal(() => {
-            }, 'goback');
-        } else {
-            // return <Navigate replace to='/' />
-            navigate(-1)
+    // 키보드 단축키 지원
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            // Ctrl+S 또는 Cmd+S로 저장
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                if (hasChanges && !isSaving) {
+                    handleSave();
+                }
+            }
+            // Escape로 취소 (모달이 열려있지 않을 때)
+            else if (event.key === 'Escape' && !document.querySelector('[role="dialog"]')) {
+                if (hasChanges && !isSaving) {
+                    handleCancel();
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [hasChanges, isSaving, handleSave, handleCancel]);
+
+    // 폼 제출 핸들러
+    const handleFormSubmit = useCallback((event) => {
+        event.preventDefault();
+        if (hasChanges && !isSaving) {
+            handleSave();
         }
-    }, [hasChanges, openUnsavedChangesModal, navigate]);
+    }, [hasChanges, isSaving, handleSave]);
 
     return (
-        <div style={containerStyles}>
+        <Box
+            style={containerStyles}
+            role="application"
+            aria-label="사용자 프로필 편집 애플리케이션"
+        >
             <Container size="md" py="xl">
-                <Stack gap="xl">
-                    {/* Header */}
-                    <Paper p="md" radius="md" withBorder style={headerStyles}>
-                        <Group justify="space-between" align="center">
-                            <Group gap="md">
-                                <ActionIcon
-                                    variant="subtle"
-                                    onClick={handleGoBack}
-                                    disabled={isSaving}
-                                    styles={backButtonStyles}
-                                    aria-label="뒤로가기"
-                                >
-                                    <IconArrowLeft size={18} />
-                                </ActionIcon>
-                                <Box>
-                                    <Title order={2} c={themeColors.text}>
-                                        프로필 설정
-                                    </Title>
-                                    <Text size="sm" c={themeColors.subText}>
-                                        프로필 정보를 수정할 수 있습니다
-                                    </Text>
-                                </Box>
-                            </Group>
+                <form onSubmit={handleFormSubmit} noValidate>
+                    <Box style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        {/* 페이지 헤더 */}
+                        <PageHeader
+                            onGoBack={handleGoBack}
+                            hasChanges={hasChanges}
+                            isSaving={isSaving}
+                            themeColors={themeColors}
+                        />
 
-                            {hasChanges && (
-                                <Badge
-                                    styles={{
-                                        root: {
-                                            backgroundColor: `${themeColors.warning}20`,
-                                            color: themeColors.warning,
-                                            border: `1px solid ${themeColors.warning}40`
-                                        }
-                                    }}
-                                >
-                                    변경사항 있음
-                                </Badge>
-                            )}
-                        </Group>
-                    </Paper>
+                        {/* 메인 컨텐츠 그리드 */}
+                        <ProfileGrid
+                            userInfo={userInfo}
+                            errors={errors}
+                            isSaving={isSaving}
+                            hasChanges={hasChanges}
+                            onUserInfoChange={handleUserInfoChange}
+                            onImageChange={handleImageChange}
+                            onImageRemove={handleImageRemove}
+                            onSave={handleSave}
+                            onCancel={handleCancel}
+                            onDeleteAccount={handleDeleteAccount}
+                        />
+                    </Box>
+                </form>
 
-                    {/* Bento Grid Layout */}
-                    <Grid gutter="md">
-                        {/* Profile Image - Left Column */}
-                        <Grid.Col span={{ base: 12, sm: 12, md: 4 }}>
-                            <ProfileImageUpload
-                                currentImage={userInfo.profileImage}
-                                onImageChange={handleImageChange}
-                                onImageRemove={handleImageRemove}
-                            />
-                        </Grid.Col>
+                {/* 키보드 단축키 안내 (화면 리더용) */}
+                <Box
+                    className="sr-only"
+                    role="note"
+                    aria-label="키보드 단축키 안내"
+                >
+                    Ctrl+S 또는 Cmd+S를 눌러 저장할 수 있습니다.
+                    Escape 키를 눌러 변경사항을 취소할 수 있습니다.
+                </Box>
 
-                        {/* User Info Form - Right Column */}
-                        <Grid.Col span={{ base: 12, sm: 12, md: 8 }}>
-                            <UserInfoForm
-                                userInfo={userInfo}
-                                onChange={handleUserInfoChange}
-                                errors={errors}
-                            />
-                        </Grid.Col>
-
-                        {/* Action Buttons - Full Width */}
-                        <Grid.Col span={12}>
-                            <ActionButtons
-                                onSave={handleSave}
-                                onCancel={handleCancel}
-                                isSaving={isSaving}
-                                hasChanges={hasChanges}
-                            />
-                        </Grid.Col>
-
-                        {/* Danger Zone - Full Width */}
-                        <Grid.Col span={12}>
-                            <DangerZone onDeleteAccount={handleDeleteAccount} />
-                        </Grid.Col>
-                    </Grid>
-                </Stack>
+                {/* 상태 안내 (화면 리더용) */}
+                <Box
+                    aria-live="polite"
+                    aria-atomic="true"
+                    className="sr-only"
+                    role="status"
+                >
+                    {isSaving && '프로필 정보를 저장하는 중입니다...'}
+                    {hasChanges && !isSaving && '저장되지 않은 변경사항이 있습니다.'}
+                </Box>
             </Container>
-        </div>
+
+            {/* 전역 스타일 - 접근성 및 성능 개선 */}
+            <style jsx global>{`
+                .sr-only {
+                    position: absolute !important;
+                    width: 1px !important;
+                    height: 1px !important;
+                    padding: 0 !important;
+                    margin: -1px !important;
+                    overflow: hidden !important;
+                    clip: rect(0, 0, 0, 0) !important;
+                    white-space: nowrap !important;
+                    border: 0 !important;
+                }
+
+                /* 포커스 개선 */
+                *:focus-visible {
+                    outline: 2px solid ${themeColors.primary};
+                    outline-offset: 2px;
+                }
+
+                /* 감소된 모션 선호 사용자를 위한 설정 */
+                @media (prefers-reduced-motion: reduce) {
+                    * {
+                        animation-duration: 0.01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: 0.01ms !important;
+                    }
+                }
+
+                /* 고대비 모드 지원 */
+                @media (prefers-contrast: high) {
+                    button, input, textarea {
+                        border-width: 2px !important;
+                    }
+                }
+
+                /* 인쇄 최적화 */
+                @media print {
+                    .no-print {
+                        display: none !important;
+                    }
+                }
+            `}</style>
+        </Box>
     );
 };
+
+// displayName 설정
+PageHeader.displayName = 'PageHeader';
+ProfileGrid.displayName = 'ProfileGrid';
+UserProfilePage.displayName = 'UserProfilePage';
 
 export default UserProfilePage;

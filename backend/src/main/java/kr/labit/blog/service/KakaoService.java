@@ -115,4 +115,27 @@ public class KakaoService {
             // 로그아웃 실패해도 서비스 로그아웃은 진행
         }
     }
+
+
+    /**
+     * 카카오 회원탈퇴( 연결끊기 )
+     */
+    public void withdrawal(String token){
+        String url = "https://kapi.kakao.com/v1/user/unlink";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        try {
+            restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            log.info("카카오 회원탈퇴 성공");
+        } catch (Exception e) {
+            log.warn("카카오 회원탈퇴 실패", e);
+            throw new RuntimeException("카카오 회원 탈퇴에 실패했습니다.", e);
+
+        }
+    }
 }

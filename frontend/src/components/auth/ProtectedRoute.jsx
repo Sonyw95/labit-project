@@ -7,7 +7,7 @@ import {showToast} from "../advanced/Toast.jsx";
 
 const ProtectedRoute = memo(({
                                  children
-                                 // , requiredRole = null
+                                 , requiredRole = false
                              })  => {
     const location = useLocation();
     const {
@@ -32,7 +32,7 @@ const ProtectedRoute = memo(({
         return <Navigate to="/home" state={{ from: location }} replace />;
     }
 
-    if( !isAdmin ){
+    if( requiredRole && !isAdmin  ){
         showToast.error("접근 권한.", "권한이 없어 홈으로 이동합니다.",  <IconShieldLock size={16} />);
         return <Navigate to="/home" state={{ from: location }} replace />;
     }
