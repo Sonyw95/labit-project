@@ -29,19 +29,19 @@ export const useRouteAuthGuard = () => {
 
     // 메모이즈된 토큰 검증 함수
     const performRouteValidation = useCallback(async (pathname, isRefresh = false) => {
-        if (!isMountedRef.current || isLoading || !isInitialized) {
-            console.log('검증 조건 미충족:', { isLoading, isInitialized });
-            return;
-        }
+        // if (!isMountedRef.current || isLoading || !isInitialized) {
+        //     console.log('검증 조건 미충족:', { isLoading, isInitialized });
+        //     return;
+        // }
 
         // 새로고침이나 초기 렌더링에서는 보호된 경로가 아니면 검증하지 않음
         const protectedPaths = ['/admin', '/user/settings'];
         const isProtectedRoute = protectedPaths.some(path => pathname.startsWith(path));
 
-        if (!isProtectedRoute) {
-            console.log('보호되지 않은 경로, 검증 건너뛰기:', pathname);
-            return;
-        }
+        // if (!isProtectedRoute) {
+        //     console.log('보호되지 않은 경로, 검증 건너뛰기:', pathname);
+        //     return;
+        // }
 
         if (!isAuthenticated) {
             console.log('인증되지 않은 사용자, 홈으로 리다이렉트');
@@ -62,7 +62,6 @@ export const useRouteAuthGuard = () => {
             console.log(`보호된 경로 접근 감지: ${pathname}, 토큰 검증 시작`);
 
             const isValid = await validateStoredTokens();
-
             if (!isValid && isMountedRef.current) {
                 console.warn('토큰 검증 실패, 로그아웃 처리');
                 logout();
@@ -74,6 +73,10 @@ export const useRouteAuthGuard = () => {
                 console.error('라우트 검증 중 오류:', error);
                 // 서버 오류인 경우 즉시 로그아웃하지 않고 경고만
                 showToast.error('인증 확인 실패', '네트워크를 확인해주세요.');
+            }else if( error ){
+                showToast.error('토큰 만료', '토큰 만료 재로그인');
+                logout();
+                navigate('/home', { replace: true });
             }
         }
     }, [isAuthenticated, isLoading, isInitialized, validateStoredTokens, logout, navigate, cleanup]);
