@@ -1,4 +1,4 @@
-package kr.labit.blog.dto;
+package kr.labit.blog.dto.user;
 
 import kr.labit.blog.entity.LabUsers;
 import lombok.Builder;

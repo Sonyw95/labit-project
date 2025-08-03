@@ -66,14 +66,14 @@ const UserMenuButton = memo(({
             <Group gap="sm">
                 <UserAvatar
                     user={user}
-                    showOnlineStatus={true}
+                    showOnlineStatus
                     size="md"
                 />
 
                 <UserInfo
                     user={user}
                     layout="horizontal"
-                    showRole={true}
+                    showRole
                 />
 
                 {user.notifications > 0 && (

@@ -1,8 +1,7 @@
-package kr.labit.blog.dto;
+package kr.labit.blog.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.context.annotation.Profile;
 
 @Data
 public class KakaoUserInfoDto {

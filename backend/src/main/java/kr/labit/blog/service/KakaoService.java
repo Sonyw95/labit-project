@@ -1,7 +1,7 @@
 package kr.labit.blog.service;
 
-import kr.labit.blog.dto.KakaoTokenDto;
-import kr.labit.blog.dto.KakaoUserInfoDto;
+import kr.labit.blog.dto.user.KakaoTokenDto;
+import kr.labit.blog.dto.user.KakaoUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

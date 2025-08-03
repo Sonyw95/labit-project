@@ -41,6 +41,11 @@ public class NavigationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LabUsers currentUser = null;
 
+        log.info("AUauthentication = {}", authentication);
+        log.info("authentication.isAuthenticated = {}", authentication.isAuthenticated());
+        log.info("authentication.getPrincipal = {}", authentication.getPrincipal());
+
+
         if (authentication != null && authentication.isAuthenticated() &&
                 authentication.getPrincipal() instanceof LabUsers) {
             currentUser = (LabUsers) authentication.getPrincipal();

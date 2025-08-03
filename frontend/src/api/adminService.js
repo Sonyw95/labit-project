@@ -5,7 +5,7 @@ export const adminService = {
     getAdminInfo: () => api.publicRequest('get', '/admin/info'),
 
     // 관리자 조회수 증가 (공개 API - 토큰 불필요)
-    // incrementViews: () => api.publicRequest('post', '/admin/views/increment'),
+    incrementViews: () => api.publicRequest('post', '/admin/views/increment'),
 
     // 관리자 정보 수정 (인증 필요)
     updateAdminInfo: (adminData) => api.put('/admin/info', adminData),

@@ -46,11 +46,12 @@ const MainLayout = memo(() => {
 
     // 네비게이션 데이터 로드 (초기화 완료 후)
     useEffect(() => {
-        if (isInitialized && isAuthenticated) {
-            fetchNavigationTree();
-            console.log('네비게이션 트리 로드');
+        fetchNavigationTree();
+        console.log('네비게이션 트리 로드');
+
+        if ( isAdmin || isInitialized && isAuthenticated ) {
         }
-    }, [isInitialized, isAuthenticated, fetchNavigationTree]);
+    }, [isAdmin, isInitialized, isAuthenticated, fetchNavigationTree]);
 
     // 초기화 중이거나 로딩 중이면 로딩 표시
     if (!isInitialized || isLoading) {

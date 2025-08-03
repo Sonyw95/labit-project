@@ -78,13 +78,141 @@ public class LabUsers {
         return this.role.ordinal() >= requiredRole.ordinal();
     }
 
-    public void updateLastLoginDate() {
-        this.lastLoginDate = LocalDateTime.now();
-    }
+//    public void updateLastLoginDate() {
+//        this.lastLoginDate = LocalDateTime.now();
+//    }
 
     public void updateProfile(String nickname, String email, String profileImage) {
-        this.nickname = nickname;
-        this.email = email;
-        this.profileImage = profileImage;
+        if (nickname != null && !nickname.trim().isEmpty()) {
+            this.nickname = nickname.trim();
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            this.email = email.trim();
+        }
+        if (profileImage != null) {
+            this.profileImage = profileImage.trim().isEmpty() ? null : profileImage.trim();
+        }
+        this.modifiedDate = LocalDateTime.now();
+    }
+
+    /**
+     * 닉네임만 업데이트
+     */
+    public void updateNickname(String nickname) {
+        if (nickname != null && !nickname.trim().isEmpty()) {
+            this.nickname = nickname.trim();
+            this.modifiedDate = LocalDateTime.now();
+        }
+    }
+
+    /**
+     * 이메일만 업데이트
+     */
+    public void updateEmail(String email) {
+        if (email != null && !email.trim().isEmpty()) {
+            this.email = email.trim();
+            this.modifiedDate = LocalDateTime.now();
+        }
+    }
+
+    /**
+     * 프로필 이미지만 업데이트
+     */
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage != null && profileImage.trim().isEmpty() ? null : profileImage;
+        this.modifiedDate = LocalDateTime.now();
+    }
+
+    /**
+     * 계정 활성화 상태 변경
+     */
+    public void updateActiveStatus(Boolean isActive) {
+        this.isActive = isActive;
+        this.modifiedDate = LocalDateTime.now();
+    }
+
+    /**
+     * 사용자 역할 변경
+     */
+    public void updateRole(UserRole role) {
+        this.role = role;
+        this.modifiedDate = LocalDateTime.now();
+    }
+
+    /**
+     * 마지막 로그인 시간 업데이트 (기존 메서드가 있다면 오버라이드)
+     */
+    public void updateLastLoginDate() {
+        this.lastLoginDate = LocalDateTime.now();
+        this.modifiedDate = LocalDateTime.now();
+    }
+
+    /**
+     * 사용자 정보 검증
+     */
+    public boolean isValidForUpdate() {
+        return this.id != null &&
+                this.kakaoId != null &&
+                this.nickname != null && !this.nickname.trim().isEmpty() &&
+                this.email != null && !this.email.trim().isEmpty() &&
+                this.isActive != null && this.isActive;
+    }
+
+    /**
+     * 프로필 완성도 확인
+     */
+    public boolean isProfileComplete() {
+        return this.nickname != null && !this.nickname.trim().isEmpty() &&
+                this.email != null && !this.email.trim().isEmpty() &&
+                this.profileImage != null && !this.profileImage.trim().isEmpty();
+    }
+
+    /**
+     * 사용자 표시명 반환 (닉네임 우선, 없으면 이메일 앞부분)
+     */
+    public String getDisplayName() {
+        if (this.nickname != null && !this.nickname.trim().isEmpty()) {
+            return this.nickname;
+        }
+        if (this.email != null && !this.email.trim().isEmpty()) {
+            int atIndex = this.email.indexOf('@');
+            return atIndex > 0 ? this.email.substring(0, atIndex) : this.email;
+        }
+        return "사용자" + (this.id != null ? this.id : "");
+    }
+
+    /**
+     * 등급별 권한 확인
+     */
+    public boolean canManageUsers() {
+        return this.role == UserRole.SUPER_ADMIN;
+    }
+
+    public boolean canManagePosts() {
+        return this.role == UserRole.ADMIN || this.role == UserRole.SUPER_ADMIN;
+    }
+
+    public boolean canCreatePosts() {
+        return this.isActive && (this.role == UserRole.USER || this.role == UserRole.ADMIN || this.role == UserRole.SUPER_ADMIN);
+    }
+
+    /**
+     * 소프트 딜리트 (실제 삭제 대신 비활성화)
+     */
+    public void softDelete() {
+        this.isActive = false;
+        this.modifiedDate = LocalDateTime.now();
+        // 개인정보 마스킹 (선택사항)
+        // this.email = "deleted_" + this.id + "@deleted.com";
+        // this.nickname = "삭제된사용자" + this.id;
+        // this.profileImage = null;
+    }
+
+    /**
+     * 계정 복구
+     */
+    public void restore() {
+        this.isActive = true;
+        this.modifiedDate = LocalDateTime.now();
     }
 }

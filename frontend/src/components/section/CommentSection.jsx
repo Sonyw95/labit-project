@@ -23,17 +23,6 @@ const CommentSection = memo(({ postId, comments = [] }) => {
 
     const [isWriting, setIsWriting] = useState(false);
 
-    // velog 스타일 색상
-    // const themeColors = {
-    //     primary: '#12B886',
-    //     text: dark ? '#ECECEC' : '#212529',
-    //     subText: dark ? '#ADB5BD' : '#495057',
-    //     background: dark ? '#1A1B23' : '#FFFFFF',
-    //     border: dark ? '#2B2D31' : '#E9ECEF',
-    //     hover: dark ? '#2B2D31' : '#F8F9FA',
-    //     inputBg: dark ? '#2B2D31' : '#FFFFFF',
-    // };
-
     // 댓글 작성 폼
     const form = useForm({
         initialValues: {

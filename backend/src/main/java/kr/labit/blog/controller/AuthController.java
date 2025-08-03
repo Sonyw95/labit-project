@@ -4,9 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import kr.labit.blog.dto.LoginResponseDto;
-import kr.labit.blog.dto.UserInfoDto;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import kr.labit.blog.dto.user.LoginResponseDto;
+import kr.labit.blog.dto.user.UserInfoDto;
+import kr.labit.blog.dto.user.UserUpdateRequestDto;
+import kr.labit.blog.dto.user.UserUpdateResponseDto;
 import kr.labit.blog.entity.LabUsers;
+import kr.labit.blog.security.jwt.JwtBlacklistService;
 import kr.labit.blog.security.jwt.JwtTokenProvider;
 import kr.labit.blog.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +33,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtBlacklistService jwtBlacklistService;
 
     @GetMapping("/kakao/path")
     @Operation(summary = "카카오 인증 주소", description = "카카오 계정 인증 주소 가져오기")
@@ -63,6 +70,7 @@ public class AuthController {
     @Operation(summary = "로그아웃", description = "현재 사용자를 로그아웃시킵니다.")
     public ResponseEntity<String> logout(
             HttpServletRequest request,
+            HttpServletResponse response,
             @Parameter(description = "카카오 액세스 토큰 (선택사항)")
             @RequestParam(required = false) String kakaoAccessToken) {
 
@@ -81,40 +89,86 @@ public class AuthController {
 
             authService.logout(jwtToken, kakaoAccessToken, userId);
 
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+
+            response.setHeader("Clear-Site-Data", "\"cookies\", \"storage\"");
+
             return ResponseEntity.ok("로그아웃이 완료되었습니다.");
 
         } catch (Exception e) {
             log.error("로그아웃 실패", e);
+            // 로그아웃은 실패해도 SecurityContext는 비워야 함
+            SecurityContextHolder.clearContext();
             return ResponseEntity.ok("로그아웃이 완료되었습니다."); // 로그아웃은 항상 성공으로 처리
         }
     }
 
-    @GetMapping("/me")
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
-    public ResponseEntity<UserInfoDto> getUserInfo() {
-        log.info("사용자 정보 조회 요청");
+    @PutMapping("/me")
+    @Operation(summary = "내 정보 수정", description = "현재 로그인한 사용자의 정보를 수정하고 새로운 토큰을 발급합니다.")
+    public ResponseEntity<UserUpdateResponseDto> updateUserInfo(
+            @Parameter(description = "수정할 사용자 정보", required = true)
+            @Valid @RequestBody UserUpdateRequestDto updateRequest,
+            HttpServletRequest request) {
+
+        log.info("사용자 정보 수정 요청: nickname={}, email={}",
+                updateRequest.getNickname(), updateRequest.getEmail());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated() ||
                 !(authentication.getPrincipal() instanceof LabUsers)) {
-            log.warn("인증되지 않은 사용자의 정보 조회 시도");
+            log.warn("인증되지 않은 사용자의 정보 수정 시도");
             return ResponseEntity.status(401).build();
         }
 
-        LabUsers user = (LabUsers) authentication.getPrincipal();
-        UserInfoDto userInfo = UserInfoDto.fromEntity(user);
+        LabUsers currentUser = (LabUsers) authentication.getPrincipal();
+        String oldToken = getTokenFromRequest(request);
 
-        // 활성 세션 개수 추가 (선택사항)
-//        try {
-//            long activeSessionCount = authService.getActiveSessionCount(user.getId());
-//            // userInfo에 activeSessionCount 필드가 있다면 설정
-//        } catch (Exception e) {
-//            log.warn("활성 세션 개수 조회 실패: userId={}", user.getId(), e);
-//        }
+        try {
+            // 1. 사용자 정보 수정
+            LabUsers updatedUser = authService.updateUserInfo(currentUser.getId(), updateRequest);
 
-        return ResponseEntity.ok(userInfo);
+            log.info("사용자 정보 수정 완료: userId={}, nickname={}",
+                    updatedUser.getId(), updatedUser.getNickname());
+
+            // 2. 기존 토큰을 블랙리스트에 추가 (선택사항 - 보안 강화)
+            if (oldToken != null) {
+                jwtBlacklistService.addToBlacklist(oldToken);
+                log.info("기존 토큰을 블랙리스트에 추가: userId={}", updatedUser.getId());
+            }
+
+            // 3. 업데이트된 사용자 정보로 새로운 JWT 토큰 생성
+            String newAccessToken = jwtTokenProvider.generateToken(updatedUser);
+
+            log.info("새로운 JWT 토큰 발급 완료: userId={}", updatedUser.getId());
+
+            // 4. 응답 DTO 생성
+            UserUpdateResponseDto response = UserUpdateResponseDto.builder()
+                    .user(UserInfoDto.fromEntity(updatedUser))
+                    .accessToken(newAccessToken)
+                    .tokenType("Bearer")
+                    .expiresIn(30 * 60) // 30분
+                    .message("프로필이 성공적으로 수정되었습니다.")
+                    .build();
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            log.warn("사용자 정보 수정 실패 - 잘못된 요청: userId={}, error={}",
+                    currentUser.getId(), e.getMessage());
+            return ResponseEntity.badRequest().build();
+
+        } catch (Exception e) {
+            log.error("사용자 정보 수정 실패: userId={}", currentUser.getId(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
+
+
     @GetMapping("/withdrawal")
     @Operation( summary = "카카오 회원 탈퇴", description = "회원 탈퇴를 진행합닌다.")
     public ResponseEntity<String> withdrawal(

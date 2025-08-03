@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
     Container,
-    Paper,
     Text,
     TextInput,
     Button,
@@ -52,14 +51,24 @@ const UserEditPage = () => {
         },
         validate: {
             nickname: (value) => {
-                if (!value?.trim()) return '닉네임을 입력해주세요';
-                if (value.length < 2) return '닉네임은 2자 이상이어야 합니다';
-                if (value.length > 20) return '닉네임은 20자 이하여야 합니다';
+                if (!value?.trim()) {
+                    return '닉네임을 입력해주세요';
+                }
+                if (value.length < 2) {
+                    return '닉네임은 2자 이상이어야 합니다';
+                }
+                if (value.length > 20) {
+                    return '닉네임은 20자 이하여야 합니다';
+                }
                 return null;
             },
             email: (value) => {
-                if (!value?.trim()) return '이메일을 입력해주세요';
-                if (!/^\S+@\S+\.\S+$/.test(value)) return '올바른 이메일 형식이 아닙니다';
+                if (!value?.trim()) {
+                    return '이메일을 입력해주세요';
+                }
+                if (!/^\S+@\S+\.\S+$/.test(value)) {
+                    return '올바른 이메일 형식이 아닙니다';
+                }
                 return null;
             },
         },
@@ -77,7 +86,7 @@ const UserEditPage = () => {
                 setProfileImagePreview(user.profileImage);
             }
         }
-    }, [user]);
+    }, [ user]);
 
     // 인증되지 않은 경우 리다이렉트
     useEffect(() => {
@@ -88,7 +97,9 @@ const UserEditPage = () => {
 
     // 파일 선택 처리
     const handleImageSelect = useCallback((file) => {
-        if (!file) return;
+        if (!file) {
+            return;
+        }
 
         // 파일 유효성 검사
         const maxSize = 5 * 1024 * 1024; // 5MB
@@ -135,7 +146,9 @@ const UserEditPage = () => {
 
     // 폼 제출 처리
     const handleSubmit = useCallback(async (values) => {
-        if (!user) return;
+        if (!user) {
+            return;
+        }
 
         setLoading(true);
 
@@ -146,7 +159,7 @@ const UserEditPage = () => {
             if (profileImageFile) {
                 setImageUploading(true);
                 try {
-                    const uploadResponse = await uploadService.uploadImage(profileImageFile);
+                    const uploadResponse = await uploadService.uploadImage(profileImageFile, 'profile');
                     profileImageUrl = uploadResponse.fileUrl || uploadResponse.url;
                 } catch (uploadError) {
                     console.error('이미지 업로드 실패:', uploadError);
@@ -169,16 +182,6 @@ const UserEditPage = () => {
             };
 
             await authService.updateUserInfo(updateData);
-
-            // Store 업데이트
-            updateUser(updateData);
-
-            notifications.show({
-                title: '프로필 수정 완료',
-                message: '프로필이 성공적으로 수정되었습니다.',
-                color: 'green',
-                icon: <IconCheck />,
-            });
 
             // 파일 상태 초기화
             setProfileImageFile(null);
@@ -374,8 +377,8 @@ const UserEditPage = () => {
 
                             <TextInput
                                 label="이메일"
-                                placeholder="이메일을 입력하세요"
                                 leftSection={<IconMail size={16} />}
+                                disabled
                                 required
                                 {...form.getInputProps('email')}
                                 styles={{

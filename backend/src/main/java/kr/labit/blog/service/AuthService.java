@@ -1,12 +1,14 @@
 package kr.labit.blog.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kr.labit.blog.dto.KakaoTokenDto;
-import kr.labit.blog.dto.KakaoUserInfoDto;
-import kr.labit.blog.dto.LoginResponseDto;
+import kr.labit.blog.dto.user.KakaoTokenDto;
+import kr.labit.blog.dto.user.KakaoUserInfoDto;
+import kr.labit.blog.dto.user.LoginResponseDto;
+import kr.labit.blog.dto.user.UserUpdateRequestDto;
 import kr.labit.blog.entity.LabUsers;
 import kr.labit.blog.entity.UserRole;
 import kr.labit.blog.repository.LabUsersRepository;
+import kr.labit.blog.security.jwt.JwtBlacklistService;
 import kr.labit.blog.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class AuthService {
     private final KakaoService kakaoService;
     private final LabUsersRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtBlacklistService jwtBlacklistService;
 //    private final RefreshTokenService refreshTokenService;
 
     /**
@@ -117,18 +120,7 @@ public class AuthService {
     private LabUsers saveOrUpdateUser(KakaoUserInfoDto kakaoUserInfo) {
         Optional<LabUsers> existingUser = userRepository.findByKakaoId(kakaoUserInfo.getId());
 
-        if (existingUser.isPresent()) {
-            // 기존 사용자 정보 업데이트
-            LabUsers user = existingUser.get();
-            user.updateProfile(
-                    kakaoUserInfo.getNickname(),
-                    kakaoUserInfo.getEmail(),
-                    kakaoUserInfo.getProfileImageUrl()
-            );
-            user.updateLastLoginDate();
-
-            return userRepository.save(user);
-        } else {
+        if (existingUser.isEmpty()) {
             // 새 사용자 생성
             LabUsers newUser = LabUsers.builder()
                     .kakaoId(kakaoUserInfo.getId())
@@ -141,6 +133,19 @@ public class AuthService {
                     .build();
 
             return userRepository.save(newUser);
+        }
+        else {
+            // 기존 사용자 정보 업데이트
+//            LabUsers user = existingUser.get();
+//            user.updateProfile(
+//                    null,
+//                    kakaoUserInfo.getEmail(),
+//                    kakaoUserInfo.getProfileImageUrl()
+//            );
+//            user.updateLastLoginDate();
+//
+//            return userRepository.save(user);
+            return existingUser.get();
         }
     }
 
@@ -162,24 +167,67 @@ public class AuthService {
      */
     public void logout(String jwtToken, String kakaoAccessToken, Long userId) {
         try {
-//            // 1. 사용자의 모든 Refresh Token 취소
-//            if (userId != null) {
-//                refreshTokenService.revokeAllUserTokens(userId);
-//            }
+            // 1. JWT 토큰을 블랙리스트에 추가하여 무효화
+            if (jwtToken != null && !jwtToken.trim().isEmpty()) {
+                jwtBlacklistService.addToBlacklist(jwtToken);
+                log.info("JWT 토큰이 블랙리스트에 추가됨: userId={}", userId);
+            }
 
-            // 2. 카카오 로그아웃 (실패해도 진행)
-            if (kakaoAccessToken != null) {
+            // 2. 카카오 로그아웃 (실패해도 로컬 로그아웃은 계속 진행)
+            if (kakaoAccessToken != null && !kakaoAccessToken.trim().isEmpty()) {
                 try {
                     kakaoService.logout(kakaoAccessToken);
+                    log.info("카카오 로그아웃 성공: userId={}", userId);
                 } catch (Exception e) {
-                    log.warn("카카오 로그아웃 실패, 로컬 로그아웃은 계속 진행", e);
+                    log.warn("카카오 로그아웃 실패, 로컬 로그아웃은 계속 진행: userId={}", userId, e);
+                }
+            }
+
+            // 3. 사용자 마지막 로그아웃 시간 업데이트 (선택사항)
+            if (userId != null) {
+                try {
+                    Optional<LabUsers> userOpt = userRepository.findById(userId);
+                    if (userOpt.isPresent()) {
+                        LabUsers user = userOpt.get();
+                        // 필요하다면 lastLogoutDate 필드를 추가하여 업데이트
+                        // user.setLastLogoutDate(LocalDateTime.now());
+                        // userRepository.save(user);
+                    }
+                } catch (Exception e) {
+                    log.warn("사용자 로그아웃 시간 업데이트 실패: userId={}", userId, e);
                 }
             }
 
             log.info("로그아웃 완료: userId={}", userId);
 
         } catch (Exception e) {
-            log.warn("로그아웃 중 오류 발생: userId={}", userId, e);
+            log.error("로그아웃 처리 중 오류 발생: userId={}", userId, e);
+            // 로그아웃 실패해도 JWT 토큰은 블랙리스트에 추가
+            if (jwtToken != null && !jwtToken.trim().isEmpty()) {
+                try {
+                    jwtBlacklistService.addToBlacklist(jwtToken);
+                } catch (Exception ex) {
+                    log.error("JWT 토큰 블랙리스트 추가 실패: userId={}", userId, ex);
+                }
+            }
+        }
+    }
+
+    /**
+     * 강제 로그아웃 (모든 기기에서 로그아웃)
+     */
+    public void forceLogoutAllDevices(Long userId, String currentJwtToken) {
+        try {
+            // 현재 토큰을 블랙리스트에 추가
+            if (currentJwtToken != null) {
+                jwtBlacklistService.addUserTokensToBlacklist(userId, currentJwtToken);
+            }
+
+            log.info("사용자 모든 기기 강제 로그아웃 완료: userId={}", userId);
+
+        } catch (Exception e) {
+            log.error("강제 로그아웃 실패: userId={}", userId, e);
+            throw new RuntimeException("강제 로그아웃에 실패했습니다.", e);
         }
     }
 
@@ -255,6 +303,17 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public boolean isTokenValid(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return false;
+        }
+
+        // 1. 블랙리스트 확인
+        if (jwtBlacklistService.isBlacklisted(token)) {
+            log.debug("블랙리스트된 토큰");
+            return false;
+        }
+
+        // 2. JWT 검증
         return jwtTokenProvider.validateToken(token) && !jwtTokenProvider.isTokenExpired(token);
     }
 
@@ -272,4 +331,131 @@ public class AuthService {
 //    public void revokeRefreshToken(String refreshTokenValue) {
 //        refreshTokenService.revokeRefreshToken(refreshTokenValue);
 //    }
+    /**
+     * 사용자 정보 수정
+     */
+    @Transactional
+    public LabUsers updateUserInfo(Long userId, UserUpdateRequestDto updateRequest) {
+        log.info("사용자 정보 수정 시작: userId={}", userId);
+
+        // 사용자 조회
+        LabUsers user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 활성 사용자인지 확인
+        if (!user.getIsActive()) {
+            throw new IllegalArgumentException("비활성화된 사용자입니다.");
+        }
+
+        // 닉네임 중복 검사 (본인 제외)
+        if (!updateRequest.getNickname().equals(user.getNickname())) {
+            Optional<LabUsers> existingUserByNickname = userRepository.findByNickname(updateRequest.getNickname());
+            if (existingUserByNickname.isPresent() && !existingUserByNickname.get().getId().equals(userId)) {
+                throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            }
+        }
+
+        // 이메일 중복 검사 (본인 제외)
+        if (!updateRequest.getEmail().equals(user.getEmail())) {
+            Optional<LabUsers> existingUserByEmail = userRepository.findByEmail(updateRequest.getEmail());
+            if (existingUserByEmail.isPresent() && !existingUserByEmail.get().getId().equals(userId)) {
+                throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            }
+        }
+
+        // 사용자 정보 업데이트
+        user.updateProfile(
+                updateRequest.getNickname(),
+                updateRequest.getEmail(),
+                updateRequest.getProfileImage()
+        );
+
+        LabUsers savedUser = userRepository.save(user);
+
+        log.info("사용자 정보 수정 완료: userId={}, nickname={}, email={}",
+                savedUser.getId(), savedUser.getNickname(), savedUser.getEmail());
+
+        return savedUser;
+    }
+    /**
+     * 이메일 중복 검사
+     */
+    @Transactional(readOnly = true)
+    public boolean isEmailAvailable(String email) {
+        return !userRepository.findByEmail(email).isPresent();
+    }
+
+    /**
+     * 사용자 정보 부분 업데이트 (프로필 이미지만)
+     */
+    @Transactional
+    public LabUsers updateProfileImage(Long userId, String profileImageUrl) {
+        log.info("프로필 이미지 업데이트: userId={}, imageUrl={}", userId, profileImageUrl);
+
+        LabUsers user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (!user.getIsActive()) {
+            throw new IllegalArgumentException("비활성화된 사용자입니다.");
+        }
+
+        user.updateProfile(user.getNickname(), user.getEmail(), profileImageUrl);
+        LabUsers savedUser = userRepository.save(user);
+
+        log.info("프로필 이미지 업데이트 완료: userId={}", savedUser.getId());
+        return savedUser;
+    }
+
+    /**
+     * 사용자 정보 검증
+     */
+    @Transactional(readOnly = true)
+    public void validateUserUpdate(Long userId, UserUpdateRequestDto updateRequest) {
+        // 기본 유효성 검사는 Bean Validation으로 처리
+
+        // 사용자 존재 여부 확인
+        LabUsers user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 활성 사용자인지 확인
+        if (!user.getIsActive()) {
+            throw new IllegalArgumentException("비활성화된 사용자입니다.");
+        }
+
+        // 닉네임 중복 검사 (본인 제외)
+        if (!updateRequest.getNickname().equals(user.getNickname())) {
+            if (!isNicknameAvailable(updateRequest.getNickname())) {
+                throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            }
+        }
+
+        // 이메일 중복 검사 (본인 제외)
+        if (!updateRequest.getEmail().equals(user.getEmail())) {
+            if (!isEmailAvailable(updateRequest.getEmail())) {
+                throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            }
+        }
+
+        log.info("사용자 정보 검증 완료: userId={}", userId);
+    }
+
+    /**
+     * 사용자 활동 로그 (향후 확장용)
+     */
+    @Transactional
+    public void logUserActivity(Long userId, String activity, String details) {
+        try {
+            // 향후 사용자 활동 로그 테이블에 저장
+            log.info("사용자 활동 로그: userId={}, activity={}, details={}", userId, activity, details);
+        } catch (Exception e) {
+            log.warn("사용자 활동 로그 저장 실패: userId={}", userId, e);
+        }
+    }
+    /**
+     * 닉네임 중복 검사
+     */
+    @Transactional(readOnly = true)
+    public boolean isNicknameAvailable(String nickname) {
+        return !userRepository.findByNickname(nickname).isPresent();
+    }
 }

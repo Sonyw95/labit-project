@@ -38,16 +38,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
 
+    private final JwtBlacklistService jwtBlacklistService; // 추가
+
     // 인증이 필요하지 않은 경로들
     private static final String[] PUBLIC_URLS = {
             "/api/auth/kakao/login",
             "/api/auth/kakao/path",
-            "/api/navigation/",
-            "/api/navigation",
+            "/api/files",
             "/api/auth/token/refresh",
             "/api/auth/token/validate",
             "/api/posts",
-            "/api/navigation",
             "/swagger-ui",
             "/v3/api-docs",
             "/swagger-resources",
@@ -95,6 +95,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * JWT 토큰 처리
      */
     private void processJwtToken(String jwt, HttpServletRequest request) {
+
+        // 1. 블랙리스트 확인
+        if (jwtBlacklistService.isBlacklisted(jwt)) {
+            log.debug("블랙리스트된 토큰 사용 시도");
+            throw new JwtException("Token is blacklisted");
+        }
+
+
         if (!jwtTokenProvider.validateToken(jwt)) {
             log.debug("JWT 토큰 검증 실패");
             return;
@@ -150,6 +158,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws IOException {
 
         String requestURI = request.getRequestURI();
+
+        // SecurityContext 비우기
+        SecurityContextHolder.clearContext();
 
         // API 요청인 경우 JSON 응답
         if (requestURI.startsWith("/api/")) {

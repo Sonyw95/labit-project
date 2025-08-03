@@ -20,7 +20,7 @@ function KakaoCallbackPage() {
     const processKakaoCallback = useCallback(async () => {
         // 이미 처리된 경우 중복 실행 방지
         if (hasProcessed.current) {
-            console.log('이미 처리된 콜백, 중복 실행 방지');
+            // console.log('이미 처리된 콜백, 중복 실행 방지');
             return;
         }
 
@@ -33,7 +33,7 @@ function KakaoCallbackPage() {
             const errorParam = searchParams.get('error');
             const errorDescription = searchParams.get('error_description');
 
-            console.log('카카오 콜백 처리 시작');
+            // console.log('카카오 콜백 처리 시작');
 
             // 에러가 있는 경우
             if (errorParam) {
@@ -67,12 +67,12 @@ function KakaoCallbackPage() {
                 return;
             }
 
-            console.log('카카오 로그인 API 호출 시작');
+            // console.log('카카오 로그인 API 호출 시작');
 
             // 카카오 로그인 API 호출
             const data = await authService.kakaoLogin(code);
 
-            console.log('카카오 로그인 API 성공');
+            // console.log('카카오 로그인 API 성공');
 
             if (!data?.accessToken) {
                 throw new Error('액세스 토큰을 받지 못했습니다.');
@@ -91,13 +91,13 @@ function KakaoCallbackPage() {
             showToast.success('로그인 성공', '카카오 로그인이 완료되었습니다.');
 
             // 로그인 성공 시 홈으로 이동
-            console.log('카카오 로그인 성공, 홈으로 이동');
+            // console.log('카카오 로그인 성공, 홈으로 이동');
             setTimeout(() => {
                 navigate('/home', { replace: false });
             }, 1000);
 
         } catch (err) {
-            console.error('카카오 콜백 처리 실패:', err);
+            // console.error('카카오 콜백 처리 실패:', err);
 
             const errorMessage = err.response?.data?.message ||
                 err.message ||

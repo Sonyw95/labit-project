@@ -38,45 +38,44 @@ export const useRouteAuthGuard = () => {
         const protectedPaths = ['/admin', '/user/settings'];
         const isProtectedRoute = protectedPaths.some(path => pathname.startsWith(path));
 
-        // if (!isProtectedRoute) {
-        //     console.log('보호되지 않은 경로, 검증 건너뛰기:', pathname);
-        //     return;
-        // }
+        if (!isProtectedRoute) {
+            return;
+        }
 
         if (!isAuthenticated) {
-            console.log('인증되지 않은 사용자, 홈으로 리다이렉트');
+            showToast.error('접근 제한', '인증되지 않은 사용자')
             navigate('/home', { replace: true });
             return;
         }
 
         // 새로고침인 경우 더 관대하게 처리
         if (isRefresh) {
-            console.log('새로고침 감지, 서버 검증 생략');
             return;
         }
 
         cleanup();
         abortControllerRef.current = new AbortController();
 
-        try {
-            console.log(`보호된 경로 접근 감지: ${pathname}, 토큰 검증 시작`);
+        if( isProtectedRoute ){
+            try {
+                // console.log(`보호된 경로 접근 감지: ${pathname}, 토큰 검증 시작`);
 
-            const isValid = await validateStoredTokens();
-            if (!isValid && isMountedRef.current) {
-                console.warn('토큰 검증 실패, 로그아웃 처리');
-                logout();
-                showToast.error('인증 실패', '다시 로그인해주세요.');
-                navigate('/home', { replace: true });
-            }
-        } catch (error) {
-            if (error.name !== 'AbortError' && isMountedRef.current) {
-                console.error('라우트 검증 중 오류:', error);
-                // 서버 오류인 경우 즉시 로그아웃하지 않고 경고만
-                showToast.error('인증 확인 실패', '네트워크를 확인해주세요.');
-            }else if( error ){
-                showToast.error('토큰 만료', '토큰 만료 재로그인');
-                logout();
-                navigate('/home', { replace: true });
+                const isValid = await validateStoredTokens();
+                if (!isValid && isMountedRef.current) {
+                    logout();
+                    showToast.error('인증 실패', '다시 로그인해주세요.');
+                    navigate('/home', { replace: true });
+                }
+            } catch (error) {
+                // if (error.name !== 'AbortError' && isMountedRef.current) {
+                //     // 서버 오류인 경우 즉시 로그아웃하지 않고 경고만
+                //     showToast.error('인증 확인 실패', '네트워크를 확인해주세요.');
+                // }else
+                if( error ){
+                    showToast.error('토큰 만료', '토큰 만료 재로그인');
+                    logout();
+                    navigate('/home', { replace: true });
+                }
             }
         }
     }, [isAuthenticated, isLoading, isInitialized, validateStoredTokens, logout, navigate, cleanup]);
@@ -89,7 +88,7 @@ export const useRouteAuthGuard = () => {
         if (isInitialized) {
             // 경로가 실제로 변경된 경우에만 검증 실행
             if (lastPathRef.current !== currentPath) {
-                console.log(`라우트 변경 감지: ${lastPathRef.current} -> ${currentPath}`);
+                // console.log(`라우트 변경 감지: ${lastPathRef.current} -> ${currentPath}`);
                 lastPathRef.current = currentPath;
 
                 // 초기 렌더링인지 확인
@@ -104,7 +103,7 @@ export const useRouteAuthGuard = () => {
                 return () => clearTimeout(timeoutId);
             }
         } else {
-            console.log('아직 초기화되지 않음, 라우트 검증 대기 중');
+            // console.log('아직 초기화되지 않음, 라우트 검증 대기 중');
         }
     }, [location.pathname, isInitialized, performRouteValidation]);
 

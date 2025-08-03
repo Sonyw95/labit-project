@@ -50,7 +50,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "포스트 조회", description = "특정 포스트를 조회합니다.")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable(name ="postId") Long postId) {
         PostResponseDto post = postService.getPost(postId);
         return ResponseEntity.ok(post);
     }

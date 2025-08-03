@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/api/auth/kakao/path",
                                 "/api/posts/**",
                                 "/api/assets/**",
+                                "/api/files/**",
                                 "/api/dashboard/**",
                                 "/api/comments/**",
                                 "/api/admin/**",

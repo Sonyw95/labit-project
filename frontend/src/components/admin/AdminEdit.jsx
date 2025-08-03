@@ -156,7 +156,7 @@ const AdminEdit = memo(() => {
 
     // 프로필 이미지 업로드 Mutation
     const uploadImageMutation = useMutation({
-        mutationFn: (formData) => adminService.uploadProfileImage(formData),
+        mutationFn: (formData) => adminService.uploadProfileImage(formData, 'admin'),
         onSuccess: (imageUrl) => {
             setProfileImagePreview(imageUrl);
             notifications.show({

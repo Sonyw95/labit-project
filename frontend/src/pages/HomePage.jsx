@@ -77,24 +77,24 @@ const HomePage = memo(() => {
         return storedAdminInfo || adminInfoFromAPI;
     }, [storedAdminInfo, adminInfoFromAPI]);
 
-    // 조회수 증가 함수
-    const incrementViews = useCallback(async () => {
-        try {
-            await adminService.incrementViews();
-            console.log('조회수 증가 완료');
-        } catch (error) {
-            console.error('조회수 증가 실패:', error);
-        }
-    }, []);
-
-    // 컴포넌트 마운트 시 조회수 증가 (한 번만)
-    useEffect(() => {
-        const hasIncrementedViews = sessionStorage.getItem('admin-views-incremented');
-        if (!hasIncrementedViews) {
-            incrementViews();
-            sessionStorage.setItem('admin-views-incremented', 'true');
-        }
-    }, [incrementViews]);
+    // // 조회수 증가 함수
+    // const incrementViews = useCallback(async () => {
+    //     try {
+    //         await adminService.incrementViews();
+    //         console.log('조회수 증가 완료');
+    //     } catch (error) {
+    //         console.error('조회수 증가 실패:', error);
+    //     }
+    // }, []);
+    //
+    // // 컴포넌트 마운트 시 조회수 증가 (한 번만)
+    // useEffect(() => {
+    //     const hasIncrementedViews = sessionStorage.getItem('admin-views-incremented');
+    //     if (!hasIncrementedViews) {
+    //         incrementViews();
+    //         sessionStorage.setItem('admin-views-incremented', 'true');
+    //     }
+    // }, [incrementViews]);
 
     // 스타일 객체를 메모이제이션
     const containerStyle = useMemo(() => ({

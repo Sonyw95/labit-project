@@ -1,10 +1,12 @@
+import {api} from "./client.js";
 
 export const uploadService = {
     // 이미지 업로드
+
     uploadImage: async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('type', 'image');
+        formData.append('type', 'profile');
 
         return await api.post('/upload/image', formData, {
             headers: {
