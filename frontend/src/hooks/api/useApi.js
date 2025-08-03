@@ -7,6 +7,7 @@ import {postService} from "@/api/postService.js";
 import {commentService} from "@/api/commentService.js";
 import {uploadService} from "@/api/uploadService.js";
 import {assetService} from "@/api/assetService.js";
+import {useCallback} from "react";
 
 export const queryKeys = {
     users: {
@@ -796,5 +797,81 @@ export const useDeleteAssetFile = () => {
         onError: (error) => {
             showToast.error('파일 삭제 실패', error.message || '파일 삭제 중 오류가 발생했습니다.');
         },
+    });
+};
+
+
+// 개선된 인증 관련 훅
+export const useAuthenticatedQuery = (key, queryFn, options = {}) => {
+    const { isAuthenticated, validateStoredTokens } = useAuthStore();
+    const lastValidationRef = useRef(0);
+
+    const enhancedQueryFn = useCallback(async () => {
+        if (!isAuthenticated) {
+            throw new Error('인증되지 않은 사용자');
+        }
+
+        // 5분마다 토큰 검증
+        const now = Date.now();
+        if (now - lastValidationRef.current > 5 * 60 * 1000) {
+            try {
+                await validateStoredTokens();
+                lastValidationRef.current = now;
+            } catch (error) {
+                throw new Error('토큰 검증 실패');
+            }
+        }
+
+        return queryFn();
+    }, [isAuthenticated, validateStoredTokens, queryFn]);
+
+    return useQuery({
+        queryKey: Array.isArray(key) ? key : [key],
+        queryFn: enhancedQueryFn,
+        enabled: isAuthenticated && (options.enabled !== false),
+        staleTime: 5 * 60 * 1000,
+        retry: (failureCount, error) => {
+            if (error?.response?.status === 401) {
+                return false;
+            }
+            return failureCount < 1;
+        },
+        ...options,
+    });
+};
+
+// 개선된 뮤테이션 훅
+export const useAuthenticatedMutation = (mutationFn, options = {}) => {
+    const { isAuthenticated, validateStoredTokens } = useAuthStore();
+    const queryClient = useQueryClient();
+
+    const enhancedMutationFn = useCallback(async (variables) => {
+        if (!isAuthenticated) {
+            throw new Error('인증되지 않은 사용자');
+        }
+
+        try {
+            await validateStoredTokens();
+        } catch (error) {
+            throw new Error('토큰 검증 실패');
+        }
+
+        return mutationFn(variables);
+    }, [isAuthenticated, validateStoredTokens, mutationFn]);
+
+    return useMutation({
+        mutationFn: enhancedMutationFn,
+        retry: (failureCount, error) => {
+            if (error?.response?.status === 401) {
+                return false;
+            }
+            return failureCount < 1;
+        },
+        onError: (error) => {
+            if (error?.response?.status === 401) {
+                queryClient.clear();
+            }
+        },
+        ...options,
     });
 };

@@ -2,6 +2,37 @@ import axios from "axios";
 import useAuthStore from "../stores/authStore.js";
 import { showToast } from "../components/advanced/Toast.jsx";
 
+// 요청 중복 방지를 위한 맵
+const pendingRequests = new Map();
+const requestTimeouts = new Map();
+
+// 요청 키 생성 함수
+const generateRequestKey = (config) => {
+    const { method, url, params, data } = config;
+    return `${method?.toUpperCase()}_${url}_${JSON.stringify(params || {})}_${JSON.stringify(data || {})}`;
+};
+
+// 디바운스된 요청 처리
+const debounceRequest = (key, request, delay = 100) => {
+    if (requestTimeouts.has(key)) {
+        clearTimeout(requestTimeouts.get(key));
+    }
+
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(async () => {
+            requestTimeouts.delete(key);
+            try {
+                const result = await request();
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        }, delay);
+
+        requestTimeouts.set(key, timeout);
+    });
+};
+
 const instance = axios.create({
     baseURL: 'http://localhost:8080/api',
     timeout: 10000,
@@ -11,25 +42,80 @@ const instance = axios.create({
 });
 
 // Request interceptor - 토큰 첨부만
-instance.interceptors.request.use((config) => {
+instance.interceptors.request.use(async (config) => {
     try {
-        const accessToken = useAuthStore.getState().getAccessToken();
-        if (accessToken && !useAuthStore.getState().isTokenExpired(accessToken)) {
+        const state = useAuthStore.getState();
+        const accessToken = state.getAccessToken();
+
+        // 토큰이 있고 만료되지 않았으면 첨부
+        if (accessToken && !state.isTokenExpired(accessToken)) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
+
+        // 중복 요청 방지
+        const requestKey = generateRequestKey(config);
+
+        // 동일한 요청이 진행 중이면 취소
+        if (pendingRequests.has(requestKey)) {
+            const existingRequest = pendingRequests.get(requestKey);
+            existingRequest.cancel('중복 요청으로 인한 취소');
+            pendingRequests.delete(requestKey);
+        }
+
+        // 새로운 CancelToken 생성
+        const cancelSource = axios.CancelToken.source();
+        config.cancelToken = cancelSource.token;
+
+        // 요청을 맵에 저장
+        pendingRequests.set(requestKey, cancelSource);
+
+        // 토큰 검증 (보호된 경로에서만)
+        if (config.headers.Authorization && state.isAuthenticated) {
+            try {
+                await state.validateStoredTokens();
+            } catch (error) {
+                // 검증 실패 시 즉시 로그아웃
+                state.logout();
+                throw new axios.Cancel('토큰 검증 실패로 인한 요청 취소');
+            }
+        }
+
     } catch (error) {
-        console.error('토큰 접근 오류:', error);
+        console.error('요청 인터셉터 오류:', error);
+        if (axios.isCancel(error)) {
+            throw error;
+        }
     }
+
     return config;
 }, (error) => Promise.reject(error));
 
 
 // Response interceptor - 401시 바로 로그아웃
 instance.interceptors.response.use(
-    (response) => response.data,
+    (response) => {
+        // 성공 시 대기 요청에서 제거
+        const requestKey = generateRequestKey(response.config);
+        pendingRequests.delete(requestKey);
+        return response.data;
+    },
     (error) => {
+        // 취소된 요청이면 조용히 처리
+        if (axios.isCancel(error)) {
+            // eslint-disable-next-line prefer-promise-reject-errors
+            return Promise.reject({ cancelled: true, message: error.message });
+        }
+
+        // 에러 시 대기 요청에서 제거
+        if (error.config) {
+            const requestKey = generateRequestKey(error.config);
+            pendingRequests.delete(requestKey);
+        }
+
+        // 401 에러 처리
         if (error.response?.status === 401) {
-            useAuthStore().logout();
+            const state = useAuthStore.getState();
+            state.logout();
             showToast.error('세션 만료', '다시 로그인해주세요.');
 
             // 보호된 페이지에서는 홈으로 리다이렉트
@@ -38,6 +124,7 @@ instance.interceptors.response.use(
                 window.location.href = '/home';
             }
         }
+
         return Promise.reject(error);
     }
 );
@@ -105,9 +192,12 @@ class Api {
         this.api = instance;
     }
 
+    // 디바운스된 요청 메서드들
     async get(url, config) {
-        return await this.api.get(url, config);
+        const requestKey = `GET_${url}_${JSON.stringify(config?.params || {})}`;
+        return debounceRequest(requestKey, () => this.api.get(url, config));
     }
+
 
     async post(url, data, config) {
         return await this.api.post(url, data, config);
@@ -169,6 +259,18 @@ class Api {
             default:
                 throw new Error(`지원하지 않는 HTTP 메서드: ${method}`);
         }
+    }
+    // 모든 대기 중인 요청 취소 (로그아웃 시 사용)
+    cancelAllRequests() {
+        pendingRequests.forEach((cancelSource, requestKey) => {
+            cancelSource.cancel('사용자 로그아웃으로 인한 요청 취소');
+        });
+        pendingRequests.clear();
+
+        requestTimeouts.forEach((timeout, key) => {
+            clearTimeout(timeout);
+        });
+        requestTimeouts.clear();
     }
 }
 

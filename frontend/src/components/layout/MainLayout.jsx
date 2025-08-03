@@ -1,78 +1,68 @@
 import React, {memo, useEffect, useState} from 'react';
 import {
-    AppShell, ScrollArea,
+    AppShell, Center, Loader, ScrollArea,
 } from '@mantine/core';
-import {Navigate, Outlet, useLocation} from "react-router-dom";
+import { Outlet} from "react-router-dom";
 import Header from "@/components/main/header/Header.jsx";
 import {useTheme} from "../../contexts/ThemeContext.jsx";
 import MobileDrawer from "../main/MobileDrawer.jsx";
 import useAuthStore from "../../stores/authStore.js";
 import useNavigationStore from "@/stores/navigationStore.js";
+import {useRouteAuthGuard} from "@/hooks/useRouteAuthGuard.js";
+import {useMemorySafeAuth} from "@/hooks/useMemorySafeAuth.js";
 
 const MainLayout = memo(() => {
-    const location = useLocation();
     const [navOpened, setNavOpened] = useState(false);
     const { dark, toggleColorScheme, themeColors } = useTheme();
-    const [validationError, setValidationError] = useState(false);
 
     // Auth store 사용
     const {
         isAuthenticated,
         isAdmin,
         isLoading,
+        isInitialized, // 새로 추가
         user,
-        validateStoredTokens,
-        logout
+        setInitialized,
     } = useAuthStore();
 
     // Navigation Store 사용
     const { fetchNavigationTree } = useNavigationStore();
 
-    // 라우트 변경 시 토큰 검증
-    useEffect(() => {
-        const validateOnRouteChange = async () => {
-            if (isAuthenticated) {
-                try {
-                    setValidationError(false);
-                    console.log('라우트 변경 감지, 토큰 검증 중:', location.pathname);
-                    await validateStoredTokens();
-                } catch (error) {
-                    console.error('토큰 검증 실패:', error);
-                    setValidationError(true);
-                    logout();
-                }
-            }
-        };
-        validateOnRouteChange();
-    }, [location.pathname, isAuthenticated, validateStoredTokens, logout]);
+    // 커스텀 훅들 - 초기화 완료 후에만 실행
+    useRouteAuthGuard(); // 라우트 변경 시 토큰 검증
+    useMemorySafeAuth(); // 메모리 안전 인증 관리
 
-    // 컴포넌트 마운트 시 네비게이션 데이터 로드
+    // 앱 초기화 처리
     useEffect(() => {
-        if (isAuthenticated && !validationError) {
+        // persist 로딩이 완료되었지만 아직 초기화되지 않은 경우
+        if (!isInitialized && !isLoading) {
+            console.log('수동 초기화 실행');
+            const timer = setTimeout(() => {
+                setInitialized();
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [isInitialized, isLoading, setInitialized]);
+
+    // 네비게이션 데이터 로드 (초기화 완료 후)
+    useEffect(() => {
+        if (isInitialized && isAuthenticated) {
             fetchNavigationTree();
             console.log('네비게이션 트리 로드');
         }
-    }, [isAdmin, fetchNavigationTree, isAuthenticated, validationError]);
+    }, [isInitialized, isAuthenticated, fetchNavigationTree]);
 
-    // 로딩 중이면 로딩 표시
-    if (isLoading) {
+    // 초기화 중이거나 로딩 중이면 로딩 표시
+    if (!isInitialized || isLoading) {
         return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh'
-            }}>
-                로딩중...
-            </div>
+            <Center h="100vh">
+                <div style={{ textAlign: 'center' }}>
+                    <Loader size="lg" />
+                    <Text mt="md">초기화 중...</Text>
+                </div>
+            </Center>
         );
     }
-
-    // 인증되지 않았거나 검증 에러가 있으면 로그인 페이지로 리다이렉트
-    if (validationError) {
-        return <Navigate to="/home" state={{ from: location }} replace />;
-    }
-
 
     return (
         <AppShell

@@ -25,13 +25,13 @@ const AppRouter = memo((() => {
 
 
                 { path: '/posts/:category', element: <PostListPage/> },
-                { path: '/post/edit/:postId', element: <ProtectedRoute requiredRole><PostEditPage/></ProtectedRoute> },
+                { path: '/post/edit/:postId', element: <PostEditPage/> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
 
-                {path:'/user/settings', element: <ProtectedRoute><UserProfilePage /></ProtectedRoute>},
+                {path:'/user/settings', element:<UserProfilePage /> },
 
                 // { path: '/setting/user', element: <UserSettings/>},
-                { path: '/admin', element: <ProtectedRoute requiredRole><AdminManagementPage/></ProtectedRoute>}
+                { path: '/admin', element: <AdminManagementPage/>}
             ]
         },
         { path: '/auth/kakao/callback', element: <KakaoCallbackPage/> },
