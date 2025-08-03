@@ -10,7 +10,7 @@ export const authService = {
         params: { code }
     }),
 
-    updateUserInfo: (data) => api.put('/user/info', data),
+    updateUserInfo: (data) => api.put('/auth/info', data),
 
     // 로그아웃
     logout: (kakaoAccessToken) => api.post('/auth/logout', null, {
