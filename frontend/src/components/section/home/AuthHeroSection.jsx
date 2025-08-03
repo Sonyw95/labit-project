@@ -27,7 +27,6 @@ const AuthHeroSection = memo(({ adminInfo, isLoading, error, onRefresh }) => {
     const { themeColors } = useTheme();
     const avatarRef = useRef(null);
     const fallbackIndexRef = useRef(0);
-    console.log(error)
 
     // 스타일 객체들을 메모이제이션
     const styles = useMemo(() => ({

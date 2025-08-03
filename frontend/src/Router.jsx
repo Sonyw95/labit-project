@@ -1,4 +1,4 @@
-import React, {lazy, memo, Suspense} from "react";
+import React, {lazy, memo} from "react";
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage.jsx";
@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage.jsx";
 import ErrorPage from "@/pages/ErrorPage.jsx";
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout.jsx'));
+
 const AppRouter = memo((() => {
     const router = createBrowserRouter([
         // { path: '/test', element:<DashboardPage/>},

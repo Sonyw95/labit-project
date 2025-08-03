@@ -21,6 +21,10 @@ const useAuthStore = create(
             isAdmin: false,
             tokenRefreshPromise: null, // 중복 갱신 방지
 
+            // 성능 최적화를 위한 새로운 상태
+            lastValidation: null,
+            validationCache: new Map(),
+
             adminInfo: null,
             adminInfoLoading: false,
             adminInfoError: null,
@@ -74,7 +78,6 @@ const useAuthStore = create(
                 }
             },
 
-            // 로그인
             login: (accessToken, refreshToken = null) => {
                 const { extractUserFromToken, isTokenExpired } = get();
 
@@ -98,10 +101,30 @@ const useAuthStore = create(
                     isAuthenticated: true,
                     isAdmin,
                     isLoading: false,
+                    lastValidation: Date.now(), // 로그인 시 검증 시간 설정
                 });
 
-                console.log('로그인 성공:', { userId: user.id, role: user.role, isAdmin });
+                console.log('로그인 성공:', user.nickname);
                 return true;
+            },
+
+            // 기존 logout 함수 개선
+            logout: () => {
+                // 캐시 클리어
+                get().validationCache.clear();
+
+                set({
+                    accessToken: null,
+                    refreshToken: null,
+                    user: null,
+                    isAuthenticated: false,
+                    isAdmin: false,
+                    isLoading: false,
+                    tokenRefreshPromise: null,
+                    lastValidation: null,
+                });
+
+                console.log('로그아웃 완료');
             },
 
             // 토큰 갱신
@@ -161,59 +184,71 @@ const useAuthStore = create(
                 set({ isLoading: loading });
             },
 
-            // 로그아웃
-            logout: () => {
-                set({
-                    accessToken: null,
-                    refreshToken: null,
-                    user: null,
-                    isAuthenticated: false,
-                    isAdmin: false,
-                    isLoading: false,
-                    tokenRefreshPromise: null,
-                });
-                console.log('로그아웃 완료');
-            },
-
-            // 토큰 상태 확인 (앱 시작시)
-            validateStoredTokens: () => {
-                const { accessToken, refreshToken, isTokenExpired, logout } = get();
+            // 성능 최적화된 토큰 검증 함수
+            validateStoredTokens: async () => {
+                const state = get();
+                const { accessToken, lastValidation, validationCache } = state;
 
                 if (!accessToken) {
+                    set({ isAuthenticated: false });
                     return false;
                 }
 
-                // Access token이 만료된 경우
-                if (isTokenExpired(accessToken)) {
-                    console.log('저장된 access token이 만료됨');
-
-                    // Refresh token도 확인
-                    if (!refreshToken || isTokenExpired(refreshToken)) {
-                        console.log('Refresh token도 만료됨, 로그아웃 처리');
-                        logout();
-                        return false;
-                    }
-
-                    // Refresh token이 유효하면 자동 갱신 시도
-                    console.log('Refresh token으로 갱신 시도');
-                    return 'refresh_needed';
-                }
-
-                // Access token이 유효한 경우 사용자 정보 복원
-                const user = get().extractUserFromToken(accessToken);
-                if (user) {
-                    const isAdmin = ['ADMIN', 'SUPER_ADMIN'].includes(user.role);
-                    set({
-                        user,
-                        isAuthenticated: true,
-                        isAdmin,
-                        isLoading: false,
-                    });
+                // 성능 최적화: 최근 30초 이내에 검증했으면 건너뛰기
+                const now = Date.now();
+                if (lastValidation && (now - lastValidation) < 30000) {
+                    console.log('최근에 검증했으므로 건너뛰기');
                     return true;
                 }
 
-                logout();
-                return false;
+                // 캐시 확인 (1분 캐시)
+                const cacheKey = accessToken.substring(0, 20);
+                const cached = validationCache.get(cacheKey);
+                if (cached && (now - cached.timestamp) < 60000) {
+                    console.log('캐시에서 검증 결과 사용');
+                    if (!cached.result) {
+                        throw new Error('캐시된 검증 실패');
+                    }
+                    set({ lastValidation: now });
+                    return true;
+                }
+
+                set({ isLoading: true });
+
+                try {
+                    // 클라이언트 측 토큰 만료 확인
+                    if (state.isTokenExpired(accessToken)) {
+                        throw new Error('토큰이 만료되었습니다');
+                    }
+
+                    // 여기에 서버 측 검증 로직 추가 가능
+                    // const response = await fetch('/api/auth/validate', {
+                    //     headers: { Authorization: `Bearer ${accessToken}` }
+                    // });
+                    // if (!response.ok) {
+                    //     throw new Error('서버 검증 실패');
+                    // }
+
+                    // 성공적인 검증 결과 캐시
+                    validationCache.set(cacheKey, { result: true, timestamp: now });
+
+                    set({
+                        lastValidation: now,
+                        isLoading: false,
+                        isAuthenticated: true
+                    });
+
+                    console.log('토큰 검증 성공');
+                    return true;
+
+                } catch (error) {
+                    // 실패 결과도 짧은 시간 캐시 (반복 요청 방지)
+                    validationCache.set(cacheKey, { result: false, timestamp: now });
+
+                    set({ isLoading: false });
+                    console.error('토큰 검증 실패:', error.message);
+                    throw error;
+                }
             },
 
             setAdminInfo: (adminInfo) => {

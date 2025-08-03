@@ -161,7 +161,7 @@ const AssetManagement = () => {
             </Text>
         ),
         labels: { confirm: '삭제', cancel: '취소' },
-        onCancel: () => console.log('Cancel'),
+        // onCancel: () => console.log('Cancel'),
         onConfirm: () => deleteFolderMutation.mutate(id),
     }), [deleteFolderMutation])
 
@@ -173,7 +173,7 @@ const AssetManagement = () => {
             </Text>
         ),
         labels: { confirm: '삭제', cancel: '취소' },
-        onCancel: () => console.log('Cancel'),
+        // onCancel: () => console.log('Cancel'),
         onConfirm: () => deleteFileMutation.mutate(id),
     }), [deleteFileMutation])
 

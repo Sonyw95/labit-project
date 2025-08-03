@@ -8,16 +8,12 @@ import {
     Box,
     Group,
     Transition,
-    ActionIcon,
     Flex,
 } from '@mantine/core';
-import {
-    IconSun,
-    IconMoon
-} from '@tabler/icons-react';
 import {Icons} from "@/utils/Icons.jsx";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
 import {isRouteErrorResponse, useParams, useRouteError} from "react-router-dom";
+import {IconHome, IconRefresh} from "@tabler/icons-react";
 
 
 const errorPages = {
@@ -97,7 +93,7 @@ const ErrorPage = memo(() => {
     ).toString();
 
     // 2. 에러 페이지 정보 매핑
-    const { title, description, icon, color } = errorPages[statusCode] || {
+    const { title, description, icon} = errorPages[statusCode] || {
         title: '알 수 없는 오류',
         description: error?.message || '예기치 않은 문제가 발생했습니다.',
         icon: 'IconAlertCircle',
@@ -119,7 +115,6 @@ const ErrorPage = memo(() => {
                 color: currentTheme.text
             }}
         >
-            <pre>{JSON.stringify(error, null, 2)}</pre>
             {/* Global Styles */}
             <style>
                 {`
@@ -151,7 +146,7 @@ const ErrorPage = memo(() => {
                             <Stack align="center" spacing="xl" style={styles}>
                                 {/* Floating Icon */}
                                 <FloatingElement delay={0}>
-                                    {/*<PulsingIcon icon={icon} />*/}
+                                    <PulsingIcon icon={icon} />
                                 </FloatingElement>
 
                                 {/* Error Code with 2025 Typography Trend */}
@@ -170,7 +165,7 @@ const ErrorPage = memo(() => {
                                             letterSpacing: '-0.05em'
                                         }}
                                     >
-                                        {/*{statusCode}*/}
+                                        {statusCode}
                                     </Title>
                                 </FloatingElement>
 
@@ -186,7 +181,7 @@ const ErrorPage = memo(() => {
                                             marginBottom: '1rem'
                                         }}
                                     >
-                                        {/*{title}*/}
+                                        {title}
                                     </Title>
                                 </FloatingElement>
 
@@ -201,7 +196,7 @@ const ErrorPage = memo(() => {
                                             lineHeight: 1.6
                                         }}
                                     >
-                                        {/*{description}*/}
+                                        {description}
                                     </Text>
                                 </FloatingElement>
 
@@ -211,7 +206,7 @@ const ErrorPage = memo(() => {
                                         <Button
                                             size="lg"
                                             variant="filled"
-                                            // leftIcon={<IconHome size={20} />}
+                                            leftSection={<IconHome size={20} />}
                                             style={{
                                                 background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
                                                 border: 'none',
@@ -233,7 +228,7 @@ const ErrorPage = memo(() => {
                                         <Button
                                             size="lg"
                                             variant="outline"
-                                            // leftIcon={<IconRefresh size={20} />}
+                                            leftSection={<IconRefresh size={20} />}
                                             style={{
                                                 borderColor: currentTheme.primary,
                                                 color: currentTheme.primary,
