@@ -3,9 +3,8 @@ import { Button } from '@mantine/core';
 import { IconBrandKakao } from "@/utils/helpers.jsx";
 import {useKakaoAuthPath} from "../../../../hooks/api/useApi.js";
 
-const KakaoLoginButton = memo(({ loading }) => {
+const KakaoLoginButton = memo(({ loading, setButtonLoading }) => {
     const { data } = useKakaoAuthPath();
-    const [isLoading, setIsLoading] = useState(false);
 
     // 카카오 버튼 스타일 메모이제이션
     const kakaoButtonStyles = useMemo(() => ({
@@ -27,12 +26,13 @@ const KakaoLoginButton = memo(({ loading }) => {
     // 카카오 로그인 핸들러 메모이제이션
     const handleKakaoLogin = useCallback(() => {
         // 중복 클릭 방지
-        if (isLoading || loading) {
+        if ( loading ) {
             console.log('이미 로그인 진행 중, 중복 클릭 방지');
             return;
         }
 
-        setIsLoading(true);
+
+        setButtonLoading(true);
 
         // 상태 파라미터 생성
         const state = Math.random().toString(36).substring(2, 15);
@@ -42,17 +42,17 @@ const KakaoLoginButton = memo(({ loading }) => {
             window.location.href = authUrl;
         } catch (error) {
             console.error('카카오 로그인 오류:', error);
-            setIsLoading(false);
+            setButtonLoading(false);
         }
-    }, [isLoading, loading, data]);
+    }, [loading, data]);
 
     // 컴포넌트 언마운트 시 타이머 정리
     useEffect(() => {
         let timeoutId;
 
-        if (isLoading) {
+        if (loading) {
             timeoutId = setTimeout(() => {
-                setIsLoading(false);
+                setButtonLoading(false);
             }, 5000);
         }
 
@@ -61,7 +61,7 @@ const KakaoLoginButton = memo(({ loading }) => {
                 clearTimeout(timeoutId);
             }
         };
-    }, [isLoading]);
+    }, [loading]);
 
     // 호버 이벤트 핸들러
     const handleMouseEnter = useCallback((e) => {
@@ -77,7 +77,7 @@ const KakaoLoginButton = memo(({ loading }) => {
             variant="filled"
             leftSection={<IconBrandKakao size={20} aria-hidden="true" />}
             onClick={handleKakaoLogin}
-            loading={isLoading || loading}
+            loading={loading}
             // disabled={!data || isLoading || loading}
             fullWidth
             size="lg"

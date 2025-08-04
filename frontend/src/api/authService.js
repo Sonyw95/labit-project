@@ -89,31 +89,28 @@ export const authService = {
             // console.log('이미 로그아웃 처리 중입니다.');
             return;
         }
-
-        // console.log('로그아웃 처리 시작');
-
         try {
             apiUtils.cancelAllRequests();
-
             try {
                 await api.post('/auth/logout', null, {
                     params: { kakaoAccessToken }
                 });
-                // console.log('서버 로그아웃 성공');
-                showToast.success('로그아웃', '정상적으로 로그아웃되었습니다.');
             } catch (error) {
-                // console.warn('서버 로그아웃 실패, 로컬 로그아웃은 계속 진행:', error);
-                showToast.warning('로그아웃', '서버 오류가 있었지만 로컬 로그아웃을 진행합니다.');
+                return error;
             }
-
         } catch (error) {
             // console.error('로그아웃 중 오류:', error);
         } finally {
-            apiUtils.forceLogout('사용자 로그아웃 요청');
+            // apiUtils.forceLogout('사용자 로그아웃 요청');
+            // 5. 보호된 페이지에서는 홈으로 리다이렉트
+            const protectedPaths = ['/admin', '/user/settings', '/post/edit'];
+            const currentPath = window.location.pathname;
 
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            if (protectedPaths.some(path => currentPath.startsWith(path))) {
+                setTimeout(() => {
+                    window.location.href = '/home';
+                }, 1000);
+            }
         }
     },
 

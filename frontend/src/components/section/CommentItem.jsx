@@ -1,4 +1,4 @@
-import {memo, useState} from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import {
     Group,
     Avatar,
@@ -30,39 +30,39 @@ import {
     useUpdateComment
 } from "../../hooks/api/useApi.js";
 import useAuthStore from "../../stores/authStore.js";
-import {showToast} from "../advanced/Toast.jsx";
-import {useTheme} from "@/contexts/ThemeContext.jsx";
+import { showToast } from "../advanced/Toast.jsx";
+import { useTheme } from "@/contexts/ThemeContext.jsx";
+import { useScrollArea } from "../layout/MainLayout.jsx"; // Context import
 
 const CommentItem = memo(({ comment, postId, depth = 0 }) => {
     const { user, isAuthenticated } = useAuthStore();
     const { themeColors } = useTheme();
+    const { scrollToElement } = useScrollArea(); // MainLayout ScrollArea 제어
 
     const [isReplying, setIsReplying] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
 
-    // API 훅
+    // 답글 폼 ref
+    const replyFormRef = useRef(null);
+
+    // API 훅들...
     const { refetch } = useCommentsByPost(postId);
     const updateCommentMutation = useUpdateComment();
     const deleteCommentMutation = useDeleteComment();
     const toggleLikeMutation = useToggleCommentLike();
     const createReplyMutation = useCreateComment();
 
-    // 수정 폼
+    // 폼들...
     const editForm = useForm({
-        initialValues: {
-            content: comment.content,
-        },
+        initialValues: { content: comment.content },
         validate: {
             content: (value) => (!value.trim() ? '댓글 내용을 입력해주세요.' : null),
         },
     });
 
-    // 답글 작성 폼
     const replyForm = useForm({
-        initialValues: {
-            content: '',
-        },
+        initialValues: { content: '' },
         validate: {
             content: (value) => (!value.trim() ? '답글 내용을 입력해주세요.' : null),
         },
@@ -71,8 +71,42 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
     // 권한 확인
     const isAuthor = user && user.id === comment.author.id;
     const isAdmin = user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
-    const canReply = depth < 1; // 대댓글까지만 허용
+    const canReply = depth < 1;
     const isLiked = comment?.isLiked;
+
+    // 답글 폼 표시 시 자동 스크롤
+    useEffect(() => {
+        if (isReplying && replyFormRef.current) {
+            // 다중 타이밍 전략으로 안정적 스크롤
+            const attemptScroll = (delay) => {
+                setTimeout(() => {
+                    if (replyFormRef.current) {
+                        const success = scrollToElement(replyFormRef.current, {
+                            smooth: true
+                        });
+
+                        if (!success) {
+                            // 폴백: 기본 scrollIntoView
+                            replyFormRef.current.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    }
+                }, delay);
+            };
+
+            // 여러 시점에서 스크롤 시도
+            attemptScroll(0);    // 즉시
+            attemptScroll(100);  // DOM 업데이트 후
+            attemptScroll(300);  // 애니메이션 완료 후
+        }
+    }, [isReplying, scrollToElement]);
+
+    // 답글 버튼 클릭 핸들러
+    const handleReplyClick = () => {
+        setIsReplying(!isReplying);
+    };
 
     // 날짜 포맷팅
     const formatDate = (dateString) => {
@@ -89,14 +123,13 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
         return date.toLocaleDateString('ko-KR');
     };
 
-    // 댓글 수정
+    // 기존 핸들러들... (handleUpdateComment, handleDeleteComment, handleToggleLike)
     const handleUpdateComment = async (values) => {
         try {
             await updateCommentMutation.mutateAsync({
                 id: comment.id,
                 data: values,
             });
-
             setIsEditing(false);
             showToast.success("댓글 수정 완료", "댓글이 수정되었습니다.")
         } catch (error) {
@@ -104,7 +137,6 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
         }
     };
 
-    // 댓글 삭제
     const handleDeleteComment = async () => {
         try {
             await deleteCommentMutation.mutateAsync(comment.id);
@@ -115,7 +147,6 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
         setDeleteModalOpened(false);
     };
 
-    // 좋아요 토글
     const handleToggleLike = async () => {
         if (!isAuthenticated) {
             showToast.warning("로그인 필요", "좋아요를 누르려면 로그인이 필요합니다.")
@@ -128,7 +159,6 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
         }
     };
 
-    // 답글 작성
     const handleCreateReply = async (values) => {
         if (!isAuthenticated) {
             showToast.warning("로그인 필요", "답글을 작성하려면 로그인이 필요합니다.")
@@ -352,7 +382,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                     variant="subtle"
                                     size="sm"
                                     leftSection={<IconMessageCircle size={14} />}
-                                    onClick={() => setIsReplying(!isReplying)}
+                                    onClick={handleReplyClick}
                                     style={{
                                         color: themeColors.subText,
                                         '&:hover': {
@@ -368,9 +398,19 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                         </Group>
                     )}
 
-                    {/* 답글 작성 폼 */}
+                    {/* 답글 작성 폼 - ref 추가 */}
                     {isReplying && (
-                        <Box mt="md">
+                        <Box
+                            ref={replyFormRef}
+                            mt="md"
+                            p="md"
+                            style={{
+                                backgroundColor: themeColors.inputBg,
+                                border: `2px solid ${themeColors.primary}`,
+                                borderRadius: '8px',
+                                boxShadow: `0 4px 12px ${themeColors.primary}20`,
+                            }}
+                        >
                             <form onSubmit={replyForm.onSubmit(handleCreateReply)}>
                                 <Stack gap="md">
                                     <Textarea
@@ -378,10 +418,11 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                                         {...replyForm.getInputProps('content')}
                                         minRows={3}
                                         autosize
+                                        autoFocus
                                         styles={{
                                             input: {
-                                                backgroundColor: themeColors.inputBg,
-                                                border: `2px solid ${themeColors.border}`,
+                                                backgroundColor: themeColors.background,
+                                                border: `1px solid ${themeColors.border}`,
                                                 borderRadius: '8px',
                                                 fontSize: '15px',
                                                 color: themeColors.text,

@@ -46,6 +46,7 @@ const handleForceLogout = (reason = '인증 오류') => {
     console.warn(`강제 로그아웃 실행: ${reason}`);
 
     try {
+
         // 1. 모든 진행 중인 요청 취소
         pendingRequests.forEach((cancelSource) => {
             cancelSource.cancel('강제 로그아웃으로 인한 요청 취소');

@@ -49,6 +49,10 @@ export const useLoginModal = () => {
         }
     }, [validateForm]);
 
+    const setButtonLoading = useCallback((result) => {
+        setLoading(result);
+    }, [])
+
     // 모달 리셋 함수
     const resetModal = useCallback(() => {
         setLoading(false);
@@ -60,6 +64,8 @@ export const useLoginModal = () => {
         resetModal,
         themeColors,
         dark,
+        setButtonLoading
+
     };
 };
 

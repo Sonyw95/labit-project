@@ -4,8 +4,9 @@ import {useLoginModal, useLoginModalAccessibility, useLoginModalStyles} from "@/
 import LoginForm from "@/components/common/auth/login/LoginForm.jsx";
 import KakaoLoginButton from "@/components/common/auth/login/KakaoLoginButton.jsx";
 
+
 const LoginModal = memo(({ opened, onClose }) => {
-    const { loading, handleEmailLogin, resetModal } = useLoginModal();
+    const { loading, handleEmailLogin, resetModal, setButtonLoading } = useLoginModal();
     const { modalStyles, titleStyles, dividerStyles } = useLoginModalStyles();
     const { overlayProps, accessibilityProps } = useLoginModalAccessibility();
 
@@ -55,7 +56,7 @@ const LoginModal = memo(({ opened, onClose }) => {
                     aria-hidden="true"
                 />
 
-                <KakaoLoginButton loading={loading} />
+                <KakaoLoginButton loading={loading} setButtonLoading={setButtonLoading}  />
             </Stack>
         </Modal>
     );
