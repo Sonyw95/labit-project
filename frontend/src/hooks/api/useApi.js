@@ -439,32 +439,60 @@ export const useRecentComments = (limit = 10) => {
 // 댓글 생성
 export const useCreateComment = () => {
     const queryClient = useQueryClient();
+    const { user } = useAuthStore();
 
     return useMutation({
         mutationFn: commentService.createComment,
         onSuccess: (data) => {
-            // 해당 포스트의 댓글 목록 무효화
-            queryClient.invalidateQueries({
-                queryKey: queryKeys.commentsByPost(data.postId)
-            });
 
-            // 최근 댓글 무효화
+            // 1. 즉시 캐시에 새 댓글 추가
+            queryClient.setQueryData(
+                queryKeys.commentsByPost(data.postId),
+                (oldComments) => {
+
+                    if (!oldComments) {
+                        return [data];
+                    }
+
+                    // parentId가 있으면 답글, 없으면 일반 댓글
+                    if (data.parentId) {
+                        // 답글인 경우 - 부모 댓글의 replies에 추가
+                        return oldComments.map(comment =>
+                            comment.id === data.parentId
+                                ? {
+                                    ...comment,
+                                    replies: [...(comment.replies || []), data]
+                                }
+                                : comment
+                        );
+                    }
+                    // 일반 댓글인 경우 - 목록 맨 뒤에 추가
+                    return [...oldComments, data];
+
+                }
+            );
+
+            // 2. 포스트 상세 정보의 댓글 수 업데이트
+            queryClient.setQueryData(
+                queryKeys.post.post(data.postId),
+                (oldPost) => {
+                    if (!oldPost) {
+                        return oldPost;
+                    }
+                    return {
+                        ...oldPost,
+                        commentCount: (oldPost.commentCount || 0) + 1
+                    };
+                }
+            );
+
+            // 3. 관련 캐시들 무효화 (백그라운드에서 최신 데이터 가져오기)
             queryClient.invalidateQueries({
                 queryKey: queryKeys.recentComments
             });
-
-            // 포스트의 댓글 수 업데이트
-            queryClient.invalidateQueries({
-                queryKey: ['posts', data.postId]
-            });
-            showToast.success("댓글 작성 완료", "댓글이 성공적으로 작성되었습니다.")
-        },
-        onError: (error) => {
-            showToast.error("댓글 작성 실패", error.message || "댓글 작성 중 오류가 발생하였스브니다.")
         },
     });
 };
-
 // 댓글 수정
 export const useUpdateComment = () => {
     const queryClient = useQueryClient();

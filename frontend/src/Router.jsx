@@ -25,6 +25,7 @@ const AppRouter = memo((() => {
 
 
                 { path: '/posts/:category', element: <PostListPage/> },
+                { path: '/post/edit', element: <PostEditPage/> },
                 { path: '/post/edit/:postId', element: <PostEditPage/> },
                 { path: '/post/view/:postId', element: <PostViewPage/> },
 

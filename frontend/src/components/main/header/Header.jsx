@@ -238,10 +238,11 @@ const Header = memo(({
                         {/* 로그인된 경우 새 글 작성 버튼 */}
                         {isAuthenticated && (
                             <ActionIcon
+                                component={NavLink}
+                                to='/post/edit'
                                 variant="filled"
                                 size="lg"
                                 radius="xl"
-                                onClick={handleEditClick}
                                 style={actionButtonStyles.edit}
                             >
                                 <IconEdit size={20} />

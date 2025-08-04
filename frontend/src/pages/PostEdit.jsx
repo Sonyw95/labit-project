@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import {useState, useEffect, useMemo, useCallback, memo} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Container,
@@ -42,6 +42,7 @@ import css from 'highlight.js/lib/languages/css';
 import html from 'highlight.js/lib/languages/xml';
 import { showToast } from "@/components/advanced/Toast.jsx";
 import { useCreatePost, useNavigationTree, usePost, useUpdatePost } from "@/hooks/api/useApi.js";
+import {useTheme} from "../contexts/ThemeContext.jsx";
 
 const lowlight = createLowlight({})
 // 언어 등록
@@ -51,24 +52,13 @@ lowlight.register('java', java);
 lowlight.register('css', css);
 lowlight.register('html', html);
 
-function PostEditPage() {
-    const { colorScheme } = useMantineColorScheme();
+const PostEditPage = memo(() => {
+    const { themeColors } = useTheme();
+
     const { postId } = useParams();
     const navigate = useNavigate();
     const isEdit = !!postId;
 
-    // velog 스타일 색상 팔레트
-    const themeColors = useMemo(() => ({
-        primary: '#12B886',
-        text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-        subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-        background: colorScheme === 'dark' ? '#1A1B23' : '#FFFFFF',
-        border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-        hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
-        success: '#12B886',
-        error: '#FA5252',
-        cardBg: colorScheme === 'dark' ? '#242529' : '#FFFFFF',
-    }), [colorScheme]);
 
     // 상태 관리 (기존 유지)
     const [previewMode, setPreviewMode] = useState(false);
@@ -296,7 +286,7 @@ function PostEditPage() {
             <Box
                 style={{
                     position: 'fixed',
-                        left: 0,
+                    left: 0,
                     right: 0,
                     zIndex: 100,
                     backdropFilter: 'blur(8px)',
@@ -554,15 +544,15 @@ function PostEditPage() {
                                                 '& .ProseMirror li': {
                                                     margin: `${rem(8)} 0`,
                                                 },
-                                                '& .ProseMirror p.is-editor-empty:first-of-type::before': {
-                                                    content: '"내용을 입력하세요..."',
-                                                    float: 'left',
-                                                    color: themeColors.subText,
-                                                    pointerEvents: 'none',
-                                                    height: 0,
-                                                    fontStyle: 'italic',
-                                                    opacity: 0.6,
-                                                }
+                                                // '& .ProseMirror p.is-editor-empty:first-of-type::before': {
+                                                //     content: '"내용을 입력하세요..."',
+                                                //     float: 'left',
+                                                //     color: themeColors.subText,
+                                                //     pointerEvents: 'none',
+                                                //     height: 0,
+                                                //     fontStyle: 'italic',
+                                                //     opacity: 0.6,
+                                                // }
                                             }
                                         }}
                                     >
@@ -608,7 +598,7 @@ function PostEditPage() {
                 </form>
             </Container>
 
-            {/* velog 스타일 설정 모달 */}
+            {/* 설정 모달 */}
             <Modal
                 opened={settingsOpened}
                 onClose={closeSettings}
@@ -850,6 +840,6 @@ function PostEditPage() {
             </Modal>
         </Box>
     );
-}
+})
 
 export default PostEditPage;

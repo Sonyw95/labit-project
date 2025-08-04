@@ -92,8 +92,6 @@ export const ToastProvider = ({ children }) => {
     }, [showToast]);
 
     const error = useCallback((title, message, options = {}) => {
-        console.log('ERROR')
-
         return showToast({ type: 'error', title, message, ...options });
     }, [showToast]);
 

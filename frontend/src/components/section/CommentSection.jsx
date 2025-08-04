@@ -1,4 +1,4 @@
-import {memo, useState} from 'react';
+import {memo, useEffect, useState} from 'react';
 import {
     Stack,
     Text,
@@ -15,14 +15,21 @@ import {useCreateComment} from "@/hooks/api/useApi.js";
 import CommentItem from "./CommentItem.jsx";
 import {showToast} from "../advanced/Toast.jsx";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
+import {useCommentsByPost} from "../../hooks/api/useApi.js";
 
-const CommentSection = memo(({ postId, comments = [] }) => {
+const CommentSection = memo(({ postId }) => {
     const { isAuthenticated } = useAuthStore();
-    const createCommentMutation = useCreateComment();
     const { themeColors } = useTheme();
 
+    // 댓글 목록을 직접 가져오기
+    const { data: comments = [], isLoading, refetch } = useCommentsByPost(postId);
+    const createCommentMutation = useCreateComment();
     const [isWriting, setIsWriting] = useState(false);
 
+    // 디버깅용 - 댓글 데이터 변화 추적
+    useEffect(() => {
+        console.log(`[CommentSection] 댓글 데이터 변경됨 (PostID: ${postId}):`, comments);
+    }, [comments, postId]);
     // 댓글 작성 폼
     const form = useForm({
         initialValues: {
@@ -50,6 +57,11 @@ const CommentSection = memo(({ postId, comments = [] }) => {
             setIsWriting(false);
 
             showToast.success("댓글 작성 완료", '댓글이 성공적으로 작성되었습니다.');
+
+            // 혹시 캐시 업데이트가 안 됐을 경우를 대비해 강제 refetch
+            setTimeout(() => {
+                refetch();
+            }, 100);
 
         } catch (error) {
             showToast.error("댓글 작성 실패", '댓글이 작성 중 오류가 발생했습니다.');

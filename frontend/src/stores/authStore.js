@@ -205,7 +205,7 @@ const useAuthStore = create(
                     lastValidation: Date.now(),
                 });
 
-                console.log('토큰 갱신 완료:', { userId: user.id, nickname: user.nickname, role: user.role });
+                // console.log('토큰 갱신 완료:', { userId: user.id, nickname: user.nickname, role: user.role });
                 return true;
             },
 
@@ -213,7 +213,7 @@ const useAuthStore = create(
             updateUser: (userData) => {
                 const currentState = get();
                 if (!currentState.isAuthenticated) {
-                    console.warn('인증되지 않은 상태에서 사용자 정보 업데이트 시도');
+                    // console.warn('인증되지 않은 상태에서 사용자 정보 업데이트 시도');
                     return;
                 }
 
@@ -225,7 +225,7 @@ const useAuthStore = create(
                     isAdmin,
                 });
 
-                console.log('사용자 정보 업데이트 완료:', updatedUser.nickname);
+                // console.log('사용자 정보 업데이트 완료:', updatedUser.nickname);
             },
 
             // 로딩 상태 설정

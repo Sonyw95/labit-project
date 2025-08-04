@@ -22,7 +22,13 @@ import {
     IconSend,
 } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import {useCreateComment, useDeleteComment, useToggleCommentLike, useUpdateComment} from "../../hooks/api/useApi.js";
+import {
+    useCommentsByPost,
+    useCreateComment,
+    useDeleteComment,
+    useToggleCommentLike,
+    useUpdateComment
+} from "../../hooks/api/useApi.js";
 import useAuthStore from "../../stores/authStore.js";
 import {showToast} from "../advanced/Toast.jsx";
 import {useTheme} from "@/contexts/ThemeContext.jsx";
@@ -35,19 +41,8 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
 
-    // velog 스타일 색상
-    // const themeColors = {
-    //     primary: '#12B886',
-    //     text: dark ? '#ECECEC' : '#212529',
-    //     subText: dark ? '#ADB5BD' : '#495057',
-    //     background: dark ? '#1A1B23' : '#FFFFFF',
-    //     border: dark ? '#2B2D31' : '#E9ECEF',
-    //     hover: dark ? '#2B2D31' : '#F8F9FA',
-    //     replyBg: dark ? '#1E1F25' : '#F8F9FA',
-    //     inputBg: dark ? '#2B2D31' : '#FFFFFF',
-    // };
-
     // API 훅
+    const { refetch } = useCommentsByPost(postId);
     const updateCommentMutation = useUpdateComment();
     const deleteCommentMutation = useDeleteComment();
     const toggleLikeMutation = useToggleCommentLike();
@@ -150,6 +145,10 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
             replyForm.reset();
             setIsReplying(false);
             showToast.success("답글 작성 완료", '답글이 성공적으로 작성되었습니다.')
+
+            setTimeout(() => {
+                refetch();
+            }, 100);
         } catch (error) {
             showToast.error('답글 작성 실패', error.message || '답글 작성 중 오류가 발생했습니다.')
         }
@@ -168,7 +167,7 @@ const CommentItem = memo(({ comment, postId, depth = 0 }) => {
                     borderRadius: depth > 0 ? '0 8px 8px 0' : 0,
                 }}
             >
-                <Stack gap="md">
+                <Stack gap="s">
                     {/* 댓글 헤더 */}
                     <Group justify="space-between">
                         <Group gap="md">

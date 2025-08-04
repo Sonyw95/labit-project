@@ -68,7 +68,7 @@ const handleForceLogout = (reason = '인증 오류') => {
         showToast.error('세션 만료', '다시 로그인해주세요.');
 
         // 5. 보호된 페이지에서는 홈으로 리다이렉트
-        const protectedPaths = ['/admin', '/user/settings'];
+        const protectedPaths = ['/admin', '/user/settings', '/post/edit'];
         const currentPath = window.location.pathname;
 
         if (protectedPaths.some(path => currentPath.startsWith(path))) {

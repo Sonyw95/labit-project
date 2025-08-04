@@ -15,10 +15,10 @@ export const authService = {
     getUserInfo: async () => {
         try {
             const response = await api.get('/auth/me');
-            console.log('서버에서 사용자 정보 조회 성공');
+            // console.log('서버에서 사용자 정보 조회 성공');
             return response;
         } catch (error) {
-            console.error('사용자 정보 조회 실패:', error);
+            // console.error('사용자 정보 조회 실패:', error);
 
             // 401 에러면 자동 로그아웃 처리됨 (client.js 인터셉터에서)
             if (error.response?.status === 401) {
@@ -32,12 +32,12 @@ export const authService = {
     // 사용자 정보 수정 (새로운 토큰 재발급 방식)
     updateUserInfo: async (data) => {
         try {
-            console.log('사용자 정보 수정 시작:', data);
+            // console.log('사용자 정보 수정 시작:', data);
 
             // 서버에 사용자 정보 수정 요청 (새 토큰과 함께 응답)
             const response = await api.put('/auth/me', data);
 
-            console.log('서버 사용자 정보 수정 성공:', response);
+            // console.log('서버 사용자 정보 수정 성공:', response);
 
             // 응답에서 새 토큰과 사용자 정보 추출
             const { user, accessToken, tokenType, expiresIn, message } = response;
@@ -54,11 +54,11 @@ export const authService = {
                 throw new Error('새 토큰 설정에 실패했습니다.');
             }
 
-            console.log('새 토큰으로 업데이트 완료:', {
-                nickname: user.nickname,
-                tokenType,
-                expiresIn
-            });
+            // console.log('새 토큰으로 업데이트 완료:', {
+            //     nickname: user.nickname,
+            //     tokenType,
+            //     expiresIn
+            // });
 
             // 성공 메시지 표시
             showToast.success('프로필 수정', message || '프로필 정보가 성공적으로 수정되었습니다.');
@@ -86,11 +86,11 @@ export const authService = {
     // 완전한 로그아웃 처리 (기존 코드 유지)
     logout: async (kakaoAccessToken) => {
         if (apiUtils.isLoggingOut()) {
-            console.log('이미 로그아웃 처리 중입니다.');
+            // console.log('이미 로그아웃 처리 중입니다.');
             return;
         }
 
-        console.log('로그아웃 처리 시작');
+        // console.log('로그아웃 처리 시작');
 
         try {
             apiUtils.cancelAllRequests();
@@ -99,15 +99,15 @@ export const authService = {
                 await api.post('/auth/logout', null, {
                     params: { kakaoAccessToken }
                 });
-                console.log('서버 로그아웃 성공');
+                // console.log('서버 로그아웃 성공');
                 showToast.success('로그아웃', '정상적으로 로그아웃되었습니다.');
             } catch (error) {
-                console.warn('서버 로그아웃 실패, 로컬 로그아웃은 계속 진행:', error);
+                // console.warn('서버 로그아웃 실패, 로컬 로그아웃은 계속 진행:', error);
                 showToast.warning('로그아웃', '서버 오류가 있었지만 로컬 로그아웃을 진행합니다.');
             }
 
         } catch (error) {
-            console.error('로그아웃 중 오류:', error);
+            // console.error('로그아웃 중 오류:', error);
         } finally {
             apiUtils.forceLogout('사용자 로그아웃 요청');
 
@@ -119,10 +119,10 @@ export const authService = {
 
     // 강제 로그아웃 (401 에러 등에서 자동 호출)
     forceLogout: (reason = '자동 로그아웃') => {
-        console.warn(`강제 로그아웃 실행: ${reason}`);
+        // console.warn(`강제 로그아웃 실행: ${reason}`);
         apiUtils.forceLogout(reason);
 
-        const protectedPaths = ['/admin', '/user/settings'];
+        const protectedPaths = ['/admin', '/user/settings', '/post/edit'];
         const currentPath = window.location.pathname;
 
         if (!protectedPaths.some(path => currentPath.startsWith(path))) {
@@ -147,7 +147,7 @@ export const authService = {
         const authStore = useAuthStore.getState();
 
         if (!authStore.isInitialized) {
-            console.log('아직 초기화되지 않음, 검증 건너뛰기');
+            // console.log('아직 초기화되지 않음, 검증 건너뛰기');
             return false;
         }
 
@@ -159,7 +159,7 @@ export const authService = {
         try {
             // 1. 클라이언트 측 만료 확인
             if (authStore.isTokenExpired(token)) {
-                console.log('토큰 만료됨');
+                // console.log('토큰 만료됨');
                 authService.forceLogout('토큰 만료');
                 return false;
             }
@@ -167,7 +167,7 @@ export const authService = {
             // 2. 서버 측 검증 (블랙리스트 확인)
             const isValid = await apiUtils.validateToken();
             if (!isValid) {
-                console.log('서버 토큰 검증 실패');
+                // console.log('서버 토큰 검증 실패');
                 authService.forceLogout('서버 토큰 검증 실패');
                 return false;
             }
@@ -176,7 +176,7 @@ export const authService = {
             return true;
 
         } catch (error) {
-            console.error('토큰 검증 중 오류:', error);
+            // console.error('토큰 검증 중 오류:', error);
             authService.forceLogout('토큰 검증 오류');
             return false;
         }

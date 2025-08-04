@@ -55,7 +55,7 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
-    @GetMapping
+    @GetMapping("/view")
     @Operation(summary = "포스트 목록 조회", description = "발행된 포스트 목록을 조회합니다.")
     public ResponseEntity<Page<PostResponseDto>> getPosts(
             @Parameter(description = "페이지 번호 (0부터 시작)") @RequestParam(name = "page", defaultValue = "0") int page,
@@ -68,9 +68,9 @@ public class PostController {
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "카테고리별 포스트 조회", description = "특정 카테고리의 포스트를 조회합니다.")
     public ResponseEntity<Page<PostResponseDto>> getPostsByCategory(
-            @PathVariable Long categoryId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable(name ="categoryId") Long categoryId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PostResponseDto> posts = postService.getPostsByCategory(categoryId, pageable);
         return ResponseEntity.ok(posts);

@@ -18,6 +18,7 @@ import {IconAlertCircle, IconRefresh} from "@tabler/icons-react";
 import PostList from "@/components/section/post/PostList.jsx";
 import {postService} from "@/api/postService.js";
 import {useTheme} from "../contexts/ThemeContext.jsx";
+import useNavigationStore from "../stores/navigationStore.js";
 
 const POSTS_PER_PAGE = 12;
 const INFINITE_SCROLL_THRESHOLD = POSTS_PER_PAGE;
@@ -26,16 +27,6 @@ const INFINITE_SCROLL_THRESHOLD = POSTS_PER_PAGE;
 const PostListPage = memo( () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { themeColors } = useTheme();
-
-    // velog 스타일 색상
-    // const themeColors = {
-    //     primary: '#12B886',
-    //     text: colorScheme === 'dark' ? '#ECECEC' : '#212529',
-    //     subText: colorScheme === 'dark' ? '#ADB5BD' : '#495057',
-    //     background: colorScheme === 'dark' ? '#1A1B23' : '#f8f9fa',
-    //     border: colorScheme === 'dark' ? '#2B2D31' : '#E9ECEF',
-    //     hover: colorScheme === 'dark' ? '#2B2D31' : '#F8F9FA',
-    // };
 
     // 상태 관리
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -47,7 +38,10 @@ const PostListPage = memo( () => {
     const [debouncedCategory] = useDebouncedValue(selectedCategory, 300);
 
     // 네비게이션 데이터 조회
-    const { data: navigationTree } = useNavigationTree();
+    const {
+        navigationTree: navigationTree = [],
+    } = useNavigationStore();
+
 
     // 카테고리 옵션 생성 (중복 코드 방지)
     const categoryOptions = useMemo(() => {

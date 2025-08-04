@@ -4,7 +4,7 @@ export const postService = {
     // 포스트 목록 조회
     getPosts: (params = {}) => {
         const { page = 0, size = 10, ...otherParams } = params;
-        return api.get('/posts', {
+        return api.get('/posts/view', {
             params: { page, size, ...otherParams }
         });
     },
