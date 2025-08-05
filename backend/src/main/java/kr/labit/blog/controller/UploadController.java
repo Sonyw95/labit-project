@@ -39,7 +39,7 @@ public class UploadController {
                     {
                         "success": true,
                         "message": "이미지 업로드 완료",
-                        "fileUrl": "http://localhost:8080/api/files/profiles/2025/01/20250101_123456_abc12345.jpg",
+                        "fileUrl": "http://localhost:10001/api/files/profiles/2025/01/20250101_123456_abc12345.jpg",
                         "fileName": "20250101_123456_abc12345.jpg"
                     }
                     """))

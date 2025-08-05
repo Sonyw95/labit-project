@@ -22,6 +22,6 @@ public class UserUpdateRequestDto {
     private String email;
 
     @Size(max = 500, message = "프로필 이미지 URL은 500자 이하여야 합니다")
-    @Schema(description = "프로필 이미지 URL", example = "http://localhost:8080/api/files/profiles/2025/01/image.jpg")
+    @Schema(description = "프로필 이미지 URL", example = "http://localhost:10001/api/files/profiles/2025/01/image.jpg")
     private String profileImage;
 }

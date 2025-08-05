@@ -85,7 +85,7 @@
     - 도메인: `http://localhost:3000`
 4. **카카오 로그인 설정**:
     - 활성화 설정: ON
-    - Redirect URI: `http://localhost:8080/oauth2/callback/kakao`
+    - Redirect URI: `http://localhost:10001/oauth2/callback/kakao`
 5. **동의항목 설정**:
     - 닉네임: 필수 동의
     - 프로필 사진: 선택 동의
@@ -105,7 +105,7 @@ cd backend
 # 2. 환경변수 설정 (application.yml 또는 환경변수)
 export KAKAO_CLIENT_ID=your_rest_api_key
 export KAKAO_CLIENT_SECRET=your_client_secret
-export KAKAO_REDIRECT_URI=http://localhost:8080/oauth2/callback/kakao
+export KAKAO_REDIRECT_URI=http://localhost:10001/oauth2/callback/kakao
 
 # 3. 애플리케이션 빌드 및 실행
 ./gradlew bootRun
@@ -121,7 +121,7 @@ cd frontend
 npm install
 
 # 3. 환경변수 설정 (.env 파일 생성)
-echo "VITE_API_BASE_URL=http://localhost:8080/api" > .env
+echo "VITE_API_BASE_URL=http://localhost:10001/api" > .env
 
 # 4. 개발 서버 실행
 npm run dev
@@ -149,7 +149,7 @@ docker-compose logs -f
 |--------|------|------|
 | `KAKAO_CLIENT_ID` | 카카오 REST API 키 | `your_rest_api_key` |
 | `KAKAO_CLIENT_SECRET` | 카카오 Client Secret | `your_client_secret` |
-| `KAKAO_REDIRECT_URI` | 카카오 리다이렉트 URI | `http://localhost:8080/oauth2/callback/kakao` |
+| `KAKAO_REDIRECT_URI` | 카카오 리다이렉트 URI | `http://localhost:10001/oauth2/callback/kakao` |
 | `FRONTEND_URL` | 프론트엔드 URL | `http://localhost:3000` |
 | `JWT_SECRET` | JWT 서명 키 | `mySecretKey123...` |
 | `JWT_EXPIRATION` | JWT 만료 시간 (ms) | `86400000` |
@@ -158,7 +158,7 @@ docker-compose logs -f
 
 | 변수명 | 설명 | 예시 |
 |--------|------|------|
-| `VITE_API_BASE_URL` | 백엔드 API URL | `http://localhost:8080/api` |
+| `VITE_API_BASE_URL` | 백엔드 API URL | `http://localhost:10001/api` |
 | `VITE_KAKAO_CLIENT_ID` | 카카오 클라이언트 ID | `your_kakao_client_id` |
 
 ## 📚 API 문서
@@ -293,7 +293,7 @@ certbot --nginx -d yourdomain.com
 
 #### 2. CORS 오류
 ```
-오류: "Access to fetch at 'http://localhost:8080' from origin 'http://localhost:3000' has been blocked by CORS policy"
+오류: "Access to fetch at 'http://localhost:10001' from origin 'http://localhost:3000' has been blocked by CORS policy"
 해결:
 - 백엔드 SecurityConfig의 CORS 설정 확인
 - application.yml의 frontend-url 설정 확인

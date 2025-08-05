@@ -112,7 +112,7 @@ const clearAllBrowserStorage = () => {
 };
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: 'http://localhost:10001/api',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ instance.interceptors.request.use(async (config) => {
 // 서버 측 토큰 검증 함수
 const validateTokenWithServer = async (token) => {
     try {
-        const response = await axios.get('http://localhost:8080/api/auth/token/validate', {
+        const response = await axios.get('http://localhost:10001/api/auth/token/validate', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -274,7 +274,7 @@ class Api {
 
     #getPublicRequest(){
         const publicApi = axios.create({
-            baseURL: 'http://localhost:8080/api',
+            baseURL: 'http://localhost:10001/api',
             timeout: 10000,
             headers: {
                 'Content-Type': 'application/json',
